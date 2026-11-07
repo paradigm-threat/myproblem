@@ -21,7 +21,7 @@ Built from **MyProblem Test Mode** offline gate on device **CPH2419** (2026-11-0
 
 | Field | Client use |
 |---|---|
-| `capture_request` | Narrows WORTHY to color/shape/angle match |
+| `capture_request` | Narrows SEND to color/shape/angle match |
 | `pack_min_version` | Client ignores advanced hints if pack too old |
 | Pack CDN manifest URL | Cursor-style On-Device Pack update — [onboard-ai.md](./onboard-ai.md) |
 
@@ -38,7 +38,7 @@ Built from **MyProblem Test Mode** offline gate on device **CPH2419** (2026-11-0
 | `pack.version` | Provenance / escalate if stale |
 | `uniqueness.pHash` | Optional server-side archive dedupe across sessions |
 | `tickMs` / client clocks | Latency telemetry |
-| `decision=WORTHY` | Assert client already gated |
+| `decision=SEND` (`sendReady=true`) | Assert client already gated (docs formerly said WORTHY) |
 
 ## Not for reject — for dialogue
 

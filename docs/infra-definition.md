@@ -25,6 +25,7 @@ See [`context-for-server.md`](context-for-server.md). Bad frames never leave the
 
 ## Next ops (out of band)
 
-1. Spot Phase 0.5 benches ([`clevertree-llc-plan/09-rackspace-spot-vision-prototype.md`](../../relay/clevertree-llc-plan/09-rackspace-spot-vision-prototype.md)).
-2. Cost oracle → transparent priority fees.
-3. Wire worthy-frame upload only after gate metrics look good.
+1. **MVP standup plan:** [`spot-ai-mvp.md`](./spot-ai-mvp.md) — one SJC A30 Spot + Vercel proxy + Relay `relay.ai.*` flags.
+2. Spot Phase 0.5 benches ([`clevertree-llc-plan/09-rackspace-spot-vision-prototype.md`](../../relay/clevertree-llc-plan/09-rackspace-spot-vision-prototype.md)).
+3. Cost oracle → transparent priority fees.
+4. Wire SEND-frame upload only after gate metrics look good.
