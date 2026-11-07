@@ -145,14 +145,22 @@ export default function HomePage() {
             features like a live video feed.
           </p>
           <figure className="section-graphic">
-            <img
-              src="/people.jpg"
-              alt="MyProblem for people: investigate a problem with AI, solve it yourself or get a recommendation, then connect with local help in test areas — free core help, anonymous mode, fees only for infrastructure"
-              width={1024}
-              height={512}
-              className="section-graphic-img"
-              decoding="async"
-            />
+            <picture>
+              <source
+                media="(max-width: 767px)"
+                srcSet="/people-portrait.jpg"
+                width={768}
+                height={1024}
+              />
+              <img
+                src="/people.jpg"
+                alt="MyProblem for people: investigate a problem with AI, solve it yourself or get a recommendation, then connect with local help in test areas — free core help, anonymous mode, fees only for infrastructure"
+                width={1024}
+                height={512}
+                className="section-graphic-img"
+                decoding="async"
+              />
+            </picture>
           </figure>
           <ol className="steps">
             <li>
