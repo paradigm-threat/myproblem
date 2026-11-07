@@ -27,14 +27,14 @@ Built from **MyProblem Test Mode** offline gate on device **CPH2419** (2026-11-0
 
 ## Split: realtime capture vs Project investigation
 
-**Realtime** (this doc’s SEND path) is only for **ticket intake**: coach lines + `capture_request` so the user fills evidence. It is **not** the primary place for deep research.
+**Realtime** (this doc’s SEND path) is only for **smart-enough ticket intake**: coach lines + `capture_request` so the user fills questions, requirements, and photos. It is **not** an on-demand frontier solve.
 
-**Projects** — deferred, batched server investigation — are the **primary** heavy path once a ticket is packaged. See [`projects.md`](./projects.md).
+**Projects** — deferred, batched server investigation — are the **primary** heavy path once a ticket is packaged and queued by status. Bedrock/frontier is a **rare escalate** inside that batch worker. See [`projects.md`](./projects.md) · [`backbone-escalate.md`](./backbone-escalate.md).
 
 | Mode | Server job |
 |---|---|
 | Realtime SEND | Light VL/OCR for coaching; update ticket fields; never pretend the Problem is fully solved |
-| Project batch | Deep research, multi-LLM / web queries, dossier compile, DIY vs merchant recommendation, timeline updates |
+| Project batch | Deep research ASAP + complete; cache/KB first; rare Bedrock escalate; DIY vs merchant; timeline updates |
 
 ## Sent with worthy uploads (server needs these for realtime coaching)
 
@@ -89,5 +89,6 @@ Unit tests: Android `./gradlew :app:testDebugUnitTest`; Web `npm test`.
 ## Related docs
 
 - [projects.md](./projects.md) — deferred server investigation (primary heavy path)
+- [backbone-escalate.md](./backbone-escalate.md) — rare Bedrock / frontier escalate
 - [capture-guidance.md](./capture-guidance.md) — `capture_request` schema + future 3D
 - [onboard-ai.md](./onboard-ai.md) — L0–L4, HF pins, pack format, CDN

@@ -6,7 +6,7 @@ Research: [MyProblem APK server needs](95c99f78-e4c4-4a29-9242-fe486ef3fc3e) · 
 
 **Goal:** Rent interruptible Rackspace Spot long enough to build/test **image recognition**, then **voice→transcript→Problem chat**, then **Project batch investigation** ([`projects.md`](./projects.md)). Tear down when idle. Phase 0.5 is **designed, not executed** — no `clevertree-llc-plan/bench/` yet.
 
-**Architecture stance:** Realtime Spot calls are for **capture coaching** only. Full ticket research runs as deferred **Projects** on the free/batch pool when capacity exists—cheaper than fake realtime at best quality.
+**Architecture stance:** No on-demand frontier LLM. Realtime = **smart-enough capture** (questions / requirements / photos) → queue JIRA-like ticket. Batch **Projects** investigate ASAP and completely (cache/KB first). **Bedrock / frontier** = rare escalate inside the Project worker ([`backbone-escalate.md`](./backbone-escalate.md)).
 
 ## Hard constraints (from Test Mode)
 
@@ -53,7 +53,7 @@ Do **not** fork a separate AI product. Spot box = Relay worker profile with inst
 | `relay.ai.ocr` | off | GPU OCR |
 | `relay.ai.asr` | off | whisper → transcript Evidence (new; TTS already exists) |
 | `relay.ai.chat` | off | brief-compiler + LLM (**prefer Project batch**, not live session) |
-| `relay.ai.frontier` | off | low-confidence API escalate (**Project job**, not realtime) |
+| `relay.ai.frontier` | off | **Rare** Bedrock/API escalate inside Project only — cache gold; never live capture |
 | `relay.ai.pool` | — | `free_pool` (Spot, busy→429 / enqueue Project) vs `paid_pool` (reliable) |
 | `relay.ai.projects` | off | deferred investigation worker: drain queued tickets, write timeline updates |
 
@@ -88,9 +88,10 @@ Structured output shape (draft):
 5. Relay `relay.ai.*` flags; Spot joins as flagged worker; optional demo Problem tip write.
 6. Flip Test Mode “would upload” → real POST (web, then APK + INTERNET).
 7. ASR second (mic → whisper on same A30); keep Piper for TTS reply.
-8. **Projects queue:** package ticket → enqueue → batch worker on Spot drain; app/email InvestigationUpdate; merchant submit always optional ([`projects.md`](./projects.md)).
-9. **KB extract (batch):** redacted public docs + GA/Israel place channels ([`knowledge-base.md`](./knowledge-base.md)).
-10. If SJC↔GA latency fails targets: IAD CPU + API VL for GA; Spot GPU for **Project batch** distill (decision table in plan `09`).
+8. **Projects queue:** package ticket → status queue → batch worker drains ASAP (complete, non-redundant); app/email InvestigationUpdate ([`projects.md`](./projects.md)).
+9. **Backbone escalate:** Bedrock/Haiku→Sonnet only on unique misses; answer cache + distill ([`backbone-escalate.md`](./backbone-escalate.md)).
+10. **KB extract (batch):** redacted public docs + GA/Israel channels ([`knowledge-base.md`](./knowledge-base.md)).
+11. If SJC↔GA latency fails targets: IAD CPU + API VL for GA; Spot GPU for **Project batch** distill (decision table in plan `09`).
 
 ## Out of scope for this MVP
 
@@ -99,6 +100,7 @@ Always-on reliable GPU, multi-region, full WebRTC SFU, L2 HF pack CDN, billing, 
 ## Related
 
 - [`projects.md`](./projects.md) — deferred investigation (primary server path)
+- [`backbone-escalate.md`](./backbone-escalate.md) — rare Bedrock escalate in batch
 - [`knowledge-base.md`](./knowledge-base.md) — local shared KB + channels
 - [`context-for-server.md`](./context-for-server.md)
 - [`onboard-ai.md`](./onboard-ai.md)

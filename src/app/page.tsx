@@ -60,9 +60,9 @@ export default function HomePage() {
               </h1>
               <p className="eyebrow">Coming soon · Georgia &amp; Israel pilots</p>
               <p className="hero-lead">
-                Free forever for local businesses. Capture fast; investigate
-                thoroughly as a Project; grow a Georgia- and Israel-only
-                knowledge base — local, not another global chatbot.
+                Free forever for local businesses. Capture the ticket, queue it
+                like JIRA, batch-investigate thoroughly — Bedrock only when we
+                truly need it. Local knowledge for Georgia and Israel.
               </p>
               <div className="cta-row">
                 <a className="btn-primary" href="#signup">
@@ -197,13 +197,13 @@ export default function HomePage() {
                 </p>
               </li>
               <li>
-                <strong>Start a Project — deferred thorough investigation</strong>
+                <strong>Start a Project — queued batch investigation</strong>
                 <p>
-                  When there is no ready solution yet, MyProblem queues a
-                  server-side Project. The worker takes the time hardware and
-                  other models allow — batched, not rushed — so quality stays
-                  high while cost stays low. Timeline updates land in the app
-                  (and email if you want). Many Problems close with AI alone.
+                  When there is no ready solution yet, the ticket joins a
+                  status queue. Workers investigate ASAP and completely —
+                  cache and local KB first, Bedrock only if truly stuck.
+                  Timeline updates land in the app (and email if you want).
+                  Many Problems close with AI alone.
                 </p>
               </li>
               <li>
@@ -246,71 +246,75 @@ export default function HomePage() {
           </section>
 
           <section id="projects" aria-labelledby="projects-heading">
-            <h2 id="projects-heading">Projects — thorough investigation on purpose</h2>
+            <h2 id="projects-heading">Projects — capture, queue, batch (not on-demand LLM)</h2>
             <p className="section-lead">
-              Fake realtime at “best quality” is expensive and still rushes the
-              model. MyProblem separates{" "}
-              <strong className="emph">capture</strong> from{" "}
-              <strong className="emph">investigation</strong> so the AI can take
-              the time resources allow — and never cut corners to look instant.
+              We don’t need a live frontier chatbot. We need a{" "}
+              <strong className="emph">smart-enough</strong> intake model, a{" "}
+              <strong className="emph">JIRA-style ticket queue</strong>, and
+              batch workers that investigate{" "}
+              <strong className="emph">ASAP and completely</strong> — without
+              waste or repeating the same call. Bedrock (or similar) is a{" "}
+              <strong className="emph">rare backbone escalate</strong> when the
+              cheap path truly cannot.
             </p>
             <div className="project-flow" role="list">
               <article className="project-flow-card" role="listitem">
                 <p className="project-flow-label">1 · Live</p>
-                <h3>Capture the ticket</h3>
+                <h3>Capture requirements</h3>
                 <p>
-                  Camera coaching and clarifying questions fill the Problem
-                  record. This path stays thin on purpose — gather evidence,
-                  don’t burn the investigation budget on the spot.
+                  Camera coaching and clarifying questions gather photos,
+                  constraints, and what’s been tried. Smart enough to fill the
+                  ticket — not to burn Sonnet on every frame.
                 </p>
               </article>
               <article className="project-flow-card" role="listitem">
                 <p className="project-flow-label">2 · Queue</p>
-                <h3>Start a Project</h3>
+                <h3>Ticket by status</h3>
                 <p>
-                  When you don’t have a solution yet (and aren’t ready — or
-                  don’t want — a merchant yet), the ticket joins a JIRA-like
-                  investigation queue. Submit to a local pro stays available
-                  anytime.
+                  Packaged Problems join a status queue like JIRA —
+                  uninvestigated, in progress, blocked, done. Merchant submit
+                  stays available anytime beside the Project.
                 </p>
               </article>
               <article className="project-flow-card" role="listitem">
                 <p className="project-flow-label">3 · Batch</p>
-                <h3>Investigate thoroughly</h3>
+                <h3>Investigate ASAP + completely</h3>
                 <p>
-                  When Spot GPUs and research capacity free up, workers dig in:
-                  revisit photos, run deeper models, query other LLMs or the
-                  wider web as needed. Quality first; clock second.
+                  Workers drain the queue when Spot capacity frees: local KB and
+                  answer cache first, then cheap models and tools. Dig until
+                  DIY, need-more-evidence, merchant-ready, or closed — no
+                  redundant repeats.
                 </p>
               </article>
               <article className="project-flow-card" role="listitem">
-                <p className="project-flow-label">4 · Timeline</p>
-                <h3>One place for updates</h3>
+                <p className="project-flow-label">4 · Escalate</p>
+                <h3>Bedrock only when stuck</h3>
                 <p>
-                  Bot notes, human specialists, and service providers write the
-                  same ticket timeline. App updates by default; email if you
-                  opt in — a one-stop shop until DIY, close, or handoff.
+                  Advanced math, rare language, or hard vision that our path
+                  can’t handle → one frontier call, then cache the gold answer
+                  for the next identical ask. Priority shortens the queue; it
+                  does not invent a live on-demand LLM.
                 </p>
               </article>
             </div>
             <div className="people-promise" style={{ marginTop: "1.75rem" }}>
-              <h3 id="projects-why-heading">Why deferring is the better experience</h3>
+              <h3 id="projects-why-heading">Why this beats on-demand deep LLM</h3>
               <ul aria-labelledby="projects-why-heading">
                 <li>
-                  <strong>Lower cost</strong> — batching and elastic Spot beat
-                  reserved GPUs staring at a “thinking…” spinner.
+                  <strong>Lower cost</strong> — batching + Spot + cache beats
+                  reserved GPUs and per-turn Sonnet.
                 </li>
                 <li>
                   <strong>No corner-cutting</strong> — free tier waits for
-                  capacity instead of silently using a weaker instant model.
+                  capacity instead of a silently weaker instant model.
                 </li>
                 <li>
-                  <strong>Honest timing</strong> — you get an ETA band and
-                  progress on the timeline, not a fake instant answer.
+                  <strong>Non-redundant</strong> — same normalized question
+                  hits cache / local KB; frontier is for unique misses.
                 </li>
                 <li>
-                  <strong>Same dossier shops see</strong> — when a merchant is
-                  needed, they open work that was researched properly.
+                  <strong>Honest timing</strong> — ETA + timeline updates, not
+                  a fake instant answer.
                 </li>
               </ul>
             </div>
@@ -408,12 +412,11 @@ export default function HomePage() {
                 </p>
               </article>
               <article>
-                <h3>Thorough Projects</h3>
+                <h3>Queue + batch, not on-demand LLM</h3>
                 <p>
-                  Realtime is ticket intake only. Heavy AI runs as batched
-                  Projects when hardware is free — take the time needed, never
-                  truncate quality for speed — with timeline updates until DIY,
-                  close, or merchant handoff.
+                  Smart capture → JIRA-like status queue → batch investigate
+                  ASAP and completely. Bedrock/frontier only for rare unique
+                  misses; priority shortens wait, not a live Sonnet chat.
                 </p>
               </article>
               <article>

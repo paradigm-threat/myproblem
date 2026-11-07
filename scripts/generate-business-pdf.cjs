@@ -102,7 +102,7 @@ doc
   .text("Free forever front door for local businesses");
 doc.moveDown(0.15);
 body(
-  "MyProblem absorbs “should I call?” before it hits your phone. Capture in realtime; thorough Projects run when capacity is free. Public lessons feed a Georgia- and Israel-only knowledge base (private details stay private). Ready customers arrive with a real dossier—not a cold call.",
+  "MyProblem absorbs “should I call?” before it hits your phone. Smart capture fills the ticket; a JIRA-like queue batch-investigates ASAP and thoroughly — Bedrock only for rare hard cases. Public lessons feed a Georgia- and Israel-only knowledge base. Ready customers arrive with a real dossier—not a cold call.",
 );
 
 // —— Landscape businesses graphic (required) ——

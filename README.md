@@ -2,9 +2,9 @@
 
 Coming-soon site for **MyProblem** — free AI front door for local businesses; Problems not chats; zero-salary Relay vision.
 
-**Investigation model:** realtime AI only **captures** the ticket (camera + questions). Heavy research is a deferred **Project** — batched server investigation when capacity is free. See [`docs/projects.md`](docs/projects.md).
+**Investigation model:** no on-demand frontier LLM. Smart-enough realtime AI **captures** questions / requirements / photos → queues a JIRA-like ticket → **batch Projects** investigate ASAP and completely. Bedrock/frontier = rare escalate. See [`docs/projects.md`](docs/projects.md) · [`docs/backbone-escalate.md`](docs/backbone-escalate.md).
 
-**Local knowledge:** each investigation can maintain a **Georgia- and Israel-scoped** public knowledge base (private details redacted) plus **channels** (any unique id — place, Wi-Fi, Bluetooth dongle, …); subscribers see associated tickets. See [`docs/knowledge-base.md`](docs/knowledge-base.md).
+**Local knowledge:** Georgia- and Israel-scoped public KB (redacted) + **channels** (any unique id); subscribers see associated tickets. See [`docs/knowledge-base.md`](docs/knowledge-base.md).
 
 ## Stack
 
@@ -35,6 +35,7 @@ npm run dev
 | Doc | Topic |
 |---|---|
 | [`docs/projects.md`](docs/projects.md) | Deferred Projects — primary server investigation |
+| [`docs/backbone-escalate.md`](docs/backbone-escalate.md) | Rare Bedrock/frontier escalate in batch |
 | [`docs/knowledge-base.md`](docs/knowledge-base.md) | Shared local KB + channels (any unique id) |
 | [`docs/spot-ai-mvp.md`](docs/spot-ai-mvp.md) | Spot GPU test standup |
 | [`docs/context-for-server.md`](docs/context-for-server.md) | Client gate vs server SEND |

@@ -2,17 +2,19 @@
 
 **Projects** are MyProblem’s primary heavy investigation mode: **deferred, batched, server-side research** on a ticket after the client has captured enough context—not a real-time “solve it while you wait” LLM session.
 
+**We do not need an on-demand frontier LLM.** We need a **smart-enough** model to capture the question, requirements, and photos; **queue a JIRA-like ticket by status**; then **batch-investigate ASAP and as completely as possible** without waste or redundant calls. Bedrock / other frontier APIs are a **rare backbone escalate** inside that batch worker — see [`backbone-escalate.md`](./backbone-escalate.md).
+
 Realtime AI in the app exists only to **build the ticket**. Full investigation quality runs later, when Spot / batch capacity (and optional internet / multi-LLM queries) are cheap and available.
 
 **Product promise:** the AI **does not cut corners** to look instant. It takes the time resources allow to investigate thoroughly. Waiting for capacity is an honest UX; silently downgrading free-tier depth is not.
 
-Related: [`context-for-server.md`](./context-for-server.md) (what SEND frames mean) · [`spot-ai-mvp.md`](./spot-ai-mvp.md) (GPU standup) · [`infra-definition.md`](./infra-definition.md) (cost physics) · [`knowledge-base.md`](./knowledge-base.md) (local public KB + channels).
+Related: [`backbone-escalate.md`](./backbone-escalate.md) · [`context-for-server.md`](./context-for-server.md) · [`spot-ai-mvp.md`](./spot-ai-mvp.md) · [`infra-definition.md`](./infra-definition.md) · [`knowledge-base.md`](./knowledge-base.md).
 
 ---
 
 ## One-sentence rule
 
-> **Hold the camera and answer questions in real time; investigate the Problem on the server when capacity allows.**
+> **Capture smart in real time; queue the ticket; batch-investigate thoroughly — escalate to Bedrock only when the cheap path truly cannot.**
 
 Service-provider handoff remains **always available**. Deferred investigation is the default *quality* path when the client and server agree: *we do not have a solution yet, but more AI research could help—and we are not ready (or not required) to submit to a merchant.*
 
@@ -83,19 +85,20 @@ Those belong on the **Project worker**.
 ## Server primary path (batch investigator)
 
 ```
-Realtime capture (thin)
-   │  ticket fields + SEND evidence + ContextPacket
+Realtime capture (smart-enough, thin)
+   │  questions + requirements + photos + ContextPacket
    ▼
-Ticket packaged  →  status: needs_investigation | investigating | …
+Ticket packaged  →  status queued like JIRA
    │
    ▼
-Project queue  (like JIRA: uninvestigated / in progress / blocked / done)
+Project queue  (by status / priority — drain ASAP)
    │
    ▼
-Batch workers when capacity available
-   · Spot GPU / free_pool bursts
-   · Optional paid_pool / API LLMs for hard queries
-   · Internet tools / other models as needed
+Batch workers (complete + non-redundant)
+   · Cache / local KB first (skip duplicate work)
+   · Spot GPU / free_pool cheap VL + mid LLM
+   · Tools / web as needed
+   · Rare: Bedrock / frontier backbone escalate → cache gold
    · Write InvestigationUpdate events on the ticket
    ▼
 Outcomes
@@ -105,12 +108,13 @@ Outcomes
    · Closed / redirected (emergency, licensed care, out of scope)
 ```
 
-**Primary means of investigation on the server = this queue + batch path**, not a synchronous request/response chat completion for every ticket.
+**Primary means of investigation on the server = this queue + batch path**, not on-demand chat completion for every ticket.
 
-Spot / Relay flags ([`spot-ai-mvp.md`](./spot-ai-mvp.md)) should treat:
+Spot / Relay flags ([`spot-ai-mvp.md`](./spot-ai-mvp.md)):
 
-- `relay.ai.vision` / light coach → **realtime capture** (short)
-- Deep VL revisit, ASR archive, multi-step chat, frontier → **Project batch jobs** (`free_pool` preferred; busy → wait, don’t fake realtime)
+- `relay.ai.vision` / light coach → **realtime capture** only  
+- Deep VL, ASR archive, multi-step research → **Project batch** (`free_pool`; busy → wait)  
+- `relay.ai.frontier` → **rare escalate inside Project** ([`backbone-escalate.md`](./backbone-escalate.md)) — never live session
 
 ---
 
@@ -139,11 +143,11 @@ UX promise: **one place** for investigative progress and handoff status—not a 
 
 | Approach | Quality | Cost |
 |---|---|---|
-| Realtime best-quality investigation | High latency pressure → reserved GPU / frontier | Expensive; fights free forever |
-| **Deferred batch Project** | Same or better quality when hardware free; batching | Matches Spot / off-peak; funds free tier |
+| On-demand frontier for every hard Q | Looks “smart” | Wasteful; redundant; fights free forever |
+| **Deferred batch Project + rare Bedrock** | Thorough ASAP; cache/KB dedupe | Spot + pennies per unique escalate |
 | Immediate merchant submit | No AI depth | Always allowed; businesses still $0 |
 
-Free-tier honesty: “We’re researching this; you’ll get updates when capacity runs” beats silent downgrade or surprise bills.
+Free-tier honesty: “We’re researching this; you’ll get updates when capacity runs” beats silent downgrade or surprise bills. Priority shortens the **queue**, it does not buy live Sonnet.
 
 ---
 
@@ -186,7 +190,8 @@ Landing / PDF should not promise “instant deep AI answers.” Prefer: *capture
 4. Notify: app poll/SSE first; email later.  
 5. Always expose **Submit to provider** beside **Start Project**.  
 6. After Project: optional redacted publish to region KB + channel tags ([`knowledge-base.md`](./knowledge-base.md)).  
-7. Bench: $/ticket deferred vs fake-realtime in `clevertree-llc-plan/bench/`.
+7. Backbone escalate path + answer cache ([`backbone-escalate.md`](./backbone-escalate.md)).  
+8. Bench: $/ticket deferred vs fake-realtime; escalate rate + cache hit rate in `clevertree-llc-plan/bench/`.
 
 ---
 

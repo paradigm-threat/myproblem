@@ -33,7 +33,7 @@ export const metadata: Metadata = {
     template: "%s · MyProblem",
   },
   description:
-    "Coming soon. Local businesses join at $0 forever. Deferred Projects for thorough investigation. A Georgia- and Israel-only shared knowledge base — place-tied, private by default. Not another global chatbot.",
+    "Coming soon. Capture tickets, queue like JIRA, batch-investigate thoroughly — no on-demand frontier LLM. Bedrock only for rare escalate. Local KB for Georgia and Israel. Businesses free forever.",
   applicationName: "MyProblem",
   keywords: [
     "MyProblem",
