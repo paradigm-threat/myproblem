@@ -43,6 +43,26 @@ data class CaptureRequest(
                 logic = HintLogic.ALL,
                 coach = "Turn to face $sectorName (debug hint)",
             )
+
+        /** Test Mode inject: require on-device OCR to see any readable text (optional substring). */
+        fun requireTextDemo(contains: String = ""): CaptureRequest =
+            CaptureRequest(
+                id = "cr_demo_text",
+                hints =
+                    listOf(
+                        CaptureHint.Text(
+                            contains = contains,
+                            minLen = 2,
+                        ),
+                    ),
+                logic = HintLogic.ALL,
+                coach =
+                    if (contains.isBlank()) {
+                        "Point at readable text (OCR)"
+                    } else {
+                        "Find text containing \"$contains\""
+                    },
+            )
     }
 }
 
@@ -74,11 +94,17 @@ sealed class CaptureHint {
         val orYawDeg: Float? = null,
         val tolDeg: Float = 20f,
     ) : CaptureHint()
+
+    data class Text(
+        val contains: String = "",
+        val minLen: Int = 2,
+    ) : CaptureHint()
 }
 
 data class HintScores(
     val colorMatch: Float = 1f,
     val shapeMatch: Float = 1f,
+    val textMatch: Float = 1f,
     val poseErrDeg: Float = 0f,
     val passed: Boolean = true,
     val failLabel: String = "",

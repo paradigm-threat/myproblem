@@ -150,4 +150,33 @@ class HintScorersTest {
     fun hueDistance_wraps() {
         assertThat(HintScorers.hueDistance(10f, 350f)).isWithin(0.1f).of(20f)
     }
+
+    @Test
+    fun textHint_skippedInVisualLayer_includedWhenAsked() {
+        val req = CaptureRequest.requireTextDemo("SERIAL")
+        val visual =
+            HintScorers.score(
+                request = req,
+                hsvSamples = null,
+                sampleCount = 0,
+                yawDeg = 0f,
+                sectorName = "N",
+                blobAspect = null,
+                includeTextHints = false,
+            )
+        assertThat(visual.passed).isTrue()
+        val withOcr =
+            HintScorers.score(
+                request = req,
+                hsvSamples = null,
+                sampleCount = 0,
+                yawDeg = 0f,
+                sectorName = "N",
+                blobAspect = null,
+                ocrText = "MODEL SERIAL 123",
+                includeTextHints = true,
+            )
+        assertThat(withOcr.passed).isTrue()
+        assertThat(withOcr.textMatch).isEqualTo(1f)
+    }
 }

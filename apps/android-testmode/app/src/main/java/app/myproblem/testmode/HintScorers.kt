@@ -5,6 +5,10 @@ import kotlin.math.min
 
 /** Pure L1 hint scorers — JVM-testable. */
 object HintScorers {
+    /**
+     * @param includeTextHints when false, skip Text (OCR is a separate capability —
+     * see [OcrLayer]). Color/angle/shape still apply.
+     */
     fun score(
         request: CaptureRequest?,
         hsvSamples: FloatArray?,
@@ -12,7 +16,9 @@ object HintScorers {
         yawDeg: Float,
         sectorName: String,
         blobAspect: Float?,
+        ocrText: String = "",
         colorMinFractionDefault: Float = 0.04f,
+        includeTextHints: Boolean = false,
     ): HintScores {
         if (request == null || !request.isActive) {
             return HintScores()
@@ -21,6 +27,7 @@ object HintScorers {
         val results = ArrayList<Pair<Boolean, String>>(request.hints.size)
         var colorMatch = 1f
         var shapeMatch = 1f
+        var textMatch = 1f
         var poseErr = 0f
 
         for (hint in request.hints) {
@@ -44,7 +51,6 @@ object HintScorers {
                 }
                 is CaptureHint.Shape -> {
                     if (blobAspect == null) {
-                        // No aspect yet — treat as fail-closed when shape required
                         shapeMatch = 0f
                         results += false to "shape:no_aspect"
                     } else {
@@ -60,7 +66,18 @@ object HintScorers {
                     poseErr = maxOf(poseErr, err)
                     results += ok to if (ok) "" else "angle"
                 }
+                is CaptureHint.Text -> {
+                    if (!includeTextHints) {
+                        continue
+                    }
+                    val (ok, score) = textMatch(hint, ocrText)
+                    textMatch = min(textMatch, score)
+                    results += ok to if (ok) "" else "text"
+                }
             }
+        }
+        if (results.isEmpty() && request.hints.all { it is CaptureHint.Text } && !includeTextHints) {
+            return HintScores()
         }
 
         val passed =
@@ -72,10 +89,19 @@ object HintScorers {
         return HintScores(
             colorMatch = colorMatch,
             shapeMatch = shapeMatch,
+            textMatch = textMatch,
             poseErrDeg = poseErr,
             passed = passed,
             failLabel = failLabel,
         )
+    }
+
+    fun textMatch(hint: CaptureHint.Text, ocrText: String): Pair<Boolean, Float> {
+        val t = ocrText.trim()
+        if (t.length < hint.minLen) return false to 0f
+        if (hint.contains.isBlank()) return true to 1f
+        val ok = t.contains(hint.contains, ignoreCase = true)
+        return ok to if (ok) 1f else 0f
     }
 
     fun colorFraction(

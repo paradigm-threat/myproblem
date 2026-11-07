@@ -85,7 +85,7 @@ class ContextBuilderTest {
     }
 
     @Test
-    fun worthy_whenStableUniqueAndNewSector() {
+    fun send_whenStableUniqueAndNewSector_noTextHint() {
         val yawSouth = 180f
         val sector = AngleScenario.sectorFromYaw(yawSouth)
         val p =
@@ -103,7 +103,8 @@ class ContextBuilderTest {
                 analysisFps = 3f,
                 tsMs = 4L,
             )
-        assertThat(p.decision).isEqualTo(Decision.WORTHY)
+        assertThat(p.decision).isEqualTo(Decision.SEND)
+        assertThat(p.sendReady).isTrue()
         assertThat(p.sectorId).isEqualTo(sector)
     }
 
@@ -197,7 +198,7 @@ class ContextBuilderTest {
     }
 
     @Test
-    fun worthy_whenBlueHintAndBlueFrame() {
+    fun send_whenBlueHintAndBlueFrame() {
         val p =
             ContextBuilder.decide(
                 feedOn = true,
@@ -215,7 +216,7 @@ class ContextBuilderTest {
                 captureRequest = CaptureRequest.requireBlueDemo(),
                 pack = OnDevicePack(version = "1.0.0-test"),
             )
-        assertThat(p.decision).isEqualTo(Decision.WORTHY)
+        assertThat(p.decision).isEqualTo(Decision.SEND)
         assertThat(p.colorMatch).isGreaterThan(0.9f)
     }
 
@@ -238,6 +239,50 @@ class ContextBuilderTest {
                 captureRequest = CaptureRequest.requireSectorDemo("NE"),
             )
         assertThat(p.dropReason).isEqualTo(DropReason.WRONG_TARGET)
+    }
+
+    @Test
+    fun textHint_keepsThenOcrSendOrReject() {
+        val kept =
+            ContextBuilder.decide(
+                feedOn = true,
+                stats = goodStats(),
+                attitude = stillAttitude(),
+                uniqueDistance = 64,
+                sectorsFilled = emptySet(),
+                scenarioActive = false,
+                tickMs = 2,
+                worthyCount = 0,
+                dropCount = 0,
+                cameraFps = 3f,
+                analysisFps = 3f,
+                tsMs = 10L,
+                captureRequest = CaptureRequest.requireTextDemo("SERIAL"),
+            )
+        assertThat(kept.decision).isEqualTo(Decision.KEEP)
+        assertThat(kept.dropReason).isEqualTo(DropReason.OCR_PENDING)
+
+        val reject =
+            ContextBuilder.afterOcr(
+                kept,
+                OcrLayer.evaluate(CaptureRequest.requireTextDemo("SERIAL"), "MODEL ABC", emptySet()),
+                CaptureRequest.requireTextDemo("SERIAL"),
+            )
+        assertThat(reject.decision).isEqualTo(Decision.DROP)
+        assertThat(reject.dropReason).isEqualTo(DropReason.WRONG_TEXT)
+
+        val send =
+            ContextBuilder.afterOcr(
+                kept,
+                OcrLayer.evaluate(
+                    CaptureRequest.requireTextDemo("SERIAL"),
+                    "DEVICE SERIAL 99",
+                    emptySet(),
+                ),
+                CaptureRequest.requireTextDemo("SERIAL"),
+            )
+        assertThat(send.decision).isEqualTo(Decision.SEND)
+        assertThat(send.sendReady).isTrue()
     }
 }
 

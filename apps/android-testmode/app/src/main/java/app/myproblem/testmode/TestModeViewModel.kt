@@ -23,14 +23,17 @@ class TestModeViewModel(app: Application) : AndroidViewModel(app) {
     private val analyzer = FrameAnalyzer()
     private val pack: OnDevicePack = OnDevicePackLoader.load(app)
     private val coach = CoachEventTracker()
+    private val ocr = OnDeviceOcr()
 
     private val tickSamples = ArrayDeque<Long>()
     private val analysisTimes = ArrayDeque<Long>()
 
-    private val worthy = AtomicLong(0)
+    private val kept = AtomicLong(0)
+    private val sent = AtomicLong(0)
     private val drops = AtomicLong(0)
     private val dropReasons = mutableMapOf<String, Int>()
     private val filledSectors = mutableSetOf<Int>()
+    private val rejectedOcr = mutableSetOf<String>()
 
     /** HUD refresh floor — Preview stays smooth; Compose must not chase every analysis tick. */
     private var lastUiPublishNs = 0L
@@ -105,13 +108,15 @@ class TestModeViewModel(app: Application) : AndroidViewModel(app) {
             when (_state.value.debugHintMode) {
                 DebugHintMode.OFF -> DebugHintMode.REQUIRE_BLUE
                 DebugHintMode.REQUIRE_BLUE -> DebugHintMode.REQUIRE_SECTOR_NE
-                DebugHintMode.REQUIRE_SECTOR_NE -> DebugHintMode.OFF
+                DebugHintMode.REQUIRE_SECTOR_NE -> DebugHintMode.REQUIRE_TEXT
+                DebugHintMode.REQUIRE_TEXT -> DebugHintMode.OFF
             }
         val req =
             when (next) {
                 DebugHintMode.OFF -> null
                 DebugHintMode.REQUIRE_BLUE -> CaptureRequest.requireBlueDemo()
                 DebugHintMode.REQUIRE_SECTOR_NE -> CaptureRequest.requireSectorDemo("NE")
+                DebugHintMode.REQUIRE_TEXT -> CaptureRequest.requireTextDemo()
             }
         val events = coach.onHint(next, req?.coach, System.currentTimeMillis())
         logCoach(events)
@@ -125,10 +130,12 @@ class TestModeViewModel(app: Application) : AndroidViewModel(app) {
     }
 
     fun resetSession() {
-        worthy.set(0)
+        kept.set(0)
+        sent.set(0)
         drops.set(0)
         dropReasons.clear()
         filledSectors.clear()
+        rejectedOcr.clear()
         analyzer.resetUniqueness()
         tickSamples.clear()
         lastUiPublishNs = 0L
@@ -137,6 +144,7 @@ class TestModeViewModel(app: Application) : AndroidViewModel(app) {
         _state.update {
             it.copy(
                 worthyCount = 0,
+                sendCount = 0,
                 dropCount = 0,
                 dropsByReason = emptyMap(),
                 sectorsFilled = emptySet(),
@@ -157,8 +165,15 @@ class TestModeViewModel(app: Application) : AndroidViewModel(app) {
         val t0 = System.nanoTime()
         try {
             val stats = analyzer.analyze(image)
-            // Close ASAP so CameraX can recycle the ImageAnalysis buffer;
-            // Preview never shared this buffer.
+            val ui = _state.value
+            // Snapshot JPEG only if we might KEEP and need OCR — decided after gate;
+            // cheap enough to grab when text hints are active.
+            val maybeOcrJpeg =
+                if (OcrLayer.hasTextHints(ui.captureRequest)) {
+                    FrameAnalyzer.yuvToJpeg(image, quality = 55)
+                } else {
+                    null
+                }
             image.close()
 
             val uniqueDist = analyzer.uniqueDistance(stats.pHash)
@@ -166,7 +181,6 @@ class TestModeViewModel(app: Application) : AndroidViewModel(app) {
             recordTick(tickMs)
             recordFps(analysisTimes, System.nanoTime())
 
-            val ui = _state.value
             val activePack =
                 if (pack.packDisabled) {
                     OnDevicePack.NONE.copy(version = pack.version, source = pack.source)
@@ -183,33 +197,50 @@ class TestModeViewModel(app: Application) : AndroidViewModel(app) {
                     sectorsFilled = filledSectors.toSet(),
                     scenarioActive = ui.scenarioActive,
                     tickMs = tickMs,
-                    worthyCount = worthy.get().toInt(),
+                    worthyCount = kept.get().toInt(),
                     dropCount = drops.get().toInt(),
-                    cameraFps = analysisFps, // legacy field: analysis intake, not Preview fps
+                    cameraFps = analysisFps,
                     analysisFps = analysisFps,
                     captureRequest = ui.captureRequest,
                     pack = activePack,
                 )
 
-            if (packet.decision == Decision.WORTHY) {
-                worthy.incrementAndGet()
-                analyzer.rememberWorthy(stats.pHash)
-                if (ui.scenarioActive) {
-                    filledSectors.add(packet.sectorId)
+            when (packet.decision) {
+                Decision.DROP -> {
+                    drops.incrementAndGet()
+                    val key = packet.dropReason.label
+                    dropReasons[key] = (dropReasons[key] ?: 0) + 1
+                    if (drops.get() % 8L == 0L) ContextBuilder.log(packet)
+                    val coachEvents = coach.onPacket(packet)
+                    logCoach(coachEvents)
+                    publishUi(packet, tickMs, force = coachEvents.isNotEmpty())
                 }
-            } else {
-                drops.incrementAndGet()
-                val key = packet.dropReason.label
-                dropReasons[key] = (dropReasons[key] ?: 0) + 1
+                Decision.SEND -> {
+                    // Current ask satisfied without OCR (or no text capability requested)
+                    onVisualKeep(packet, stats.pHash, ui.scenarioActive)
+                    sent.incrementAndGet()
+                    ContextBuilder.log(packet)
+                    val coachEvents = coach.onPacket(packet)
+                    logCoach(coachEvents)
+                    publishUi(packet, tickMs, force = true)
+                }
+                Decision.KEEP -> {
+                    // Candidate frame — run OCR capability, then SEND or keep scanning
+                    onVisualKeep(packet, stats.pHash, ui.scenarioActive)
+                    ContextBuilder.log(packet)
+                    val coachEvents = coach.onPacket(packet)
+                    logCoach(coachEvents)
+                    publishUi(packet, tickMs, force = true)
+                    val jpeg = maybeOcrJpeg
+                    if (jpeg != null) {
+                        ocr.tryRecognizeJpeg(jpeg) { text, _ ->
+                            onOcrFinished(packet, text, ui.captureRequest)
+                        }
+                    } else {
+                        onOcrFinished(packet, "", ui.captureRequest)
+                    }
+                }
             }
-
-            if (packet.decision == Decision.WORTHY || drops.get() % 8L == 0L) {
-                ContextBuilder.log(packet)
-            }
-
-            val coachEvents = coach.onPacket(packet)
-            logCoach(coachEvents)
-            publishUi(packet, tickMs, force = coachEvents.isNotEmpty())
         } catch (e: Exception) {
             try {
                 image.close()
@@ -220,12 +251,54 @@ class TestModeViewModel(app: Application) : AndroidViewModel(app) {
         }
     }
 
+    private fun onVisualKeep(
+        packet: ContextPacket,
+        pHash: Long,
+        scenarioActive: Boolean,
+    ) {
+        kept.incrementAndGet()
+        analyzer.rememberWorthy(pHash)
+        if (scenarioActive) {
+            filledSectors.add(packet.sectorId)
+        }
+    }
+
+    private fun onOcrFinished(
+        keptPacket: ContextPacket,
+        text: String,
+        captureRequest: CaptureRequest?,
+    ) {
+        val verdict = OcrLayer.evaluate(captureRequest, text, rejectedOcr.toSet())
+        when (verdict.outcome) {
+            OcrOutcome.REJECT, OcrOutcome.SAME_REJECTED -> {
+                if (verdict.normalized.isNotEmpty()) {
+                    rejectedOcr.add(verdict.normalized)
+                }
+            }
+            else -> Unit
+        }
+        val finalPacket = ContextBuilder.afterOcr(keptPacket, verdict, captureRequest)
+        if (finalPacket.decision == Decision.SEND) {
+            sent.incrementAndGet()
+        } else {
+            drops.incrementAndGet()
+            val key = finalPacket.dropReason.label
+            dropReasons[key] = (dropReasons[key] ?: 0) + 1
+        }
+        ContextBuilder.log(finalPacket)
+        val events = coach.onOcrVerdict(verdict, System.currentTimeMillis())
+        logCoach(events)
+        publishUi(finalPacket, keptPacket.tickMs, force = true)
+    }
+
     private fun publishUi(packet: ContextPacket, tickMs: Long, force: Boolean = false) {
         val now = System.nanoTime()
         val should =
             force ||
-                packet.decision == Decision.WORTHY ||
+                packet.decision == Decision.KEEP ||
+                packet.decision == Decision.SEND ||
                 packet.dropReason == DropReason.WRONG_TARGET ||
+                packet.dropReason == DropReason.WRONG_TEXT ||
                 lastUiPublishNs == 0L ||
                 now - lastUiPublishNs >= UI_MIN_INTERVAL_NS
         if (!should) return
@@ -244,7 +317,8 @@ class TestModeViewModel(app: Application) : AndroidViewModel(app) {
             it.copy(
                 lastPacket = packet,
                 lastJson = packet.toJson().toString(),
-                worthyCount = worthy.get().toInt(),
+                worthyCount = kept.get().toInt(),
+                sendCount = sent.get().toInt(),
                 dropCount = drops.get().toInt(),
                 dropsByReason = dropReasons.toMap(),
                 sectorsFilled = filledSectors.toSet(),
@@ -289,6 +363,7 @@ class TestModeViewModel(app: Application) : AndroidViewModel(app) {
 
     override fun onCleared() {
         attitude.stop()
+        ocr.close()
         analysisExecutor.shutdownNow()
         super.onCleared()
     }

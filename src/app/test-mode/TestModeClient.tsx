@@ -199,7 +199,7 @@ export function TestModeClient() {
       scenarioActive: scenarioRef.current,
     });
 
-    if (result.decision === "WORTHY") {
+    if (result.decision === "SEND") {
       worthyRef.current += 1;
       hashesRef.current.push(hash);
       if (hashesRef.current.length > 24) hashesRef.current.shift();
@@ -370,8 +370,8 @@ export function TestModeClient() {
         }}
       >
         {feedOn
-          ? hud.decision === "WORTHY"
-            ? "WORTHY — would upload this frame"
+          ? hud.decision === "SEND"
+            ? "SEND — would upload this frame"
             : hud.dropReason === "duplicate"
               ? "DROP · duplicate — feed working; move/new angle for another worthy"
               : hud.dropReason === "motion/shake"

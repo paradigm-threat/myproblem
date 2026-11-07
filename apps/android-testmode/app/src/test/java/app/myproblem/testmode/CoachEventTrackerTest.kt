@@ -16,6 +16,7 @@ class CoachEventTrackerTest {
             feedOn = true,
             decision = decision,
             dropReason = reason,
+            sendReady = decision == Decision.SEND,
             tickMs = 2,
             brightness = 0.4f,
             contrast = 0.3f,
@@ -49,10 +50,10 @@ class CoachEventTrackerTest {
     @Test
     fun worthy_logsNewImageInView() {
         val t = CoachEventTracker()
-        val fresh = t.onPacket(packet(Decision.WORTHY, DropReason.NONE, 1000L, "NE"))
+        val fresh = t.onPacket(packet(Decision.SEND, DropReason.NONE, 1000L, "NE"))
         assertThat(fresh).hasSize(1)
         assertThat(fresh[0].kind).isEqualTo(CoachKind.NEW)
-        assertThat(fresh[0].message).contains("New image in view")
+        assertThat(fresh[0].message).contains("Ask satisfied")
         assertThat(fresh[0].message).contains("NE")
     }
 
@@ -73,7 +74,7 @@ class CoachEventTrackerTest {
         val t = CoachEventTracker(sustainMs = 1000L)
         t.onPacket(packet(Decision.DROP, DropReason.BLUR, 0L))
         t.onPacket(packet(Decision.DROP, DropReason.BLUR, 1000L))
-        val fresh = t.onPacket(packet(Decision.WORTHY, DropReason.NONE, 1500L, "S"))
+        val fresh = t.onPacket(packet(Decision.SEND, DropReason.NONE, 1500L, "S"))
         assertThat(fresh.map { it.message }).contains("Focus looks good again")
         assertThat(fresh.any { it.kind == CoachKind.NEW }).isTrue()
     }
@@ -81,7 +82,7 @@ class CoachEventTrackerTest {
     @Test
     fun duplicate_suggestsPanAfterSameSceneHold() {
         val t = CoachEventTracker(sameSceneMs = 1500L)
-        t.onPacket(packet(Decision.WORTHY, DropReason.NONE, 0L, "S"))
+        t.onPacket(packet(Decision.SEND, DropReason.NONE, 0L, "S"))
         assertThat(t.onPacket(packet(Decision.DROP, DropReason.DUPLICATE, 100L))).isEmpty()
         val held = t.onPacket(packet(Decision.DROP, DropReason.DUPLICATE, 1600L))
         assertThat(held[0].message).contains("Same scene")

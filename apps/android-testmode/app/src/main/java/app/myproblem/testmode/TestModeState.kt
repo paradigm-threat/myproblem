@@ -12,6 +12,7 @@ enum class DebugHintMode {
     OFF,
     REQUIRE_BLUE,
     REQUIRE_SECTOR_NE,
+    REQUIRE_TEXT,
 }
 
 data class TestModeUiState(
@@ -19,7 +20,10 @@ data class TestModeUiState(
     val scenarioActive: Boolean = true,
     val lastPacket: ContextPacket? = null,
     val lastJson: String = "",
+    /** Clear unique candidate frames kept for evidence. */
     val worthyCount: Int = 0,
+    /** Frames that would upload (ask satisfied). */
+    val sendCount: Int = 0,
     val dropCount: Int = 0,
     val dropsByReason: Map<String, Int> = emptyMap(),
     val sectorsFilled: Set<Int> = emptySet(),

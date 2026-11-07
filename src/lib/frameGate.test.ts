@@ -42,9 +42,9 @@ describe("decideGate", () => {
     expect(r.dropReason).toBe("duplicate");
   });
 
-  it("marks worthy when stable and unique", () => {
+  it("marks send when stable and unique", () => {
     const r = decideGate(base);
-    expect(r.decision).toBe("WORTHY");
+    expect(r.decision).toBe("SEND");
   });
 
   it("drops filled sector when scenario on", () => {
@@ -55,6 +55,49 @@ describe("decideGate", () => {
       sectorsFilled: [3],
     });
     expect(r.dropReason).toBe("wrong angle");
+  });
+
+  it("wrong_target when blue hint and gray samples", () => {
+    const gray = Array.from({ length: 16 * 3 }, (_, i) =>
+      i % 3 === 0 ? 0 : i % 3 === 1 ? 0.05 : 0.4,
+    );
+    const r = decideGate({
+      ...base,
+      hsvSamples: gray,
+      captureRequest: {
+        id: "cr_blue",
+        hints: [{ type: "color", h: 210, s: 0.45, v: 0.4, minFraction: 0.04 }],
+      },
+    });
+    expect(r.dropReason).toBe("wrong_target");
+  });
+
+  it("worthy when blue hint and blue samples", () => {
+    const blue = Array.from({ length: 16 * 3 }, (_, i) =>
+      i % 3 === 0 ? 210 : i % 3 === 1 ? 0.5 : 0.45,
+    );
+    const r = decideGate({
+      ...base,
+      hsvSamples: blue,
+      captureRequest: {
+        id: "cr_blue",
+        hints: [{ type: "color", h: 210, s: 0.45, v: 0.4, minFraction: 0.04 }],
+      },
+    });
+    expect(r.decision).toBe("SEND");
+  });
+
+  it("text hint yields KEEP pending OCR capability", () => {
+    const r = decideGate({
+      ...base,
+      ocrText: "",
+      captureRequest: {
+        id: "cr_text",
+        hints: [{ type: "text", minLen: 2 }],
+      },
+    });
+    expect(r.decision).toBe("KEEP");
+    expect(r.dropReason).toBe("ocr_pending");
   });
 });
 

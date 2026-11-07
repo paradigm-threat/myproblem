@@ -62,6 +62,9 @@ dependencies {
     implementation("androidx.core:core-ktx:1.15.0")
     implementation("com.google.android.material:material:1.12.0")
 
+    // On-device Latin OCR (unbundled — model via Play Services; ~260KB app delta)
+    implementation("com.google.android.gms:play-services-mlkit-text-recognition:19.0.1")
+
     debugImplementation("androidx.compose.ui:ui-tooling")
 
     testImplementation("junit:junit:4.13.2")

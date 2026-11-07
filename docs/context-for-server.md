@@ -15,7 +15,7 @@ Built from **MyProblem Test Mode** offline gate on device **CPH2419** (2026-11-0
 | `image` too dark / too bright | Exposure reject | |
 | `uniqueness.pHash` / `uniqueDistance` | Dedupe before network | Observed: after 1 worthy, steady hold → endless `duplicate` drops (working as intended) |
 | Drop reason enum | Explains gate to UI / logs | `blur`, `motion/shake`, `duplicate`, `wrong angle`, `wrong_target`, `glare`, … |
-| Active `capture_request` color/angle match | Hint miss never uploads | See [capture-guidance.md](./capture-guidance.md); drop `wrong_target` |
+| Active `capture_request` capabilities (color/angle/text) | Ask miss never uploads | See [capture-guidance.md](./capture-guidance.md); `wrong_target` / `wrong_text` |
 
 ## Server → app (hints, not reject of shake)
 

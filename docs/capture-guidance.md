@@ -1,8 +1,19 @@
 # Server → app capture guidance
 
-The server AI does **not** re-judge shake/blur. It sends **deductive capture hints** so the on-device gate only marks frames worthy when they match coaching (e.g. “that blue,” “this angle”).
+The server AI does **not** re-judge shake/blur. Server and app share **capabilities** to deduce and drill down a Problem in realtime: quality/uniqueness, color/shape/angle filters, OCR text, later pose/3D.
 
 Related: [context-for-server.md](./context-for-server.md), [onboard-ai.md](./onboard-ai.md).
+
+## Capabilities (not fixed layers)
+
+| Capability | Who runs it | Typical use in an investigation |
+|---|---|---|
+| Frame quality + uniqueness | App (always) | Only clear, new views enter the evidence stream |
+| Color / shape / angle hints | App when `capture_request` asks | “That blue fitting,” “NE face” |
+| OCR (Latin) | App when text is relevant | Serial / model / label — match or keep looking |
+| Brief + next ask | Server | Hypothesize; emit next `capture_request`; stop camera when done |
+
+The server chooses **which** capabilities matter for the next turn. The app runs them on-device and reports scores + (when ready) a frame. No rigid “always OCR after always X” pipeline — OCR is just another tool when the investigation needs text.
 
 ## Protocol: `capture_request`
 
@@ -14,52 +25,54 @@ Related: [context-for-server.md](./context-for-server.md), [onboard-ai.md](./onb
     "hints": [
       { "type": "color", "hsv": [210, 0.45, 0.35], "tolH": 25, "tolS": 0.35, "tolV": 0.45, "minFraction": 0.04, "label": "that blue" },
       { "type": "shape", "kind": "bbox_aspect", "aspect": 1.6, "tol": 0.25 },
-      { "type": "angle", "sector": "NE", "orYawDeg": 45, "tolDeg": 20 }
+      { "type": "angle", "sector": "NE", "orYawDeg": 45, "tolDeg": 20 },
+      { "type": "text", "contains": "SERIAL", "minLen": 2 }
     ],
     "logic": "all",
-    "coach": "Hold still on the blue part from the NE"
+    "coach": "Hold still on the blue label from the NE — need the serial"
   }
 }
 ```
 
-| Hint | Client gate (MVP) | Server intent |
+| Hint | App capability | Server intent |
 |---|---|---|
-| `color` | Fraction of sampled pixels near HSV target ≥ `minFraction` → else `wrong_target` | “Show me the blue part” |
-| `shape` | Aspect / contour stub (optional; miss → `wrong_target`) | “Match that plate” |
-| `angle` | Yaw/sector within tol (else `wrong_target` / sector miss) | “Need the left side” |
-| `text` | Deferred (OCR) | “Find the serial” |
+| `color` | HSV fraction ≥ min → else `wrong_target` | “Show me the blue part” |
+| `shape` | Aspect / contour stub | “Match that plate” |
+| `angle` | Yaw/sector within tol | “Need the left side” |
+| `text` | OCR on a clear unique candidate; match → would send; miss → remember text, need a **new** unique view | “Find the serial” |
 
-**Logic:** `all` = every hint must pass; `any` = one enough. No active request → L0 quality+unique only.
+**Logic:** `all` / `any` across the hints the server included. No request → quality + uniqueness only.
 
-**Client-only still:** shake, blur, glare, dark/bright, duplicate. New drop: `wrong_target`.
+**Client-only still:** shake, blur, glare, dark/bright, duplicate.
 
-## Deductive loop
+## Realtime drill-down loop
 
 ```mermaid
 flowchart LR
   server[Server_AI]
-  hint[capture_request]
-  gate[On_device_gate]
-  worthy[Worthy_frame_plus_context]
-  server -->|"color_shape_angle"| hint
-  hint --> gate
-  gate -->|"only_matches"| worthy
-  worthy --> server
-  server -->|"refine_or_done"| hint
+  ask[capture_request_capabilities]
+  app[App_runs_capabilities]
+  evidence[Frame_plus_scores_plus_OCR]
+  server -->|"need_blue_and_serial"| ask
+  ask --> app
+  app -->|"match"| evidence
+  evidence --> server
+  server -->|"refine_or_done"| ask
 ```
 
-1. Server reads last worthy image + context → hypothesis.
-2. Emits `capture_request`.
-3. App HUD shows `coach`; gate requires hint match for WORTHY.
-4. Server clears or tightens; may `camera_control: stop`.
+1. Server reads last evidence → hypothesis.
+2. Emits `capture_request` listing the capabilities needed next (color and/or angle and/or text…).
+3. App coaches the user; runs those capabilities; when evidence fits → **would send** (Test Mode: event log `Would send` / `OCR match`).
+4. If text was requested but OCR is wrong/empty → keep scanning for a **new** unique image; rejected OCR strings are remembered so the same label text doesn’t spam.
+5. Server updates brief; may clear request or `camera_control: stop`.
 
 ## Test Mode (no server)
 
-Debug control injects a sample “require blue-ish” / sector hint locally to prove `wrong_target` without network.
+Debug Hint cycles: blue → NE → TEXT/OCR → off. Event log shows capability outcomes (kept view, OCR match/reject, would send).
 
 ## Future: 3D guidance (docs only — do not build yet)
 
-- Coarse **3D proxy** (bbox / mesh / CAD-lite) of the Problem object.
-- On-screen guide rotates with attitude so the user sees the target pose.
-- Or: score live pose vs requested quaternion; when clear + unique + in-tol, **auto-mark worthy**.
-- Upload stays sparse; guide is local; server gets worthy frame + pose + `capture_request.id`.
+- Coarse **3D proxy** of the Problem object.
+- On-screen guide rotates with attitude.
+- Or: score live pose vs requested quaternion; when clear + unique + in-tol, auto-mark send-ready.
+- Still sparse uploads; guide stays local.

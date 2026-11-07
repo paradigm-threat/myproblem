@@ -11,6 +11,7 @@ import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -19,6 +20,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -94,26 +96,34 @@ fun TestModeScreen(
             )
             Spacer(Modifier.height(8.dp))
 
-            // Controls near top so gesture-nav doesn't eat ADB taps
+            // Primary Start control: full-width, tall — hard to miss with a finger
+            Button(
+                onClick = onToggleFeed,
+                colors =
+                    ButtonDefaults.buttonColors(
+                        containerColor = if (feedOn) Danger else Accent,
+                        contentColor = if (feedOn) Color.White else Color(0xFF062016),
+                    ),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .heightIn(min = 56.dp),
+            ) {
+                Text(
+                    if (feedOn) "Stop feed" else "Start feed",
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 18.sp,
+                )
+            }
+            Spacer(Modifier.height(6.dp))
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                Button(
-                    onClick = onToggleFeed,
-                    colors =
-                        ButtonDefaults.buttonColors(
-                            containerColor = if (feedOn) Danger else Accent,
-                            contentColor = if (feedOn) Color.White else Color(0xFF062016),
-                        ),
-                    modifier = Modifier.weight(1f),
-                ) {
-                    Text(if (feedOn) "Stop feed" else "Start feed")
-                }
                 OutlinedButton(onClick = onToggleScenario, modifier = Modifier.weight(1f)) {
                     Text(
                         if (state.scenarioActive) "Angles: ON" else "Angles: OFF",
                         color = Warm,
                     )
                 }
-                OutlinedButton(onClick = onReset) {
+                OutlinedButton(onClick = onReset, modifier = Modifier.weight(1f)) {
                     Text("Reset", color = Muted)
                 }
             }
@@ -123,9 +133,18 @@ fun TestModeScreen(
                     when (state.debugHintMode) {
                         DebugHintMode.OFF -> "Hint: OFF (tap = require blue)"
                         DebugHintMode.REQUIRE_BLUE -> "Hint: BLUE (tap = require NE)"
-                        DebugHintMode.REQUIRE_SECTOR_NE -> "Hint: NE sector (tap = off)"
+                        DebugHintMode.REQUIRE_SECTOR_NE -> "Hint: NE (tap = require text/OCR)"
+                        DebugHintMode.REQUIRE_TEXT -> "Hint: TEXT/OCR (tap = off)"
                     }
                 Text(hintLabel, color = if (state.debugHintMode == DebugHintMode.OFF) Muted else Warm)
+            }
+            if (state.permissionNeeded) {
+                Text(
+                    "Allow camera — choose While using the app (feed starts automatically)",
+                    color = Danger,
+                    fontSize = 12.sp,
+                    modifier = Modifier.padding(top = 4.dp),
+                )
             }
             Spacer(Modifier.height(8.dp))
 
@@ -134,7 +153,14 @@ fun TestModeScreen(
                     Modifier
                         .fillMaxWidth()
                         .weight(1f)
-                        .background(Color(0xFF122019), RoundedCornerShape(12.dp)),
+                        .background(Color(0xFF122019), RoundedCornerShape(12.dp))
+                        .then(
+                            if (!feedOn) {
+                                Modifier.clickable(onClick = onToggleFeed)
+                            } else {
+                                Modifier
+                            },
+                        ),
             ) {
                 if (feedOn) {
                     CameraPreview(
@@ -144,7 +170,7 @@ fun TestModeScreen(
                     )
                 } else {
                     Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                        Text("Feed OFF — tap Start feed", color = Muted)
+                        Text("Feed OFF — tap here or Start feed", color = Muted)
                     }
                 }
 
@@ -184,9 +210,6 @@ fun TestModeScreen(
             Spacer(Modifier.height(8.dp))
             HudPanel(state)
 
-            if (state.permissionNeeded) {
-                Text("Grant camera permission to continue.", color = Danger, fontSize = 12.sp)
-            }
             state.error?.let {
                 Text(it, color = Danger, fontSize = 12.sp)
             }
@@ -211,7 +234,8 @@ private fun HudPanel(state: TestModeUiState) {
             fontSize = 12.sp,
         )
         Text(
-            "worthy=${state.worthyCount}  filled=${state.sectorsFilled.size}/${AngleScenario.SECTOR_COUNT}  " +
+            "kept=${state.worthyCount}  send=${state.sendCount}  " +
+                "filled=${state.sectorsFilled.size}/${AngleScenario.SECTOR_COUNT}  " +
                 "sector=${p?.sectorName ?: "—"}  gate=${"%.0f".format(state.perf.analysisFps)}fps  " +
                 "pack=${state.packVersion}",
             color = Muted,
@@ -303,6 +327,8 @@ private fun CameraPreview(
             PreviewView(context).apply {
                 implementationMode = PreviewView.ImplementationMode.PERFORMANCE
                 scaleType = PreviewView.ScaleType.FILL_CENTER
+                isClickable = false
+                isFocusable = false
             }
         }
 

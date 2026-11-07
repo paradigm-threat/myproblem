@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Fraunces, Manrope } from "next/font/google";
+import { JsonLd } from "@/components/JsonLd";
 import { CONTACT_EMAIL, SITE_URL } from "@/lib/contact";
 import "./globals.css";
 
@@ -21,6 +22,8 @@ export const viewport: Viewport = {
     { media: "(prefers-color-scheme: light)", color: "#0b1a2e" },
   ],
   colorScheme: "dark",
+  width: "device-width",
+  initialScale: 1,
 };
 
 export const metadata: Metadata = {
@@ -30,9 +33,31 @@ export const metadata: Metadata = {
     template: "%s · MyProblem",
   },
   description:
-    "Coming soon. Local businesses join at $0 forever. AI triage so unsure customers never clog the phone. Pilots in Georgia and Israel.",
+    "Coming soon. Local businesses join at $0 forever. People get free private anonymous AI help for Problems. Pilots in Georgia and Israel. Fees only to run infrastructure — not salaries.",
   applicationName: "MyProblem",
+  keywords: [
+    "MyProblem",
+    "AI problem solving",
+    "local businesses",
+    "free for businesses",
+    "anonymous AI help",
+    "Georgia",
+    "Israel",
+    "Problem ticket",
+  ],
+  category: "technology",
   manifest: "/manifest.webmanifest",
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+      "max-video-preview": -1,
+    },
+  },
   icons: {
     icon: [
       { url: "/favicon.ico", sizes: "any" },
@@ -50,11 +75,12 @@ export const metadata: Metadata = {
     shortcut: ["/favicon.ico"],
   },
   openGraph: {
-    title: "MyProblem",
+    title: "MyProblem — Free AI front door for local businesses",
     description:
-      "Free forever front door for local businesses. Problems, not chats. Zero-salary Relay vision.",
+      "Free forever for shops. Free core help for people. Problems, not chats. Zero-salary Relay vision. Pilots in Georgia and Israel.",
     url: SITE_URL,
     siteName: "MyProblem",
+    locale: "en_US",
     type: "website",
     images: [
       {
@@ -67,9 +93,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "MyProblem",
+    title: "MyProblem — Free AI front door for local businesses",
     description:
-      "Free forever front door for local businesses. Problems, not chats.",
+      "Free forever for shops. Free core help for people. Problems, not chats.",
     images: ["/og.jpg"],
   },
   appleWebApp: {
@@ -79,6 +105,13 @@ export const metadata: Metadata = {
   },
   alternates: { canonical: SITE_URL },
   authors: [{ name: "MyProblem", url: SITE_URL }],
+  creator: "MyProblem",
+  publisher: "MyProblem",
+  formatDetection: {
+    email: false,
+    address: false,
+    telephone: false,
+  },
   other: {
     "contact:email": CONTACT_EMAIL,
   },
@@ -90,7 +123,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="en"
       className={`${fraunces.variable} ${manrope.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col">
+        <JsonLd />
+        {children}
+      </body>
     </html>
   );
 }

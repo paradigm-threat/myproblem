@@ -4,12 +4,16 @@ Single-screen offline frame gate MVP.
 
 - Camera on/off
 - On-device ContextBuilder (gyro, lighting, blur, uniqueness, angle sectors)
-- L1 capture hints (debug inject: require blue / NE sector → `wrong_target`)
-- Bundled On-Device Pack `assets/ondevice-pack/v1` (version in HUD)
-- Worthy vs drop HUD + rental-style all-angles gauge
-- **No network upload** (no `INTERNET` permission)
+- L1 capture hints (debug: blue → NE → **TEXT/OCR** → off)
+- ML Kit Latin OCR (sparse; Play Services model) when text hint on
+- Event log: new image in view, sustained blur/shake, OCR text
+- Bundled On-Device Pack `assets/ondevice-pack/v1`
+- Dual CameraX: GPU Preview + low-res ImageAnalysis
+- **No network upload** (no `INTERNET` permission; Play Services may fetch OCR model)
 
 Docs: `docs/onboard-ai.md`, `docs/capture-guidance.md`
+
+Coach logcat: `adb logcat -s MyProblemCoach:I MyProblemCtx:I`
 
 ## Build / install
 

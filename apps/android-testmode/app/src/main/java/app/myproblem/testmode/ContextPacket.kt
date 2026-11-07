@@ -44,8 +44,12 @@ data class ContextPacket(
     val coach: String = "",
     val colorMatch: Float = 1f,
     val shapeMatch: Float = 1f,
+    val textMatch: Float = 1f,
     val poseErrDeg: Float = 0f,
     val hintFailLabel: String = "",
+    val ocrText: String = "",
+    /** True when this frame would upload to the server (SEND). */
+    val sendReady: Boolean = false,
 ) {
     fun toJson(): JSONObject =
         JSONObject()
@@ -53,6 +57,7 @@ data class ContextPacket(
             .put("feedOn", feedOn)
             .put("decision", decision.name)
             .put("dropReason", dropReason.label)
+            .put("sendReady", sendReady)
             .put("tickMs", tickMs)
             .put(
                 "image",
@@ -103,8 +108,10 @@ data class ContextPacket(
                     .put("coach", coach)
                     .put("colorMatch", colorMatch.toDouble())
                     .put("shapeMatch", shapeMatch.toDouble())
+                    .put("textMatch", textMatch.toDouble())
                     .put("poseErr", poseErrDeg.toDouble())
-                    .put("failLabel", hintFailLabel),
+                    .put("failLabel", hintFailLabel)
+                    .put("ocrText", ocrText.take(120)),
             )
             .put(
                 "pack",

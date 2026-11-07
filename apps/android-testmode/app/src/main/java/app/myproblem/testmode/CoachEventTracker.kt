@@ -48,14 +48,28 @@ class CoachEventTracker(
     fun onPacket(packet: ContextPacket, nowMs: Long = packet.tsMs): List<CoachLogEntry> {
         val fresh = ArrayList<CoachLogEntry>(2)
 
-        if (packet.decision == Decision.WORTHY) {
-            fresh +=
-                append(
-                    nowMs,
-                    CoachKind.NEW,
-                    "New image in view · sector ${packet.sectorName}" +
-                        if (packet.captureRequestId != null) " · matched hint" else "",
-                )
+        if (packet.decision == Decision.KEEP || packet.decision == Decision.SEND) {
+            if (packet.decision == Decision.KEEP) {
+                fresh +=
+                    append(
+                        nowMs,
+                        CoachKind.NEW,
+                        "New clear view · sector ${packet.sectorName} — running OCR…",
+                    )
+            } else if (packet.sendReady) {
+                val textBit =
+                    if (packet.ocrText.isNotBlank()) {
+                        " · \"${packet.ocrText.take(40)}\""
+                    } else {
+                        ""
+                    }
+                fresh +=
+                    append(
+                        nowMs,
+                        CoachKind.NEW,
+                        "Ask satisfied — would send · sector ${packet.sectorName}$textBit",
+                    )
+            }
             if (wasBlurry) {
                 fresh += append(nowMs, CoachKind.OK, "Focus looks good again")
                 wasBlurry = false
@@ -114,6 +128,7 @@ class CoachEventTracker(
                 DebugHintMode.OFF -> "Hint cleared — any unique clear frame counts"
                 DebugHintMode.REQUIRE_BLUE -> "Hint: need blue in frame — ${coach ?: "get more blue"}"
                 DebugHintMode.REQUIRE_SECTOR_NE -> "Hint: face NE — ${coach ?: "turn to NE"}"
+                DebugHintMode.REQUIRE_TEXT -> "Hint: OCR — ${coach ?: "point at readable text"}"
             }
         return listOf(append(nowMs, CoachKind.INFO, msg))
     }
@@ -121,6 +136,34 @@ class CoachEventTracker(
     fun onReset(nowMs: Long): List<CoachLogEntry> {
         reset()
         return listOf(append(nowMs, CoachKind.INFO, "Session reset — ready for a new image"))
+    }
+
+    fun onOcrVerdict(verdict: OcrVerdict, nowMs: Long): List<CoachLogEntry> {
+        val preview =
+            if (verdict.display.length > 60) verdict.display.take(57) + "…" else verdict.display
+        return when (verdict.outcome) {
+            OcrOutcome.MATCH ->
+                listOf(
+                    append(nowMs, CoachKind.NEW, "OCR match — would send: \"$preview\""),
+                )
+            OcrOutcome.REJECT ->
+                listOf(
+                    append(
+                        nowMs,
+                        CoachKind.WARN,
+                        "OCR reject \"$preview\" — find a new image (not this text)",
+                    ),
+                )
+            OcrOutcome.SAME_REJECTED ->
+                listOf(
+                    append(nowMs, CoachKind.WARN, "OCR same rejected text — keep panning"),
+                )
+            OcrOutcome.EMPTY ->
+                listOf(
+                    append(nowMs, CoachKind.WARN, "Kept frame but no readable text — try closer"),
+                )
+            OcrOutcome.NO_HINT -> emptyList()
+        }
     }
 
     private fun sustainThreshold(reason: DropReason): Long =
@@ -146,7 +189,11 @@ class CoachEventTracker(
                 packet.coach.ifBlank {
                     "Hint miss (${packet.hintFailLabel.ifBlank { "target" }}) for 1s+ — adjust framing"
                 }
-            DropReason.FEED_OFF, DropReason.NONE -> null
+            DropReason.WRONG_TEXT ->
+                "Wrong / missing text for 1s+ — pan to a different label or plate"
+            DropReason.SAME_TEXT ->
+                "Same rejected text for 1s+ — need a new image with different text"
+            DropReason.OCR_PENDING, DropReason.FEED_OFF, DropReason.NONE -> null
         }
 
     private fun resetSustain() {

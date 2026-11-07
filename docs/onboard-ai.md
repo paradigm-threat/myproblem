@@ -14,7 +14,7 @@ On-device stack for MyProblem Test Mode / future Problem capture. **Not** a phon
 | Layer | Tech | Role | Status |
 |---|---|---|---|
 | L0 Classical | Kotlin `ImageStatsMath`, gyro | Shake/blur/unique/sectors | **Shipped** in Test Mode |
-| L1 Hint filters | HSV color fraction; yaw/sector; bbox aspect stub | Match `capture_request` | **APK** |
+| L1 Hint filters | HSV color fraction; yaw/sector; bbox aspect stub; **ML Kit Latin OCR** (sparse) | Match `capture_request` | **APK** |
 | L2 Tiny embedding | TFLite / ORT Mobile from HF | Uniqueness + “same region” | **Deferred** (see below) |
 | L3 Nano detector | YOLO-nano / MediaPipe | Coarse class/ROI | Phase 2 |
 | L4 Pose / 3D guide | Attitude + mesh overlay | Turn-with-you / auto-best angle | Docs only — see [capture-guidance.md](./capture-guidance.md) |
@@ -93,6 +93,8 @@ See also [capture-guidance.md](./capture-guidance.md) and [context-for-server.md
 | Piece | Path |
 |---|---|
 | Gate | `ContextBuilder.kt` + `CaptureHints.kt` |
-| Color/angle scorers | `HintScorers.kt` (+ RGB sample from `FrameAnalyzer`) |
+| Color/angle/text scorers | `HintScorers.kt` (+ RGB sample from `FrameAnalyzer`) |
+| OCR capability | `OnDeviceOcr.kt` + `OcrLayer.kt` — when text is in the ask; match → send, else new unique view |
 | Pack | `OnDevicePackLoader.kt` + `assets/ondevice-pack/v1/` |
-| HUD | `TestModeScreen` shows pack version + active coach |
+| Event log | `CoachEventTracker` — new image / sustained blur / OCR text |
+| HUD | `TestModeScreen` event log + pack version |
