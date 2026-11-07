@@ -1,0 +1,69 @@
+import { describe, expect, it } from "vitest";
+import {
+  averageHash,
+  decideGate,
+  hammingDistance,
+  sectorFromYaw,
+} from "./frameGate";
+
+describe("sectorFromYaw", () => {
+  it("returns 0..7", () => {
+    for (let y = -180; y < 180; y += 10) {
+      const s = sectorFromYaw(y);
+      expect(s).toBeGreaterThanOrEqual(0);
+      expect(s).toBeLessThan(8);
+    }
+  });
+});
+
+describe("decideGate", () => {
+  const base = {
+    feedOn: true,
+    brightness: 0.4,
+    blurScore: 0.1,
+    glareScore: 0.01,
+    shakeScore: 0.01,
+    frameDiffEnergy: 0.01,
+    uniqueDistance: 20,
+    sectorId: 1,
+    sectorsFilled: [] as number[],
+    scenarioActive: false,
+  };
+
+  it("drops when shaking", () => {
+    const r = decideGate({ ...base, shakeScore: 1.5 });
+    expect(r.decision).toBe("DROP");
+    expect(r.dropReason).toBe("motion/shake");
+    expect(r.isShaking).toBe(true);
+  });
+
+  it("drops duplicates", () => {
+    const r = decideGate({ ...base, uniqueDistance: 2 });
+    expect(r.dropReason).toBe("duplicate");
+  });
+
+  it("marks worthy when stable and unique", () => {
+    const r = decideGate(base);
+    expect(r.decision).toBe("WORTHY");
+  });
+
+  it("drops filled sector when scenario on", () => {
+    const r = decideGate({
+      ...base,
+      scenarioActive: true,
+      sectorId: 3,
+      sectorsFilled: [3],
+    });
+    expect(r.dropReason).toBe("wrong angle");
+  });
+});
+
+describe("averageHash", () => {
+  it("identical buffers have zero distance", () => {
+    const g = new Uint8Array(64 * 48);
+    for (let i = 0; i < g.length; i++) g[i] = i % 200;
+    const a = averageHash(g, 64, 48);
+    const b = averageHash(g, 64, 48);
+    expect(hammingDistance(a, b)).toBe(0);
+  });
+});

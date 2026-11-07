@@ -8,7 +8,10 @@
     "generate:pdf": "node scripts/generate-business-pdf.cjs",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:android": "cd apps/android-testmode && ./gradlew :app:testDebugUnitTest"
   },
   "dependencies": {
     "@neondatabase/serverless": "^1.2.0",
@@ -27,6 +30,7 @@
     "eslint": "^9",
     "eslint-config-next": "16.4.5",
     "tailwindcss": "^4",
-    "typescript": "^5"
+    "typescript": "^5",
+    "vitest": "^3.2.4"
   }
 }
