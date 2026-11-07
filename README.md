@@ -2,6 +2,8 @@
 
 Coming-soon site for **MyProblem** — free AI front door for local businesses; Problems not chats; zero-salary Relay vision.
 
+**Investigation model:** realtime AI only **captures** the ticket (camera + questions). Heavy research is a deferred **Project** — batched server investigation when capacity is free. See [`docs/projects.md`](docs/projects.md).
+
 ## Stack
 
 - Next.js (App Router) on Vercel
@@ -25,6 +27,15 @@ npm run generate:pdf   # refresh business one-pager
 npm run build          # runs PDF prebuild + next build
 npm run dev
 ```
+
+## Docs
+
+| Doc | Topic |
+|---|---|
+| [`docs/projects.md`](docs/projects.md) | Deferred Projects — primary server investigation |
+| [`docs/spot-ai-mvp.md`](docs/spot-ai-mvp.md) | Spot GPU test standup |
+| [`docs/context-for-server.md`](docs/context-for-server.md) | Client gate vs server SEND |
+| [`docs/infra-definition.md`](docs/infra-definition.md) | Free vs premium workload physics |
 
 ## Contact
 

@@ -102,7 +102,7 @@ doc
   .text("Free forever front door for local businesses");
 doc.moveDown(0.2);
 body(
-  "MyProblem is an AI investigation service that absorbs “should I call?” questions before they hit your phone. Unsure people get structured help. When they are ready, you get a Problem dossier—not a cold call.",
+  "MyProblem is an AI investigation service that absorbs “should I call?” questions before they hit your phone. People capture tickets in realtime; deep research runs as deferred Projects when server capacity is free. When they are ready, you get a Problem dossier—not a cold call.",
 );
 
 // —— Landscape businesses graphic (required) ——
@@ -125,7 +125,7 @@ doc.moveDown(0.35);
 h2("What you get");
 bullet("$0 to join. No application fee, no monthly bill, no per-lead invoice.");
 bullet("Lighter front desk — routine triage and redirects never reach the secretary.");
-bullet("Warmer handoffs — photos, facts, and AI notes already on the Problem tip.");
+bullet("Warmer handoffs — photos, facts, and Project investigation notes already on the tip.");
 bullet(
   "Legal stops baked in — we redirect emergencies and licensed care; we do not practice medicine or vet medicine.",
 );
@@ -133,7 +133,7 @@ bullet(
 h2("How it works for your shop");
 [
   "Sign up at $0. You appear as a local option when a Problem needs a real pro.",
-  "AI handles the unsure callers first — advice, redirects, or “wait and watch.”",
+  "AI handles unsure callers first — capture now, Project research when capacity allows.",
   "When it is real, you open a Problem tip with the dossier already done.",
   "Accept, decline, or bid. After handshake, the deal is between you and them.",
 ].forEach((s, i) => {

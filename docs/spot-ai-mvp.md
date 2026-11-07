@@ -4,7 +4,9 @@ Living plan after APK Test Mode + Relay Spot docs.
 
 Research: [MyProblem APK server needs](95c99f78-e4c4-4a29-9242-fe486ef3fc3e) · [Relay Spot / reuse gaps](c76adaea-baea-400e-99d0-a11d45b0c279).
 
-**Goal:** Rent interruptible Rackspace Spot long enough to build/test **image recognition**, then **voice→transcript→Problem chat**. Tear down when idle. Phase 0.5 is **designed, not executed** — no `clevertree-llc-plan/bench/` yet.
+**Goal:** Rent interruptible Rackspace Spot long enough to build/test **image recognition**, then **voice→transcript→Problem chat**, then **Project batch investigation** ([`projects.md`](./projects.md)). Tear down when idle. Phase 0.5 is **designed, not executed** — no `clevertree-llc-plan/bench/` yet.
+
+**Architecture stance:** Realtime Spot calls are for **capture coaching** only. Full ticket research runs as deferred **Projects** on the free/batch pool when capacity exists—cheaper than fake realtime at best quality.
 
 ## Hard constraints (from Test Mode)
 
@@ -50,9 +52,10 @@ Do **not** fork a separate AI product. Spot box = Relay worker profile with inst
 | `relay.ai.vision` | off | VL on SEND frames |
 | `relay.ai.ocr` | off | GPU OCR |
 | `relay.ai.asr` | off | whisper → transcript Evidence (new; TTS already exists) |
-| `relay.ai.chat` | off | brief-compiler + LLM |
-| `relay.ai.frontier` | off | low-confidence API escalate |
-| `relay.ai.pool` | — | `free_pool` (Spot, busy→429) vs `paid_pool` (reliable) |
+| `relay.ai.chat` | off | brief-compiler + LLM (**prefer Project batch**, not live session) |
+| `relay.ai.frontier` | off | low-confidence API escalate (**Project job**, not realtime) |
+| `relay.ai.pool` | — | `free_pool` (Spot, busy→429 / enqueue Project) vs `paid_pool` (reliable) |
+| `relay.ai.projects` | off | deferred investigation worker: drain queued tickets, write timeline updates |
 
 ## Image recognition first (acceptance)
 
@@ -85,14 +88,16 @@ Structured output shape (draft):
 5. Relay `relay.ai.*` flags; Spot joins as flagged worker; optional demo Problem tip write.
 6. Flip Test Mode “would upload” → real POST (web, then APK + INTERNET).
 7. ASR second (mic → whisper on same A30); keep Piper for TTS reply.
-8. If SJC↔GA latency fails targets: IAD CPU + API VL for GA; Spot GPU for batch distill (decision table in plan `09`).
+8. **Projects queue:** package ticket → enqueue → batch worker on Spot drain; app/email InvestigationUpdate; merchant submit always optional ([`projects.md`](./projects.md)).
+9. If SJC↔GA latency fails targets: IAD CPU + API VL for GA; Spot GPU for **Project batch** distill (decision table in plan `09`).
 
 ## Out of scope for this MVP
 
-Always-on reliable GPU, multi-region, full WebRTC SFU, L2 HF pack CDN, billing, merchant match.
+Always-on reliable GPU, multi-region, full WebRTC SFU, L2 HF pack CDN, billing, merchant match. Full Project notify (email/push) can stub as in-app poll first.
 
 ## Related
 
+- [`projects.md`](./projects.md) — deferred investigation (primary server path)
 - [`context-for-server.md`](./context-for-server.md)
 - [`onboard-ai.md`](./onboard-ai.md)
 - [`infra-definition.md`](./infra-definition.md)

@@ -25,6 +25,17 @@ Built from **MyProblem Test Mode** offline gate on device **CPH2419** (2026-11-0
 | `pack_min_version` | Client ignores advanced hints if pack too old |
 | Pack CDN manifest URL | Cursor-style On-Device Pack update — [onboard-ai.md](./onboard-ai.md) |
 
+## Split: realtime capture vs Project investigation
+
+**Realtime** (this doc’s SEND path) is only for **ticket intake**: coach lines + `capture_request` so the user fills evidence. It is **not** the primary place for deep research.
+
+**Projects** — deferred, batched server investigation — are the **primary** heavy path once a ticket is packaged. See [`projects.md`](./projects.md).
+
+| Mode | Server job |
+|---|---|
+| Realtime SEND | Light VL/OCR for coaching; update ticket fields; never pretend the Problem is fully solved |
+| Project batch | Deep research, multi-LLM / web queries, dossier compile, DIY vs merchant recommendation, timeline updates |
+
 ## Sent with worthy uploads (server needs these for realtime coaching)
 
 | Field | Server use |
@@ -77,5 +88,6 @@ Unit tests: Android `./gradlew :app:testDebugUnitTest`; Web `npm test`.
 
 ## Related docs
 
+- [projects.md](./projects.md) — deferred server investigation (primary heavy path)
 - [capture-guidance.md](./capture-guidance.md) — `capture_request` schema + future 3D
 - [onboard-ai.md](./onboard-ai.md) — L0–L4, HF pins, pack format, CDN

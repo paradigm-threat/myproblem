@@ -119,16 +119,17 @@ export default function HomePage() {
               <li>
                 <strong>AI takes the unsure callers first</strong>
                 <p>
-                  Routine “is this urgent?”, “what until Monday?”, and redirect
-                  loops never reach the secretary. Those people get structured
-                  advice without clogging your phone.
+                  People capture tickets in realtime; deep research runs as
+                  deferred Projects when capacity is free. Routine “is this
+                  urgent?” and redirect loops never reach the secretary.
                 </p>
               </li>
               <li>
                 <strong>Open a Problem tip when it is real</strong>
                 <p>
-                  Photos, facts, and AI notes are already on the dossier. Accept,
-                  decline, or bid — then the deal is between you and them.
+                  Photos, facts, and Project investigation notes are already on
+                  the dossier timeline. Accept, decline, or bid — then the deal
+                  is between you and them.
                 </p>
               </li>
               <li>
@@ -183,25 +184,29 @@ export default function HomePage() {
             </figure>
             <ol className="steps">
               <li>
-                <strong>Investigate a new Problem (ticket)</strong>
+                <strong>Capture a new Problem (ticket)</strong>
                 <p>
-                  Open a ticket and get real-time AI help — including photo
-                  analysis — as you figure out what is going wrong.
+                  Real-time AI helps only while you gather evidence — camera
+                  coaching and clarifying questions — so the ticket is complete.
+                  Deep answers are not expected in that live session.
                 </p>
               </li>
               <li>
-                <strong>Solve it, or get a recommendation</strong>
+                <strong>Start a Project — deferred investigation</strong>
                 <p>
-                  Many Problems close with AI alone. If not, the AI can recommend
-                  calling a local business or other resource — with the dossier
-                  ready.
+                  When there is no ready solution yet, MyProblem queues a
+                  server-side Project: batched research when capacity is free
+                  (cheaper than fake realtime). You get timeline updates in the
+                  app (and email if you want) as the bot — or later humans —
+                  advances the ticket. Many Problems close with AI alone.
                 </p>
               </li>
               <li>
-                <strong>Submit to local merchants (test areas)</strong>
+                <strong>Submit to local merchants anytime (test areas)</strong>
                 <p>
-                  In our pilot regions, send the ticket into the local resource
-                  database so nearby merchants can review and respond.
+                  Merchant handoff is always an option — before, during, or after
+                  a Project. In pilot regions, send the ticket so nearby shops
+                  can review the dossier and respond on the same timeline.
                 </p>
               </li>
             </ol>
@@ -246,6 +251,15 @@ export default function HomePage() {
                 </p>
               </article>
               <article>
+                <h3>Projects = deferred investigation</h3>
+                <p>
+                  Realtime is ticket intake only. Heavy AI runs as batched
+                  Projects when hardware is free — like a JIRA queue for
+                  research — with app (and optional email) updates until DIY,
+                  close, or merchant handoff.
+                </p>
+              </article>
+              <article>
                 <h3>Businesses free forever</h3>
                 <p>
                   Default promise: no shop invoice. Charging businesses later is
@@ -256,8 +270,8 @@ export default function HomePage() {
               <article>
                 <h3>Spot free / reliable paid</h3>
                 <p>
-                  Free tier uses elastic Spot GPUs. Priority consumers get a
-                  reliable pool. When Spot is busy: honest “high demand,” not a
+                  Free Projects drain elastic Spot GPUs. Priority consumers get
+                  a faster queue. When Spot is busy: honest wait — not a
                   surprise bill to the shop.
                 </p>
               </article>
@@ -314,10 +328,10 @@ export default function HomePage() {
               </p>
               <ul>
                 <li>
-                  Unit cost of a free real-time scan (backbone + storage +
-                  bandwidth)
+                  Unit cost of a free Project investigation (batch Spot +
+                  storage + bandwidth) vs fake realtime
                 </li>
-                <li>Free consumer uses before priority / payee fee</li>
+                <li>Free consumer uses / Project SLA before priority queue</li>
                 <li>
                   Share of Problems that resolve without a business vs hand off
                   with dossier
