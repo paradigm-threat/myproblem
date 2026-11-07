@@ -197,82 +197,63 @@ fun TestModeScreen(
 @Composable
 private fun HudPanel(state: TestModeUiState) {
     val p = state.lastPacket
-    val decisionColor =
-        when (p?.decision) {
-            Decision.WORTHY -> Accent
-            Decision.DROP -> Warm
-            null -> Muted
-        }
     Column(
         Modifier
             .fillMaxWidth()
             .background(Color(0xFF122019), RoundedCornerShape(12.dp))
             .padding(10.dp)
-            .height(168.dp)
-            .verticalScroll(rememberScrollState()),
+            .height(220.dp),
     ) {
         Text(
-            when {
-                !state.feedOn -> "Feed OFF — tap green Start feed (not a shake gesture)"
-                p?.decision == Decision.WORTHY -> "WORTHY — would upload this frame"
-                p?.dropReason == DropReason.DUPLICATE ->
-                    "DROP · duplicate — feed is working; move/new angle for another worthy"
-                p?.dropReason == DropReason.MOTION ->
-                    "DROP · shake/motion — hold still (shake is detected on-device, not by tapping)"
-                p?.dropReason == DropReason.WRONG_TARGET ->
-                    "DROP · wrong_target — ${p.hintFailLabel.ifBlank { "hint miss" }}; ${p.coach.ifBlank { "adjust framing" }}"
-                p != null -> "Decision: ${p.decision.name} · ${p.dropReason.label}"
-                else -> "Feed ON — waiting for first frame…"
-            },
-            color = decisionColor,
-            fontWeight = FontWeight.Bold,
-            fontSize = 13.sp,
+            "Event log (changes only)",
+            color = Accent,
+            fontWeight = FontWeight.SemiBold,
+            fontSize = 12.sp,
         )
-        if (state.captureRequest != null) {
-            Text(
-                "coach: ${state.captureRequest.coach.ifBlank { state.captureRequest.id }}",
-                color = Warm,
-                fontSize = 11.sp,
-            )
-        }
         Text(
-            buildString {
-                append("moving=${p?.isMoving ?: false}  shaking=${p?.isShaking ?: false}  ")
-                append("sector=${p?.sectorName ?: "—"}  ")
-                append("light=${"%.2f".format(p?.brightness ?: 0f)}  ")
-                append("blur=${"%.2f".format(p?.blurScore ?: 0f)}  ")
-                append("cx=${"%.2f".format(p?.complexity ?: 0f)}  ")
-                append("cMatch=${"%.2f".format(p?.colorMatch ?: 1f)}")
-            },
+            "worthy=${state.worthyCount}  filled=${state.sectorsFilled.size}/${AngleScenario.SECTOR_COUNT}  " +
+                "sector=${p?.sectorName ?: "—"}  gate=${"%.0f".format(state.perf.analysisFps)}fps  " +
+                "pack=${state.packVersion}",
             color = Muted,
-            fontSize = 11.sp,
+            fontSize = 10.sp,
             fontFamily = FontFamily.Monospace,
         )
-        Text(
-            "pack=${state.packVersion}(${state.packSource})  worthy=${state.worthyCount}  drops=${state.dropCount}  " +
-                "filled=${state.sectorsFilled.size}/${AngleScenario.SECTOR_COUNT}  " +
-                "tick=${state.perf.lastTickMs}ms p50=${state.perf.p50Ms} p95=${state.perf.p95Ms}  " +
-                "gate=${"%.1f".format(state.perf.analysisFps)}fps (preview=GPU)",
-            color = Color.White,
-            fontSize = 11.sp,
-            fontFamily = FontFamily.Monospace,
-        )
-        if (state.dropsByReason.isNotEmpty()) {
-            Text(
-                "drops: " + state.dropsByReason.entries.joinToString { "${it.key}=${it.value}" },
-                color = Muted,
-                fontSize = 10.sp,
-            )
-        }
         Spacer(Modifier.height(4.dp))
-        Text("ContextBuilder", color = Accent, fontSize = 11.sp)
-        Text(
-            state.lastJson.ifBlank { "{}" },
-            color = Muted,
-            fontSize = 9.sp,
-            fontFamily = FontFamily.Monospace,
-            maxLines = 6,
-        )
+        Column(
+            Modifier
+                .fillMaxWidth()
+                .weight(1f)
+                .verticalScroll(rememberScrollState()),
+            verticalArrangement = Arrangement.spacedBy(3.dp),
+        ) {
+            if (state.coachLog.isEmpty()) {
+                Text(
+                    if (state.feedOn) {
+                        "Waiting for a new clear image in view…"
+                    } else {
+                        "Feed OFF — tap Start feed"
+                    },
+                    color = Muted,
+                    fontSize = 12.sp,
+                )
+            } else {
+                for (entry in state.coachLog) {
+                    val color =
+                        when (entry.kind) {
+                            CoachKind.NEW -> Accent
+                            CoachKind.WARN -> Warm
+                            CoachKind.OK -> Accent
+                            CoachKind.INFO -> Muted
+                        }
+                    Text(
+                        entry.message,
+                        color = color,
+                        fontSize = 12.sp,
+                        fontWeight = if (entry.kind == CoachKind.NEW) FontWeight.SemiBold else FontWeight.Normal,
+                    )
+                }
+            }
+        }
     }
 }
 

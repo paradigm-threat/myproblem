@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import org.json.JSONObject
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import java.util.concurrent.atomic.AtomicLong
@@ -21,6 +22,7 @@ class TestModeViewModel(app: Application) : AndroidViewModel(app) {
     private val attitude = AttitudeTracker(app)
     private val analyzer = FrameAnalyzer()
     private val pack: OnDevicePack = OnDevicePackLoader.load(app)
+    private val coach = CoachEventTracker()
 
     private val tickSamples = ArrayDeque<Long>()
     private val analysisTimes = ArrayDeque<Long>()
@@ -32,6 +34,11 @@ class TestModeViewModel(app: Application) : AndroidViewModel(app) {
 
     /** HUD refresh floor — Preview stays smooth; Compose must not chase every analysis tick. */
     private var lastUiPublishNs = 0L
+
+    companion object {
+        private const val UI_MIN_INTERVAL_NS = 100_000_000L // 10 Hz HUD
+        const val COACH_TAG = "MyProblemCoach"
+    }
 
     private val _state =
         MutableStateFlow(
@@ -79,7 +86,9 @@ class TestModeViewModel(app: Application) : AndroidViewModel(app) {
             attitude.stop()
             analyzer.resetUniqueness()
         }
-        _state.update { it.copy(feedOn = on) }
+        val events = coach.onFeed(on, System.currentTimeMillis())
+        logCoach(events)
+        _state.update { it.copy(feedOn = on, coachLog = coach.snapshot()) }
         Log.i(ContextBuilder.TAG, """{"event":"feed","on":$on}""")
     }
 
@@ -104,7 +113,11 @@ class TestModeViewModel(app: Application) : AndroidViewModel(app) {
                 DebugHintMode.REQUIRE_BLUE -> CaptureRequest.requireBlueDemo()
                 DebugHintMode.REQUIRE_SECTOR_NE -> CaptureRequest.requireSectorDemo("NE")
             }
-        _state.update { it.copy(debugHintMode = next, captureRequest = req) }
+        val events = coach.onHint(next, req?.coach, System.currentTimeMillis())
+        logCoach(events)
+        _state.update {
+            it.copy(debugHintMode = next, captureRequest = req, coachLog = coach.snapshot())
+        }
         Log.i(
             ContextBuilder.TAG,
             """{"event":"debug_hint","mode":"$next","id":${req?.id?.let { "\"$it\"" } ?: "null"}}""",
@@ -119,6 +132,8 @@ class TestModeViewModel(app: Application) : AndroidViewModel(app) {
         analyzer.resetUniqueness()
         tickSamples.clear()
         lastUiPublishNs = 0L
+        val events = coach.onReset(System.currentTimeMillis())
+        logCoach(events)
         _state.update {
             it.copy(
                 worthyCount = 0,
@@ -128,6 +143,7 @@ class TestModeViewModel(app: Application) : AndroidViewModel(app) {
                 lastPacket = null,
                 lastJson = "",
                 perf = PerfStats(),
+                coachLog = coach.snapshot(),
             )
         }
         Log.i(ContextBuilder.TAG, """{"event":"reset"}""")
@@ -191,7 +207,9 @@ class TestModeViewModel(app: Application) : AndroidViewModel(app) {
                 ContextBuilder.log(packet)
             }
 
-            publishUi(packet, tickMs)
+            val coachEvents = coach.onPacket(packet)
+            logCoach(coachEvents)
+            publishUi(packet, tickMs, force = coachEvents.isNotEmpty())
         } catch (e: Exception) {
             try {
                 image.close()
@@ -202,15 +220,15 @@ class TestModeViewModel(app: Application) : AndroidViewModel(app) {
         }
     }
 
-    private fun publishUi(packet: ContextPacket, tickMs: Long) {
+    private fun publishUi(packet: ContextPacket, tickMs: Long, force: Boolean = false) {
         val now = System.nanoTime()
-        val force =
-            packet.decision == Decision.WORTHY ||
+        val should =
+            force ||
+                packet.decision == Decision.WORTHY ||
                 packet.dropReason == DropReason.WRONG_TARGET ||
-                lastUiPublishNs == 0L
-        if (!force && now - lastUiPublishNs < UI_MIN_INTERVAL_NS) {
-            return
-        }
+                lastUiPublishNs == 0L ||
+                now - lastUiPublishNs >= UI_MIN_INTERVAL_NS
+        if (!should) return
         lastUiPublishNs = now
 
         val perf =
@@ -233,7 +251,14 @@ class TestModeViewModel(app: Application) : AndroidViewModel(app) {
                 perf = perf,
                 packVersion = pack.version,
                 packSource = pack.source,
+                coachLog = coach.snapshot(),
             )
+        }
+    }
+
+    private fun logCoach(events: List<CoachLogEntry>) {
+        for (e in events) {
+            Log.i(COACH_TAG, """{"id":${e.id},"kind":"${e.kind}","msg":${JSONObject.quote(e.message)}}""")
         }
     }
 
@@ -266,9 +291,5 @@ class TestModeViewModel(app: Application) : AndroidViewModel(app) {
         attitude.stop()
         analysisExecutor.shutdownNow()
         super.onCleared()
-    }
-
-    companion object {
-        private const val UI_MIN_INTERVAL_NS = 100_000_000L // 10 Hz HUD
     }
 }

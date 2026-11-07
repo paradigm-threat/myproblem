@@ -31,9 +31,6 @@ class CoachEventTracker(
     private var sustainedEmittedFor: DropReason? = null
 
     private var lastWorthySector: String? = null
-    private var lastWorthyTsMs: Long = 0L
-    private var sameSceneEmitted = false
-
     private var wasBlurry = false
 
     fun reset() {
@@ -42,8 +39,6 @@ class CoachEventTracker(
         reasonSinceMs = 0L
         sustainedEmittedFor = null
         lastWorthySector = null
-        lastWorthyTsMs = 0L
-        sameSceneEmitted = false
         wasBlurry = false
     }
 
@@ -68,8 +63,6 @@ class CoachEventTracker(
             activeReason = null
             sustainedEmittedFor = null
             lastWorthySector = packet.sectorName
-            lastWorthyTsMs = nowMs
-            sameSceneEmitted = false
             return fresh
         }
 
@@ -160,7 +153,6 @@ class CoachEventTracker(
         activeReason = null
         reasonSinceMs = 0L
         sustainedEmittedFor = null
-        sameSceneEmitted = false
     }
 
     private fun append(tsMs: Long, kind: CoachKind, message: String): CoachLogEntry {
