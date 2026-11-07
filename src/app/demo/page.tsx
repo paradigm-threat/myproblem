@@ -92,7 +92,7 @@ export default async function DemoPage() {
         <p className="section-lead demo-lead">
           Hands-on previews of MyProblem while the product grows.{" "}
           <strong>Check back for new demos</strong> as we keep shipping capture,
-          OCR, and investigation tools.
+          OCR, and tools that feed deferred Project investigation.
         </p>
 
         <section className="demo-card" aria-labelledby="apk-heading">

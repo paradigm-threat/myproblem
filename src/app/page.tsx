@@ -29,6 +29,7 @@ export default function HomePage() {
           <nav className="nav-links" aria-label="Page sections">
             <a href="#businesses">For businesses</a>
             <a href="#people">For people</a>
+            <a href="#projects">Projects</a>
             <a href="#investors">Investors</a>
             <a href="#regions">Regions</a>
             <a href="#signup">Signup</a>
@@ -58,8 +59,9 @@ export default function HomePage() {
               </h1>
               <p className="eyebrow">Coming soon · Georgia &amp; Israel pilots</p>
               <p className="hero-lead">
-                Free forever for local businesses — AI that absorbs “should I
-                call?” so ready customers arrive with a Problem dossier.
+                Free forever for local businesses. Capture fast; investigate
+                thoroughly as a deferred Project — no rushed AI corners — so
+                ready customers arrive with a real dossier.
               </p>
               <div className="cta-row">
                 <a className="btn-primary" href="#signup">
@@ -83,8 +85,9 @@ export default function HomePage() {
             <h2 id="businesses-heading">How it works for businesses</h2>
             <p className="section-lead">
               $0 application. $0 subscription. Preferred stance: free for shops
-              forever. Your ROI is time saved and warmer bookings — not another
-              SaaS invoice.
+              forever. Unsure people get a thorough deferred Project first —
+              not a rushed chatbot — so when they reach you, the dossier is
+              real. Your ROI is time saved and warmer bookings.
             </p>
             <figure className="section-graphic">
               <picture>
@@ -155,10 +158,11 @@ export default function HomePage() {
           <section id="people" aria-labelledby="people-heading">
             <h2 id="people-heading">How it works for people</h2>
             <p className="section-lead">
-              Get real help — anonymously or with an account. Core AI help is{" "}
-              <strong className="emph">free, private, and forever</strong>. An
-              account is only required for high-load features like a live video
-              feed.
+              Get thorough help — anonymously or with an account. Core AI help
+              is <strong className="emph">free, private, and forever</strong>.
+              Live sessions only capture your ticket; deep investigation runs as
+              a Project when capacity allows — so the AI never has to cut
+              corners for speed.
             </p>
             <figure className="section-graphic">
               <picture>
@@ -192,13 +196,13 @@ export default function HomePage() {
                 </p>
               </li>
               <li>
-                <strong>Start a Project — deferred investigation</strong>
+                <strong>Start a Project — deferred thorough investigation</strong>
                 <p>
                   When there is no ready solution yet, MyProblem queues a
-                  server-side Project: batched research when capacity is free
-                  (cheaper than fake realtime). You get timeline updates in the
-                  app (and email if you want) as the bot — or later humans —
-                  advances the ticket. Many Problems close with AI alone.
+                  server-side Project. The worker takes the time hardware and
+                  other models allow — batched, not rushed — so quality stays
+                  high while cost stays low. Timeline updates land in the app
+                  (and email if you want). Many Problems close with AI alone.
                 </p>
               </li>
               <li>
@@ -218,17 +222,94 @@ export default function HomePage() {
                   help — no login required for the basics.
                 </li>
                 <li>
+                  <strong>Thorough over instant</strong> — deferred Projects
+                  wait for capacity so investigations stay complete, not
+                  truncated for a spinner.
+                </li>
+                <li>
                   <strong>Account only when you need it</strong> — high-load
                   features like real-time video feed.
                 </li>
                 <li>
-                  <strong>First few ticket requests free</strong> (exact count
-                  TBD).
+                  <strong>First few ticket / Project uses free</strong> (exact
+                  count TBD).
                 </li>
                 <li>
                   <strong>After that, a small usage fee</strong> — only to keep
                   hardware and software running. We will not take salaries from
-                  those fees.
+                  those fees. Priority shortens the queue; it does not buy a
+                  weaker free-tier answer.
+                </li>
+              </ul>
+            </div>
+          </section>
+
+          <section id="projects" aria-labelledby="projects-heading">
+            <h2 id="projects-heading">Projects — thorough investigation on purpose</h2>
+            <p className="section-lead">
+              Fake realtime at “best quality” is expensive and still rushes the
+              model. MyProblem separates{" "}
+              <strong className="emph">capture</strong> from{" "}
+              <strong className="emph">investigation</strong> so the AI can take
+              the time resources allow — and never cut corners to look instant.
+            </p>
+            <div className="project-flow" role="list">
+              <article className="project-flow-card" role="listitem">
+                <p className="project-flow-label">1 · Live</p>
+                <h3>Capture the ticket</h3>
+                <p>
+                  Camera coaching and clarifying questions fill the Problem
+                  record. This path stays thin on purpose — gather evidence,
+                  don’t burn the investigation budget on the spot.
+                </p>
+              </article>
+              <article className="project-flow-card" role="listitem">
+                <p className="project-flow-label">2 · Queue</p>
+                <h3>Start a Project</h3>
+                <p>
+                  When you don’t have a solution yet (and aren’t ready — or
+                  don’t want — a merchant yet), the ticket joins a JIRA-like
+                  investigation queue. Submit to a local pro stays available
+                  anytime.
+                </p>
+              </article>
+              <article className="project-flow-card" role="listitem">
+                <p className="project-flow-label">3 · Batch</p>
+                <h3>Investigate thoroughly</h3>
+                <p>
+                  When Spot GPUs and research capacity free up, workers dig in:
+                  revisit photos, run deeper models, query other LLMs or the
+                  wider web as needed. Quality first; clock second.
+                </p>
+              </article>
+              <article className="project-flow-card" role="listitem">
+                <p className="project-flow-label">4 · Timeline</p>
+                <h3>One place for updates</h3>
+                <p>
+                  Bot notes, human specialists, and service providers write the
+                  same ticket timeline. App updates by default; email if you
+                  opt in — a one-stop shop until DIY, close, or handoff.
+                </p>
+              </article>
+            </div>
+            <div className="people-promise" style={{ marginTop: "1.75rem" }}>
+              <h3 id="projects-why-heading">Why deferring is the better experience</h3>
+              <ul aria-labelledby="projects-why-heading">
+                <li>
+                  <strong>Lower cost</strong> — batching and elastic Spot beat
+                  reserved GPUs staring at a “thinking…” spinner.
+                </li>
+                <li>
+                  <strong>No corner-cutting</strong> — free tier waits for
+                  capacity instead of silently using a weaker instant model.
+                </li>
+                <li>
+                  <strong>Honest timing</strong> — you get an ETA band and
+                  progress on the timeline, not a fake instant answer.
+                </li>
+                <li>
+                  <strong>Same dossier shops see</strong> — when a merchant is
+                  needed, they open work that was researched properly.
                 </li>
               </ul>
             </div>
@@ -237,9 +318,9 @@ export default function HomePage() {
           <section id="plan" aria-labelledby="plan-heading">
             <h2 id="plan-heading">The plan</h2>
             <p className="section-lead">
-              Relay-native investigation service. Problems not chats. Local
-              businesses as free distribution. Consumer economics after free
-              uses.
+              Relay-native investigation service. Problems not chats. Projects
+              for thorough deferred research. Local businesses as free
+              distribution. Consumer economics after free uses.
             </p>
             <div className="plan-grid">
               <article>
@@ -251,11 +332,11 @@ export default function HomePage() {
                 </p>
               </article>
               <article>
-                <h3>Projects = deferred investigation</h3>
+                <h3>Thorough Projects</h3>
                 <p>
                   Realtime is ticket intake only. Heavy AI runs as batched
-                  Projects when hardware is free — like a JIRA queue for
-                  research — with app (and optional email) updates until DIY,
+                  Projects when hardware is free — take the time needed, never
+                  truncate quality for speed — with timeline updates until DIY,
                   close, or merchant handoff.
                 </p>
               </article>
@@ -270,9 +351,9 @@ export default function HomePage() {
               <article>
                 <h3>Spot free / reliable paid</h3>
                 <p>
-                  Free Projects drain elastic Spot GPUs. Priority consumers get
-                  a faster queue. When Spot is busy: honest wait — not a
-                  surprise bill to the shop.
+                  Free Projects drain elastic Spot GPUs. Priority shortens wait;
+                  it does not invent a rushed free answer. Busy Spot = honest
+                  queue — never a surprise bill to the shop.
                 </p>
               </article>
               <article>

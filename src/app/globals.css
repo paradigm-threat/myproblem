@@ -409,6 +409,47 @@ section h2 {
   line-height: 1.5;
 }
 
+.project-flow {
+  display: grid;
+  gap: 1.15rem;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  margin-top: 0.5rem;
+}
+
+.project-flow-card {
+  padding: 1.15rem 1.1rem 1.25rem;
+  border-radius: 1rem;
+  border: 1px solid var(--line);
+  background: linear-gradient(
+    165deg,
+    rgba(15, 26, 44, 0.95),
+    rgba(7, 13, 24, 0.5)
+  );
+}
+
+.project-flow-label {
+  margin: 0 0 0.45rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.project-flow-card h3 {
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  font-weight: 550;
+  margin: 0 0 0.45rem;
+}
+
+.project-flow-card p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.5;
+  font-size: 0.98rem;
+}
+
 .plan-grid {
   display: grid;
   gap: 1.5rem;

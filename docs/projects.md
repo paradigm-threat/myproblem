@@ -4,6 +4,8 @@
 
 Realtime AI in the app exists only to **build the ticket**. Full investigation quality runs later, when Spot / batch capacity (and optional internet / multi-LLM queries) are cheap and available.
 
+**Product promise:** the AI **does not cut corners** to look instant. It takes the time resources allow to investigate thoroughly. Waiting for capacity is an honest UX; silently downgrading free-tier depth is not.
+
 Related: [`context-for-server.md`](./context-for-server.md) (what SEND frames mean) · [`spot-ai-mvp.md`](./spot-ai-mvp.md) (GPU standup) · [`infra-definition.md`](./infra-definition.md) (cost physics).
 
 ---

@@ -102,7 +102,7 @@ doc
   .text("Free forever front door for local businesses");
 doc.moveDown(0.2);
 body(
-  "MyProblem is an AI investigation service that absorbs “should I call?” questions before they hit your phone. People capture tickets in realtime; deep research runs as deferred Projects when server capacity is free. When they are ready, you get a Problem dossier—not a cold call.",
+  "MyProblem is an AI investigation service that absorbs “should I call?” questions before they hit your phone. People capture tickets in realtime; thorough research runs as deferred Projects when capacity is free — so the AI never rushes or cuts corners for a fake instant answer. When they are ready, you get a real Problem dossier—not a cold call.",
 );
 
 // —— Landscape businesses graphic (required) ——

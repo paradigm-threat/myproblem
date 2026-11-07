@@ -11,9 +11,12 @@ export function JsonLd() {
         url: SITE_URL,
         email: CONTACT_EMAIL,
         logo: `${SITE_URL}/icons/icon-512.png`,
-        sameAs: [],
+        sameAs: [
+          "https://github.com/paradigm-threat/myproblem",
+          "https://gitlab.com/clevertree/myproblem",
+        ],
         description:
-          "AI investigation service for Problems — free forever for local businesses; free core help for people.",
+          "AI investigation service for Problems — free forever for local businesses; deferred Projects for thorough ticket research; free core help for people.",
       },
       {
         "@type": "WebSite",
@@ -21,7 +24,7 @@ export function JsonLd() {
         url: SITE_URL,
         name: "MyProblem",
         description:
-          "Free AI front door for local businesses. Problems, not chats. Pilots in Georgia and Israel.",
+          "Free AI front door for local businesses. Capture fast; investigate thoroughly as deferred Projects. Pilots in Georgia and Israel.",
         publisher: { "@id": `${SITE_URL}/#organization` },
         inLanguage: "en-US",
       },
@@ -37,10 +40,10 @@ export function JsonLd() {
           price: "0",
           priceCurrency: "USD",
           description:
-            "Local businesses join free forever. Core consumer help is free; usage fees after free tickets fund infrastructure only.",
+            "Local businesses join free forever. Core consumer help is free; usage fees after free tickets fund infrastructure only. Priority shortens Project queues without weakening free-tier thoroughness.",
         },
         description:
-          "Investigate Problems with AI, get recommendations, and connect with local merchants in pilot regions.",
+          "Capture Problem tickets in realtime; queue deferred Projects for thorough AI investigation; connect with local merchants in pilot regions.",
       },
     ],
   };
