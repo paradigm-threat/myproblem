@@ -4,6 +4,8 @@ Coming-soon site for **MyProblem** — free AI front door for local businesses; 
 
 **Investigation model:** realtime AI only **captures** the ticket (camera + questions). Heavy research is a deferred **Project** — batched server investigation when capacity is free. See [`docs/projects.md`](docs/projects.md).
 
+**Local knowledge:** each investigation can maintain a **Georgia- and Israel-scoped** public knowledge base (private details redacted) plus opt-in place / Wi-Fi **channels**. See [`docs/knowledge-base.md`](docs/knowledge-base.md).
+
 ## Stack
 
 - Next.js (App Router) on Vercel
@@ -33,6 +35,7 @@ npm run dev
 | Doc | Topic |
 |---|---|
 | [`docs/projects.md`](docs/projects.md) | Deferred Projects — primary server investigation |
+| [`docs/knowledge-base.md`](docs/knowledge-base.md) | Shared local KB + place / Wi-Fi channels |
 | [`docs/spot-ai-mvp.md`](docs/spot-ai-mvp.md) | Spot GPU test standup |
 | [`docs/context-for-server.md`](docs/context-for-server.md) | Client gate vs server SEND |
 | [`docs/infra-definition.md`](docs/infra-definition.md) | Free vs premium workload physics |

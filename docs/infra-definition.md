@@ -29,6 +29,7 @@ See [`context-for-server.md`](context-for-server.md). Bad frames never leave the
 
 1. **MVP standup plan:** [`spot-ai-mvp.md`](./spot-ai-mvp.md) — one SJC A30 Spot + Vercel proxy + Relay `relay.ai.*` flags.
 2. **Projects** as primary server investigation: [`projects.md`](./projects.md).
-3. Spot Phase 0.5 benches ([`clevertree-llc-plan/09-rackspace-spot-vision-prototype.md`](../../relay/clevertree-llc-plan/09-rackspace-spot-vision-prototype.md)).
-4. Cost oracle → transparent priority fees (faster Project SLA, not shop invoices).
-5. Wire SEND-frame upload only after gate metrics look good.
+3. **Shared local knowledge base** (GA / Israel place-tied): [`knowledge-base.md`](./knowledge-base.md).
+4. Spot Phase 0.5 benches ([`clevertree-llc-plan/09-rackspace-spot-vision-prototype.md`](../../relay/clevertree-llc-plan/09-rackspace-spot-vision-prototype.md)).
+5. Cost oracle → transparent priority fees (faster Project SLA, not shop invoices).
+6. Wire SEND-frame upload only after gate metrics look good.

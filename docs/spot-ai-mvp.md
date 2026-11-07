@@ -89,7 +89,8 @@ Structured output shape (draft):
 6. Flip Test Mode “would upload” → real POST (web, then APK + INTERNET).
 7. ASR second (mic → whisper on same A30); keep Piper for TTS reply.
 8. **Projects queue:** package ticket → enqueue → batch worker on Spot drain; app/email InvestigationUpdate; merchant submit always optional ([`projects.md`](./projects.md)).
-9. If SJC↔GA latency fails targets: IAD CPU + API VL for GA; Spot GPU for **Project batch** distill (decision table in plan `09`).
+9. **KB extract (batch):** redacted public docs + GA/Israel place channels ([`knowledge-base.md`](./knowledge-base.md)).
+10. If SJC↔GA latency fails targets: IAD CPU + API VL for GA; Spot GPU for **Project batch** distill (decision table in plan `09`).
 
 ## Out of scope for this MVP
 
@@ -98,6 +99,7 @@ Always-on reliable GPU, multi-region, full WebRTC SFU, L2 HF pack CDN, billing, 
 ## Related
 
 - [`projects.md`](./projects.md) — deferred investigation (primary server path)
+- [`knowledge-base.md`](./knowledge-base.md) — local shared KB + channels
 - [`context-for-server.md`](./context-for-server.md)
 - [`onboard-ai.md`](./onboard-ai.md)
 - [`infra-definition.md`](./infra-definition.md)

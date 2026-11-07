@@ -30,6 +30,7 @@ export default function HomePage() {
             <a href="#businesses">For businesses</a>
             <a href="#people">For people</a>
             <a href="#projects">Projects</a>
+            <a href="#knowledge">Knowledge</a>
             <a href="#investors">Investors</a>
             <a href="#regions">Regions</a>
             <a href="#signup">Signup</a>
@@ -60,8 +61,8 @@ export default function HomePage() {
               <p className="eyebrow">Coming soon · Georgia &amp; Israel pilots</p>
               <p className="hero-lead">
                 Free forever for local businesses. Capture fast; investigate
-                thoroughly as a deferred Project — no rushed AI corners — so
-                ready customers arrive with a real dossier.
+                thoroughly as a Project; grow a Georgia- and Israel-only
+                knowledge base — local, not another global chatbot.
               </p>
               <div className="cta-row">
                 <a className="btn-primary" href="#signup">
@@ -315,12 +316,87 @@ export default function HomePage() {
             </div>
           </section>
 
+          <section id="knowledge" aria-labelledby="knowledge-heading">
+            <h2 id="knowledge-heading">Shared local knowledge — Georgia &amp; Israel</h2>
+            <p className="section-lead">
+              Global AIs and national directories guess at “near me.” MyProblem
+              builds a <strong className="emph">place-tied knowledge base</strong>{" "}
+              from every investigation in our pilots — public lessons shared,
+              private details protected — so we outcompete on local, realtime,
+              Relay-connected truth instead of world-scale trivia.
+            </p>
+            <div className="project-flow" role="list">
+              <article className="project-flow-card" role="listitem">
+                <p className="project-flow-label">Grow</p>
+                <h3>Docs from investigations</h3>
+                <p>
+                  As Projects finish, the AI creates and maintains public
+                  documents: common advice, local facts, even rumors — only when
+                  they come from reliable or identified sources — continuously
+                  updated as more tickets teach the same place.
+                </p>
+              </article>
+              <article className="project-flow-card" role="listitem">
+                <p className="project-flow-label">Scope</p>
+                <h3>Must map to a local point</h3>
+                <p>
+                  The KB is defined for Georgia and Israel only. An article can
+                  cover almost any topic, but it has to relate to a geographic
+                  point in-region. That keeps growth deep and local — not a
+                  second ChatGPT.
+                </p>
+              </article>
+              <article className="project-flow-card" role="listitem">
+                <p className="project-flow-label">Privacy</p>
+                <h3>Anonymous unless you project</h3>
+                <p>
+                  Default is private. You may opt in to publish coarse location
+                  or a Wi-Fi locality tag — never a password — so others can
+                  find the right house, street, or town channel without your
+                  phone number or full address.
+                </p>
+              </article>
+              <article className="project-flow-card" role="listitem">
+                <p className="project-flow-label">Channels</p>
+                <h3>Tickets meet places</h3>
+                <p>
+                  Post a ticket to a house, street, town, or Wi-Fi channel — or
+                  tag it publicly to that channel — so helpers know the general
+                  place identity, not “anonymous internet.” More non-sensitive
+                  signal → more trust.
+                </p>
+              </article>
+            </div>
+            <div className="people-promise" style={{ marginTop: "1.75rem" }}>
+              <h3 id="knowledge-why-heading">Why local beats global here</h3>
+              <ul aria-labelledby="knowledge-why-heading">
+                <li>
+                  <strong>Realtime local loop</strong> — knowledge updates from
+                  live Projects, not a yearly crawl of the open web.
+                </li>
+                <li>
+                  <strong>No fake “everywhere”</strong> — we refuse out-of-region
+                  KB sprawl so Georgia and Israel stay dense and useful.
+                </li>
+                <li>
+                  <strong>Trust without doxxing</strong> — share a channel grain
+                  (house / street / town / network place), not secrets.
+                </li>
+                <li>
+                  <strong>Relay-native</strong> — tips and place channels, not
+                  another global feed.
+                </li>
+              </ul>
+            </div>
+          </section>
+
           <section id="plan" aria-labelledby="plan-heading">
             <h2 id="plan-heading">The plan</h2>
             <p className="section-lead">
               Relay-native investigation service. Problems not chats. Projects
-              for thorough deferred research. Local businesses as free
-              distribution. Consumer economics after free uses.
+              for thorough deferred research. A shared local knowledge base for
+              pilot regions. Local businesses as free distribution. Consumer
+              economics after free uses.
             </p>
             <div className="plan-grid">
               <article>
@@ -338,6 +414,14 @@ export default function HomePage() {
                   Projects when hardware is free — take the time needed, never
                   truncate quality for speed — with timeline updates until DIY,
                   close, or merchant handoff.
+                </p>
+              </article>
+              <article>
+                <h3>Local knowledge base</h3>
+                <p>
+                  Every investigation can enrich public, place-tied docs for
+                  Georgia and Israel — redacting private data — plus opt-in
+                  house / Wi-Fi channels so help is local, not anonymous web.
                 </p>
               </article>
               <article>
@@ -361,7 +445,7 @@ export default function HomePage() {
                 <p>
                   Home repair and simple glasses; careful clinic/vet-style
                   triage with redirect as product. No doctor marketplace on day
-                  one.
+                  one. KB locked to the same two regions.
                 </p>
               </article>
             </div>
@@ -444,8 +528,10 @@ export default function HomePage() {
           <section id="regions" aria-labelledby="regions-heading">
             <h2 id="regions-heading">Pilot regions</h2>
             <p className="section-lead">
-              We are starting where we can operate tightly — then expand by
-              request.
+              We are starting where we can operate tightly — product, merchants,{" "}
+              <em>and</em> the shared knowledge base are scoped to these places
+              only. Expand by request, as new region partitions — not one global
+              brain.
             </p>
             <ul className="regions">
               <li className="chip">

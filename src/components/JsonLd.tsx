@@ -16,7 +16,7 @@ export function JsonLd() {
           "https://gitlab.com/clevertree/myproblem",
         ],
         description:
-          "AI investigation service for Problems — free forever for local businesses; deferred Projects for thorough ticket research; free core help for people.",
+          "AI investigation service for Problems — free forever for local businesses; deferred Projects; Georgia- and Israel-scoped shared knowledge base; free core help for people.",
       },
       {
         "@type": "WebSite",
@@ -24,7 +24,7 @@ export function JsonLd() {
         url: SITE_URL,
         name: "MyProblem",
         description:
-          "Free AI front door for local businesses. Capture fast; investigate thoroughly as deferred Projects. Pilots in Georgia and Israel.",
+          "Free AI front door for local businesses. Deferred Projects and a place-tied knowledge base for Georgia and Israel pilots.",
         publisher: { "@id": `${SITE_URL}/#organization` },
         inLanguage: "en-US",
       },
@@ -43,7 +43,7 @@ export function JsonLd() {
             "Local businesses join free forever. Core consumer help is free; usage fees after free tickets fund infrastructure only. Priority shortens Project queues without weakening free-tier thoroughness.",
         },
         description:
-          "Capture Problem tickets in realtime; queue deferred Projects for thorough AI investigation; connect with local merchants in pilot regions.",
+          "Capture Problem tickets; deferred Projects for thorough investigation; shared local knowledge and place channels in Georgia and Israel; connect with local merchants.",
       },
     ],
   };

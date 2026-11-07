@@ -102,7 +102,7 @@ doc
   .text("Free forever front door for local businesses");
 doc.moveDown(0.2);
 body(
-  "MyProblem is an AI investigation service that absorbs “should I call?” questions before they hit your phone. People capture tickets in realtime; thorough research runs as deferred Projects when capacity is free — so the AI never rushes or cuts corners for a fake instant answer. When they are ready, you get a real Problem dossier—not a cold call.",
+  "MyProblem is an AI investigation service that absorbs “should I call?” questions before they hit your phone. People capture tickets in realtime; thorough research runs as deferred Projects when capacity is free. Public lessons feed a Georgia- and Israel-only knowledge base (private details stay private). When they are ready, you get a real Problem dossier—not a cold call.",
 );
 
 // —— Landscape businesses graphic (required) ——
@@ -125,7 +125,7 @@ doc.moveDown(0.35);
 h2("What you get");
 bullet("$0 to join. No application fee, no monthly bill, no per-lead invoice.");
 bullet("Lighter front desk — routine triage and redirects never reach the secretary.");
-bullet("Warmer handoffs — photos, facts, and Project investigation notes already on the tip.");
+bullet("Warmer handoffs — photos, facts, and Project notes on the tip; local KB stays place-tied.");
 bullet(
   "Legal stops baked in — we redirect emergencies and licensed care; we do not practice medicine or vet medicine.",
 );

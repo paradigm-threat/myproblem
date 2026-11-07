@@ -33,18 +33,19 @@ export const metadata: Metadata = {
     template: "%s · MyProblem",
   },
   description:
-    "Coming soon. Local businesses join at $0 forever. Capture tickets in realtime; thorough AI investigation runs as deferred Projects when capacity allows — no corner-cutting for speed. Pilots in Georgia and Israel.",
+    "Coming soon. Local businesses join at $0 forever. Deferred Projects for thorough investigation. A Georgia- and Israel-only shared knowledge base — place-tied, private by default. Not another global chatbot.",
   applicationName: "MyProblem",
   keywords: [
     "MyProblem",
     "AI problem solving",
     "deferred investigation",
     "Projects",
+    "local knowledge base",
+    "Georgia",
+    "Israel",
     "local businesses",
     "free for businesses",
     "anonymous AI help",
-    "Georgia",
-    "Israel",
     "Problem ticket",
   ],
   category: "technology",
@@ -79,7 +80,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "MyProblem — Free AI front door for local businesses",
     description:
-      "Free forever for shops. Capture fast; investigate thoroughly via deferred Projects. Problems, not chats. Zero-salary Relay vision.",
+      "Free forever for shops. Deferred Projects + Georgia/Israel local knowledge base. Problems, not chats. Zero-salary Relay vision.",
     url: SITE_URL,
     siteName: "MyProblem",
     locale: "en_US",
@@ -97,7 +98,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "MyProblem — Free AI front door for local businesses",
     description:
-      "Free forever for shops. Thorough deferred Projects — not rushed AI. Problems, not chats.",
+      "Free forever for shops. Thorough Projects + local shared knowledge for GA and Israel.",
     images: ["/og.jpg"],
   },
   appleWebApp: {

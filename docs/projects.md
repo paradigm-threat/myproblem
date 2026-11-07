@@ -6,7 +6,7 @@ Realtime AI in the app exists only to **build the ticket**. Full investigation q
 
 **Product promise:** the AI **does not cut corners** to look instant. It takes the time resources allow to investigate thoroughly. Waiting for capacity is an honest UX; silently downgrading free-tier depth is not.
 
-Related: [`context-for-server.md`](./context-for-server.md) (what SEND frames mean) · [`spot-ai-mvp.md`](./spot-ai-mvp.md) (GPU standup) · [`infra-definition.md`](./infra-definition.md) (cost physics).
+Related: [`context-for-server.md`](./context-for-server.md) (what SEND frames mean) · [`spot-ai-mvp.md`](./spot-ai-mvp.md) (GPU standup) · [`infra-definition.md`](./infra-definition.md) (cost physics) · [`knowledge-base.md`](./knowledge-base.md) (local public KB + channels).
 
 ---
 
@@ -171,9 +171,10 @@ Each job run emits `InvestigationUpdate { at, actor, kind, summary, evidence_ref
 - Real-time = **intake** (camera + questions).  
 - Investigation = **Project** (deferred server research).  
 - Merchants = optional anytime; Project can recommend submit when ready.  
-- Updates = app timeline (+ email if enabled).
+- Updates = app timeline (+ email if enabled).  
+- Public lessons → **region knowledge base** (redacted); optional place / Wi-Fi **channels** ([`knowledge-base.md`](./knowledge-base.md)).
 
-Landing / PDF should not promise “instant deep AI answers.” Prefer: *capture now, investigate when capacity allows, get notified.*
+Landing / PDF should not promise “instant deep AI answers.” Prefer: *capture now, investigate when capacity allows, get notified.* Local KB: *we know Georgia and Israel places — not the whole internet.*
 
 ---
 
@@ -184,7 +185,8 @@ Landing / PDF should not promise “instant deep AI answers.” Prefer: *capture
 3. Realtime API stays coach-only; enqueue endpoint `POST /api/projects` (or Problem `start_project`).  
 4. Notify: app poll/SSE first; email later.  
 5. Always expose **Submit to provider** beside **Start Project**.  
-6. Bench: $/ticket deferred vs fake-realtime in `clevertree-llc-plan/bench/`.
+6. After Project: optional redacted publish to region KB + channel tags ([`knowledge-base.md`](./knowledge-base.md)).  
+7. Bench: $/ticket deferred vs fake-realtime in `clevertree-llc-plan/bench/`.
 
 ---
 
