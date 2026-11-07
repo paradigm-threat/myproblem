@@ -282,10 +282,44 @@ section h2 {
 
 /* Fallback if a browser ignores <picture> art-direction */
 @media (max-width: 767px) {
-  .section-graphic {
+  .section-graphic:has(picture) {
     max-width: 28rem;
     margin-inline: auto 0;
   }
+}
+
+.people-promise {
+  margin-top: 2rem;
+  padding: 1.35rem 1.25rem;
+  border-radius: 1rem;
+  border: 1px solid var(--line);
+  background: linear-gradient(
+    180deg,
+    rgba(15, 26, 44, 0.9),
+    rgba(7, 13, 24, 0.55)
+  );
+}
+
+.people-promise h3 {
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  font-weight: 550;
+  margin: 0 0 0.75rem;
+}
+
+.people-promise ul {
+  margin: 0;
+  padding-left: 1.15rem;
+  color: var(--muted);
+  line-height: 1.55;
+}
+
+.people-promise li + li {
+  margin-top: 0.45rem;
+}
+
+.people-promise strong {
+  color: var(--ink);
 }
 
 .steps {

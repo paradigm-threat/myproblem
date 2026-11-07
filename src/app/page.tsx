@@ -139,44 +139,67 @@ export default function HomePage() {
         <section id="people">
           <h2>How it works for people</h2>
           <p className="section-lead">
-            The product is a <em>Problem</em> — a live issue — not a chat
-            transcript that forgets. Voice and photos are inputs into the
-            Problem record.
+            Get real help — anonymously or with an account. Core AI help is{" "}
+            <strong style={{ color: "var(--ink)" }}>free, private, and
+            forever</strong>. An account is only required for high-load
+            features like a live video feed.
           </p>
+          <figure className="section-graphic">
+            <img
+              src="/people.jpg"
+              alt="MyProblem for people: investigate a problem with AI, solve it yourself or get a recommendation, then connect with local help in test areas — free core help, anonymous mode, fees only for infrastructure"
+              width={1024}
+              height={512}
+              className="section-graphic-img"
+              decoding="async"
+            />
+          </figure>
           <ol className="steps">
             <li>
-              <strong>Open a Problem</strong>
+              <strong>Investigate a new Problem (ticket)</strong>
               <p>
-                Big actions, voice-first, ADA-capable. Describe what is going
-                wrong — leak, appliance, glasses frame, “should I call the
-                vet?”
+                Open a ticket and get real-time AI help — including photo
+                analysis — as you figure out what is going wrong.
               </p>
             </li>
             <li>
-              <strong>Investigate with AI</strong>
+              <strong>Solve it, or get a recommendation</strong>
               <p>
-                Clear camera frames, rate-limited analysis, legal stops on
-                every update. Many Problems resolve without anyone calling a
-                shop.
+                Many Problems close with AI alone. If not, the AI can recommend
+                calling a local business or other resource — with the dossier
+                ready.
               </p>
             </li>
             <li>
-              <strong>Free uses, then optional payee fee</strong>
+              <strong>Submit to local merchants (test areas)</strong>
               <p>
-                Free investigation runs on elastic Spot capacity. After free
-                depth, a consumer priority / payee fee unlocks reliable
-                compute — you pay, not the business.
-              </p>
-            </li>
-            <li>
-              <strong>Hand off with a dossier</strong>
-              <p>
-                When you need a local pro, they get the brief — not a cold
-                call. Split or combine Problems when there are really two
-                issues or one root cause.
+                In our pilot regions, send the ticket into the local resource
+                database so nearby merchants can review and respond.
               </p>
             </li>
           </ol>
+          <div className="people-promise">
+            <h3>What to expect on cost &amp; privacy</h3>
+            <ul>
+              <li>
+                <strong>Free forever</strong> for core private / anonymous AI
+                help — no login required for the basics.
+              </li>
+              <li>
+                <strong>Account only when you need it</strong> — high-load
+                features like real-time video feed.
+              </li>
+              <li>
+                <strong>First few ticket requests free</strong> (exact count
+                TBD).
+              </li>
+              <li>
+                <strong>After that, a small usage fee</strong> — only to keep
+                hardware and software running. We will not take salaries from
+                those fees.
+              </li>
+            </ul>
+          </div>
         </section>
 
         <section id="plan">
