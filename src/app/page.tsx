@@ -351,19 +351,19 @@ export default function HomePage() {
                 <h3>Anonymous unless you project</h3>
                 <p>
                   Default is private. You may opt in to publish coarse location
-                  or a Wi-Fi locality tag — never a password — so others can
-                  find the right house, street, or town channel without your
+                  or any channel id — Wi-Fi locality, Bluetooth dongle, house
+                  alias — never passwords or pairing secrets — without your
                   phone number or full address.
                 </p>
               </article>
               <article className="project-flow-card" role="listitem">
                 <p className="project-flow-label">Channels</p>
-                <h3>Tickets meet places</h3>
+                <h3>Anything with a unique id</h3>
                 <p>
-                  Post a ticket to a house, street, town, or Wi-Fi channel — or
-                  tag it publicly to that channel — so helpers know the general
-                  place identity, not “anonymous internet.” More non-sensitive
-                  signal → more trust.
+                  A channel is just a unique id. Associate tickets with it —
+                  house, street, town, Wi-Fi, Bluetooth beacon, or other local
+                  tag — and anyone subscribed to that id sees them. Helpers get
+                  place grain, not anonymous internet. More signal → more trust.
                 </p>
               </article>
             </div>
@@ -379,8 +379,8 @@ export default function HomePage() {
                   KB sprawl so Georgia and Israel stay dense and useful.
                 </li>
                 <li>
-                  <strong>Trust without doxxing</strong> — share a channel grain
-                  (house / street / town / network place), not secrets.
+                  <strong>Trust without doxxing</strong> — subscribe by public
+                  channel id (house, Wi-Fi, Bluetooth dongle, …), never secrets.
                 </li>
                 <li>
                   <strong>Relay-native</strong> — tips and place channels, not
@@ -420,8 +420,9 @@ export default function HomePage() {
                 <h3>Local knowledge base</h3>
                 <p>
                   Every investigation can enrich public, place-tied docs for
-                  Georgia and Israel — redacting private data — plus opt-in
-                  house / Wi-Fi channels so help is local, not anonymous web.
+                  Georgia and Israel — redacting private data — plus channels
+                  by unique id (place, Wi-Fi, Bluetooth, …) so subscribers see
+                  associated tickets locally.
                 </p>
               </article>
               <article>

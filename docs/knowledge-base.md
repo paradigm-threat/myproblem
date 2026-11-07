@@ -57,32 +57,34 @@ Unattributed gossip from nowhere does **not** enter the public KB.
 | May publish (opt-in) | Must not require for basic help |
 |---|---|
 | Coarse geo (town, neighborhood, map pin band) | Full street address |
-| **Wi-Fi channel / BSSID-style locality tag** (public “I’m on this network place”) | Wi-Fi password |
-| House / building **channel** handle (alias for “this place”) | Legal name, phone |
-| Public ticket linked to a channel | Private evidence blobs |
+| **Any channel id** (Wi-Fi locality, Bluetooth dongle, house alias, …) | Passwords, pairing secrets, phone |
+| Public ticket linked to one or more `channel_id`s | Private evidence blobs |
 
 **Trust gradient:** the more non-sensitive locality and provenance you share, the more others (and the AI) can trust and help — still without forcing street address or phone number.
 
 ---
 
-## Channels — place-linked presence (Relay-aligned)
+## Channels — anything with a unique id (Relay-aligned)
 
-Channels are **local gathering points** for tickets and knowledge — not global anonymous forums.
+A **channel** is defined only by a **unique `channel_id`**. The physical or social thing behind it can be almost anything in-region:
 
-| Channel type | Purpose |
+| Example binding | Notes |
 |---|---|
-| **House / place channel** | People find each other around a home or venue alias |
-| **Street / town channel** | Broader local scope inside GA or IL region |
-| **Wi-Fi locality channel** | “Same place network” without sharing the password |
-| **Public channel feed** | Tickets or KB notes posted **associated with** that place |
+| House / venue alias | Human-readable place handle |
+| Street / town | Broader local scope inside GA or Israel |
+| Wi-Fi locality | Network place tag — **never** the password |
+| **Bluetooth dongle / beacon** | Hardware presence; id is public, pairing secrets are not |
+| Other beacons / QR / NFC place tags | Same rule: unique id, no secrets required to subscribe |
+
+**Subscription rule:** tickets (and optional KB notes) **associated with a `channel_id` appear to anyone subscribed to that channel**. Unsubscribe → they leave that feed. Private tickets with no channel stay invisible to channel subscribers.
 
 Tickets may be:
 
-- Posted **to** an address- or Wi-Fi-linked channel (helpers see house / street / town grain — not “random internet”).  
-- Posted **publicly** but **tagged** to those channels so investigators know the general identity of the place.  
-- Kept fully private (no channel).
+- **Posted to** one or more channels → every subscriber of those ids sees them.  
+- **Tagged** publicly to channels so helpers know the general identity (house / street / town / “that Bluetooth place”) — not anonymous internet.  
+- **Kept fully private** (no `channel_id`).
 
-This matches the Relay vision: **local mesh identity and tips**, not a second Twitter.
+Helpers do not need passwords or pairing codes to follow a channel — only the public id + subscribe. This matches the Relay vision: **local mesh identity and tips**, not a second Twitter.
 
 ---
 
@@ -93,10 +95,10 @@ Ticket capture (realtime, private by default)
    → Project investigation (deferred, thorough)
    → Outcomes on ticket timeline
    → Optional extract → region KB doc create/update (redacted)
-   → Optional post / link to place or Wi-Fi channel
+   → Optional post / link to channel_id(s) (place, Wi-Fi, Bluetooth, …)
 ```
 
-KB writes are **batch-friendly** (same worker pool as Projects). Realtime capture does not publish.
+KB writes are **batch-friendly** (same worker pool as Projects). Realtime capture does not publish. Subscribers of those channels see associated tickets.
 
 ---
 
@@ -116,25 +118,27 @@ New regions later = **new KB partitions**, not one world graph.
 - Shared knowledge = **local, place-tied, continuously maintained** from investigations.  
 - Private by default; public docs are redacted extracts.  
 - Rumors OK only with **reliable / identified** attribution.  
-- Channels (house, street, town, Wi-Fi locality) let people and tickets meet **locally** without passwords or forced PII.  
+- Channels = **unique ids** (house, street, town, Wi-Fi, Bluetooth dongle, …); subscribers see associated tickets.  
+- No passwords/pairing secrets required to subscribe — only the public id.  
 - We win on **local realtime knowledge**, not global LLM breadth.
 
 ---
 
 ## Implementation checklist (docs → code)
 
-1. Schema: `KbDocument`, `KbRevision`, `SourceCitation`, `Channel`, `ChannelMembership` (Neon); Blob for attachments.  
+1. Schema: `KbDocument`, `KbRevision`, `SourceCitation`, `Channel` (`channel_id` PK + optional binding type/metadata), `ChannelSubscription` (Neon); Blob for attachments.  
 2. Redaction pipeline before any Project → KB publish.  
 3. Region partition key: `georgia` | `israel` (+ place geo).  
-4. Channel post APIs; ticket `channel_ids` optional.  
+4. APIs: create/resolve channel by id; subscribe/unsubscribe; list tickets for subscribed channels; ticket `channel_ids[]` optional.  
 5. Trust UI: show source tier + how much locality the author projected.  
-6. Never store Wi-Fi passwords; locality tags are public identifiers only.
+6. Never store Wi-Fi passwords, Bluetooth pairing secrets, or similar — channel ids are public identifiers only.
 
 ---
 
 ## Open questions
 
-1. Exact Wi-Fi locality identifier (hashed BSSID vs user-named place network)?  
+1. Id formats per binding (hashed BSSID, BLE UUID, user alias) and collision policy?  
 2. Moderation: who can flag bad rumors in-region?  
 3. Merchant edits to KB pages about their own shop?  
-4. Retention when a user deletes a ticket that already fed a KB doc?
+4. Retention when a user deletes a ticket that already fed a KB doc?  
+5. Discovery: how do nearby devices propose a `channel_id` without leaking secrets?
