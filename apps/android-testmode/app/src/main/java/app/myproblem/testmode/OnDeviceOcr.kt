@@ -8,7 +8,7 @@ import com.google.mlkit.vision.text.latin.TextRecognizerOptions
 import java.util.concurrent.atomic.AtomicBoolean
 
 /**
- * ML Kit Latin OCR — run sparsely (not every Preview frame).
+ * ML Kit Latin OCR capability — invoke sparsely on kept candidate frames only.
  * Unbundled Play Services model; first call may download weights.
  */
 class OnDeviceOcr {
@@ -41,13 +41,15 @@ class OnDeviceOcr {
                 val changed = text != lastText
                 lastText = text
                 lastMs = System.currentTimeMillis()
-                busy.set(false)
                 onResult(text, changed)
             }
             .addOnFailureListener { e ->
                 Log.w(TAG, "OCR failed", e)
-                busy.set(false)
                 onResult(lastText, false)
+            }
+            .addOnCompleteListener {
+                if (!bitmap.isRecycled) bitmap.recycle()
+                busy.set(false)
             }
         return true
     }
@@ -58,7 +60,7 @@ class OnDeviceOcr {
 
     companion object {
         private const val TAG = "MyProblemOcr"
-        /** Min gap between OCR attempts while text hint is active. */
         const val MIN_INTERVAL_MS = 500L
+        const val MAX_REJECTED = 32
     }
 }

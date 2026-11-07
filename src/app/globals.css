@@ -635,6 +635,99 @@ section h2 {
   }
 }
 
+/* —— Demos —— */
+.demo-page {
+  padding: 1.5rem 0 3.5rem;
+}
+
+.demo-title {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 4vw, 2.75rem);
+  letter-spacing: -0.03em;
+  margin: 0.35rem 0 0.75rem;
+}
+
+.demo-lead {
+  max-width: 38rem;
+}
+
+.demo-lead strong {
+  color: var(--accent, #5fd4a4);
+  font-weight: 600;
+}
+
+.demo-card {
+  margin-top: 2rem;
+  padding: 1.35rem 1.4rem 1.5rem;
+  border: 1px solid var(--line);
+  border-radius: 1rem;
+  background: linear-gradient(
+    165deg,
+    rgba(18, 40, 64, 0.55) 0%,
+    rgba(11, 20, 32, 0.85) 100%
+  );
+}
+
+.demo-card h2 {
+  margin: 0 0 0.65rem;
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+}
+
+.demo-card p {
+  color: var(--muted);
+  margin: 0 0 0.85rem;
+  line-height: 1.55;
+}
+
+.demo-card-muted {
+  background: rgba(11, 20, 32, 0.45);
+}
+
+.demo-meta {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 1rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.1rem;
+  color: var(--ink);
+  font-size: 0.9rem;
+}
+
+.demo-meta code,
+.demo-hash code,
+.demo-warn code {
+  font-size: 0.85em;
+  word-break: break-all;
+}
+
+.demo-steps {
+  margin: 1rem 0 0.5rem;
+  padding-left: 1.2rem;
+  color: var(--muted);
+  line-height: 1.55;
+}
+
+.demo-hash,
+.demo-notes,
+.demo-warn {
+  font-size: 0.8rem;
+  color: var(--muted);
+  margin-top: 0.85rem;
+}
+
+.demo-warn {
+  color: var(--warm);
+}
+
+.site-footer {
+  padding: 1.5rem 0 2.5rem;
+  border-top: 1px solid var(--line);
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;

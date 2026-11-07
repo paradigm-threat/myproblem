@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  applyOcrLayer,
   averageHash,
   decideGate,
   hammingDistance,
@@ -98,6 +99,33 @@ describe("decideGate", () => {
     });
     expect(r.decision).toBe("KEEP");
     expect(r.dropReason).toBe("ocr_pending");
+  });
+});
+
+describe("applyOcrLayer", () => {
+  const kept = {
+    decision: "KEEP" as const,
+    dropReason: "ocr_pending" as const,
+    isMoving: false,
+    isShaking: false,
+    colorMatch: 1,
+    textMatch: 0,
+  };
+  const req = {
+    id: "cr_text",
+    hints: [{ type: "text" as const, contains: "SERIAL", minLen: 2 }],
+  };
+
+  it("sends on match", () => {
+    const r = applyOcrLayer(kept, req, "Device SERIAL 1");
+    expect(r.decision).toBe("SEND");
+  });
+
+  it("wrong_text on miss and same_text when rejected", () => {
+    const miss = applyOcrLayer(kept, req, "MODEL ONLY");
+    expect(miss.dropReason).toBe("wrong_text");
+    const same = applyOcrLayer(kept, req, "MODEL ONLY", new Set(["model only"]));
+    expect(same.dropReason).toBe("same_text");
   });
 });
 

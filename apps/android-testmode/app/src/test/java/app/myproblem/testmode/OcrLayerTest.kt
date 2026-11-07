@@ -37,4 +37,11 @@ class OcrLayerTest {
         val v = OcrLayer.evaluate(null, "anything", emptySet())
         assertThat(v.outcome).isEqualTo(OcrOutcome.NO_HINT)
     }
+
+    @Test
+    fun anyText_matchesBlankContains() {
+        val any = CaptureRequest.requireTextDemo("")
+        val v = OcrLayer.evaluate(any, "Hello plate", emptySet())
+        assertThat(v.outcome).isEqualTo(OcrOutcome.MATCH)
+    }
 }

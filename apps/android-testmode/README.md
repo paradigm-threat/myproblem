@@ -13,7 +13,13 @@ Single-screen offline frame gate MVP.
 
 Docs: `docs/onboard-ai.md`, `docs/capture-guidance.md`
 
-Coach logcat: `adb logcat -s MyProblemCoach:I MyProblemCtx:I`
+Coach / gate logcat:
+
+```bash
+adb logcat -s MyProblemCoach:I MyProblemCtx:I MyProblemOcr:W
+```
+
+Hardening notes: JPEG+OCR only on KEEP candidates; OCR epoch ignores stale callbacks after Reset/Hint change; rejected OCR strings capped at 32.
 
 ## Build / install
 

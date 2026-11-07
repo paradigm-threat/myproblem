@@ -32,6 +32,7 @@ export default function HomePage() {
             <a href="#investors">Investors</a>
             <a href="#regions">Regions</a>
             <a href="#signup">Signup</a>
+            <a href="/demo">Demos</a>
             <a href="/test-mode">Test Mode</a>
           </nav>
         </div>

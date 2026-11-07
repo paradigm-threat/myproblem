@@ -33,7 +33,9 @@ class TestModeViewModel(app: Application) : AndroidViewModel(app) {
     private val drops = AtomicLong(0)
     private val dropReasons = mutableMapOf<String, Int>()
     private val filledSectors = mutableSetOf<Int>()
-    private val rejectedOcr = mutableSetOf<String>()
+    private val rejectedOcr = linkedSetOf<String>()
+    /** Bumps on reset / hint change so late OCR callbacks are ignored. */
+    private val ocrEpoch = AtomicLong(0)
 
     /** HUD refresh floor — Preview stays smooth; Compose must not chase every analysis tick. */
     private var lastUiPublishNs = 0L
@@ -118,6 +120,8 @@ class TestModeViewModel(app: Application) : AndroidViewModel(app) {
                 DebugHintMode.REQUIRE_SECTOR_NE -> CaptureRequest.requireSectorDemo("NE")
                 DebugHintMode.REQUIRE_TEXT -> CaptureRequest.requireTextDemo()
             }
+        rejectedOcr.clear()
+        ocrEpoch.incrementAndGet()
         val events = coach.onHint(next, req?.coach, System.currentTimeMillis())
         logCoach(events)
         _state.update {
@@ -136,6 +140,7 @@ class TestModeViewModel(app: Application) : AndroidViewModel(app) {
         dropReasons.clear()
         filledSectors.clear()
         rejectedOcr.clear()
+        ocrEpoch.incrementAndGet()
         analyzer.resetUniqueness()
         tickSamples.clear()
         lastUiPublishNs = 0L
@@ -163,24 +168,11 @@ class TestModeViewModel(app: Application) : AndroidViewModel(app) {
             return
         }
         val t0 = System.nanoTime()
+        var closed = false
         try {
             val stats = analyzer.analyze(image)
             val ui = _state.value
-            // Snapshot JPEG only if we might KEEP and need OCR — decided after gate;
-            // cheap enough to grab when text hints are active.
-            val maybeOcrJpeg =
-                if (OcrLayer.hasTextHints(ui.captureRequest)) {
-                    FrameAnalyzer.yuvToJpeg(image, quality = 55)
-                } else {
-                    null
-                }
-            image.close()
-
             val uniqueDist = analyzer.uniqueDistance(stats.pHash)
-            val tickMs = (System.nanoTime() - t0) / 1_000_000L
-            recordTick(tickMs)
-            recordFps(analysisTimes, System.nanoTime())
-
             val activePack =
                 if (pack.packDisabled) {
                     OnDevicePack.NONE.copy(version = pack.version, source = pack.source)
@@ -188,6 +180,7 @@ class TestModeViewModel(app: Application) : AndroidViewModel(app) {
                     pack
                 }
             val analysisFps = fpsFrom(analysisTimes)
+            // Decide before JPEG encode — only KEEP candidates pay OCR encode cost
             val packet =
                 ContextBuilder.decide(
                     feedOn = true,
@@ -196,7 +189,7 @@ class TestModeViewModel(app: Application) : AndroidViewModel(app) {
                     uniqueDistance = uniqueDist,
                     sectorsFilled = filledSectors.toSet(),
                     scenarioActive = ui.scenarioActive,
-                    tickMs = tickMs,
+                    tickMs = 0,
                     worthyCount = kept.get().toInt(),
                     dropCount = drops.get().toInt(),
                     cameraFps = analysisFps,
@@ -205,46 +198,66 @@ class TestModeViewModel(app: Application) : AndroidViewModel(app) {
                     pack = activePack,
                 )
 
-            when (packet.decision) {
+            val ocrJpeg =
+                if (packet.decision == Decision.KEEP) {
+                    FrameAnalyzer.yuvToJpeg(image, quality = 55)
+                } else {
+                    null
+                }
+            image.close()
+            closed = true
+
+            val tickMs = (System.nanoTime() - t0) / 1_000_000L
+            recordTick(tickMs)
+            recordFps(analysisTimes, System.nanoTime())
+            val timed = packet.copy(tickMs = tickMs)
+
+            when (timed.decision) {
                 Decision.DROP -> {
                     drops.incrementAndGet()
-                    val key = packet.dropReason.label
+                    val key = timed.dropReason.label
                     dropReasons[key] = (dropReasons[key] ?: 0) + 1
-                    if (drops.get() % 8L == 0L) ContextBuilder.log(packet)
-                    val coachEvents = coach.onPacket(packet)
+                    if (drops.get() % 8L == 0L) ContextBuilder.log(timed)
+                    val coachEvents = coach.onPacket(timed)
                     logCoach(coachEvents)
-                    publishUi(packet, tickMs, force = coachEvents.isNotEmpty())
+                    publishUi(timed, tickMs, force = coachEvents.isNotEmpty())
                 }
                 Decision.SEND -> {
-                    // Current ask satisfied without OCR (or no text capability requested)
-                    onVisualKeep(packet, stats.pHash, ui.scenarioActive)
+                    onVisualKeep(timed, stats.pHash, ui.scenarioActive)
                     sent.incrementAndGet()
-                    ContextBuilder.log(packet)
-                    val coachEvents = coach.onPacket(packet)
+                    ContextBuilder.log(timed)
+                    val coachEvents = coach.onPacket(timed)
                     logCoach(coachEvents)
-                    publishUi(packet, tickMs, force = true)
+                    publishUi(timed, tickMs, force = true)
                 }
                 Decision.KEEP -> {
-                    // Candidate frame — run OCR capability, then SEND or keep scanning
-                    onVisualKeep(packet, stats.pHash, ui.scenarioActive)
-                    ContextBuilder.log(packet)
-                    val coachEvents = coach.onPacket(packet)
+                    onVisualKeep(timed, stats.pHash, ui.scenarioActive)
+                    ContextBuilder.log(timed)
+                    val coachEvents = coach.onPacket(timed)
                     logCoach(coachEvents)
-                    publishUi(packet, tickMs, force = true)
-                    val jpeg = maybeOcrJpeg
-                    if (jpeg != null) {
-                        ocr.tryRecognizeJpeg(jpeg) { text, _ ->
-                            onOcrFinished(packet, text, ui.captureRequest)
+                    publishUi(timed, tickMs, force = true)
+                    val epoch = ocrEpoch.get()
+                    if (ocrJpeg != null) {
+                        val started =
+                            ocr.tryRecognizeJpeg(ocrJpeg) { text, _ ->
+                                if (epoch != ocrEpoch.get() || !_state.value.feedOn) return@tryRecognizeJpeg
+                                onOcrFinished(timed, text, ui.captureRequest)
+                            }
+                        if (!started) {
+                            // OCR busy — don't reuse stale text; uniqueness already remembered
+                            onOcrFinished(timed, "", ui.captureRequest)
                         }
                     } else {
-                        onOcrFinished(packet, "", ui.captureRequest)
+                        onOcrFinished(timed, "", ui.captureRequest)
                     }
                 }
             }
         } catch (e: Exception) {
-            try {
-                image.close()
-            } catch (_: Exception) {
+            if (!closed) {
+                try {
+                    image.close()
+                } catch (_: Exception) {
+                }
             }
             Log.e(ContextBuilder.TAG, "analyze failed", e)
             _state.update { it.copy(error = e.message) }
@@ -272,7 +285,7 @@ class TestModeViewModel(app: Application) : AndroidViewModel(app) {
         when (verdict.outcome) {
             OcrOutcome.REJECT, OcrOutcome.SAME_REJECTED -> {
                 if (verdict.normalized.isNotEmpty()) {
-                    rejectedOcr.add(verdict.normalized)
+                    rememberRejected(verdict.normalized)
                 }
             }
             else -> Unit
@@ -289,6 +302,15 @@ class TestModeViewModel(app: Application) : AndroidViewModel(app) {
         val events = coach.onOcrVerdict(verdict, System.currentTimeMillis())
         logCoach(events)
         publishUi(finalPacket, keptPacket.tickMs, force = true)
+    }
+
+    private fun rememberRejected(normalized: String) {
+        rejectedOcr.remove(normalized)
+        rejectedOcr.add(normalized)
+        while (rejectedOcr.size > OnDeviceOcr.MAX_REJECTED) {
+            val first = rejectedOcr.firstOrNull() ?: break
+            rejectedOcr.remove(first)
+        }
     }
 
     private fun publishUi(packet: ContextPacket, tickMs: Long, force: Boolean = false) {

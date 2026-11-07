@@ -1,0 +1,11 @@
+{
+  "id": "android-testmode",
+  "title": "Android Test Mode",
+  "version": "0.1.0-testmode",
+  "publishedAt": "2026-11-07T19:41:27.776Z",
+  "sizeBytes": 16886843,
+  "sha256": "341001b5c1446d6a0d11488f1f2d3716f27495a3d91bc5c8cabf56bcb1055007",
+  "downloadUrl": "/demos/myproblem-testmode.apk",
+  "contentType": "application/vnd.android.package-archive",
+  "notes": "Offline frame gate + OCR capability demo. Sideload on Android; allow unknown sources if prompted."
+}
