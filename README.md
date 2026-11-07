@@ -2,7 +2,7 @@
 
 Coming-soon site for **MyProblem** — free AI front door for local businesses; Problems not chats; zero-salary Relay vision.
 
-**Investigation model:** no on-demand frontier LLM. Smart-enough realtime AI **captures** questions / requirements / photos → queues a JIRA-like ticket → **batch Projects** investigate ASAP and completely. Bedrock/frontier = rare escalate. See [`docs/projects.md`](docs/projects.md) · [`docs/backbone-escalate.md`](docs/backbone-escalate.md).
+**Investigation model:** no on-demand frontier LLM or premium vision. Smart-enough realtime **captures** → queues a JIRA-like ticket → **batch Projects** investigate ASAP (HF/Spot advanced photo analysis + optional gen). Bedrock = rare escalate. See [`docs/projects.md`](docs/projects.md) · [`docs/backbone-escalate.md`](docs/backbone-escalate.md).
 
 **Local knowledge:** Georgia- and Israel-scoped public KB (redacted) + **channels** (any unique id); subscribers see associated tickets. See [`docs/knowledge-base.md`](docs/knowledge-base.md).
 

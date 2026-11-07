@@ -6,7 +6,7 @@ Research: [MyProblem APK server needs](95c99f78-e4c4-4a29-9242-fe486ef3fc3e) · 
 
 **Goal:** Rent interruptible Rackspace Spot long enough to build/test **image recognition**, then **voice→transcript→Problem chat**, then **Project batch investigation** ([`projects.md`](./projects.md)). Tear down when idle. Phase 0.5 is **designed, not executed** — no `clevertree-llc-plan/bench/` yet.
 
-**Architecture stance:** No on-demand frontier LLM. Realtime = **smart-enough capture** (questions / requirements / photos) → queue JIRA-like ticket. Batch **Projects** investigate ASAP and completely (cache/KB first). **Bedrock / frontier** = rare escalate inside the Project worker ([`backbone-escalate.md`](./backbone-escalate.md)).
+**Architecture stance:** No on-demand frontier LLM or premium vision. Realtime = **smart-enough capture** → queue JIRA-like ticket. Batch **Projects** investigate ASAP (HF/Spot advanced photo analysis + optional gen; cache/KB first). **Bedrock / frontier** = rare escalate ([`backbone-escalate.md`](./backbone-escalate.md)).
 
 ## Hard constraints (from Test Mode)
 
@@ -49,8 +49,9 @@ Do **not** fork a separate AI product. Spot box = Relay worker profile with inst
 
 | Flag | Default mesh | Spot AI worker |
 |---|---|---|
-| `relay.ai.vision` | off | VL on SEND frames |
-| `relay.ai.ocr` | off | GPU OCR |
+| `relay.ai.vision` | off | Light VL on SEND (capture); deep VL in Project batch |
+| `relay.ai.ocr` | off | GPU OCR (Spot / HF) |
+| `relay.ai.imggen` | off | Batch image/diagram gen (HF weights on Spot or cheap batch API) |
 | `relay.ai.asr` | off | whisper → transcript Evidence (new; TTS already exists) |
 | `relay.ai.chat` | off | brief-compiler + LLM (**prefer Project batch**, not live session) |
 | `relay.ai.frontier` | off | **Rare** Bedrock/API escalate inside Project only — cache gold; never live capture |
@@ -89,9 +90,10 @@ Structured output shape (draft):
 6. Flip Test Mode “would upload” → real POST (web, then APK + INTERNET).
 7. ASR second (mic → whisper on same A30); keep Piper for TTS reply.
 8. **Projects queue:** package ticket → status queue → batch worker drains ASAP (complete, non-redundant); app/email InvestigationUpdate ([`projects.md`](./projects.md)).
-9. **Backbone escalate:** Bedrock/Haiku→Sonnet only on unique misses; answer cache + distill ([`backbone-escalate.md`](./backbone-escalate.md)).
-10. **KB extract (batch):** redacted public docs + GA/Israel channels ([`knowledge-base.md`](./knowledge-base.md)).
-11. If SJC↔GA latency fails targets: IAD CPU + API VL for GA; Spot GPU for **Project batch** distill (decision table in plan `09`).
+9. **Vision media batch:** HF/open VL + optional imggen on Spot A30; cache by pHash/prompt ([`backbone-escalate.md`](./backbone-escalate.md)).
+10. **Backbone escalate:** Bedrock/Haiku→Sonnet (text/VL) only on unique misses; distill.
+11. **KB extract (batch):** redacted public docs + GA/Israel channels ([`knowledge-base.md`](./knowledge-base.md)).
+12. If SJC↔GA latency fails targets: IAD CPU + API VL for GA; Spot GPU for **Project batch** distill (decision table in plan `09`).
 
 ## Out of scope for this MVP
 

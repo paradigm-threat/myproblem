@@ -248,12 +248,13 @@ export default function HomePage() {
           <section id="projects" aria-labelledby="projects-heading">
             <h2 id="projects-heading">Projects — capture, queue, batch (not on-demand LLM)</h2>
             <p className="section-lead">
-              We don’t need a live frontier chatbot. We need a{" "}
-              <strong className="emph">smart-enough</strong> intake model, a{" "}
-              <strong className="emph">JIRA-style ticket queue</strong>, and
-              batch workers that investigate{" "}
-              <strong className="emph">ASAP and completely</strong> — without
-              waste or repeating the same call. Bedrock (or similar) is a{" "}
+              We don’t need live frontier chatbots or on-demand premium vision.
+              We need a <strong className="emph">smart-enough</strong> intake
+              model, a <strong className="emph">JIRA-style ticket queue</strong>,
+              and batch workers that investigate{" "}
+              <strong className="emph">ASAP and completely</strong> — including
+              advanced photo analysis and generation at minimal cost (Hugging
+              Face / Spot first). Bedrock is a{" "}
               <strong className="emph">rare backbone escalate</strong> when the
               cheap path truly cannot.
             </p>
@@ -280,8 +281,9 @@ export default function HomePage() {
                 <p className="project-flow-label">3 · Batch</p>
                 <h3>Investigate ASAP + completely</h3>
                 <p>
-                  Workers drain the queue when Spot capacity frees: local KB and
-                  answer cache first, then cheap models and tools. Dig until
+                  Workers drain the queue when Spot frees: local KB and cache
+                  first, then Hugging Face / open VL on Spot for deep photo
+                  reads, optional diagram generation, and mid LLMs. Dig until
                   DIY, need-more-evidence, merchant-ready, or closed — no
                   redundant repeats.
                 </p>
@@ -290,10 +292,10 @@ export default function HomePage() {
                 <p className="project-flow-label">4 · Escalate</p>
                 <h3>Bedrock only when stuck</h3>
                 <p>
-                  Advanced math, rare language, or hard vision that our path
-                  can’t handle → one frontier call, then cache the gold answer
-                  for the next identical ask. Priority shortens the queue; it
-                  does not invent a live on-demand LLM.
+                  Advanced math, rare language, or photo understanding/gen that
+                  open models can’t handle → one frontier call, then cache the
+                  gold for the next identical ask. Priority shortens the queue;
+                  it does not invent live on-demand LLM or image APIs.
                 </p>
               </article>
             </div>
@@ -414,9 +416,9 @@ export default function HomePage() {
               <article>
                 <h3>Queue + batch, not on-demand LLM</h3>
                 <p>
-                  Smart capture → JIRA-like status queue → batch investigate
-                  ASAP and completely. Bedrock/frontier only for rare unique
-                  misses; priority shortens wait, not a live Sonnet chat.
+                  Smart capture → status queue → batch investigate ASAP
+                  (HF/Spot photo analysis + gen). Bedrock only for rare unique
+                  misses; priority shortens wait, not live Sonnet or image APIs.
                 </p>
               </article>
               <article>

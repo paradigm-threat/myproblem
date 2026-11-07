@@ -2,7 +2,7 @@
 
 **Projects** are MyProblem’s primary heavy investigation mode: **deferred, batched, server-side research** on a ticket after the client has captured enough context—not a real-time “solve it while you wait” LLM session.
 
-**We do not need an on-demand frontier LLM.** We need a **smart-enough** model to capture the question, requirements, and photos; **queue a JIRA-like ticket by status**; then **batch-investigate ASAP and as completely as possible** without waste or redundant calls. Bedrock / other frontier APIs are a **rare backbone escalate** inside that batch worker — see [`backbone-escalate.md`](./backbone-escalate.md).
+**We do not need an on-demand frontier LLM or on-demand premium vision.** We need a **smart-enough** model to capture the question, requirements, and photos; **queue a JIRA-like ticket by status**; then **batch-investigate ASAP and as completely as possible** — including **advanced photo analysis and generation** at minimal cost (Hugging Face / Spot first) — without waste or redundant calls. Bedrock / other frontier APIs are a **rare backbone escalate** inside that batch worker — see [`backbone-escalate.md`](./backbone-escalate.md).
 
 Realtime AI in the app exists only to **build the ticket**. Full investigation quality runs later, when Spot / batch capacity (and optional internet / multi-LLM queries) are cheap and available.
 
@@ -57,7 +57,7 @@ User can still:
 |---|---|---|---|
 | **On-device gate** | Frame-time | Drop shake/blur/dupe; never upload junk | Free / local |
 | **Realtime capture coach** | Seconds | “Turn left,” “read the label,” “what have you tried?” — **ticket intake only** | Cheap / free pool; capped |
-| **Project investigation (primary)** | Minutes → hours (honest ETA) | Deep VL revisit, multi-step LLM research, web/other-model queries, dossier compile, close-or-escalate recommendation | **Batch / Spot / off-peak** — much cheaper than realtime best quality |
+| **Project investigation (primary)** | Minutes → hours (honest ETA) | Deep VL (HF/Spot), optional image gen, multi-step LLM, web tools, dossier compile, rare Bedrock escalate | **Batch / Spot / off-peak** — much cheaper than on-demand premium |
 | **Merchant / human update** | Async | Accept, decline, ask for more info, schedule | Businesses free; timeline still on ticket |
 
 **Do not** design the product around realtime “frontier investigation while the user stares at a spinner.” That path is optional premium later if ever; it is **not** the default.
@@ -96,10 +96,10 @@ Project queue  (by status / priority — drain ASAP)
    ▼
 Batch workers (complete + non-redundant)
    · Cache / local KB first (skip duplicate work)
-   · Spot GPU / free_pool cheap VL + mid LLM
-   · Tools / web as needed
+   · Spot + HF: OCR, advanced photo analysis, optional diagram/gen
+   · Mid LLM + tools / web as needed
    · Rare: Bedrock / frontier backbone escalate → cache gold
-   · Write InvestigationUpdate events on the ticket
+   · Write InvestigationUpdate + media Evidence on the ticket
    ▼
 Outcomes
    · Solved / DIY steps → user notified
@@ -112,8 +112,9 @@ Outcomes
 
 Spot / Relay flags ([`spot-ai-mvp.md`](./spot-ai-mvp.md)):
 
-- `relay.ai.vision` / light coach → **realtime capture** only  
-- Deep VL, ASR archive, multi-step research → **Project batch** (`free_pool`; busy → wait)  
+- `relay.ai.vision` light → **realtime capture** only; deep VL → **Project batch**  
+- `relay.ai.imggen` → **batch** photo/diagram generation (HF/Spot)  
+- ASR archive, multi-step research → **Project batch** (`free_pool`; busy → wait)  
 - `relay.ai.frontier` → **rare escalate inside Project** ([`backbone-escalate.md`](./backbone-escalate.md)) — never live session
 
 ---
