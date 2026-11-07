@@ -262,10 +262,23 @@ section h2 {
   box-shadow: 0 18px 48px rgba(0, 0, 0, 0.28);
 }
 
+.section-graphic picture {
+  display: block;
+  line-height: 0;
+}
+
 .section-graphic-img {
   width: 100%;
   height: auto;
   display: block;
+}
+
+/* Fallback if a browser ignores <picture> art-direction */
+@media (max-width: 767px) {
+  .section-graphic {
+    max-width: 28rem;
+    margin-inline: auto 0;
+  }
 }
 
 .steps {

@@ -81,14 +81,22 @@ export default function HomePage() {
             SaaS invoice.
           </p>
           <figure className="section-graphic">
-            <Image
-              src="/businesses.jpg"
-              alt="MyProblem for local businesses: receive requests, review the AI investigation dossier, choose accept call or redirect, and manage work — free forever"
-              width={1024}
-              height={512}
-              className="section-graphic-img"
-              sizes="(max-width: 1080px) 100vw, 1080px"
-            />
+            <picture>
+              <source
+                media="(max-width: 767px)"
+                srcSet="/businesses-portrait.jpg"
+                width={768}
+                height={1024}
+              />
+              <img
+                src="/businesses.jpg"
+                alt="MyProblem for local businesses: receive requests, review the AI investigation dossier, choose accept call or redirect, and manage work — free forever"
+                width={1024}
+                height={512}
+                className="section-graphic-img"
+                decoding="async"
+              />
+            </picture>
           </figure>
           <ol className="steps">
             <li>
