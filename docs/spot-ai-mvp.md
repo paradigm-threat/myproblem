@@ -1,8 +1,10 @@
 # Spot AI MVP — test infrastructure (not permanent)
 
-Living plan after APK Test Mode + Relay Spot docs. Research: [MyProblem APK server needs](95c99f78-e4c4-4a29-9242-fe486ef3fc3e).
+Living plan after APK Test Mode + Relay Spot docs.
 
-**Goal:** Rent interruptible Rackspace Spot long enough to build/test **image recognition**, then **voice→transcript→Problem chat**. Tear down when idle.
+Research: [MyProblem APK server needs](95c99f78-e4c4-4a29-9242-fe486ef3fc3e) · [Relay Spot / reuse gaps](c76adaea-baea-400e-99d0-a11d45b0c279).
+
+**Goal:** Rent interruptible Rackspace Spot long enough to build/test **image recognition**, then **voice→transcript→Problem chat**. Tear down when idle. Phase 0.5 is **designed, not executed** — no `clevertree-llc-plan/bench/` yet.
 
 ## Hard constraints (from Test Mode)
 
@@ -35,17 +37,22 @@ Spot A30  vision worker
    → optional Relay tip write (flag on)
 ```
 
-## Relay reuse — install-time feature flags
+## Relay reuse — what already exists vs flags to add
 
-Do **not** fork a separate AI product. Spot box = Relay worker profile:
+**Already in Relay (reuse as-is):** Spot fleet ops / reclaim (`relay-gateway/ops`, terraform), tip/park Problem dossier host, Piper **TTS** (output), Argos offline MT, thin media policy.
+
+**Not in Relay today:** vision/OCR/Whisper workers, WebRTC SFU, Problem patch schema, free/paid GPU pool routing. Live mesh is **CPU** (iad/ord/hkg); SJC A30 is planned only.
+
+Do **not** fork a separate AI product. Spot box = Relay worker profile with install-time flags:
 
 | Flag | Default mesh | Spot AI worker |
 |---|---|---|
 | `relay.ai.vision` | off | VL on SEND frames |
 | `relay.ai.ocr` | off | GPU OCR |
-| `relay.ai.asr` | off | whisper → transcript Evidence |
+| `relay.ai.asr` | off | whisper → transcript Evidence (new; TTS already exists) |
 | `relay.ai.chat` | off | brief-compiler + LLM |
 | `relay.ai.frontier` | off | low-confidence API escalate |
+| `relay.ai.pool` | — | `free_pool` (Spot, busy→429) vs `paid_pool` (reliable) |
 
 ## Image recognition first (acceptance)
 
@@ -72,12 +79,13 @@ Structured output shape (draft):
 ## Ordered next steps
 
 1. Freeze OpenAPI: SEND upload + `capture_request` response (align Android `SEND` / web `frameGate`).
-2. Create Spot A30 SJC pool; Docker OCR+VL; `/ready` health.
-3. Add Vercel `/api/vision/worthy` proxy → Spot.
-4. Add Relay `relay.ai.*` flags; Spot joins as flagged worker.
-5. Flip Test Mode “would upload” → real POST (web, then APK + INTERNET).
-6. Add ASR second (mic → whisper on same A30).
-7. Bench CSV → tear down Spot.
+2. **Execute Phase 0.5:** Spot IAD CPU (optional) + **SJC A30**; CUDA Docker OCR+VL; tear-down alarm; sprint ~$50–150 Spot + $50–150 APIs.
+3. Thin bench scripts → `clevertree-llc-plan/bench/` CSV (p50/p95); fake `free_pool` / `paid_pool` + 429 busy.
+4. Vercel `/api/vision/worthy` proxy → Spot (shared secret).
+5. Relay `relay.ai.*` flags; Spot joins as flagged worker; optional demo Problem tip write.
+6. Flip Test Mode “would upload” → real POST (web, then APK + INTERNET).
+7. ASR second (mic → whisper on same A30); keep Piper for TTS reply.
+8. If SJC↔GA latency fails targets: IAD CPU + API VL for GA; Spot GPU for batch distill (decision table in plan `09`).
 
 ## Out of scope for this MVP
 
