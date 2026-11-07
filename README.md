@@ -14,7 +14,9 @@ Coming-soon site for **MyProblem** — free AI front door for local businesses; 
 | Remote | URL | Role |
 |---|---|---|
 | `origin` | https://gitlab.com/clevertree/myproblem | Deploy source → Vercel |
-| `github` | https://github.com/paradigm-threat/myproblem | Public mirror |
+| `github` | https://github.com/paradigm-threat/myproblem | Public mirror (push via HTTPS / `gh`; SSH may hit suspended `clevertree` key) |
+
+Production: https://myproblem.app
 
 ## Scripts
 
