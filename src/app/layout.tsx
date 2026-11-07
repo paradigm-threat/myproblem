@@ -58,19 +58,19 @@ export const metadata: Metadata = {
     type: "website",
     images: [
       {
-        url: "/og.png",
-        width: 512,
+        url: "/og.jpg",
+        width: 1024,
         height: 512,
-        alt: "MyProblem — AI ticket icon",
+        alt: "MyProblem — turn any problem into a solution",
       },
     ],
   },
   twitter: {
-    card: "summary",
+    card: "summary_large_image",
     title: "MyProblem",
     description:
       "Free forever front door for local businesses. Problems, not chats.",
-    images: ["/og.png"],
+    images: ["/og.jpg"],
   },
   appleWebApp: {
     capable: true,

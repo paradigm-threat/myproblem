@@ -8,64 +8,71 @@ import {
 
 export default function HomePage() {
   return (
-    <div className="site">
-      <header className="nav">
-        <a className="brand" href="/">
-          <Image
-            src="/icons/icon-64.png"
-            alt=""
-            width={36}
-            height={36}
-            className="brand-mark"
-            priority
-          />
-          MyProblem
-        </a>
-        <nav className="nav-links" aria-label="Sections">
-          <a href="#businesses">For businesses</a>
-          <a href="#people">For people</a>
-          <a href="#investors">Investors</a>
-          <a href="#regions">Regions</a>
-          <a href="#signup">Signup</a>
-          <a href="/test-mode">Test Mode</a>
-        </nav>
-      </header>
-
-      <main>
-        <section className="hero" aria-label="Hero" style={{ borderTop: "none" }}>
-          <div className="hero-visual" aria-hidden="true">
+    <>
+      <div className="site">
+        <header className="nav">
+          <a className="brand" href="/">
             <Image
-              src="/icons/icon-512.png"
+              src="/icons/icon-64.png"
               alt=""
-              width={420}
-              height={420}
-              className="hero-icon"
+              width={36}
+              height={36}
+              className="brand-mark"
               priority
             />
+            MyProblem
+          </a>
+          <nav className="nav-links" aria-label="Sections">
+            <a href="#businesses">For businesses</a>
+            <a href="#people">For people</a>
+            <a href="#investors">Investors</a>
+            <a href="#regions">Regions</a>
+            <a href="#signup">Signup</a>
+            <a href="/test-mode">Test Mode</a>
+          </nav>
+        </header>
+      </div>
+
+      <main>
+        <section className="hero" aria-label="Hero">
+          <div className="hero-media">
+            <Image
+              src="/hero.jpg"
+              alt="MyProblem — turn any problem into a solution with AI support and local experts"
+              width={1024}
+              height={512}
+              className="hero-photo"
+              priority
+              sizes="100vw"
+            />
           </div>
-          <div className="hero-inner">
-            <p className="eyebrow">Coming soon · Georgia &amp; Israel pilots</p>
-            <h1>MyProblem</h1>
-            <p className="hero-lead">
-              A free forever front door for local businesses — AI that absorbs
-              “should I call?” so your front desk stays light, and ready
-              customers arrive with a Problem dossier.
-            </p>
-            <div className="cta-row">
-              <a className="btn-primary" href="#signup">
-                Join the business waitlist
-              </a>
-              <a
-                className="btn-secondary"
-                href={BUSINESS_PDF_PATH}
-                download
-              >
-                Download business one-pager (PDF)
-              </a>
+          <div className="hero-bar">
+            <div className="site hero-bar-inner">
+              <h1 className="sr-only">
+                Turn any problem into a solution
+              </h1>
+              <p className="eyebrow">Coming soon · Georgia &amp; Israel pilots</p>
+              <p className="hero-lead">
+                Free forever for local businesses — AI that absorbs “should I
+                call?” so ready customers arrive with a Problem dossier.
+              </p>
+              <div className="cta-row">
+                <a className="btn-primary" href="#signup">
+                  Join the business waitlist
+                </a>
+                <a
+                  className="btn-secondary"
+                  href={BUSINESS_PDF_PATH}
+                  download
+                >
+                  Download business one-pager (PDF)
+                </a>
+              </div>
             </div>
           </div>
         </section>
 
+        <div className="site">
         <section id="businesses">
           <h2>How it works for businesses</h2>
           <p className="section-lead">
@@ -281,7 +288,6 @@ export default function HomePage() {
           </p>
           <SignupForm defaultRole="business" id="waitlist" />
         </section>
-      </main>
 
       <footer className="footer">
         <div className="footer-brand">
@@ -310,6 +316,8 @@ export default function HomePage() {
           when needed. Preferred business pricing: free forever.
         </p>
       </footer>
-    </div>
+        </div>
+      </main>
+    </>
   );
 }
