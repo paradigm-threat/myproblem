@@ -6,7 +6,9 @@ const PDFDocument = require("pdfkit");
 const fs = require("node:fs");
 const path = require("node:path");
 
-const outPath = path.join(__dirname, "..", "public", "myproblem-for-businesses.pdf");
+const root = path.join(__dirname, "..");
+const outPath = path.join(root, "public", "myproblem-for-businesses.pdf");
+const logoPath = path.join(root, "public", "icons", "icon-192.png");
 
 const CONTACT = "ari@asu.edu";
 const SITE = "https://myproblem.app";
@@ -26,7 +28,7 @@ const doc = new PDFDocument({
 const stream = fs.createWriteStream(outPath);
 doc.pipe(stream);
 
-const ink = "#14221c";
+const ink = "#0b1a2e";
 const muted = "#3d5248";
 const accent = "#0f6b4c";
 
@@ -55,6 +57,16 @@ function bullet(text) {
     indent: 8,
     lineGap: 2,
   });
+}
+
+if (fs.existsSync(logoPath)) {
+  doc.image(logoPath, doc.page.margins.left, doc.page.margins.top - 6, {
+    width: 44,
+    height: 44,
+  });
+  doc.moveDown(3.2);
+} else {
+  doc.moveDown(0.2);
 }
 
 doc.font("Helvetica-Bold").fontSize(11).fillColor(accent).text("MYPROBLEM.APP");

@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { SignupForm } from "@/components/SignupForm";
 import {
   BUSINESS_PDF_PATH,
@@ -10,6 +11,14 @@ export default function HomePage() {
     <div className="site">
       <header className="nav">
         <a className="brand" href="/">
+          <Image
+            src="/icons/icon-64.png"
+            alt=""
+            width={36}
+            height={36}
+            className="brand-mark"
+            priority
+          />
           MyProblem
         </a>
         <nav className="nav-links" aria-label="Sections">
@@ -24,6 +33,16 @@ export default function HomePage() {
 
       <main>
         <section className="hero" aria-label="Hero" style={{ borderTop: "none" }}>
+          <div className="hero-visual" aria-hidden="true">
+            <Image
+              src="/icons/icon-512.png"
+              alt=""
+              width={420}
+              height={420}
+              className="hero-icon"
+              priority
+            />
+          </div>
           <div className="hero-inner">
             <p className="eyebrow">Coming soon · Georgia &amp; Israel pilots</p>
             <h1>MyProblem</h1>
@@ -265,7 +284,16 @@ export default function HomePage() {
       </main>
 
       <footer className="footer">
-        <strong>MyProblem</strong>
+        <div className="footer-brand">
+          <Image
+            src="/icons/icon-64.png"
+            alt=""
+            width={40}
+            height={40}
+            className="brand-mark"
+          />
+          <strong>MyProblem</strong>
+        </div>
         <div>
           Contact{" "}
           <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>

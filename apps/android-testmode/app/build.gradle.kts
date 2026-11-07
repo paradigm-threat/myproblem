@@ -67,4 +67,6 @@ dependencies {
     testImplementation("junit:junit:4.13.2")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:2.0.21")
     testImplementation("com.google.truth:truth:1.4.4")
+    // Real org.json for JVM unit tests (Android stub is not mocked)
+    testImplementation("org.json:json:20240303")
 }

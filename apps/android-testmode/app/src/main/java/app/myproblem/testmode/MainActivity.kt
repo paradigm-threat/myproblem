@@ -41,9 +41,10 @@ class MainActivity : ComponentActivity() {
                     }
                 },
                 onToggleScenario = { vm.toggleScenario() },
+                onCycleDebugHint = { vm.cycleDebugHint() },
                 onReset = { vm.resetSession() },
                 analysisExecutor = vm.analysisExecutor,
-                imageAnalyzer = vm.imageAnalyzer(),
+                imageAnalyzer = vm.imageAnalyzer,
                 feedOn = state.feedOn,
             )
         }

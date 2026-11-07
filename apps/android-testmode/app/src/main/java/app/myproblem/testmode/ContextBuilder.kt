@@ -8,7 +8,7 @@ import android.util.Log
 object ContextBuilder {
     const val TAG = "MyProblemCtx"
 
-    // Tunable thresholds — client-only gate
+    // Tunable thresholds — client-only gate (overridden by pack when present)
     const val SHAKE_DROP = 0.85f
     const val MOVING_DIFF = 0.08f
     const val BLUR_DROP = 0.62f
@@ -30,13 +30,29 @@ object ContextBuilder {
         cameraFps: Float,
         analysisFps: Float,
         tsMs: Long = System.currentTimeMillis(),
+        captureRequest: CaptureRequest? = null,
+        pack: OnDevicePack = OnDevicePack.NONE,
     ): ContextPacket {
         val sectorId = AngleScenario.sectorFromYaw(attitude.yawDeg)
         val sectorName = AngleScenario.nameFor(sectorId)
         val shake = attitude.shakeScore
-        val isShaking = shake >= SHAKE_DROP
+        val isShaking = shake >= (pack.thresholds.shakeDrop ?: SHAKE_DROP)
         val frameDiff = stats?.frameDiffEnergy ?: 0f
         val isMoving = isShaking || frameDiff >= MOVING_DIFF
+
+        val blurDrop = pack.thresholds.blurDrop ?: BLUR_DROP
+        val colorMin = pack.thresholds.colorMinFraction ?: 0.04f
+
+        val hintScores =
+            HintScorers.score(
+                request = captureRequest,
+                hsvSamples = stats?.hsvSamples,
+                sampleCount = stats?.hsvSampleCount ?: 0,
+                yawDeg = attitude.yawDeg,
+                sectorName = sectorName,
+                blobAspect = stats?.blobAspect,
+                colorMinFractionDefault = colorMin,
+            )
 
         var decision = Decision.DROP
         var reason = DropReason.FEED_OFF
@@ -45,7 +61,7 @@ object ContextBuilder {
             reason = DropReason.FEED_OFF
         } else if (isShaking) {
             reason = DropReason.MOTION
-        } else if (stats.blurScore >= BLUR_DROP) {
+        } else if (stats.blurScore >= blurDrop) {
             reason = DropReason.BLUR
         } else if (stats.glareScore >= GLARE_DROP) {
             reason = DropReason.GLARE
@@ -57,6 +73,8 @@ object ContextBuilder {
             reason = DropReason.DUPLICATE
         } else if (scenarioActive && sectorId in sectorsFilled) {
             reason = DropReason.WRONG_ANGLE
+        } else if (captureRequest != null && captureRequest.isActive && !hintScores.passed) {
+            reason = DropReason.WRONG_TARGET
         } else {
             decision = Decision.WORTHY
             reason = DropReason.NONE
@@ -94,6 +112,13 @@ object ContextBuilder {
             analysisFps = analysisFps,
             width = stats?.width ?: 0,
             height = stats?.height ?: 0,
+            packVersion = pack.version,
+            captureRequestId = captureRequest?.id,
+            coach = captureRequest?.coach.orEmpty(),
+            colorMatch = hintScores.colorMatch,
+            shapeMatch = hintScores.shapeMatch,
+            poseErrDeg = hintScores.poseErrDeg,
+            hintFailLabel = hintScores.failLabel,
         )
     }
 

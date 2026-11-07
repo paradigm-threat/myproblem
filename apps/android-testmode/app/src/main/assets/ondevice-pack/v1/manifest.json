@@ -1,0 +1,29 @@
+{
+  "version": "1.0.0",
+  "minApp": 1,
+  "packDisabled": false,
+  "thresholds": {
+    "shakeDrop": 0.85,
+    "blurDrop": 0.62,
+    "colorMinFraction": 0.04,
+    "yawTolDeg": 20
+  },
+  "models": [],
+  "hfProvenance": [
+    {
+      "repo_id": "timm/mobilenetv3_small_100.lamb_in1k",
+      "revision": "main",
+      "role": "embedding_planned"
+    },
+    {
+      "repo_id": "Xenova/mobileclip_s0",
+      "revision": "main",
+      "role": "embedding_alt_planned"
+    }
+  ],
+  "coachDefaults": {
+    "holdStill": "Hold still",
+    "moreColor": "Get more of the target color in frame"
+  },
+  "signature": null
+}

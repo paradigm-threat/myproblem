@@ -6,6 +6,7 @@ enum class DropReason(val label: String) {
     MOTION("motion/shake"),
     DUPLICATE("duplicate"),
     WRONG_ANGLE("wrong angle"),
+    WRONG_TARGET("wrong_target"),
     GLARE("glare"),
     DARK("too dark"),
     BRIGHT("too bright"),

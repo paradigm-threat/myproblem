@@ -39,6 +39,13 @@ data class ContextPacket(
     val analysisFps: Float,
     val width: Int,
     val height: Int,
+    val packVersion: String = "none",
+    val captureRequestId: String? = null,
+    val coach: String = "",
+    val colorMatch: Float = 1f,
+    val shapeMatch: Float = 1f,
+    val poseErrDeg: Float = 0f,
+    val hintFailLabel: String = "",
 ) {
     fun toJson(): JSONObject =
         JSONObject()
@@ -88,6 +95,21 @@ data class ContextPacket(
                 JSONObject()
                     .put("pHash", java.lang.Long.toUnsignedString(pHash))
                     .put("uniqueDistance", uniqueDistance),
+            )
+            .put(
+                "hints",
+                JSONObject()
+                    .put("captureRequestId", captureRequestId)
+                    .put("coach", coach)
+                    .put("colorMatch", colorMatch.toDouble())
+                    .put("shapeMatch", shapeMatch.toDouble())
+                    .put("poseErr", poseErrDeg.toDouble())
+                    .put("failLabel", hintFailLabel),
+            )
+            .put(
+                "pack",
+                JSONObject()
+                    .put("version", packVersion),
             )
             .put(
                 "counts",

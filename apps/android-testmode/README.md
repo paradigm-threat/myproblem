@@ -4,8 +4,12 @@ Single-screen offline frame gate MVP.
 
 - Camera on/off
 - On-device ContextBuilder (gyro, lighting, blur, uniqueness, angle sectors)
+- L1 capture hints (debug inject: require blue / NE sector → `wrong_target`)
+- Bundled On-Device Pack `assets/ondevice-pack/v1` (version in HUD)
 - Worthy vs drop HUD + rental-style all-angles gauge
 - **No network upload** (no `INTERNET` permission)
+
+Docs: `docs/onboard-ai.md`, `docs/capture-guidance.md`
 
 ## Build / install
 

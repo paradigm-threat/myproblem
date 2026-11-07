@@ -148,4 +148,96 @@ class ContextBuilderTest {
             )
         assertThat(p.dropReason).isEqualTo(DropReason.BLUR)
     }
+
+    private fun blueHsvStats(): ImageStats {
+        val n = 16
+        val hsv = FloatArray(n * 3)
+        for (i in 0 until n) {
+            hsv[i * 3] = 210f
+            hsv[i * 3 + 1] = 0.5f
+            hsv[i * 3 + 2] = 0.45f
+        }
+        return goodStats().copy(hsvSamples = hsv, hsvSampleCount = n)
+    }
+
+    private fun grayHsvStats(): ImageStats {
+        val n = 16
+        val hsv = FloatArray(n * 3)
+        for (i in 0 until n) {
+            hsv[i * 3] = 0f
+            hsv[i * 3 + 1] = 0.02f
+            hsv[i * 3 + 2] = 0.4f
+        }
+        return goodStats().copy(hsvSamples = hsv, hsvSampleCount = n)
+    }
+
+    @Test
+    fun wrongTarget_whenBlueHintAndGrayFrame() {
+        val p =
+            ContextBuilder.decide(
+                feedOn = true,
+                stats = grayHsvStats(),
+                attitude = stillAttitude(),
+                uniqueDistance = 64,
+                sectorsFilled = emptySet(),
+                scenarioActive = false,
+                tickMs = 2,
+                worthyCount = 0,
+                dropCount = 0,
+                cameraFps = 3f,
+                analysisFps = 3f,
+                tsMs = 7L,
+                captureRequest = CaptureRequest.requireBlueDemo(),
+                pack = OnDevicePack(version = "1.0.0-test"),
+            )
+        assertThat(p.decision).isEqualTo(Decision.DROP)
+        assertThat(p.dropReason).isEqualTo(DropReason.WRONG_TARGET)
+        assertThat(p.packVersion).isEqualTo("1.0.0-test")
+        assertThat(p.captureRequestId).isEqualTo("cr_demo_blue")
+    }
+
+    @Test
+    fun worthy_whenBlueHintAndBlueFrame() {
+        val p =
+            ContextBuilder.decide(
+                feedOn = true,
+                stats = blueHsvStats(),
+                attitude = stillAttitude(),
+                uniqueDistance = 64,
+                sectorsFilled = emptySet(),
+                scenarioActive = false,
+                tickMs = 2,
+                worthyCount = 0,
+                dropCount = 0,
+                cameraFps = 3f,
+                analysisFps = 3f,
+                tsMs = 8L,
+                captureRequest = CaptureRequest.requireBlueDemo(),
+                pack = OnDevicePack(version = "1.0.0-test"),
+            )
+        assertThat(p.decision).isEqualTo(Decision.WORTHY)
+        assertThat(p.colorMatch).isGreaterThan(0.9f)
+    }
+
+    @Test
+    fun wrongTarget_whenSectorHintMisses() {
+        val p =
+            ContextBuilder.decide(
+                feedOn = true,
+                stats = goodStats(),
+                attitude = stillAttitude(yaw = 180f),
+                uniqueDistance = 64,
+                sectorsFilled = emptySet(),
+                scenarioActive = false,
+                tickMs = 2,
+                worthyCount = 0,
+                dropCount = 0,
+                cameraFps = 3f,
+                analysisFps = 3f,
+                tsMs = 9L,
+                captureRequest = CaptureRequest.requireSectorDemo("NE"),
+            )
+        assertThat(p.dropReason).isEqualTo(DropReason.WRONG_TARGET)
+    }
 }
+

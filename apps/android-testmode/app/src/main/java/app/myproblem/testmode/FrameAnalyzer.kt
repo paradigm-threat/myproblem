@@ -8,7 +8,8 @@ import java.io.ByteArrayOutputStream
 import kotlin.math.max
 
 /**
- * Offline image stats + uniqueness. Lightweight — no network, no ML model in MVP.
+ * Offline image stats + uniqueness + sparse HSV for L1 color hints.
+ * Lightweight — no network, no ML model in MVP.
  */
 class FrameAnalyzer {
     private var lastGray: ByteArray? = null
@@ -20,7 +21,7 @@ class FrameAnalyzer {
         val w = image.width
         val h = image.height
         val yPlane = image.planes[0]
-        val yBuf = yPlane.buffer
+        val yBuf = yPlane.buffer.duplicate()
         val rowStride = yPlane.rowStride
         val pixelStride = yPlane.pixelStride
 
@@ -47,6 +48,7 @@ class FrameAnalyzer {
         val (blurScore, complexity) = ImageStatsMath.blurAndComplexity(lapVar)
         val diffEnergy = ImageStatsMath.frameDiffEnergy(lastGray, gray)
         val hash = ImageStatsMath.averageHash(gray, cols, rows)
+        val (hsv, hsvCount) = sampleHsv(image, maxSamples = 96)
 
         lastGray = gray
         lastW = cols
@@ -63,7 +65,56 @@ class FrameAnalyzer {
             pHash = hash,
             width = w,
             height = h,
+            hsvSamples = hsv,
+            hsvSampleCount = hsvCount,
         )
+    }
+
+    /**
+     * Sparse YUV→HSV grid for color hint scoring.
+     */
+    private fun sampleHsv(image: ImageProxy, maxSamples: Int): Pair<FloatArray, Int> {
+        if (image.planes.size < 3) return floatArrayOf() to 0
+        val w = image.width
+        val h = image.height
+        val yPlane = image.planes[0]
+        val uPlane = image.planes[1]
+        val vPlane = image.planes[2]
+        val yBuf = yPlane.buffer.duplicate()
+        val uBuf = uPlane.buffer.duplicate()
+        val vBuf = vPlane.buffer.duplicate()
+        val yRow = yPlane.rowStride
+        val yPix = yPlane.pixelStride
+        val uRow = uPlane.rowStride
+        val uPix = uPlane.pixelStride
+        val vRow = vPlane.rowStride
+        val vPix = vPlane.pixelStride
+
+        val grid = 8
+        val out = FloatArray(maxSamples * 3)
+        var n = 0
+        for (gy in 0 until grid) {
+            for (gx in 0 until grid) {
+                if (n >= maxSamples) break
+                val x = ((gx + 0.5f) / grid * w).toInt().coerceIn(0, w - 1)
+                val y = ((gy + 0.5f) / grid * h).toInt().coerceIn(0, h - 1)
+                val yIdx = y * yRow + x * yPix
+                if (yIdx < 0 || yIdx >= yBuf.capacity()) continue
+                val Y = yBuf.get(yIdx).toInt() and 0xff
+                // 4:2:0 chroma
+                val cx = x / 2
+                val cy = y / 2
+                val uIdx = cy * uRow + cx * uPix
+                val vIdx = cy * vRow + cx * vPix
+                if (uIdx < 0 || uIdx >= uBuf.capacity() || vIdx < 0 || vIdx >= vBuf.capacity()) continue
+                val U = uBuf.get(uIdx).toInt() and 0xff
+                val V = vBuf.get(vIdx).toInt() and 0xff
+                val rgb = HintScorers.yuvToRgb(Y, U, V)
+                HintScorers.rgbToHsv(rgb[0], rgb[1], rgb[2], out, n * 3)
+                n++
+            }
+        }
+        return out to n
     }
 
     fun uniqueDistance(hash: Long): Int = ImageStatsMath.minHammingTo(hash, worthyHashes)

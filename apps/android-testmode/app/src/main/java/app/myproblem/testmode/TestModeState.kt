@@ -8,6 +8,12 @@ data class PerfStats(
     val analysisFps: Float = 0f,
 )
 
+enum class DebugHintMode {
+    OFF,
+    REQUIRE_BLUE,
+    REQUIRE_SECTOR_NE,
+}
+
 data class TestModeUiState(
     val feedOn: Boolean = false,
     val scenarioActive: Boolean = true,
@@ -20,4 +26,10 @@ data class TestModeUiState(
     val perf: PerfStats = PerfStats(),
     val permissionNeeded: Boolean = false,
     val error: String? = null,
+    val debugHintMode: DebugHintMode = DebugHintMode.OFF,
+    val captureRequest: CaptureRequest? = null,
+    val packVersion: String = "none",
+    val packSource: String = "none",
+    /** Newest-first human event log (not every frame). */
+    val coachLog: List<CoachLogEntry> = emptyList(),
 )

@@ -1,0 +1,35 @@
+{
+  "name": "MyProblem",
+  "short_name": "MyProblem",
+  "description": "Free AI front door for local businesses. Problems, not chats.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0b1410",
+  "theme_color": "#0b1a2e",
+  "icons": [
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

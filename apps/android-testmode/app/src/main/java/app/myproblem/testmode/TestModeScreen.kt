@@ -1,9 +1,12 @@
 package app.myproblem.testmode
 
 import android.util.Log
+import android.util.Size
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.Preview
+import androidx.camera.core.resolutionselector.ResolutionSelector
+import androidx.camera.core.resolutionselector.ResolutionStrategy
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import androidx.compose.foundation.Canvas
@@ -62,6 +65,7 @@ fun TestModeScreen(
     state: TestModeUiState,
     onToggleFeed: () -> Unit,
     onToggleScenario: () -> Unit,
+    onCycleDebugHint: () -> Unit,
     onReset: () -> Unit,
     analysisExecutor: ExecutorService,
     imageAnalyzer: ImageAnalysis.Analyzer,
@@ -84,7 +88,7 @@ fun TestModeScreen(
                 fontSize = 20.sp,
             )
             Text(
-                "Offline frame gate — nothing uploads",
+                "Offline frame gate — nothing uploads · pack ${state.packVersion}",
                 color = Muted,
                 fontSize = 12.sp,
             )
@@ -112,6 +116,16 @@ fun TestModeScreen(
                 OutlinedButton(onClick = onReset) {
                     Text("Reset", color = Muted)
                 }
+            }
+            Spacer(Modifier.height(6.dp))
+            OutlinedButton(onClick = onCycleDebugHint, modifier = Modifier.fillMaxWidth()) {
+                val hintLabel =
+                    when (state.debugHintMode) {
+                        DebugHintMode.OFF -> "Hint: OFF (tap = require blue)"
+                        DebugHintMode.REQUIRE_BLUE -> "Hint: BLUE (tap = require NE)"
+                        DebugHintMode.REQUIRE_SECTOR_NE -> "Hint: NE sector (tap = off)"
+                    }
+                Text(hintLabel, color = if (state.debugHintMode == DebugHintMode.OFF) Muted else Warm)
             }
             Spacer(Modifier.height(8.dp))
 
@@ -205,6 +219,8 @@ private fun HudPanel(state: TestModeUiState) {
                     "DROP · duplicate — feed is working; move/new angle for another worthy"
                 p?.dropReason == DropReason.MOTION ->
                     "DROP · shake/motion — hold still (shake is detected on-device, not by tapping)"
+                p?.dropReason == DropReason.WRONG_TARGET ->
+                    "DROP · wrong_target — ${p.hintFailLabel.ifBlank { "hint miss" }}; ${p.coach.ifBlank { "adjust framing" }}"
                 p != null -> "Decision: ${p.decision.name} · ${p.dropReason.label}"
                 else -> "Feed ON — waiting for first frame…"
             },
@@ -212,23 +228,31 @@ private fun HudPanel(state: TestModeUiState) {
             fontWeight = FontWeight.Bold,
             fontSize = 13.sp,
         )
+        if (state.captureRequest != null) {
+            Text(
+                "coach: ${state.captureRequest.coach.ifBlank { state.captureRequest.id }}",
+                color = Warm,
+                fontSize = 11.sp,
+            )
+        }
         Text(
             buildString {
                 append("moving=${p?.isMoving ?: false}  shaking=${p?.isShaking ?: false}  ")
                 append("sector=${p?.sectorName ?: "—"}  ")
                 append("light=${"%.2f".format(p?.brightness ?: 0f)}  ")
                 append("blur=${"%.2f".format(p?.blurScore ?: 0f)}  ")
-                append("cx=${"%.2f".format(p?.complexity ?: 0f)}")
+                append("cx=${"%.2f".format(p?.complexity ?: 0f)}  ")
+                append("cMatch=${"%.2f".format(p?.colorMatch ?: 1f)}")
             },
             color = Muted,
             fontSize = 11.sp,
             fontFamily = FontFamily.Monospace,
         )
         Text(
-            "worthy=${state.worthyCount}  drops=${state.dropCount}  " +
+            "pack=${state.packVersion}(${state.packSource})  worthy=${state.worthyCount}  drops=${state.dropCount}  " +
                 "filled=${state.sectorsFilled.size}/${AngleScenario.SECTOR_COUNT}  " +
                 "tick=${state.perf.lastTickMs}ms p50=${state.perf.p50Ms} p95=${state.perf.p95Ms}  " +
-                "cam=${"%.1f".format(state.perf.cameraFps)}fps an=${"%.1f".format(state.perf.analysisFps)}fps",
+                "gate=${"%.1f".format(state.perf.analysisFps)}fps (preview=GPU)",
             color = Color.White,
             fontSize = 11.sp,
             fontFamily = FontFamily.Monospace,
@@ -292,9 +316,17 @@ private fun CameraPreview(
 ) {
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
-    val previewView = remember { PreviewView(context) }
+    // Stable PreviewView + PERFORMANCE (GPU SurfaceView path) — not COMPATIBLE/TextureView.
+    val previewView =
+        remember {
+            PreviewView(context).apply {
+                implementationMode = PreviewView.ImplementationMode.PERFORMANCE
+                scaleType = PreviewView.ScaleType.FILL_CENTER
+            }
+        }
 
-    DisposableEffect(lifecycleOwner, analyzer) {
+    // Key only lifecycle — analyzer/executor are VM-stable. Recomposing HUD must NOT rebind camera.
+    DisposableEffect(lifecycleOwner) {
         val cameraProviderFuture = ProcessCameraProvider.getInstance(context)
         val listener =
             Runnable {
@@ -313,6 +345,11 @@ private fun CameraPreview(
     AndroidView(factory = { previewView }, modifier = modifier)
 }
 
+/**
+ * Dual use-case bind (industry standard):
+ * - Preview → full-rate GPU surface (viewfinder)
+ * - ImageAnalysis → low-res YUV, KEEP_ONLY_LATEST (gate drops frames; never stalls Preview)
+ */
 private fun bindCamera(
     provider: ProcessCameraProvider,
     lifecycleOwner: LifecycleOwner,
@@ -321,16 +358,32 @@ private fun bindCamera(
     executor: ExecutorService,
 ) {
     provider.unbindAll()
+
     val preview =
         Preview.Builder().build().also {
             it.surfaceProvider = previewView.surfaceProvider
         }
+
+    // Gate only needs ~VGA; lower analysis res keeps CPU off the Preview path.
+    val analysisResolution =
+        ResolutionSelector.Builder()
+            .setResolutionStrategy(
+                ResolutionStrategy(
+                    Size(640, 480),
+                    ResolutionStrategy.FALLBACK_RULE_CLOSEST_LOWER_THEN_HIGHER,
+                ),
+            )
+            .build()
+
     val analysis =
         ImageAnalysis.Builder()
+            .setResolutionSelector(analysisResolution)
             .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
             .setOutputImageFormat(ImageAnalysis.OUTPUT_IMAGE_FORMAT_YUV_420_888)
+            .setBackgroundExecutor(executor)
             .build()
             .also { it.setAnalyzer(executor, analyzer) }
+
     provider.bindToLifecycle(
         lifecycleOwner,
         CameraSelector.DEFAULT_BACK_CAMERA,

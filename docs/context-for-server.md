@@ -14,7 +14,16 @@ Built from **MyProblem Test Mode** offline gate on device **CPH2419** (2026-11-0
 | `image.glareScore` | Hot-pixel fraction | |
 | `image` too dark / too bright | Exposure reject | |
 | `uniqueness.pHash` / `uniqueDistance` | Dedupe before network | Observed: after 1 worthy, steady hold → endless `duplicate` drops (working as intended) |
-| Drop reason enum | Explains gate to UI / logs | `blur`, `motion/shake`, `duplicate`, `wrong angle`, `glare`, … |
+| Drop reason enum | Explains gate to UI / logs | `blur`, `motion/shake`, `duplicate`, `wrong angle`, `wrong_target`, `glare`, … |
+| Active `capture_request` color/angle match | Hint miss never uploads | See [capture-guidance.md](./capture-guidance.md); drop `wrong_target` |
+
+## Server → app (hints, not reject of shake)
+
+| Field | Client use |
+|---|---|
+| `capture_request` | Narrows WORTHY to color/shape/angle match |
+| `pack_min_version` | Client ignores advanced hints if pack too old |
+| Pack CDN manifest URL | Cursor-style On-Device Pack update — [onboard-ai.md](./onboard-ai.md) |
 
 ## Sent with worthy uploads (server needs these for realtime coaching)
 
@@ -25,6 +34,8 @@ Built from **MyProblem Test Mode** offline gate on device **CPH2419** (2026-11-0
 | `attitude.sectorId` / `sectorName` | All-angles template progress |
 | `scenario.name` + `sectorsFilled` | “Still need NE, W, …” coaching |
 | `image.brightness/contrast/complexity` | Soft hints (lighting OK, scene busy) — not for reject |
+| `hints.colorMatch` / `shapeMatch` / `poseErr` / `captureRequestId` | Why this frame satisfied the request |
+| `pack.version` | Provenance / escalate if stale |
 | `uniqueness.pHash` | Optional server-side archive dedupe across sessions |
 | `tickMs` / client clocks | Latency telemetry |
 | `decision=WORTHY` | Assert client already gated |
@@ -62,3 +73,9 @@ Unit tests: Android `./gradlew :app:testDebugUnitTest`; Web `npm test`.
 2. Raise analysis rate vs battery — still offline-only.
 3. When uploading starts: attach last N seconds of **drop reason histogram** (not frames) so server knows user was shaking without seeing bad pixels.
 4. Web DeviceOrientation permission UX on iOS Safari (later).
+5. L2 HF embedding pack size budget on mid Android (target ≤ ~10–15 MB).
+
+## Related docs
+
+- [capture-guidance.md](./capture-guidance.md) — `capture_request` schema + future 3D
+- [onboard-ai.md](./onboard-ai.md) — L0–L4, HF pins, pack format, CDN
