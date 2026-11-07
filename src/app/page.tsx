@@ -256,9 +256,29 @@ export default function HomePage() {
         <section id="investors">
           <h2>Investor ROI — zero-salary Relay vision</h2>
           <p className="section-lead">
-            Do not pitch a normal SaaS headcount company. Pitch a capped growth
-            check into a Georgia LLC with <strong>no payroll line</strong>.
+            Invest in MyProblem for your region — a low-overhead, AI-powered
+            platform you can bring to a local market. Not a SaaS headcount
+            company: a capped growth check into a Georgia LLC with{" "}
+            <strong>no payroll line</strong>.
           </p>
+          <figure className="section-graphic">
+            <picture>
+              <source
+                media="(max-width: 767px)"
+                srcSet="/investors-portrait.jpg"
+                width={768}
+                height={1024}
+              />
+              <img
+                src="/investors.jpg"
+                alt="For investors: fund a region, we launch and operate, local service grows, you earn the majority of usage fees — no salaries, costs limited to infrastructure and advertising"
+                width={1024}
+                height={576}
+                className="section-graphic-img"
+                decoding="async"
+              />
+            </picture>
+          </figure>
           <div className="investor">
             <p style={{ margin: 0, color: "var(--muted)", lineHeight: 1.55 }}>
               Capital burns on free investigation and match infra. Residual
