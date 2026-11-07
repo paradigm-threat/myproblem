@@ -40,10 +40,10 @@ export default function HomePage() {
               src="/hero.jpg"
               alt="MyProblem — turn any problem into a solution with AI support and local experts"
               width={1024}
-              height={512}
+              height={341}
               className="hero-photo"
               priority
-              sizes="100vw"
+              sizes="(max-width: 1600px) 100vw, 1600px"
             />
           </div>
           <div className="hero-bar">

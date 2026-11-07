@@ -100,6 +100,8 @@ a:hover {
 }
 
 .hero {
+  /* Edge blue sampled from hero art — fills ultrawide side gutters */
+  --hero-blue: #002859;
   position: relative;
   width: 100%;
   border-top: none;
@@ -107,23 +109,28 @@ a:hover {
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  background: #06101f;
+  background: var(--hero-blue);
 }
 
 .hero-media {
   position: relative;
   width: 100%;
   line-height: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: var(--hero-blue);
   animation: rise 0.9s ease both;
 }
 
 .hero-photo {
+  /* Full art visible — no cover/max-height clip */
   width: 100%;
+  max-width: 1600px;
   height: auto;
   display: block;
-  object-fit: cover;
+  object-fit: contain;
   object-position: center;
-  max-height: min(72vh, 720px);
 }
 
 .hero-bar {
@@ -132,8 +139,8 @@ a:hover {
   padding: 1.5rem 0 2.25rem;
   background: linear-gradient(
     180deg,
-    rgba(6, 16, 31, 0.2) 0%,
-    rgba(7, 13, 24, 0.92) 35%,
+    var(--hero-blue) 0%,
+    rgba(7, 13, 24, 0.96) 45%,
     var(--bg) 100%
   );
   border-bottom: 1px solid var(--line);
