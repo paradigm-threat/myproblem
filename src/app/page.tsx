@@ -44,6 +44,7 @@ export default function HomePage() {
       <main id="main">
         <section className="hero" aria-labelledby="hero-heading">
           <div className="hero-media">
+            <div className="hero-wings" aria-hidden="true" />
             <picture>
               <source
                 media="(max-width: 767px)"

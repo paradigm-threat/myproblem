@@ -143,8 +143,8 @@ textarea:focus-visible,
 }
 
 .hero {
-  /* Edge blue sampled from hero art — fills ultrawide side gutters */
-  --hero-blue: #002859;
+  /* Left-edge night navy from hero.jpg (0,16,31) — full-bleed wings */
+  --hero-blue: #00101f;
   position: relative;
   width: 100%;
   border-top: none;
@@ -153,6 +153,8 @@ textarea:focus-visible,
   display: flex;
   flex-direction: column;
   background: var(--hero-blue);
+  /* Break past any ancestor padding; band goes viewport-edge to edge */
+  margin-inline: 0;
 }
 
 .hero-media {
@@ -163,14 +165,51 @@ textarea:focus-visible,
   justify-content: center;
   align-items: center;
   background: var(--hero-blue);
+  overflow: hidden;
   animation: rise 0.9s ease both;
 }
 
+/* Full-bleed atmosphere wings: soft cover of the art + edge navy wash */
+.hero-wings {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-color: var(--hero-blue);
+  background-image: url("/hero.jpg");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+  transform: scale(1.08);
+  filter: blur(18px) saturate(1.1);
+}
+
+.hero-wings::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    var(--hero-blue) 0%,
+    rgba(0, 16, 31, 0.55) 18%,
+    rgba(0, 16, 31, 0.2) 36%,
+    rgba(0, 16, 31, 0.2) 64%,
+    rgba(0, 16, 31, 0.55) 82%,
+    var(--hero-blue) 100%
+  );
+}
+
 .hero-media picture {
+  position: relative;
+  z-index: 1;
   display: block;
   line-height: 0;
   width: 100%;
   max-width: 1024px;
+  /* Solid navy wings from the sharp plate out to the viewport edges */
+  box-shadow:
+    -100vw 0 0 100vw var(--hero-blue),
+    100vw 0 0 100vw var(--hero-blue);
 }
 
 .hero-photo {
@@ -184,6 +223,10 @@ textarea:focus-visible,
 }
 
 @media (max-width: 767px) {
+  .hero-wings {
+    background-image: url("/hero-portrait.jpg");
+  }
+
   .hero-media picture {
     max-width: 576px;
   }
