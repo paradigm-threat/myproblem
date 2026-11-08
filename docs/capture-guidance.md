@@ -2,7 +2,9 @@
 
 The server AI does **not** re-judge shake/blur. Server and app share **capabilities** to deduce and drill down a Problem in realtime: quality/uniqueness, color/shape/angle filters, OCR text, later pose/3D.
 
-Related: [context-for-server.md](./context-for-server.md), [onboard-ai.md](./onboard-ai.md).
+Related: [context-for-server.md](./context-for-server.md), [onboard-ai.md](./onboard-ai.md), [progressive-transcription.md](./progressive-transcription.md).
+
+**Stills / OCR** remain this capture path. **Voice** is separate: audio posts as ticket Evidence and is batch-transcribed on the server (client never calls ASR). Context patches that include OCR snippets or corrected names on an **open** ticket may trigger the progressive-transcription **LLM gate** to decide whether to re-run ASR — see that doc.
 
 ## Capabilities (not fixed layers)
 
@@ -76,3 +78,8 @@ Debug Hint cycles: blue → NE → TEXT/OCR → off. Event log shows capability 
 - On-screen guide rotates with attitude.
 - Or: score live pose vs requested quaternion; when clear + unique + in-tol, auto-mark send-ready.
 - Still sparse uploads; guide stays local.
+
+## Voice + camera (docs only — do not build yet)
+
+- Mic → post audio Evidence to ticket → first-pass batched ASR; LLM gate for retranscription on open tickets ([progressive-transcription.md](./progressive-transcription.md)).
+- Camera = unique/worthy **stills** only within rate limits. **No video Evidence** to the server (preview must not upload a video blob).

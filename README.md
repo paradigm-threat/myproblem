@@ -2,15 +2,17 @@
 
 Coming-soon site for **MyProblem** — free AI front door for local businesses; Problems not chats; zero-salary Relay vision.
 
-**Investigation model:** no on-demand frontier LLM or premium vision. Smart-enough realtime **captures** → queues a JIRA-like ticket → **batch Projects** investigate ASAP (HF/Spot advanced photo analysis + optional gen). Bedrock = rare escalate. See [`docs/projects.md`](docs/projects.md) · [`docs/backbone-escalate.md`](docs/backbone-escalate.md).
+**Investigation model:** no on-demand frontier LLM or premium vision. Smart-enough realtime **captures** (stills + audio; no server video) → queues a JIRA-like ticket → **batch Projects** investigate ASAP. Bedrock = rare escalate. See [`docs/projects.md`](docs/projects.md) · [`docs/backbone-escalate.md`](docs/backbone-escalate.md).
 
-**Local knowledge:** Georgia- and Israel-scoped public KB (redacted) + **channels** (any unique id); subscribers see associated tickets. See [`docs/knowledge-base.md`](docs/knowledge-base.md).
+**Tickets:** anonymous by default (server UUID + APK local backup); free recover email/register to avoid loss on phone change. Dossier on Relay tip; audio/stills in cheap object store (Bunny prefer). See [`docs/anonymous-tickets.md`](docs/anonymous-tickets.md).
+
+**Local knowledge:** Georgia- and Israel-scoped public KB (redacted) + **channels** (any unique id). See [`docs/knowledge-base.md`](docs/knowledge-base.md).
 
 ## Stack
 
 - Next.js (App Router) on Vercel
-- Neon Postgres for waitlist / app data (`DATABASE_URL`)
-- Vercel Blob for future file storage (`BLOB_READ_WRITE_TOKEN`)
+- Neon Postgres for waitlist / thin queue index (`DATABASE_URL`)
+- Object store for audio/stills (plan: Bunny or S3-compatible; Blob token may be interim)
 - Build-time business PDF: `public/myproblem-for-businesses.pdf`
 
 ## Remotes
@@ -35,6 +37,8 @@ npm run dev
 | Doc | Topic |
 |---|---|
 | [`docs/projects.md`](docs/projects.md) | Deferred Projects — primary server investigation |
+| [`docs/anonymous-tickets.md`](docs/anonymous-tickets.md) | Anon UUID tickets; free recover; Relay tip + object store |
+| [`docs/progressive-transcription.md`](docs/progressive-transcription.md) | Audio Evidence → first ASR; LLM retranscription; no video |
 | [`docs/backbone-escalate.md`](docs/backbone-escalate.md) | Rare Bedrock/frontier escalate in batch |
 | [`docs/knowledge-base.md`](docs/knowledge-base.md) | Shared local KB + channels (any unique id) |
 | [`docs/spot-ai-mvp.md`](docs/spot-ai-mvp.md) | Spot GPU test standup |

@@ -4,15 +4,16 @@ Living plan after APK Test Mode + Relay Spot docs.
 
 Research: [MyProblem APK server needs](95c99f78-e4c4-4a29-9242-fe486ef3fc3e) · [Relay Spot / reuse gaps](c76adaea-baea-400e-99d0-a11d45b0c279).
 
-**Goal:** Rent interruptible Rackspace Spot long enough to build/test **image recognition**, then **voice→transcript→Problem chat**, then **Project batch investigation** ([`projects.md`](./projects.md)). Tear down when idle. Phase 0.5 is **designed, not executed** — no `clevertree-llc-plan/bench/` yet.
+**Goal:** Rent interruptible Rackspace Spot long enough to build/test **image recognition**, then **voice Evidence → batched transcript on the ticket**, then **Project batch investigation** ([`projects.md`](./projects.md) · [`progressive-transcription.md`](./progressive-transcription.md)). Tear down when idle. Phase 0.5 is **designed, not executed** — no `clevertree-llc-plan/bench/` yet.
 
-**Architecture stance:** No on-demand frontier LLM or premium vision. Realtime = **smart-enough capture** → queue JIRA-like ticket. Batch **Projects** investigate ASAP (HF/Spot advanced photo analysis + optional gen; cache/KB first). **Bedrock / frontier** = rare escalate ([`backbone-escalate.md`](./backbone-escalate.md)).
+**Architecture stance:** No on-demand frontier LLM or premium vision. Realtime = **smart-enough capture** (stills only) → queue JIRA-like ticket (anon `ticket_uuid`). Batch **Projects** investigate ASAP (HF/Spot; cache/KB first). **Bedrock / frontier** = rare escalate ([`backbone-escalate.md`](./backbone-escalate.md)). Dossier = **Relay tip**; media = **Bunny/S3-class** object store ([`anonymous-tickets.md`](./anonymous-tickets.md)).
 
 ## Hard constraints (from Test Mode)
 
 - Server **never** re-gates frames. Client sends `decision=SEND` + JPEG/WebP + [`ContextPacket`](../apps/android-testmode/app/src/main/java/app/myproblem/testmode/ContextPacket.kt).
 - Server returns coach line + next [`capture_request`](./capture-guidance.md).
-- ASR/transcription is **not** in the APK contract yet — design it as Evidence attached to a Problem, same as photos.
+- **No video file upload** — unique/worthy stills only within rate limits.
+- **ASR is ticket Evidence + batch worker — never a client ASR API.** APK posts **audio** (object-store blob); first attach enqueues `asr_job`; open tickets may re-batch via LLM **retranscription** gate. See [`progressive-transcription.md`](./progressive-transcription.md).
 - Pack CDN (`GET /api/ondevice-pack/latest`) stays **deferred** until L1 is proven.
 
 ## Minimal Spot standup
@@ -20,9 +21,11 @@ Research: [MyProblem APK server needs](95c99f78-e4c4-4a29-9242-fe486ef3fc3e) · 
 | Piece | Spec | Why |
 |---|---|---|
 | **1× GPU Spot** | `gpu.vs2.xlargeplusplus-sjc` (A30), ~$0.15/hr | VL + OCR + optional whisper |
-| Optional CPU Spot | IAD `ch.vs1.2xlarge-iad` | Later WebRTC/ffmpeg ingest only |
+| Optional CPU Spot | IAD `ch.vs1.2xlarge-iad` | Later ffmpeg stills assist only — not video product path |
 | Edge | Existing Vercel `myproblem` | Auth stub, rate limit, proxy to Spot |
-| Storage | Neon + Blob (already) | Problem metadata / future evidence |
+| Dossier | Relay tip per `ticket_uuid` | Problem SoT |
+| Queue index | Neon/Redis thin | Job leases only |
+| Media blobs | Bunny (prefer) or S3-compatible | Audio + stills; infra-funded |
 
 Org: Rackspace Spot **paradigmthreat** (see Relay plan `09`).
 
@@ -52,7 +55,7 @@ Do **not** fork a separate AI product. Spot box = Relay worker profile with inst
 | `relay.ai.vision` | off | Light VL on SEND (capture); deep VL in Project batch |
 | `relay.ai.ocr` | off | GPU OCR (Spot / HF) |
 | `relay.ai.imggen` | off | Batch image/diagram gen (HF weights on Spot or cheap batch API) |
-| `relay.ai.asr` | off | whisper → transcript Evidence (new; TTS already exists) |
+| `relay.ai.asr` | off | Batch Whisper on ticket **audio** Evidence → versioned **transcript** Evidence; LLM gate may re-queue on open tickets ([`progressive-transcription.md`](./progressive-transcription.md); TTS already exists) |
 | `relay.ai.chat` | off | brief-compiler + LLM (**prefer Project batch**, not live session) |
 | `relay.ai.frontier` | off | **Rare** Bedrock/API escalate inside Project only — cache gold; never live capture |
 | `relay.ai.pool` | — | `free_pool` (Spot, busy→429 / enqueue Project) vs `paid_pool` (reliable) |
@@ -88,7 +91,7 @@ Structured output shape (draft):
 4. Vercel `/api/vision/worthy` proxy → Spot (shared secret).
 5. Relay `relay.ai.*` flags; Spot joins as flagged worker; optional demo Problem tip write.
 6. Flip Test Mode “would upload” → real POST (web, then APK + INTERNET).
-7. ASR second (mic → whisper on same A30); keep Piper for TTS reply.
+7. ASR second: ticket audio Evidence → batch Whisper (Spot A30 or hosted API **from the worker only**); progressive retranscription gate on open tickets ([`progressive-transcription.md`](./progressive-transcription.md)); keep Piper for TTS reply. **Do not** expose client `/api/transcribe`.
 8. **Projects queue:** package ticket → status queue → batch worker drains ASAP (complete, non-redundant); app/email InvestigationUpdate ([`projects.md`](./projects.md)).
 9. **Vision media batch:** HF/open VL + optional imggen on Spot A30; cache by pHash/prompt ([`backbone-escalate.md`](./backbone-escalate.md)).
 10. **Backbone escalate:** Bedrock/Haiku→Sonnet (text/VL) only on unique misses; distill.
@@ -102,6 +105,8 @@ Always-on reliable GPU, multi-region, full WebRTC SFU, L2 HF pack CDN, billing, 
 ## Related
 
 - [`projects.md`](./projects.md) — deferred investigation (primary server path)
+- [`anonymous-tickets.md`](./anonymous-tickets.md) — anon UUID; free recover; Relay tip + object store
+- [`progressive-transcription.md`](./progressive-transcription.md) — first ASR + LLM retranscription; no video
 - [`backbone-escalate.md`](./backbone-escalate.md) — rare Bedrock escalate in batch
 - [`knowledge-base.md`](./knowledge-base.md) — local shared KB + channels
 - [`context-for-server.md`](./context-for-server.md)

@@ -8,7 +8,7 @@ Realtime AI in the app exists only to **build the ticket**. Full investigation q
 
 **Product promise:** the AI **does not cut corners** to look instant. It takes the time resources allow to investigate thoroughly. Waiting for capacity is an honest UX; silently downgrading free-tier depth is not.
 
-Related: [`backbone-escalate.md`](./backbone-escalate.md) · [`context-for-server.md`](./context-for-server.md) · [`spot-ai-mvp.md`](./spot-ai-mvp.md) · [`infra-definition.md`](./infra-definition.md) · [`knowledge-base.md`](./knowledge-base.md).
+Related: [`anonymous-tickets.md`](./anonymous-tickets.md) · [`backbone-escalate.md`](./backbone-escalate.md) · [`context-for-server.md`](./context-for-server.md) · [`spot-ai-mvp.md`](./spot-ai-mvp.md) · [`progressive-transcription.md`](./progressive-transcription.md) · [`infra-definition.md`](./infra-definition.md) · [`knowledge-base.md`](./knowledge-base.md).
 
 ---
 
@@ -24,9 +24,9 @@ Service-provider handoff remains **always available**. Deferred investigation is
 
 | Term | Meaning |
 |---|---|
-| **Problem / ticket** | The durable record (photos, facts, stops, attempts, status). Same as today. |
+| **Problem / ticket** | Durable record keyed by server `ticket_uuid` — anon by default; dossier on **Relay tip**; media in cheap object store ([`anonymous-tickets.md`](./anonymous-tickets.md)). |
 | **Project** | A deferred investigation job (or job series) attached to that ticket: queue → batch worker → research → status updates → optional close or escalate. |
-| **Realtime capture session** | Thin on-device + light server coach: gate frames, ask for missing angles/labels, fill required fields. **Not** deep research. |
+| **Realtime capture session** | Thin on-device + light server coach: gate **stills** (no video upload), ask for missing angles/labels, fill required fields. **Not** deep research. |
 
 A Project looks like a **JIRA-style work item** for investigation: uninvestigated tickets sit in a queue; workers (bots, later humans, later merchants) advance them; the end user gets a **single timeline** of updates.
 
@@ -114,8 +114,23 @@ Spot / Relay flags ([`spot-ai-mvp.md`](./spot-ai-mvp.md)):
 
 - `relay.ai.vision` light → **realtime capture** only; deep VL → **Project batch**  
 - `relay.ai.imggen` → **batch** photo/diagram generation (HF/Spot)  
-- ASR archive, multi-step research → **Project batch** (`free_pool`; busy → wait)  
+- ASR + multi-step research → **Project / ticket batch** (`free_pool`; busy → wait) — see voice subsection below  
 - `relay.ai.frontier` → **rare escalate inside Project** ([`backbone-escalate.md`](./backbone-escalate.md)) — never live session
+
+---
+
+## Voice Evidence → ASR batch (progressive transcription)
+
+Voice intake uses the **same queue → batch → write back** posture as Projects. Full contract: [`progressive-transcription.md`](./progressive-transcription.md).
+
+| Step | Behavior |
+|---|---|
+| Client | Creates/opens a ticket; posts **audio as Evidence**. Optional local cache for playback. **Never** calls a client ASR / `/api/transcribe` endpoint. |
+| Server | Audio attach enqueues `asr_job`; batch worker runs Whisper and appends versioned **transcript** Evidence on the ticket. |
+| Context later | OCR, names, title, facts via ticket patch. If the ticket is still **open**, enqueue `retranscribe_gate_job`. |
+| LLM gate | Decides whether a new ASR pass would correct errors (names, misheard model strings). Yes → new `asr_job` with hotwords/context; no → keep current transcript. **Closed** tickets do not re-batch. |
+
+This is **ticket packaging quality** (accurate words on the record), not full Project investigation. Deep research remains the Project worker.
 
 ---
 
@@ -183,16 +198,28 @@ Landing / PDF should not promise “instant deep AI answers.” Prefer: *capture
 
 ---
 
+## Storage / identity (locked)
+
+| Piece | Choice |
+|---|---|
+| Dossier SoT | **Relay tip** per `ticket_uuid` |
+| Job queue | Thin index (Neon/Redis) — leases only, not a second dossier |
+| Audio + stills | Cheap object store (**Bunny** preferred; S3-compatible OK); tip holds URI + hash |
+| Anon default | APK local backup; warn: lose phone → lose tickets |
+| Durable access | **Free** secret recover email and/or free register ([`anonymous-tickets.md`](./anonymous-tickets.md)) |
+| Notify | Anon: in-app poll; recover/account: optional email + in-app |
+
 ## Implementation checklist (docs → code)
 
-1. Schema: Problem ticket + Project job + InvestigationUpdate (Neon).  
-2. Queue: batch worker hook (Spot / cron on Vercel → worker).  
-3. Realtime API stays coach-only; enqueue endpoint `POST /api/projects` (or Problem `start_project`).  
-4. Notify: app poll/SSE first; email later.  
-5. Always expose **Submit to provider** beside **Start Project**.  
-6. After Project: optional redacted publish to region KB + channel tags ([`knowledge-base.md`](./knowledge-base.md)).  
-7. Backbone escalate path + answer cache ([`backbone-escalate.md`](./backbone-escalate.md)).  
-8. Bench: $/ticket deferred vs fake-realtime; escalate rate + cache hit rate in `clevertree-llc-plan/bench/`.
+1. Relay tip schema: Problem + InvestigationUpdate + Evidence refs; thin queue index for Project / `asr_job` leases.  
+2. Object store for audio/stills (Bunny or S3-compatible); reject video uploads.  
+3. Queue: batch worker hook (Spot / cron on Vercel → worker).  
+4. Realtime API stays coach-only; enqueue `POST /api/projects` (or Problem `start_project`).  
+5. Notify: anon poll/SSE; email when recover/account attached.  
+6. Always expose **Submit to provider** beside **Start Project**.  
+7. After Project: optional redacted publish to region KB + channel tags ([`knowledge-base.md`](./knowledge-base.md)).  
+8. Backbone escalate path + answer cache ([`backbone-escalate.md`](./backbone-escalate.md)).  
+9. Bench: $/ticket deferred vs fake-realtime; escalate rate + cache hit rate + storage $/GB in `clevertree-llc-plan/bench/`.
 
 ---
 
@@ -201,4 +228,4 @@ Landing / PDF should not promise “instant deep AI answers.” Prefer: *capture
 1. Default after packaging: auto-start Project vs explicit user tap?  
 2. Max deferred SLA for free vs priority (hours vs same-day)?  
 3. How many re-open cycles when bot asks for more photos?  
-4. Anonymous tickets: Project updates only in-app session vs require email/account for async notify?
+4. TTL / archive policy for unclaimed silent anon tickets?
