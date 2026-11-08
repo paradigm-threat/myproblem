@@ -107,7 +107,7 @@ doc
   .text("Free forever front door — ignore anytime");
 doc.moveDown(0.1);
 body(
-  "We do not answer your shop’s phone (yet). Link your website to MyProblem ticket creation — people record audio + stills; deferred Projects investigate thoroughly. Incoming work is a social-style feed: open a fit, or ignore entirely. Georgia & Israel pilots. Future VoIP can automate the same flow.",
+  "We do not answer your shop’s phone (yet). Link your site to ticket creation — audio + stills; Projects investigate thoroughly. Social-style feed: engage or ignore. Customer PII stays on their device; network tickets use safe locality (city / coarse band). Exact address/phone only via secure DM if you request it and they release it. Georgia & Israel pilots.",
 );
 
 // —— Landscape workflow graphic (ignore-entirely art) ——
@@ -135,15 +135,18 @@ bullet(
 bullet(
   "Website → ticket, not phone — send unsure visitors to MyProblem audio/stills capture (no ringing the desk).",
 );
-bullet("Warmer handoffs — dossier on the tip when you do engage.");
-bullet("Legal stops baked in — emergencies / licensed care redirect.");
+bullet(
+  "PII-safe dossiers — street/phone stay off the mesh; request personal detail via secure DM only when needed.",
+);
+bullet("Warmer handoffs — investigation notes on the tip when you engage.");
+bullet("Legal stops — emergencies / licensed care redirect.");
 
 h2("How it works");
 [
   "Sign up at $0 — still no duty to answer anyone.",
-  "Point your site at ticket creation — audio recording + stills; Project when capacity allows (we do not take phone calls yet).",
-  "When real, open the tip with photos + investigation notes already done.",
-  "Accept, bid, ask — or ignore entirely. After handshake, the deal is yours.",
+  "Point your site at tickets — audio + stills; Project when capacity allows (no phone answering yet).",
+  "Open the tip — photos + notes, PII already converted to safe context.",
+  "Accept, bid, ask (DM for exact contact if needed) — or ignore entirely.",
 ].forEach((s, i) => {
   const rowY = doc.y;
   doc.image(logoSmallPath, left, rowY, { width: 12, height: 12 });
@@ -185,7 +188,7 @@ doc
   .fontSize(7)
   .fillColor("#6a7a72")
   .text(
-    "Coming soon. Not medical, veterinary, or legal advice. Preferred business pricing: free forever.",
+    "Coming soon. Clevertree LLC · myproblem.app/terms. Not medical, veterinary, or legal advice. Free forever for shops. PII client-held + auto-convert.",
     { lineGap: 1.1 },
   );
 
