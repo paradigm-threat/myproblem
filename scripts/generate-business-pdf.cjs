@@ -117,13 +117,16 @@ doc
   .fontSize(7.5)
   .fillColor("#6a7a72")
   .text(
-    "Business workflow: receive requests → review AI dossier → choose a response → manage work. Ticket icon = MyProblem brand.",
+    "Business workflow: receive requests → review AI dossier → accept, ask, or ignore entirely (no obligation) → manage work you choose. Ticket icon = MyProblem brand.",
     { align: "left" },
   );
   doc.moveDown(0.25);
 
 h2("What you get");
 bullet("$0 to join. No application fee, no monthly bill, no per-lead invoice.");
+bullet(
+  "Zero obligation — ignore any request entirely (like a social feed). No SLA, no must-respond, no penalty for silence.",
+);
 bullet("Lighter front desk — routine triage and redirects never reach the secretary.");
 bullet("Warmer handoffs — Project notes on the tip; local KB stays place-tied.");
 bullet(
@@ -132,10 +135,10 @@ bullet(
 
 h2("How it works for your shop");
 [
-  "Sign up at $0. You appear as a local option when a Problem needs a real pro.",
+  "Sign up at $0. You appear as a local option — still with no duty to answer anyone.",
   "AI handles unsure callers first — capture now, Project research when capacity allows.",
   "When it is real, you open a Problem tip with the dossier already done.",
-  "Accept, decline, or bid. After handshake, the deal is between you and them.",
+  "Accept, bid, ask — or ignore entirely. Silence costs nothing. After handshake, the deal is between you and them.",
 ].forEach((s, i) => {
   const rowY = doc.y;
   doc.image(logoSmallPath, left, rowY, { width: 14, height: 14 });
@@ -153,7 +156,7 @@ h2("How it works for your shop");
 
 h2("Who pays (hint: not you)");
 body(
-  "Businesses stay free forever. Infra is funded by consumer free uses on elastic compute, then optional consumer priority fees—and optionally a small payment-rail fee if checkout is hosted. We do not invoice shops.",
+  "Businesses stay free forever with zero response obligation. Infra is funded by consumer free uses on elastic compute, then optional consumer priority fees—and optionally a small payment-rail fee if checkout is hosted. We do not invoice shops or punish silence.",
 );
 
 h2("Pilots");

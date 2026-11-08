@@ -95,10 +95,13 @@ export default function HomePage() {
           <section id="businesses" aria-labelledby="businesses-heading">
             <h2 id="businesses-heading">How it works for businesses</h2>
             <p className="section-lead">
-              $0 application. $0 subscription. Preferred stance: free for shops
-              forever. Unsure people get a thorough deferred Project first —
-              not a rushed chatbot — so when they reach you, the dossier is
-              real. Your ROI is time saved and warmer bookings.
+              $0 application. $0 subscription. Free forever — and{" "}
+              <strong className="emph">zero obligation</strong>. Incoming
+              requests work like a social feed: open what looks like a fit, or{" "}
+              <strong className="emph">ignore entirely</strong> when you have
+              no time or it is not for you. No SLA, no “must respond,” no
+              penalty, no per-lead bill. Unsure people get a thorough deferred
+              Project first so when you <em>do</em> engage, the dossier is real.
             </p>
             <figure className="section-graphic">
               <picture>
@@ -110,7 +113,7 @@ export default function HomePage() {
                 />
                 <img
                   src="/businesses.jpg"
-                  alt="MyProblem for local businesses: receive requests, review the AI investigation dossier, choose accept call or redirect, and manage work — free forever"
+                  alt="MyProblem for local businesses: free forever, no obligation — receive requests, review the AI dossier, accept or ignore entirely like a social feed"
                   width={1024}
                   height={512}
                   className="section-graphic-img"
@@ -118,8 +121,8 @@ export default function HomePage() {
                 />
               </picture>
               <figcaption className="sr-only">
-                Infographic: free forever workflow for local businesses and
-                service providers.
+                Infographic: free forever, no-obligation workflow for local
+                businesses and service providers.
               </figcaption>
             </figure>
             <ol className="steps">
@@ -127,7 +130,8 @@ export default function HomePage() {
                 <strong>Sign up at zero</strong>
                 <p>
                   No application fee, no monthly bill, no per-lead invoice. You
-                  show up as a local option when a Problem needs a real pro.
+                  show up as a local option when a Problem needs a real pro —
+                  still with no duty to answer anyone.
                 </p>
               </li>
               <li>
@@ -139,11 +143,12 @@ export default function HomePage() {
                 </p>
               </li>
               <li>
-                <strong>Open a Problem tip when it is real</strong>
+                <strong>Engage only if you want to</strong>
                 <p>
-                  Photos, facts, and Project investigation notes are already on
-                  the dossier timeline. Accept, decline, or bid — then the deal
-                  is between you and them.
+                  Photos, facts, and Project notes sit on the dossier. Accept,
+                  bid, ask a question — or ignore the request entirely. Same
+                  freedom as skipping a post in a social network. No score
+                  hit, no timeout threat, no invoice for silence.
                 </p>
               </li>
               <li>
@@ -444,9 +449,10 @@ export default function HomePage() {
               <article>
                 <h3>Businesses free forever</h3>
                 <p>
-                  Default promise: no shop invoice. Charging businesses later is
-                  Plan B only — dangerous to the pitch and not necessary if
-                  consumer fees cover infra.
+                  Default promise: no shop invoice and no obligation to answer.
+                  Ignore any request like a social feed. Charging businesses
+                  later is Plan B only — dangerous to the pitch if consumer
+                  fees already cover infra.
                 </p>
               </article>
               <article>

@@ -58,7 +58,7 @@ User can still:
 | **On-device gate** | Frame-time | Drop shake/blur/dupe; never upload junk | Free / local |
 | **Realtime capture coach** | Seconds | “Turn left,” “read the label,” “what have you tried?” — **ticket intake only** | Cheap / free pool; capped |
 | **Project investigation (primary)** | Minutes → hours (honest ETA) | Deep VL (HF/Spot), optional image gen, multi-step LLM, web tools, dossier compile, rare Bedrock escalate | **Batch / Spot / off-peak** — much cheaper than on-demand premium |
-| **Merchant / human update** | Async | Accept, decline, ask for more info, schedule | Businesses free; timeline still on ticket |
+| **Merchant / human update** | Async | Accept, decline, ask for more info, schedule — **or ignore entirely** (no SLA; social-feed freedom) | Businesses free + zero obligation; silence is valid; timeline still on ticket |
 
 **Do not** design the product around realtime “frontier investigation while the user stares at a spinner.” That path is optional premium later if ever; it is **not** the default.
 
@@ -161,7 +161,7 @@ UX promise: **one place** for investigative progress and handoff status—not a 
 |---|---|---|
 | On-demand frontier for every hard Q | Looks “smart” | Wasteful; redundant; fights free forever |
 | **Deferred batch Project + rare Bedrock** | Thorough ASAP; cache/KB dedupe | Spot + pennies per unique escalate |
-| Immediate merchant submit | No AI depth | Always allowed; businesses still $0 |
+| Immediate merchant submit | No AI depth | Always allowed; businesses still $0 and may ignore |
 
 Free-tier honesty: “We’re researching this; you’ll get updates when capacity runs” beats silent downgrade or surprise bills. Priority shortens the **queue**, it does not buy live Sonnet.
 
