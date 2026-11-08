@@ -1,8 +1,9 @@
 # Coding help & nearly-free websites (planned)
 
-**Status:** Knowledge base already answers “how do I set up a website?” with a two-step free-host path. **In-product coding / site-building assist** is a **coming-soon** MyProblem capability — phone or desktop.
+**Status:** Knowledge base already answers “how do I set up a website?” with a two-step free-host path. **In-product coding / site-building** and broader **batched agent work** (docs, spreadsheets, networking, heavy media jobs) are a **major coming-soon** capability — phone or desktop.
 
-Canonical KB article: [`../../myproblem-kb/general/web/set-up-website-nearly-free.md`](../../myproblem-kb/general/web/set-up-website-nearly-free.md).
+Canonical KB article: [`../../myproblem-kb/general/web/set-up-website-nearly-free.md`](../../myproblem-kb/general/web/set-up-website-nearly-free.md).  
+**Batch vs realtime IDE:** [`batched-agent-work.md`](./batched-agent-work.md) · LLC plan [`10-batched-agent-work.md`](../../relay/clevertree-llc-plan/10-batched-agent-work.md).
 
 ---
 
@@ -18,20 +19,25 @@ Always **re-check live free-tier limits** — we cite vendors; we do not cache t
 
 ---
 
-## What is coming soon (product)
+## What is coming soon (product) — major bet
+
+MyProblem will offer **batched automated agent work**, not a realtime Cursor/Codex clone:
 
 | Capability | Intent |
 |---|---|
-| Coding help on tickets | MyProblem helps people with **coding projects** from **phone or desktop** |
-| Site build loop | MyProblem can be the LLM that **builds, deploys, and maintains** the website end-to-end |
-| Same economics | Steer people to free-tier host + domain; Spot/MCP for burst work |
+| **Batched coding** | Pull repo → complete ask thoroughly → harden/test → deploy → update ticket → notify |
+| **Networking / infra help** | DNS park, TLS, simple Spot/MCP wiring — same batch discipline |
+| **Documents & office files** | Drafts, transforms, spreadsheets — expected LLM work, finished in batch |
+| **Heavy media pipelines** | Timeline/encode-style jobs: produce artifact, upload/commit, **purge scratch** |
+| Site build loop | MyProblem as the LLM that builds/maintains the website end-to-end on the free-host path |
+| Same economics | Free-tier host + domain; Spot only while the Project runs |
 
-Website copy should say **check back soon** for when we can build the site for you — without promising a ship date.
+Website copy should highlight this as a **major thing we are providing soon** — without promising a ship date. Prefer: *set clear instructions in motion; we finish completely when capacity allows; you get a notice when it is ready.*
 
 ---
 
 ## Why this is in scope for MyProblem
 
-Solving problems includes **digital** problems: “I need a real website” is as valid as “my sink is clogged.” Competitive search pushes expensive builders; our KB stores the **operational** free path. Coding assist makes MyProblem a place to **get the work done**, not only to read advice.
+Solving problems includes **digital** problems: “I need a real website” or “finish this coding task thoroughly overnight” is as valid as “my sink is clogged.” Competitive search pushes expensive builders and realtime IDE hype; our KB stores the **operational** free path, and Projects store the **thorough batch** path.
 
-Related: [`projects.md`](./projects.md) · [`spot-ai-mvp.md`](./spot-ai-mvp.md) · Relay plan `02-vision-product.md`.
+Related: [`projects.md`](./projects.md) · [`batched-agent-work.md`](./batched-agent-work.md) · [`spot-ai-mvp.md`](./spot-ai-mvp.md) · Relay plan `02-vision-product.md` · `10-batched-agent-work.md`.

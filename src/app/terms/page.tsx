@@ -162,8 +162,10 @@ export default function TermsPage() {
             General how-tos (for example, setting up a website on a free-tier
             host with an LLM maintaining it) may live in the knowledge base
             when they are useful for problem-solving.{" "}
-            <strong>In-product coding help</strong> and MyProblem itself
-            building/deploying sites for you are{" "}
+            <strong>Batched agent work</strong> (thorough automated coding,
+            networking help, documents, office files, and similar digital jobs
+            finished on a queue with notification — not a realtime IDE chat)
+            and MyProblem building/deploying sites for you are{" "}
             <strong>planned features</strong> — availability is not guaranteed
             until we ship them. Check the product site for “coming soon”
             status.

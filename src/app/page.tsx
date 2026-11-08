@@ -49,8 +49,10 @@ export default function HomePage() {
                 Free forever for local businesses. Capture the ticket, queue it
                 like JIRA, batch-investigate thoroughly — and grow a knowledge
                 base for solving problems (Georgia &amp; Israel), from clogged
-                sinks to nearly-free modern websites. Coding help coming soon.
-                No boosting. Bedrock only when we truly need it.
+                sinks to nearly-free modern websites.{" "}
+                <strong className="emph">Coming soon:</strong> batched coding
+                and digital work — not a realtime IDE chat; set instructions in
+                motion and get a notice when it is finished. No boosting.
               </p>
               <p className="powered-by">
                 Powered by{" "}
@@ -426,9 +428,11 @@ export default function HomePage() {
               Relay-native investigation service. Problems not chats. Projects
               for thorough deferred research. A shared knowledge base for
               problem-solving — including how to put a modern site online nearly
-              for free. Coding help and “build the website for you” on MyProblem
-              are coming soon. Local businesses free forever. Consumer economics
-              after free uses.
+              for free.{" "}
+              <strong className="emph">Major coming soon:</strong> batched
+              automated coding, networking, documents, and heavy digital jobs —
+              thorough finish when capacity allows, not a realtime Cursor-style
+              chat. Local businesses free forever.
             </p>
             <div className="plan-grid">
               <article>
@@ -458,12 +462,14 @@ export default function HomePage() {
                 </p>
               </article>
               <article>
-                <h3>Coding &amp; websites — coming soon</h3>
+                <h3>Batched coding &amp; digital work — coming soon</h3>
                 <p>
-                  MyProblem will help with coding projects from phone or
-                  desktop — and aim to be the LLM that builds, deploys, and
-                  maintains your site (database, SEO, and all) on a free host
-                  like Vercel, with the domain as the main yearly cost.{" "}
+                  Not a realtime Cursor/Codex clone. Leave proper instructions;
+                  a batch worker pulls the repo or files, completes the ask,
+                  hardens and tests, deploys when needed, and notifies you —
+                  including websites on a free host like Vercel (domain as the
+                  main yearly cost), docs, spreadsheets, networking setup, and
+                  heavy render-style pipelines that purge scratch afterward.{" "}
                   <strong className="emph">Check back soon.</strong>
                 </p>
               </article>

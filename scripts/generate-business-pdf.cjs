@@ -140,7 +140,7 @@ bullet(
 );
 bullet("Warmer handoffs — investigation notes on the tip when you engage.");
 bullet(
-  "Shared problem-solving knowledge (no ad boosting) — including how locals can stand up a modern site nearly for free; coding help on MyProblem coming soon.",
+  "Shared problem-solving knowledge (no ad boosting) — including nearly-free modern sites; major coming soon: batched coding/docs work (thorough finish + notify, not a realtime IDE chat).",
 );
 bullet("Legal stops — emergencies / licensed care redirect.");
 

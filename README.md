@@ -43,6 +43,7 @@ npm run dev
 | [`docs/backbone-escalate.md`](docs/backbone-escalate.md) | Rare Bedrock/frontier escalate in batch |
 | [`docs/knowledge-base.md`](docs/knowledge-base.md) | Git Markdown KB (primary learning) + channels + browser honesty |
 | [`docs/coding-and-websites.md`](docs/coding-and-websites.md) | Nearly-free sites (KB) + coding/site-build assist coming soon |
+| [`docs/batched-agent-work.md`](docs/batched-agent-work.md) | **Major coming soon:** batched coding/docs/media vs realtime Cursor/Codex |
 | [`docs/spot-ai-mvp.md`](docs/spot-ai-mvp.md) | Spot GPU test standup |
 | [`docs/context-for-server.md`](docs/context-for-server.md) | Client gate vs server SEND |
 | [`docs/infra-definition.md`](docs/infra-definition.md) | Free vs premium workload physics |
