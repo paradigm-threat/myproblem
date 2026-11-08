@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
+import { SiteHeader } from "@/components/SiteHeader";
 import { CONTACT_EMAIL, SITE_URL } from "@/lib/contact";
 
 export const metadata: Metadata = {
@@ -62,29 +62,7 @@ export default async function DemoPage() {
         Skip to main content
       </a>
 
-      <header className="site">
-        <div className="nav">
-          <a className="brand" href="/" aria-label="MyProblem home">
-            <Image
-              src="/icons/icon-64.png"
-              alt=""
-              width={36}
-              height={36}
-              className="brand-mark"
-              priority
-            />
-            <span>MyProblem</span>
-          </a>
-          <nav className="nav-links" aria-label="Site">
-            <a href="/">Home</a>
-            <a href="/demo" aria-current="page">
-              Demos
-            </a>
-            <a href="/test-mode">Web Test Mode</a>
-            <a href="/#signup">Signup</a>
-          </nav>
-        </div>
-      </header>
+      <SiteHeader variant="demo" />
 
       <main id="main" className="site demo-page">
         <p className="eyebrow">Early access · building in public</p>

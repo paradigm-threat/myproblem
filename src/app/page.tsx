@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { SignupForm } from "@/components/SignupForm";
+import { SiteHeader } from "@/components/SiteHeader";
 import {
   BUSINESS_PDF_PATH,
   CONTACT_EMAIL,
@@ -14,32 +15,7 @@ export default function HomePage() {
         Skip to main content
       </a>
 
-      <header className="site">
-        <div className="nav">
-          <a className="brand" href="/" aria-label="MyProblem home">
-            <Image
-              src="/icons/icon-64.png"
-              alt=""
-              width={36}
-              height={36}
-              className="brand-mark"
-              priority
-            />
-            <span>MyProblem</span>
-          </a>
-          <nav className="nav-links" aria-label="Page sections">
-            <a href="#businesses">For businesses</a>
-            <a href="#people">For people</a>
-            <a href="#projects">Projects</a>
-            <a href="#knowledge">Knowledge</a>
-            <a href="#investors">Investors</a>
-            <a href="#regions">Regions</a>
-            <a href="#signup">Signup</a>
-            <a href="/demo">Demos</a>
-            <a href="/test-mode">Test Mode</a>
-          </nav>
-        </div>
-      </header>
+      <SiteHeader variant="home" />
 
       <main id="main">
         <section className="hero" aria-labelledby="hero-heading">
