@@ -51,7 +51,9 @@ export default function HomePage() {
               height={341}
               className="hero-photo"
               priority
-              sizes="(max-width: 1600px) 100vw, 1600px"
+              quality={100}
+              unoptimized
+              sizes="1024px"
             />
           </div>
           <div className="hero-bar">

@@ -167,13 +167,14 @@ textarea:focus-visible,
 }
 
 .hero-photo {
-  /* Full art visible — no cover/max-height clip */
+  /* Native 1024×341 — never upscale (was stretching to 1600px and blur) */
   width: 100%;
-  max-width: 1600px;
+  max-width: 1024px;
   height: auto;
   display: block;
   object-fit: contain;
   object-position: center;
+  image-rendering: auto;
 }
 
 .hero-bar {
