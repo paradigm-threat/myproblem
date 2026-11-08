@@ -10,30 +10,29 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.core.content.ContextCompat
+import app.myproblem.testmode.ui.MyProblemApp
 
 class MainActivity : ComponentActivity() {
-    private val vm: TestModeViewModel by viewModels()
+    private val appVm: AppViewModel by viewModels()
+    private val testVm: TestModeViewModel by viewModels()
 
-    /** Start feed as soon as the user grants camera (no second tap). */
     private var startFeedAfterPermission = false
 
-    private val permissionLauncher =
+    private val cameraPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
-            vm.setPermissionNeeded(!granted)
+            testVm.setPermissionNeeded(!granted)
             if (!granted) {
                 startFeedAfterPermission = false
-                vm.setError("Camera permission required — choose While using the app")
+                testVm.setError("Camera permission required — choose While using the app")
                 toast("Camera permission needed")
                 Log.i(ContextBuilder.TAG, """{"event":"ui_tap","action":"permission","granted":false}""")
             } else {
-                vm.setError(null)
+                testVm.setError(null)
                 Log.i(ContextBuilder.TAG, """{"event":"ui_tap","action":"permission","granted":true}""")
                 if (startFeedAfterPermission) {
                     startFeedAfterPermission = false
-                    vm.setFeedOn(true)
+                    testVm.setFeedOn(true)
                     toast("Starting feed…")
                 }
             }
@@ -42,18 +41,13 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        ensureCameraPermission(requestIfMissing = true)
         setContent {
-            val state by vm.state.collectAsState()
-            TestModeScreen(
-                state = state,
-                onToggleFeed = { onToggleFeedClicked(state.feedOn) },
-                onToggleScenario = { vm.toggleScenario() },
-                onCycleDebugHint = { vm.cycleDebugHint() },
-                onReset = { vm.resetSession() },
-                analysisExecutor = vm.analysisExecutor,
-                imageAnalyzer = vm.imageAnalyzer,
-                feedOn = state.feedOn,
+            MyProblemApp(
+                appVm = appVm,
+                testVm = testVm,
+                analysisExecutor = testVm.analysisExecutor,
+                onEnsureCameraForTest = { ensureCameraPermission(requestIfMissing = true) },
+                onToggleTestFeed = { feedOn -> onToggleFeedClicked(feedOn) },
             )
         }
     }
@@ -62,19 +56,18 @@ class MainActivity : ComponentActivity() {
         if (feedOn) {
             Log.i(ContextBuilder.TAG, """{"event":"ui_tap","action":"stop_feed"}""")
             toast("Stopping feed…")
-            vm.setFeedOn(false)
+            testVm.setFeedOn(false)
             return
         }
         Log.i(ContextBuilder.TAG, """{"event":"ui_tap","action":"start_feed"}""")
         if (hasCameraPermission()) {
             toast("Starting feed…")
-            vm.setFeedOn(true)
+            testVm.setFeedOn(true)
         } else {
             startFeedAfterPermission = true
-            vm.setPermissionNeeded(true)
+            testVm.setPermissionNeeded(true)
             toast("Requesting camera…")
-            Log.i(ContextBuilder.TAG, """{"event":"ui_tap","action":"permission"}""")
-            permissionLauncher.launch(Manifest.permission.CAMERA)
+            cameraPermissionLauncher.launch(Manifest.permission.CAMERA)
         }
     }
 
@@ -84,11 +77,11 @@ class MainActivity : ComponentActivity() {
 
     private fun ensureCameraPermission(requestIfMissing: Boolean) {
         if (hasCameraPermission()) {
-            vm.setPermissionNeeded(false)
+            testVm.setPermissionNeeded(false)
         } else {
-            vm.setPermissionNeeded(true)
+            testVm.setPermissionNeeded(true)
             if (requestIfMissing) {
-                permissionLauncher.launch(Manifest.permission.CAMERA)
+                cameraPermissionLauncher.launch(Manifest.permission.CAMERA)
             }
         }
     }
