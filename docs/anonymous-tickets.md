@@ -8,7 +8,23 @@ Related: [`projects.md`](./projects.md) · [`apk-ticket-ux.md`](./apk-ticket-ux.
 
 ## One-sentence rule
 
-> **Anon = device + local backup; attach a free recover email or register if you don’t want a lost phone to lose your tickets. Dossier lives on a Relay tip; audio/stills live in a cheap object store.**
+> **Anon = device + local backup; attach a free recover email or register if you don’t want a lost phone to lose your tickets. Network tickets are PII-scrubbed; raw personal identifiers stay on the client (or move only via secure DM on request).**
+
+---
+
+## PII — client-held, automatic conversion
+
+**Product policy (public copy on myproblem.app /terms §7):**
+
+| Layer | Holds |
+|---|---|
+| **Client device** (APK / browser / local backup) | Raw PII the user spoke or typed (street address, phone, etc.) when not needed on the mesh |
+| **Network ticket / Relay tip / shared cache** | **Converted safe context only** — city, coarse location band, problem facts without exact personal identifiers |
+| **Secure 2-way DM** | Exact PII **only on request** when a service provider needs it and the user releases it — not published onto the dossier timeline |
+
+When the LLM packages a ticket it **must** protect the creator: auto-convert personal detail that is not required for shared context (e.g. full address → city / safe radius). If it is personal, unused for ticket context, and not requested by a provider, it **never enters the network** (no server durable store / mesh cache of that PII).
+
+Audio/stills Evidence used for investigation should follow the same spirit: prefer on-device hold of raw identifying media; network Evidence is for problem-solving content. Exact retention of blobs is an implementation workstream — do not regress the public promise that PII is not treated as shared-dossier material.
 
 ---
 
@@ -94,4 +110,5 @@ See [`progressive-transcription.md`](./progressive-transcription.md) · [`contex
 - Tickets start anonymous.  
 - Lose phone without recover email or register → tickets can be gone — we say so up front.  
 - Recover email or register is **free** and enough that losing the phone alone should not lose tickets.  
-- Investigation files live on Relay; recordings live in cheap object storage.
+- **PII stays on your device**; network tickets get automatic safe conversion; exact personal detail only via secure DM on request.  
+- Investigation dossiers on Relay are **not** the place for raw street addresses / phone numbers.

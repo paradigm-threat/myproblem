@@ -164,9 +164,11 @@ export default function HomePage() {
             <p className="section-lead">
               Get thorough help — anonymously or with an account. Core AI help
               is <strong className="emph">free, private, and forever</strong>.
-              Live sessions only capture your ticket; deep investigation runs as
-              a Project when capacity allows — so the AI never has to cut
-              corners for speed.
+              Personal identifiers stay on{" "}
+              <strong className="emph">your device</strong> by default; the
+              network ticket is auto-scrubbed to safe context. Deep
+              investigation runs as a Project when capacity allows — thorough,
+              not rushed.
             </p>
             <figure className="section-graphic">
               <picture>
@@ -222,27 +224,36 @@ export default function HomePage() {
               <h3 id="people-promise-heading">What to expect on cost &amp; privacy</h3>
               <ul aria-labelledby="people-promise-heading">
                 <li>
+                  <strong>PII stays on your device</strong> — phones, browsers,
+                  and local backups. Exact addresses, phone numbers, and other
+                  personal identifiers are{" "}
+                  <strong className="emph">not</strong> stored or cached on our
+                  servers or the shared ticket network unless a service provider
+                  has a real need and you release them.
+                </li>
+                <li>
+                  <strong>Automatic PII conversion</strong> — when the AI packs
+                  a ticket, spoken or typed personal detail becomes safe
+                  context (e.g. city or a coarse location band) so helpers can
+                  work without your street address living on the mesh.
+                </li>
+                <li>
+                  <strong>Only on request, via secure DM</strong> — if a pro
+                  needs something personal, it moves in a two-way secure direct
+                  channel — not into the public ticket dossier or network cache.
+                </li>
+                <li>
                   <strong>Free forever</strong> for core private / anonymous AI
                   help — no login required for the basics.
                 </li>
                 <li>
                   <strong>Thorough over instant</strong> — deferred Projects
-                  wait for capacity so investigations stay complete, not
-                  truncated for a spinner.
+                  wait for capacity so investigations stay complete.
                 </li>
                 <li>
-                  <strong>Account only when you need it</strong> — high-load
-                  features like real-time video feed.
-                </li>
-                <li>
-                  <strong>First few ticket / Project uses free</strong> (exact
-                  count TBD).
-                </li>
-                <li>
-                  <strong>After that, a small usage fee</strong> — only to keep
-                  hardware and software running. We will not take salaries from
-                  those fees. Priority shortens the queue; it does not buy a
-                  weaker free-tier answer.
+                  <strong>Small usage fee after free tickets</strong> — only to
+                  keep hardware running; no salaries from those fees. Priority
+                  shortens the queue, not the answer quality.
                 </li>
               </ul>
             </div>
@@ -358,12 +369,12 @@ export default function HomePage() {
               </article>
               <article className="project-flow-card" role="listitem">
                 <p className="project-flow-label">Privacy</p>
-                <h3>Anonymous unless you project</h3>
+                <h3>PII off the network</h3>
                 <p>
-                  Default is private. You may opt in to publish coarse location
-                  or any channel id — Wi-Fi locality, Bluetooth dongle, house
-                  alias — never passwords or pairing secrets — without your
-                  phone number or full address.
+                  Default is private and client-held. Ticket packaging converts
+                  personal detail to safe locality (city / coarse band). Phone
+                  numbers and full addresses stay out of the KB and mesh —
+                  available only on request through secure direct messaging.
                 </p>
               </article>
               <article className="project-flow-card" role="listitem">
@@ -647,10 +658,10 @@ export default function HomePage() {
           <span aria-hidden="true"> · </span>
           <a href="/sitemap.xml">Sitemap</a>
         </nav>
-        <p style={{ margin: 0, maxWidth: "40rem", lineHeight: 1.5 }}>
-          Coming soon. Operated by Clevertree LLC (Georgia). MyProblem helps
-          people investigate everyday Problems and connect with local businesses
-          when needed — see{" "}
+          <p style={{ margin: 0, maxWidth: "40rem", lineHeight: 1.5 }}>
+          Coming soon. Operated by Clevertree LLC (Georgia). PII stays on your
+          device by default; network tickets use automatic safe conversion —
+          see{" "}
           <a href="/terms">Terms &amp; Disclaimers</a>. Preferred business
           pricing: free forever. Built on{" "}
           <a href={RELAY_URL} rel="noopener noreferrer" target="_blank">

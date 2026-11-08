@@ -15,7 +15,8 @@ export const metadata: Metadata = {
   },
 };
 
-const EFFECTIVE = "November 8, 2026 (network / investor intent clarified)";
+const EFFECTIVE =
+  "November 8, 2026 (PII client-held + automatic conversion clarified)";
 
 export default function TermsPage() {
   return (
@@ -153,8 +154,46 @@ export default function TermsPage() {
           </p>
         </section>
 
+        <section className="legal-section" aria-labelledby="pii-heading">
+          <h2 id="pii-heading">7. Personal information (PII) policy</h2>
+          <p>
+            <strong>Intent:</strong> protect the ticket creator. Personal
+            identifiers (exact street addresses, phone numbers, and similar PII
+            not required for shared ticket context) are meant to stay on{" "}
+            <strong>your client devices</strong> — phones, browsers, and local
+            backups — <strong>not</strong> on Clevertree / MyProblem servers or
+            the shared Relay ticket network as durable, cacheable dossier
+            fields.
+          </p>
+          <p>
+            When the AI packages a ticket for the network, it should perform{" "}
+            <strong>automatic PII conversion</strong>: e.g. turn a spoken street
+            address into a city or coarse safe location band so investigation
+            can proceed without putting your precise personal location on the
+            mesh. If a detail is personal, not needed for ticket context, and
+            not requested by a service provider, it should stay{" "}
+            <strong>out of the network entirely</strong> — not stored or cached
+            as PII on shared infrastructure.
+          </p>
+          <p>
+            When a provider has a legitimate need and you choose to share,
+            personal detail should move through a{" "}
+            <strong>two-way secure direct messaging</strong> channel between you
+            and that party — not by publishing it onto the shared ticket
+            timeline or knowledge base. “Only available on request” means you
+            (or an explicit request/release flow) control release; we do not
+            treat the public dossier as the place for raw PII.
+          </p>
+          <p>
+            This is our product policy and design target. No system is perfect:
+            do not put secrets in tickets you would not want mishandled, and
+            contact us if you believe PII was retained incorrectly. See also the{" "}
+            <a href="/#people">For people</a> privacy bullets on the home page.
+          </p>
+        </section>
+
         <section className="legal-section" aria-labelledby="biz-heading">
-          <h2 id="biz-heading">7. Businesses and service providers</h2>
+          <h2 id="biz-heading">8. Businesses and service providers</h2>
           <p>
             Preferred stance: local businesses join at{" "}
             <strong>$0</strong> with <strong>zero obligation</strong> to
@@ -170,7 +209,7 @@ export default function TermsPage() {
         </section>
 
         <section className="legal-section" aria-labelledby="use-heading">
-          <h2 id="use-heading">8. Acceptable use</h2>
+          <h2 id="use-heading">9. Acceptable use</h2>
           <p>You agree not to:</p>
           <ul>
             <li>Use MyProblem to facilitate illegal activity</li>
@@ -191,7 +230,7 @@ export default function TermsPage() {
         </section>
 
         <section className="legal-section" aria-labelledby="warranty-heading">
-          <h2 id="warranty-heading">9. No warranties; limitation of liability</h2>
+          <h2 id="warranty-heading">10. No warranties; limitation of liability</h2>
           <p>
             The service is provided <strong>“as is”</strong> and{" "}
             <strong>“as available”</strong>, especially while we are in pilot /
@@ -216,7 +255,7 @@ export default function TermsPage() {
 
         <section className="legal-section" aria-labelledby="network-heading">
           <h2 id="network-heading">
-            10. World network intent (investors and hardware)
+            11. World network intent (investors and hardware)
           </h2>
           <p>
             MyProblem is built to participate in a{" "}
@@ -263,7 +302,7 @@ export default function TermsPage() {
         </section>
 
         <section className="legal-section" aria-labelledby="changes-heading">
-          <h2 id="changes-heading">11. Changes and contact</h2>
+          <h2 id="changes-heading">12. Changes and contact</h2>
           <p>
             We may update these terms as the product evolves. The effective date
             above will change when we do. Continued use after an update means

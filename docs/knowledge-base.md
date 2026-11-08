@@ -29,7 +29,8 @@ After (and during) Projects, the investigation worker may:
 
 1. **Create** a public KB document (how-to, FAQ, local service note, rumor log with attribution).  
 2. **Maintain** it — merge new tickets’ *public* lessons; bump confidence; retire stale claims.  
-3. **Redact** — never copy private photos, phone numbers, exact personal addresses, account secrets, or identifiable minors into the public KB.  
+3. **Redact / convert** — never copy private photos, phone numbers, exact personal addresses, account secrets, or identifiable minors into the public KB or shared ticket network. Prefer **automatic PII conversion** (city / coarse band) at ticket pack time; raw PII stays client-side or secure DM-on-request ([`anonymous-tickets.md`](./anonymous-tickets.md)).  
+
 4. **Cite** — advice and rumors require a **source tier** (see below).
 
 Private ticket timeline remains the source of truth for the person and any merchants on that tip. The KB is the **shared layer**.
