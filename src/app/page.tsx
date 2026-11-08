@@ -114,7 +114,7 @@ export default function HomePage() {
                 <source
                   media="(max-width: 767px)"
                   srcSet="/businesses-portrait.jpg"
-                  width={768}
+                  width={576}
                   height={1024}
                 />
                 <img

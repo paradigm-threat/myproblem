@@ -353,6 +353,7 @@ section h2 {
 
 .section-graphic-img {
   width: 100%;
+  max-width: 1024px;
   height: auto;
   display: block;
 }
@@ -360,8 +361,12 @@ section h2 {
 /* Fallback if a browser ignores <picture> art-direction */
 @media (max-width: 767px) {
   .section-graphic:has(picture) {
-    max-width: 28rem;
+    max-width: 576px;
     margin-inline: auto 0;
+  }
+
+  .section-graphic-img {
+    max-width: 576px;
   }
 }
 
