@@ -191,7 +191,7 @@ doc
   .fontSize(7)
   .fillColor("#6a7a72")
   .text(
-    "Coming soon. Clevertree LLC · myproblem.app/terms. Not medical, veterinary, or legal advice. Free forever for shops. PII client-held + auto-convert.",
+    "Coming soon. Clevertree LLC · myproblem.app/privacy · /terms. Not medical, veterinary, or legal advice. Free forever for shops. PII client-held + auto-convert.",
     { lineGap: 1.1 },
   );
 

@@ -17,6 +17,7 @@ const HOME_LINKS: NavItem[] = [
   { href: "/demo", label: "Demos" },
   { href: "/test-mode", label: "Test Mode" },
   { href: "/terms", label: "Terms" },
+  { href: "/privacy", label: "Privacy" },
 ];
 
 const DEMO_LINKS: NavItem[] = [
@@ -25,6 +26,7 @@ const DEMO_LINKS: NavItem[] = [
   { href: "/test-mode", label: "Web Test Mode" },
   { href: "/#signup", label: "Signup" },
   { href: "/terms", label: "Terms" },
+  { href: "/privacy", label: "Privacy" },
 ];
 
 type Props = {

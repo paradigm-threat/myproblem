@@ -41,9 +41,11 @@ export default function TermsPage() {
           <p>
             These terms cover use of <strong>MyProblem</strong> at{" "}
             <a href={SITE_URL}>{SITE_URL.replace("https://", "")}</a>, operated
-            by <strong>Clevertree LLC</strong> (Georgia), which is being formed
-            or restarted in Georgia. MyProblem is the product brand; Clevertree
-            LLC is the contracting party.
+            by <strong>Clevertree LLC</strong> (Georgia). Articles of
+            Organization were filed with the Georgia Secretary of State on
+            November 8, 2026 and are pending acceptance and a Certificate of
+            Organization. MyProblem is the product brand; Clevertree LLC is the
+            contracting party.
           </p>
           <p>
             Contact:{" "}
@@ -232,7 +234,8 @@ export default function TermsPage() {
           <p>
             This is our product policy and design target. No system is perfect:
             do not put secrets in tickets you would not want mishandled, and
-            contact us if you believe PII was retained incorrectly. See also the{" "}
+            contact us if you believe PII was retained incorrectly. See the{" "}
+            <a href="/privacy">Privacy</a> page and the{" "}
             <a href="/#people">For people</a> privacy bullets on the home page.
           </p>
         </section>

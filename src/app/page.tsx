@@ -515,7 +515,8 @@ export default function HomePage() {
               <strong className="emph">intent only</strong>; it is not an offer
               or a signed deal. Early adopters may later need a separate
               contract. See also{" "}
-              <a href="/terms">Terms &amp; Disclaimers</a>.
+              <a href="/privacy">Privacy</a> and{" "}
+              <a href="/terms">Terms</a>.
             </p>
             <figure className="section-graphic">
               <picture>
@@ -685,14 +686,17 @@ export default function HomePage() {
           <span aria-hidden="true"> · </span>
           <a href="/terms">Terms</a>
           <span aria-hidden="true"> · </span>
+          <a href="/privacy">Privacy</a>
+          <span aria-hidden="true"> · </span>
           <a href="/sitemap.xml">Sitemap</a>
         </nav>
-          <p style={{ margin: 0, maxWidth: "40rem", lineHeight: 1.5 }}>
+        <p style={{ margin: 0, maxWidth: "40rem", lineHeight: 1.5 }}>
           Coming soon. Operated by Clevertree LLC (Georgia). PII stays on your
           device by default; network tickets use automatic safe conversion —
           see{" "}
-          <a href="/terms">Terms &amp; Disclaimers</a>. Preferred business
-          pricing: free forever. Built on{" "}
+          <a href="/privacy">Privacy</a> and{" "}
+          <a href="/terms">Terms</a>. Preferred business pricing: free forever.
+          Built on{" "}
           <a href={RELAY_URL} rel="noopener noreferrer" target="_blank">
             Relay
           </a>
