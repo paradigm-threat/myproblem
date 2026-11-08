@@ -51,9 +51,13 @@ object TicketsApi {
         val code = conn.responseCode
         if (code !in 200..299) error("createTicket HTTP $code: $body")
         val json = JSONObject(body)
+        val tipClaim =
+            json.optJSONObject("tip")?.optString("claim", "")?.takeIf { it.isNotBlank() }
         return CreateResult(
             ticketUuid = json.getString("ticket_uuid"),
-            claim = json.optString("claim", "").takeIf { it.isNotBlank() },
+            claim =
+                json.optString("claim", "").takeIf { it.isNotBlank() }
+                    ?: tipClaim,
             region = json.optString("region", region),
         )
     }
