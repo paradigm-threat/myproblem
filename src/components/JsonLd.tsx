@@ -1,4 +1,4 @@
-import { CONTACT_EMAIL, SITE_URL } from "@/lib/contact";
+import { CONTACT_EMAIL, RELAY_URL, SITE_URL } from "@/lib/contact";
 
 export function JsonLd() {
   const data = {
@@ -14,9 +14,10 @@ export function JsonLd() {
         sameAs: [
           "https://github.com/paradigm-threat/myproblem",
           "https://gitlab.com/clevertree/myproblem",
+          RELAY_URL,
         ],
         description:
-          "AI investigation service for Problems — free forever for local businesses; deferred Projects; Georgia- and Israel-scoped shared knowledge base; free core help for people.",
+          "AI investigation service for Problems — free forever for local businesses; deferred Projects; Georgia- and Israel-scoped shared knowledge base; free core help for people. Powered by Relay.",
       },
       {
         "@type": "WebSite",

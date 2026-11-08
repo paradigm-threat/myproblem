@@ -3,6 +3,7 @@ import { SignupForm } from "@/components/SignupForm";
 import {
   BUSINESS_PDF_PATH,
   CONTACT_EMAIL,
+  RELAY_URL,
   SITE_URL,
 } from "@/lib/contact";
 
@@ -45,7 +46,7 @@ export default function HomePage() {
           <div className="hero-media">
             <Image
               src="/hero.jpg"
-              alt="MyProblem — turn any problem into a solution with AI support and local experts"
+              alt="MyProblem — turn any problem into a solution, powered by Relay networking, automation, and intelligence"
               width={1024}
               height={341}
               className="hero-photo"
@@ -63,6 +64,13 @@ export default function HomePage() {
                 Free forever for local businesses. Capture the ticket, queue it
                 like JIRA, batch-investigate thoroughly — Bedrock only when we
                 truly need it. Local knowledge for Georgia and Israel.
+              </p>
+              <p className="powered-by">
+                Powered by{" "}
+                <a href={RELAY_URL} rel="noopener noreferrer" target="_blank">
+                  Relay
+                </a>{" "}
+                — mesh networking, automation, and intelligence.
               </p>
               <div className="cta-row">
                 <a className="btn-primary" href="#signup">
@@ -612,6 +620,10 @@ export default function HomePage() {
             Business PDF
           </a>
           <span aria-hidden="true"> · </span>
+          <a href={RELAY_URL} rel="noopener noreferrer" target="_blank">
+            Powered by Relay
+          </a>
+          <span aria-hidden="true"> · </span>
           <a href={SITE_URL}>{SITE_URL.replace("https://", "")}</a>
           <span aria-hidden="true"> · </span>
           <a href="/sitemap.xml">Sitemap</a>
@@ -619,7 +631,11 @@ export default function HomePage() {
         <p style={{ margin: 0, maxWidth: "40rem", lineHeight: 1.5 }}>
           Coming soon. Not medical, veterinary, or legal advice. MyProblem
           helps people investigate Problems and connect with local businesses
-          when needed. Preferred business pricing: free forever.
+          when needed. Preferred business pricing: free forever. Built on{" "}
+          <a href={RELAY_URL} rel="noopener noreferrer" target="_blank">
+            Relay
+          </a>
+          .
         </p>
       </footer>
     </>

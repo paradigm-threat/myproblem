@@ -225,6 +225,21 @@ textarea:focus-visible,
   animation: rise 1s 0.12s ease both;
 }
 
+.powered-by {
+  margin: 0.35rem 0 0;
+  font-size: 0.92rem;
+  line-height: 1.45;
+  color: var(--muted);
+  max-width: 38rem;
+  animation: rise 1s 0.15s ease both;
+}
+
+.powered-by a {
+  color: var(--ink);
+  font-weight: 600;
+  text-underline-offset: 0.15em;
+}
+
 .cta-row {
   display: flex;
   flex-wrap: wrap;
