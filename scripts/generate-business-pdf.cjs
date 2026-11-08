@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
  * Build-time business one-pager for myproblem.app
- * Requires ticket icons + landscape businesses graphic.
+ * Uses landscape businesses.jpg (1024×512) — portrait is too tall for 1 page.
  */
 const PDFDocument = require("pdfkit");
 const fs = require("node:fs");
@@ -21,7 +21,7 @@ const headerLogo = fs.existsSync(logoPath) ? logoPath : logoFallbackPath;
 for (const [label, p] of [
   ["ticket icon", headerLogo],
   ["small ticket icon", logoSmallPath],
-  ["businesses wide graphic", businessesWidePath],
+  ["businesses landscape graphic", businessesWidePath],
 ]) {
   if (!fs.existsSync(p)) {
     console.error(`Missing required asset (${label}): ${p}`);
@@ -33,11 +33,12 @@ fs.mkdirSync(path.dirname(outPath), { recursive: true });
 
 const doc = new PDFDocument({
   size: "LETTER",
-  margins: { top: 32, bottom: 32, left: 44, right: 44 },
+  margins: { top: 28, bottom: 28, left: 42, right: 42 },
+  bufferPages: true,
   info: {
-    Title: "MyProblem for Local Businesses",
+    Title: "MyProblem.app for Local Businesses",
     Author: "MyProblem",
-    Subject: "Zero-cost AI front door for local shops",
+    Subject: "Free forever, zero obligation AI front door for local shops",
   },
 });
 
@@ -52,144 +53,157 @@ const contentWidth =
 const left = doc.page.margins.left;
 
 function h2(text) {
-  doc.moveDown(0.28);
+  doc.moveDown(0.22);
   doc
     .font("Helvetica-Bold")
-    .fontSize(10)
+    .fontSize(9.5)
     .fillColor(accent)
-    .text(text.toUpperCase(), { characterSpacing: 0.6 });
-  doc.moveDown(0.15);
+    .text(text.toUpperCase(), { characterSpacing: 0.55 });
+  doc.moveDown(0.12);
 }
 
 function body(text) {
-  doc.font("Helvetica").fontSize(9.5).fillColor(muted).text(text, { lineGap: 1.6 });
-  doc.moveDown(0.22);
+  doc
+    .font("Helvetica")
+    .fontSize(9)
+    .fillColor(muted)
+    .text(text, { lineGap: 1.35 });
+  doc.moveDown(0.16);
 }
 
 function bullet(text) {
-  doc.font("Helvetica").fontSize(9.5).fillColor(muted).text(`•  ${text}`, {
+  doc.font("Helvetica").fontSize(9).fillColor(muted).text(`•  ${text}`, {
     indent: 4,
-    lineGap: 1.4,
+    lineGap: 1.2,
   });
 }
 
-// —— Header: ticket icon + wordmark ——
-const logoSize = 44;
+// —— Header ——
+const logoSize = 40;
 doc.image(headerLogo, left, doc.page.margins.top, {
   width: logoSize,
   height: logoSize,
 });
 doc
   .font("Helvetica-Bold")
-  .fontSize(18)
+  .fontSize(17)
   .fillColor(ink)
-  .text("MyProblem", left + logoSize + 12, doc.page.margins.top + 2);
+  .text("MyProblem.app", left + logoSize + 10, doc.page.margins.top + 2);
 doc
   .font("Helvetica")
-  .fontSize(9.5)
+  .fontSize(9)
   .fillColor(accent)
   .text(
-    "myproblem.app  ·  Free forever for local businesses",
-    left + logoSize + 12,
-    doc.page.margins.top + 24,
+    "Free forever · Zero obligation · Powered by Relay",
+    left + logoSize + 10,
+    doc.page.margins.top + 22,
   );
-doc.y = doc.page.margins.top + logoSize + 8;
+doc.y = doc.page.margins.top + logoSize + 6;
 
 doc
   .font("Helvetica-Bold")
-  .fontSize(14)
+  .fontSize(12.5)
   .fillColor(ink)
-  .text("Free forever front door for local businesses");
-doc.moveDown(0.15);
+  .text("Free forever front door — ignore anytime");
+doc.moveDown(0.1);
 body(
-  "MyProblem absorbs “should I call?” before it hits your phone. Smart capture fills the ticket; a JIRA-like queue batch-investigates ASAP and thoroughly — Bedrock only for rare hard cases. Public lessons feed a Georgia- and Israel-only knowledge base. Ready customers arrive with a real dossier—not a cold call.",
+  "MyProblem absorbs “should I call?” before it hits your phone. Capture fills the ticket; deferred Projects investigate thoroughly. Incoming work is a social-style feed: open a fit, or ignore entirely — no SLA, no invoice for silence. Georgia & Israel pilots.",
 );
 
-// —— Landscape businesses graphic (required) ——
-const imgH = contentWidth * (512 / 1024) * 0.92;
+// —— Landscape workflow graphic (ignore-entirely art) ——
+const imgH = contentWidth * (512 / 1024);
 doc.image(businessesWidePath, left, doc.y, {
   width: contentWidth,
   height: imgH,
 });
-doc.y += imgH + 4;
+doc.y += imgH + 3;
 doc
   .font("Helvetica")
-  .fontSize(7.5)
+  .fontSize(7)
   .fillColor("#6a7a72")
   .text(
-    "Business workflow: receive requests → review AI dossier → accept, ask, or ignore entirely (no obligation) → manage work you choose. Ticket icon = MyProblem brand.",
+    "Receive → review AI dossier → accept, ask, or ignore entirely (no obligation) → manage only what you accept.",
     { align: "left" },
   );
-  doc.moveDown(0.25);
+doc.moveDown(0.18);
 
 h2("What you get");
-bullet("$0 to join. No application fee, no monthly bill, no per-lead invoice.");
+bullet("$0 to join — no application fee, monthly bill, or per-lead invoice.");
 bullet(
-  "Zero obligation — ignore any request entirely (like a social feed). No SLA, no must-respond, no penalty for silence.",
+  "Zero obligation — ignore any request like a social post. Silence is fine.",
 );
-bullet("Lighter front desk — routine triage and redirects never reach the secretary.");
-bullet("Warmer handoffs — Project notes on the tip; local KB stays place-tied.");
-bullet(
-  "Legal stops baked in — emergencies and licensed care redirect; we do not practice medicine or vet medicine.",
-);
+bullet("Lighter front desk — AI triage so routine loops never reach the secretary.");
+bullet("Warmer handoffs — dossier on the tip when you do engage.");
+bullet("Legal stops baked in — emergencies / licensed care redirect.");
 
-h2("How it works for your shop");
+h2("How it works");
 [
-  "Sign up at $0. You appear as a local option — still with no duty to answer anyone.",
-  "AI handles unsure callers first — capture now, Project research when capacity allows.",
-  "When it is real, you open a Problem tip with the dossier already done.",
-  "Accept, bid, ask — or ignore entirely. Silence costs nothing. After handshake, the deal is between you and them.",
+  "Sign up at $0 — still no duty to answer anyone.",
+  "AI handles unsure callers first (capture now, Project when capacity allows).",
+  "When real, open the tip with photos + investigation notes already done.",
+  "Accept, bid, ask — or ignore entirely. After handshake, the deal is yours.",
 ].forEach((s, i) => {
   const rowY = doc.y;
-  doc.image(logoSmallPath, left, rowY, { width: 14, height: 14 });
+  doc.image(logoSmallPath, left, rowY, { width: 12, height: 12 });
   doc
     .font("Helvetica-Bold")
-    .fontSize(9.5)
+    .fontSize(9)
     .fillColor(ink)
-    .text(`${i + 1}. `, left + 20, rowY, { continued: true });
+    .text(`${i + 1}. `, left + 18, rowY, { continued: true });
   doc
     .font("Helvetica")
     .fillColor(muted)
-    .text(s, { lineGap: 1.2, width: contentWidth - 20 });
-  doc.moveDown(0.18);
+    .text(s, { lineGap: 1.05, width: contentWidth - 18 });
+  doc.moveDown(0.12);
 });
 
-h2("Who pays (hint: not you)");
+h2("Who pays (not you)");
 body(
-  "Businesses stay free forever with zero response obligation. Infra is funded by consumer free uses on elastic compute, then optional consumer priority fees—and optionally a small payment-rail fee if checkout is hosted. We do not invoice shops or punish silence.",
+  "Shops stay free forever with zero response obligation. Infra is funded by consumer free uses, then optional consumer priority fees. We do not invoice shops or punish silence.",
 );
 
 h2("Pilots");
-body("Georgia (USA) and Israel — product and knowledge base scoped there. Want your region? Email us.");
+body(
+  "Georgia (USA) and Israel. Want your region? Email us.",
+);
 
-doc.moveDown(0.1);
 const cy = doc.y;
-doc.image(logoSmallPath, left, cy, { width: 18, height: 18 });
-doc.font("Helvetica-Bold").fontSize(10).fillColor(ink).text("Contact", left + 26, cy);
-doc.font("Helvetica").fontSize(9.5).fillColor(accent).text(CONTACT, left + 26, cy + 11);
-doc.fillColor(muted).text(SITE, left + 26, cy + 22);
-doc.y = cy + 36;
+doc.image(logoSmallPath, left, cy, { width: 16, height: 16 });
+doc.font("Helvetica-Bold").fontSize(9.5).fillColor(ink).text("Contact", left + 22, cy);
+doc
+  .font("Helvetica")
+  .fontSize(9)
+  .fillColor(accent)
+  .text(CONTACT, left + 22, cy + 11);
+doc.fillColor(muted).text(SITE, left + 22, cy + 22);
+doc.y = cy + 34;
 
 doc
   .font("Helvetica")
-  .fontSize(7.5)
+  .fontSize(7)
   .fillColor("#6a7a72")
   .text(
-    "Coming soon. Not medical, veterinary, or legal advice. MyProblem helps people investigate Problems and connect with local businesses when needed.",
-    { lineGap: 1.2 },
+    "Coming soon. Not medical, veterinary, or legal advice. Preferred business pricing: free forever.",
+    { lineGap: 1.1 },
   );
 
-if (doc.bufferedPageRange().count > 1) {
-  console.warn(
-    `Warning: PDF spilled to ${doc.bufferedPageRange().count} pages; tighten copy/spacing.`,
+const pages = doc.bufferedPageRange().count;
+if (pages > 1) {
+  console.error(
+    `ERROR: PDF spilled to ${pages} pages — must stay 1 page. Tighten copy/spacing.`,
   );
+  doc.end();
+  stream.on("finish", () => process.exit(1));
+  return;
 }
 
 doc.end();
 
 stream.on("finish", () => {
-  console.log(`Wrote ${outPath}`);
-  console.log(`Assets: ${path.basename(headerLogo)}, ${path.basename(logoSmallPath)}, ${path.basename(businessesWidePath)}`);
+  console.log(`Wrote ${outPath} (${pages} page)`);
+  console.log(
+    `Assets: ${path.basename(headerLogo)}, ${path.basename(logoSmallPath)}, ${path.basename(businessesWidePath)}`,
+  );
 });
 stream.on("error", (err) => {
   console.error(err);
