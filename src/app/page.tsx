@@ -64,10 +64,11 @@ export default function HomePage() {
                 <a
                   className="btn-secondary"
                   href={BUSINESS_PDF_PATH}
-                  download
-                  aria-label="Download business one-pager PDF"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="Open business one-pager PDF in a new tab"
                 >
-                  Download business one-pager (PDF)
+                  Business one-pager (PDF)
                 </a>
               </div>
             </div>
@@ -149,10 +150,11 @@ export default function HomePage() {
               <a
                 className="btn-secondary"
                 href={BUSINESS_PDF_PATH}
-                download
-                aria-label="Download printable PDF for your partners"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Open business one-pager PDF in a new tab"
               >
-                Printable PDF for your partners
+                Business one-pager (PDF)
               </a>
             </p>
           </section>
@@ -608,8 +610,9 @@ export default function HomePage() {
           <span aria-hidden="true"> · </span>
           <a
             href={BUSINESS_PDF_PATH}
-            download
-            aria-label="Download business one-pager PDF"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Open business one-pager PDF in a new tab"
           >
             Business PDF
           </a>
