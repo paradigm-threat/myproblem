@@ -1,0 +1,26 @@
+{
+  "id": "pet_ate_chocolate_ramble",
+  "difficulty": "medium",
+  "style": "panic",
+  "status": "generated",
+  "audio": "generated/medium/pet_ate_chocolate_ramble.wav",
+  "noise": "room_tone",
+  "snr_db": 15,
+  "expect": {
+    "title_must_include": [
+      "dog"
+    ],
+    "description_must_include_any": [
+      "chocolate",
+      "vet",
+      "vomit",
+      "ounces"
+    ],
+    "intake_targets": [
+      "advice_ready",
+      "named_and_questions"
+    ],
+    "eval_surface": "apk_or_server"
+  },
+  "script": "My dog ate dark chocolate. Maybe two ounces of seventy percent. He is thirty pounds. Happened twenty minutes ago. He seems fine so far. Do I induce vomiting or go to emergency vet?"
+}

@@ -7,10 +7,11 @@ package app.myproblem.testmode.tickets
 object IntakeHeuristics {
     fun decide(ticket: LocalTicket): IntakeDecision {
         val titleOk =
-            ticket.title.isNotBlank() &&
-                !ticket.title.equals("New problem", ignoreCase = true) &&
-                ticket.title.length >= 3
-        val descOk = ticket.description.isNotBlank() && ticket.description.length >= 8
+            ticket.displayTitle().isNotBlank() &&
+                !ticket.displayTitle().equals("New problem", ignoreCase = true) &&
+                !ticket.displayTitle().equals("Listening…", ignoreCase = true) &&
+                ticket.displayTitle().length >= 3
+        val descOk = ticket.displayDescription().isNotBlank() && ticket.displayDescription().length >= 8
         val stillsOk = ticket.stillCount > 0
         val audioOk = ticket.hasAudio
 
@@ -31,7 +32,7 @@ object IntakeHeuristics {
             stillsOk && (titleOk || descOk || audioOk) ->
                 IntakeDecision(
                     intake = IntakeStatus.ADVICE_READY,
-                    title = if (titleOk) ticket.title else "Photo problem",
+                    title = if (titleOk) ticket.displayTitle() else "Photo problem",
                     summary = "Enough to suggest first steps. Deeper investigation can still be queued.",
                     questions = emptyList(),
                     advice =
@@ -42,7 +43,7 @@ object IntakeHeuristics {
             titleOk && (descOk || audioOk) ->
                 IntakeDecision(
                     intake = IntakeStatus.QUEUE_PROJECT,
-                    title = ticket.title,
+                    title = ticket.displayTitle(),
                     summary = "Packaged — queuing a deeper look when capacity frees.",
                     questions = emptyList(),
                     advice = null,
@@ -50,7 +51,7 @@ object IntakeHeuristics {
             titleOk ->
                 IntakeDecision(
                     intake = IntakeStatus.NAMED_AND_QUESTIONS,
-                    title = ticket.title,
+                    title = ticket.displayTitle(),
                     summary = "Got a title. A bit more detail will help.",
                     questions =
                         listOf(
@@ -62,7 +63,7 @@ object IntakeHeuristics {
             audioOk && !titleOk && !descOk ->
                 IntakeDecision(
                     intake = IntakeStatus.NEEDS_USER_TEXT,
-                    title = ticket.title,
+                    title = ticket.displayTitle(),
                     summary = "Voice captured — add a short title so we can file this.",
                     questions = emptyList(),
                     advice = null,
@@ -70,7 +71,7 @@ object IntakeHeuristics {
             else ->
                 IntakeDecision(
                     intake = IntakeStatus.NEEDS_USER_TEXT,
-                    title = ticket.title,
+                    title = ticket.displayTitle(),
                     summary = "Not enough yet — add a title and what you need.",
                     questions = emptyList(),
                     advice = null,

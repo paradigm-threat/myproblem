@@ -1,0 +1,26 @@
+{
+  "id": "locked_out_apartment",
+  "difficulty": "easy",
+  "style": "clear",
+  "status": "generated",
+  "audio": "generated/easy/locked_out_apartment.wav",
+  "noise": "room_tone",
+  "snr_db": 16,
+  "expect": {
+    "title_must_include": [
+      "lock"
+    ],
+    "description_must_include_any": [
+      "apartment",
+      "keys",
+      "manager",
+      "locked out"
+    ],
+    "intake_targets": [
+      "named_and_questions",
+      "advice_ready"
+    ],
+    "eval_surface": "apk_or_server"
+  },
+  "script": "I locked myself out of my apartment. Keys are on the kitchen counter. Building manager office is closed until Monday. It is Friday evening. No spare with neighbors."
+}

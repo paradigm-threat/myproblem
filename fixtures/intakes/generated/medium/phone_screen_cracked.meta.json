@@ -1,0 +1,27 @@
+{
+  "id": "phone_screen_cracked",
+  "difficulty": "medium",
+  "style": "clear",
+  "status": "generated",
+  "audio": "generated/medium/phone_screen_cracked.wav",
+  "noise": "cafe_murmur",
+  "snr_db": 9,
+  "expect": {
+    "title_must_include": [
+      "screen"
+    ],
+    "description_must_include_any": [
+      "crack",
+      "phone",
+      "touch",
+      "repair",
+      "glass"
+    ],
+    "intake_targets": [
+      "named_and_questions",
+      "advice_ready"
+    ],
+    "eval_surface": "apk_or_server"
+  },
+  "script": "I dropped my phone and the screen is cracked but it still works. Touch is fine except the top corner. No insurance. Is a screen replacement worth it or should I use a tempered glass cover for now?"
+}

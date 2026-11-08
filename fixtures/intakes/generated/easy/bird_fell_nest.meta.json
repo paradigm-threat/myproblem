@@ -1,0 +1,27 @@
+{
+  "id": "bird_fell_nest",
+  "difficulty": "easy",
+  "style": "clear",
+  "status": "generated",
+  "audio": "generated/easy/bird_fell_nest.wav",
+  "noise": "wind_light",
+  "snr_db": 12,
+  "expect": {
+    "title_must_include": [
+      "bird"
+    ],
+    "description_must_include_any": [
+      "nest",
+      "fell",
+      "baby",
+      "yard",
+      "backyard"
+    ],
+    "intake_targets": [
+      "named_and_questions",
+      "advice_ready"
+    ],
+    "eval_surface": "apk_or_server"
+  },
+  "script": "A baby bird fell out of its nest in my backyard. It is peeping under the oak tree. The nest is high up and I am worried about cats."
+}

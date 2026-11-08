@@ -29,6 +29,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import app.myproblem.testmode.tickets.FieldSource
 import app.myproblem.testmode.tickets.IntakeStatus
 import app.myproblem.testmode.tickets.LocalTicket
 import app.myproblem.testmode.tickets.TicketStatus
@@ -46,8 +47,12 @@ fun TicketDetailScreen(
     onRunIntake: () -> Unit,
     onRetrySync: () -> Unit,
     onSimulateRemoteAhead: () -> Unit,
+    onRequestReprocess: (note: String, names: String) -> Unit,
 ) {
     var showFill by remember { mutableStateOf(ticket.intake == IntakeStatus.NEEDS_USER_TEXT) }
+    var showReprocess by remember { mutableStateOf(false) }
+    var reprocessNote by remember { mutableStateOf("") }
+    var reprocessNames by remember { mutableStateOf("") }
     var answering by remember { mutableStateOf<String?>(null) }
     var answerText by remember { mutableStateOf("") }
 
@@ -65,9 +70,35 @@ fun TicketDetailScreen(
             Text(ticket.intake.chipLabel(), color = Accent, fontSize = 13.sp)
         }
         Spacer(Modifier.height(8.dp))
-        Text(ticket.title, color = Warm, fontWeight = FontWeight.SemiBold, fontSize = 22.sp)
-        if (ticket.description.isNotBlank()) {
-            Text(ticket.description, color = Muted, fontSize = 13.sp)
+        Text(
+            ticket.displayTitle(),
+            color = Warm,
+            fontWeight = FontWeight.SemiBold,
+            fontSize = 22.sp,
+            modifier = Modifier.clickable { showFill = true },
+        )
+        Text(
+            fieldSourceLabel(ticket.titleField.source, ticket.titleField.locked, "title"),
+            color = Muted,
+            fontSize = 11.sp,
+        )
+        if (ticket.displayDescription().isNotBlank()) {
+            Spacer(Modifier.height(4.dp))
+            Text(
+                ticket.displayDescription(),
+                color = Muted,
+                fontSize = 13.sp,
+                modifier = Modifier.clickable { showFill = true },
+            )
+            Text(
+                fieldSourceLabel(ticket.descriptionField.source, ticket.descriptionField.locked, "description"),
+                color = Muted,
+                fontSize = 11.sp,
+            )
+        }
+        if (ticket.coachLine.isNotBlank()) {
+            Spacer(Modifier.height(8.dp))
+            Text(ticket.coachLine, color = Accent, fontSize = 13.sp)
         }
         Spacer(Modifier.height(12.dp))
         SyncStatusCard(
@@ -77,8 +108,16 @@ fun TicketDetailScreen(
         )
         Spacer(Modifier.height(12.dp))
 
+        PrimaryButton(
+            if (ticket.titleField.locked || ticket.descriptionField.locked) {
+                "Edit title & details"
+            } else {
+                "Edit & lock title / details"
+            },
+        ) { showFill = true }
+        Spacer(Modifier.height(8.dp))
         if (ticket.intake == IntakeStatus.NEEDS_USER_TEXT) {
-            PrimaryButton("Add title & details") { showFill = true }
+            Text("Intake needs more from you.", color = Warm, fontSize = 13.sp)
             Spacer(Modifier.height(8.dp))
         }
 
@@ -130,6 +169,13 @@ fun TicketDetailScreen(
         }
 
         Spacer(Modifier.height(8.dp))
+        if (ticket.status == TicketStatus.OPEN &&
+            ticket.sync.presence == app.myproblem.testmode.tickets.SyncPresence.ONLINE &&
+            ticket.hasAudio
+        ) {
+            SecondaryButton("Ask server to reprocess…") { showReprocess = true }
+            Spacer(Modifier.height(6.dp))
+        }
         SecondaryButton("Re-run local intake", onClick = onRunIntake)
         Spacer(Modifier.height(6.dp))
         if (ticket.status == TicketStatus.OPEN) {
@@ -139,10 +185,62 @@ fun TicketDetailScreen(
         }
     }
 
+    if (showReprocess) {
+        AlertDialog(
+            onDismissRequest = { showReprocess = false },
+            title = { Text("Reprocess on server?") },
+            text = {
+                Column {
+                    Text(
+                        "Only runs if new context would change the transcript. " +
+                            "Audio stays on this phone; server may ask you to re-upload.",
+                        color = Muted,
+                        fontSize = 13.sp,
+                    )
+                    Spacer(Modifier.height(8.dp))
+                    OutlinedTextField(
+                        value = reprocessNames,
+                        onValueChange = { reprocessNames = it },
+                        label = { Text("New names / models (comma-separated)") },
+                        modifier = Modifier.fillMaxWidth(),
+                    )
+                    Spacer(Modifier.height(8.dp))
+                    OutlinedTextField(
+                        value = reprocessNote,
+                        onValueChange = { reprocessNote = it },
+                        label = { Text("What changed?") },
+                        modifier = Modifier.fillMaxWidth().height(80.dp),
+                    )
+                }
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        showReprocess = false
+                        onRequestReprocess(reprocessNote.trim(), reprocessNames.trim())
+                        reprocessNote = ""
+                        reprocessNames = ""
+                    },
+                    enabled = reprocessNote.isNotBlank() || reprocessNames.isNotBlank(),
+                ) { Text("Request") }
+            },
+            dismissButton = {
+                TextButton(onClick = { showReprocess = false }) { Text("Cancel") }
+            },
+        )
+    }
+
     if (showFill) {
         ManualFillDialog(
-            initialTitle = ticket.title.takeIf { !it.equals("New problem", true) }.orEmpty(),
-            initialDescription = ticket.description,
+            initialTitle =
+                ticket.displayTitle()
+                    .takeIf {
+                        !it.equals("New problem", true) &&
+                            !it.equals("Listening…", true)
+                    }
+                    .orEmpty(),
+            initialDescription = ticket.displayDescription(),
+            lockedHint = ticket.titleField.locked || ticket.descriptionField.locked,
             onDismiss = { showFill = false },
             onSubmit = { title, desc ->
                 showFill = false
@@ -183,10 +281,18 @@ fun TicketDetailScreen(
     }
 }
 
+private fun fieldSourceLabel(source: FieldSource, locked: Boolean, noun: String): String =
+    when {
+        locked || source == FieldSource.USER -> "Edited by you · $noun locked from auto-guess"
+        source == FieldSource.INTAKE -> "Proposed by MyProblem"
+        else -> noun
+    }
+
 @Composable
 private fun ManualFillDialog(
     initialTitle: String,
     initialDescription: String,
+    lockedHint: Boolean,
     onDismiss: () -> Unit,
     onSubmit: (String, String) -> Unit,
 ) {
@@ -194,10 +300,18 @@ private fun ManualFillDialog(
     var description by remember { mutableStateOf(initialDescription) }
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Add ticket details") },
+        title = { Text("Edit ticket details") },
         text = {
             Column {
-                Text("Not enough from capture yet — add a title so we can file this.", color = Muted, fontSize = 13.sp)
+                Text(
+                    if (lockedHint) {
+                        "Saving keeps your edits locked — intake will not overwrite them."
+                    } else {
+                        "Saving locks title and description so auto-guess stops overwriting them."
+                    },
+                    color = Muted,
+                    fontSize = 13.sp,
+                )
                 Spacer(Modifier.height(8.dp))
                 OutlinedTextField(
                     value = title,
@@ -219,10 +333,10 @@ private fun ManualFillDialog(
             TextButton(
                 onClick = { onSubmit(title.trim(), description.trim()) },
                 enabled = title.trim().length >= 3,
-            ) { Text("Save") }
+            ) { Text("Save & lock") }
         },
         dismissButton = {
-            TextButton(onClick = onDismiss) { Text("Later") }
+            TextButton(onClick = onDismiss) { Text("Cancel") }
         },
     )
 }

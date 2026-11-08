@@ -1,0 +1,27 @@
+{
+  "id": "flat_tire_roadside",
+  "difficulty": "easy",
+  "style": "clear",
+  "status": "generated",
+  "audio": "generated/easy/flat_tire_roadside.wav",
+  "noise": "traffic_light",
+  "snr_db": 14,
+  "expect": {
+    "title_must_include": [
+      "flat",
+      "tire"
+    ],
+    "description_must_include_any": [
+      "spare",
+      "roadside",
+      "jack",
+      "passenger"
+    ],
+    "intake_targets": [
+      "named_and_questions",
+      "advice_ready"
+    ],
+    "eval_surface": "apk_or_server"
+  },
+  "script": "Hi. I have a flat tire on the roadside. The front passenger tire is completely flat. I have a spare in the trunk but I'm not sure how to use the jack safely."
+}

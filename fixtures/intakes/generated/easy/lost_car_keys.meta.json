@@ -1,0 +1,27 @@
+{
+  "id": "lost_car_keys",
+  "difficulty": "easy",
+  "style": "clear",
+  "status": "generated",
+  "audio": "generated/easy/lost_car_keys.wav",
+  "noise": "traffic_light",
+  "snr_db": 13,
+  "expect": {
+    "title_must_include": [
+      "key"
+    ],
+    "description_must_include_any": [
+      "car",
+      "lost",
+      "spare",
+      "parking",
+      "grocery"
+    ],
+    "intake_targets": [
+      "named_and_questions",
+      "advice_ready"
+    ],
+    "eval_surface": "apk_or_server"
+  },
+  "script": "I lost my car keys. Last place I remember having them is the grocery store parking lot about an hour ago. The spare key is at home across town."
+}

@@ -18,8 +18,10 @@ Related: [`projects.md`](./projects.md) · [`infra-definition.md`](./infra-defin
 |---|---|
 | Capture questions, requirements, photos → package ticket | Stream every frame to Sonnet / Midjourney |
 | Queue by status (`packaged` → `project_queued` → …) | Fake “instant deep answer” or instant gen spinners |
+| **Check region KB git first**; research/escalate only on miss | Treat the server LLM as the knowledge store |
 | Batch investigate + analyze/generate media when capacity frees | Repeat the same VL/gen call for the same evidence hash |
-| Escalate **once**, cache + KB, distill | On-demand frontier as the product |
+| Escalate **once**, then **write KB Markdown** + cache | On-demand frontier as the product; escalate with no KB write |
+| Browser research only where bots are allowed; honest walls | Pretend we saw gated forms / bypass bans |
 
 **On-demand premium media ≠ product path.** Priority buys a **faster Project queue / SLA**, not live SDXL or live Claude vision.
 
@@ -37,12 +39,17 @@ JIRA-like queue (by status / priority)
   project_queued → project_running
         ▼
 Batch investigator (asap + complete, not wasteful)
-  1. Local KB + prior ticket / media cache (dedupe by pHash + Q hash)
-  2. Cheap Spot: OCR + open VL (HF) + mid LLM + optional image gen
-  3. Only if still stuck → backbone escalate (Bedrock text/VL …)
-  4. Write InvestigationUpdate + media artifacts; optional KB extract
-  5. Close, need_evidence, or recommend merchant
+  1. Region KB git (category + place) + prior ticket / media cache (pHash + Q hash)
+  2. Allowed browser / maps / public research → honest limits on ticket
+  3. Cheap Spot: OCR + open VL (HF) + mid LLM + optional image gen
+  4. Commit useful public residue → KB Markdown (PT-style categories)
+  5. Only if still stuck → backbone escalate (Bedrock text/VL …)
+  6. Distill escalate → KB + cache (required when useful)
+  7. Write InvestigationUpdate + media artifacts
+  8. Close, need_evidence, or recommend merchant
 ```
+
+**Primary learning = KB**, not weight updates. Server LLM tweaks are for **vision/function** only ([`knowledge-base.md`](./knowledge-base.md)).
 
 ### Capture (realtime)
 
@@ -75,7 +82,9 @@ Use Bedrock (or equivalent) when the cheap path cannot:
 - Legal-sensitive “stop and redirect” wording that must be gold-quality  
 - Image understanding/gen that open models fail and the ticket still needs  
 
-Then: write gold onto the Problem → **cache** normalized Q / media hash → optional redacted **KB** doc → training row for distill. Next identical ask should be **$≈0**.
+Then: write gold onto the Problem → **cache** normalized Q / media hash → **required** redacted **KB** Markdown in the right category (reader article and/or `investigations/` dossier) → optional distill training row. Next identical ask should hit **git / cache ≈ $0**, not another Bedrock call.
+
+Do **not** escalate again for the same class of miss without a fresh **KB miss** check.
 
 Flag: `relay.ai.frontier` — **Project job only**, never live capture session.
 
@@ -97,6 +106,8 @@ Monthly frontier $ ≈ \(X \times (1-h) \times c\). Keep advanced photo work on 
 ## Product copy
 
 - No on-demand deep LLM or premium vision/gen.  
-- Smart capture → queue ticket → batch investigate + analyze/generate media thoroughly.  
-- Prefer **Hugging Face / Spot** for advanced photos; Bedrock = rare backbone escalate.  
-- Priority = faster queue, not live Sonnet or live image APIs.
+- Smart capture → queue ticket → **KB first** → batch investigate + analyze/generate media thoroughly.  
+- Prefer **Hugging Face / Spot** for advanced photos; Bedrock = rare backbone escalate **then KB write**.  
+- Web/maps research via **allowed** browser automation; honest about what bots cannot see.  
+- Priority = faster queue, not live Sonnet or live image APIs.  
+- We get smarter by **growing the Markdown KB**, not by stuffing the server model.

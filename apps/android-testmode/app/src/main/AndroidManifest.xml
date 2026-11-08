@@ -7,7 +7,8 @@
     <uses-feature android:name="android.hardware.microphone" android:required="false" />
     <uses-feature android:name="android.hardware.sensor.gyroscope" android:required="false" />
 
-    <!-- Local drafts: no INTERNET yet — Evidence stays on device until ticket APIs land. -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
         android:allowBackup="true"
@@ -15,6 +16,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:label="@string/app_name"
         android:supportsRtl="true"
+        android:usesCleartextTraffic="false"
+        android:networkSecurityConfig="@xml/network_security_config"
         android:theme="@style/Theme.MyProblemTestMode">
         <meta-data
             android:name="com.google.mlkit.vision.DEPENDENCIES"
@@ -30,5 +33,15 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!-- ADB E2E hook (debug builds). CameraX blocks UIAutomator idle. -->
+        <receiver
+            android:name=".E2eDebugReceiver"
+            android:exported="true"
+            android:enabled="true">
+            <intent-filter>
+                <action android:name="app.myproblem.testmode.E2E" />
+            </intent-filter>
+        </receiver>
     </application>
 </manifest>

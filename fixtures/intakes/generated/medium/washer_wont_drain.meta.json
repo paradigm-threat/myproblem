@@ -1,0 +1,28 @@
+{
+  "id": "washer_wont_drain",
+  "difficulty": "medium",
+  "style": "rambly",
+  "status": "generated",
+  "audio": "generated/medium/washer_wont_drain.wav",
+  "noise": "appliance_hum",
+  "snr_db": 10,
+  "expect": {
+    "title_must_include": [
+      "wash"
+    ],
+    "description_must_include_any": [
+      "drain",
+      "water",
+      "drum",
+      "pump",
+      "whirlpool"
+    ],
+    "intake_targets": [
+      "named_and_questions",
+      "advice_ready",
+      "queue_project"
+    ],
+    "eval_surface": "apk_or_server"
+  },
+  "script": "Okay so the washing machine finished the cycle but the water is still sitting in the drum. It usually drains fine. I cleaned the filter last month I think. Brand is a Whirlpool front loader. Clothes are soaking wet and I have to leave for work. Is this a drain pump or a hose kink?"
+}

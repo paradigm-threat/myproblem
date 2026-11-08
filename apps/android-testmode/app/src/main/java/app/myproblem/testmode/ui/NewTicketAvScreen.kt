@@ -121,9 +121,9 @@ fun NewTicketAvScreen(
     ) {
         Text("← Cancel", color = Muted, modifier = Modifier.clickable(onClick = onCancel))
         Spacer(Modifier.height(8.dp))
-        Text("New ticket · audio + frames", color = Accent, fontWeight = FontWeight.SemiBold, fontSize = 20.sp)
+        Text("Live ticket · audio + frames", color = Accent, fontWeight = FontWeight.SemiBold, fontSize = 20.sp)
         Text(
-            "Preview is analysis-ready stills only — no video file is saved. Keep unique frames; stop mic when done talking.",
+            "Ticket already open. Stills only (no video file). Stop mic when done talking — no later Submit.",
             color = Muted,
             fontSize = 12.sp,
         )
@@ -207,14 +207,13 @@ fun NewTicketAvScreen(
         }
         Spacer(Modifier.height(8.dp))
         if (recording) {
-            PrimaryButton("Stop mic & continue") {
+            PrimaryButton("Stop recording") {
                 val f = capture.stop()
                 recording = false
                 if (f != null) onAudioRecorded(f)
-                onFinish()
             }
-        } else {
-            PrimaryButton("Done — open ticket", onClick = onFinish)
         }
+        Spacer(Modifier.height(8.dp))
+        PrimaryButton("Done — open ticket", onClick = onFinish)
     }
 }

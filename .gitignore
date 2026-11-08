@@ -40,3 +40,20 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# intake / any media bytes — repos are text + links only (regenerate fixtures locally)
+fixtures/intakes/.venv/
+fixtures/intakes/.tmp_tts/
+*.wav
+*.mp3
+*.m4a
+*.ogg
+*.flac
+*.webm
+!docs/**/*.md
+
+# local ticket tips / media (Intake edge store) — never commit uploads
+.data/
+**/media/
+**/.cache/
+apps/android-testmode/ticket-detail-smoke.png

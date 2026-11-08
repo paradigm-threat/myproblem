@@ -1,0 +1,26 @@
+{
+  "id": "minor_cut_see_doctor",
+  "difficulty": "easy",
+  "style": "clear",
+  "status": "generated",
+  "audio": "generated/easy/minor_cut_see_doctor.wav",
+  "noise": "room_tone",
+  "snr_db": 17,
+  "expect": {
+    "title_must_include": [
+      "cut"
+    ],
+    "description_must_include_any": [
+      "finger",
+      "bleed",
+      "doctor",
+      "pressure"
+    ],
+    "intake_targets": [
+      "named_and_questions",
+      "advice_ready"
+    ],
+    "eval_surface": "apk_or_server"
+  },
+  "script": "Do I need to see a doctor? I cut my finger while chopping vegetables. It is still bleeding after ten minutes of pressure. It looks deep but I can move the finger."
+}

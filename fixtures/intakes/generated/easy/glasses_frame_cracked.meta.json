@@ -1,0 +1,26 @@
+{
+  "id": "glasses_frame_cracked",
+  "difficulty": "easy",
+  "style": "clear",
+  "status": "generated",
+  "audio": "generated/easy/glasses_frame_cracked.wav",
+  "noise": "room_tone",
+  "snr_db": 18,
+  "expect": {
+    "title_must_include": [
+      "glasses"
+    ],
+    "description_must_include_any": [
+      "frame",
+      "cracked",
+      "hinge",
+      "arm"
+    ],
+    "intake_targets": [
+      "named_and_questions",
+      "advice_ready"
+    ],
+    "eval_surface": "apk_or_server"
+  },
+  "script": "How can I repair my glasses frame? The plastic arm on the left side cracked near the hinge. The lenses are fine. I need them for work tomorrow."
+}

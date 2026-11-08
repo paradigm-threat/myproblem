@@ -1,4 +1,4 @@
-import { CONTACT_EMAIL, RELAY_URL, SITE_URL } from "@/lib/contact";
+import { CONTACT_EMAIL, RELAY_SOURCE_URL, RELAY_URL, SITE_URL } from "@/lib/contact";
 
 export function JsonLd() {
   const data = {
@@ -14,10 +14,11 @@ export function JsonLd() {
         sameAs: [
           "https://github.com/paradigm-threat/myproblem",
           "https://gitlab.com/clevertree/myproblem",
+          RELAY_SOURCE_URL,
           RELAY_URL,
         ],
         description:
-          "AI investigation service for Problems — free forever for local businesses; deferred Projects; Georgia- and Israel-scoped shared knowledge base; free core help for people. Powered by Relay.",
+          "AI investigation service for Problems — free forever for local businesses; deferred Projects; Georgia- and Israel knowledge base for problem-solving (speculative, user+AI only, no boosting); free core help for people. Powered by Relay.",
       },
       {
         "@type": "WebSite",
@@ -25,7 +26,7 @@ export function JsonLd() {
         url: SITE_URL,
         name: "MyProblem",
         description:
-          "Free AI front door for local businesses. Deferred Projects and a place-tied knowledge base for Georgia and Israel pilots.",
+          "Free AI front door for local businesses. Deferred Projects and a problem-solving knowledge base for Georgia and Israel — not a search-ad mirror.",
         publisher: { "@id": `${SITE_URL}/#organization` },
         inLanguage: "en-US",
       },
@@ -44,7 +45,7 @@ export function JsonLd() {
             "Local businesses join free forever. Core consumer help is free; usage fees after free tickets fund infrastructure only. Priority shortens Project queues without weakening free-tier thoroughness.",
         },
         description:
-          "Capture Problem tickets; queue like JIRA; batch Projects investigate thoroughly; Bedrock only for rare escalate; local knowledge and channels in Georgia and Israel.",
+          "Capture Problem tickets; queue like JIRA; batch Projects investigate thoroughly; KB-first local problem-solving with no boosting; Bedrock only for rare escalate.",
       },
     ],
   };

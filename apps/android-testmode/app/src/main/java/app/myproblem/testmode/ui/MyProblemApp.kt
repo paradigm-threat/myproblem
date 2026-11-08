@@ -11,6 +11,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -24,6 +25,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import app.myproblem.testmode.AppViewModel
@@ -33,10 +35,10 @@ import app.myproblem.testmode.tickets.StartMode
 import java.util.concurrent.ExecutorService
 
 object Routes {
-    const val ONBOARDING = "onboarding"
     const val HOME = "home"
     const val SETTINGS = "settings"
     const val TEST = "test"
+    const val NEW_MODE = "new/mode"
     const val NEW_TEXT = "new/text"
     const val NEW_AUDIO = "new/audio/{ticketId}"
     const val NEW_AV = "new/av/{ticketId}"
@@ -61,182 +63,239 @@ fun MyProblemApp(
     val testState by testVm.state.collectAsState()
     val nav = rememberNavController()
 
-    MaterialTheme(colorScheme = darkColorScheme(background = Bg, primary = Accent)) {
-        if (!ui.ready) {
-            Column(
-                Modifier
-                    .fillMaxSize()
-                    .background(Bg)
-                    .statusBarsPadding()
-                    .padding(16.dp),
-            ) {
-                Text("Loading…", color = Muted)
-            }
-            return@MaterialTheme
+    val backStackEntry by nav.currentBackStackEntryAsState()
+    LaunchedEffect(backStackEntry, ui.ready) {
+        if (ui.ready && backStackEntry == null) {
+            nav.navigate(Routes.HOME) { launchSingleTop = true }
         }
+    }
 
-        val start = if (ui.onboarded) Routes.HOME else Routes.ONBOARDING
+    MaterialTheme(colorScheme = darkColorScheme(background = Bg, primary = Accent)) {
+        Box(
+            Modifier
+                .fillMaxSize()
+                .background(Bg),
+        ) {
+            if (!ui.ready) {
+                Column(
+                    Modifier
+                        .fillMaxSize()
+                        .statusBarsPadding()
+                        .padding(16.dp),
+                ) {
+                    Text("Loading…", color = Muted)
+                }
+                return@Box
+            }
 
-        NavHost(navController = nav, startDestination = start) {
-            composable(Routes.ONBOARDING) {
-                OnboardingScreen { mode ->
-                    appVm.completeOnboarding(mode)
-                    nav.navigate(Routes.HOME) {
-                        popUpTo(Routes.ONBOARDING) { inclusive = true }
-                    }
-                }
-            }
-            composable(Routes.HOME) {
-                HomeScreen(
-                    tickets = appVm.visibleTickets(),
-                    showArchived = ui.showArchived,
-                    onNewTicket = {
-                        when (ui.startMode) {
-                            StartMode.TEXT -> nav.navigate(Routes.NEW_TEXT)
-                            StartMode.AUDIO -> {
-                                val t = appVm.beginAudioTicket()
-                                nav.navigate(Routes.newAudio(t.id))
-                            }
-                            StartMode.AUDIO_FRAMES -> {
-                                val t = appVm.beginAvTicket()
-                                nav.navigate(Routes.newAv(t.id))
-                            }
-                        }
-                    },
-                    onOpenTicket = { nav.navigate(Routes.ticket(it)) },
-                    onSettings = { nav.navigate(Routes.SETTINGS) },
-                    onTestMode = {
-                        onEnsureCameraForTest()
-                        nav.navigate(Routes.TEST)
-                    },
-                )
-            }
-            composable(Routes.SETTINGS) {
-                SettingsScreen(
-                    startMode = ui.startMode,
-                    showArchived = ui.showArchived,
-                    onlineSyncEnabled = ui.onlineSyncEnabled,
-                    onStartMode = appVm::setStartMode,
-                    onShowArchived = appVm::setShowArchived,
-                    onOnlineSyncEnabled = appVm::setOnlineSyncEnabled,
-                    onBack = { nav.popBackStack() },
-                )
-            }
-            composable(Routes.NEW_TEXT) {
-                NewTicketTextScreen(
-                    onCancel = { nav.popBackStack() },
-                    onSubmit = { title, desc ->
-                        val t = appVm.createTextTicket(title, desc)
-                        nav.navigate(Routes.ticket(t.id)) {
-                            popUpTo(Routes.HOME)
-                        }
-                    },
-                )
-            }
-            composable(
-                Routes.NEW_AUDIO,
-                arguments = listOf(navArgument("ticketId") { type = NavType.StringType }),
-            ) { entry ->
-                val id = entry.arguments?.getString("ticketId") ?: return@composable
-                NewTicketAudioScreen(
-                    ticketId = id,
-                    audioFileFactory = { appVm.audioFileFor(id) },
-                    onCancel = {
-                        appVm.closeTicket(id)
-                        nav.popBackStack()
-                    },
-                    onRecorded = { file ->
-                        appVm.onAudioCaptured(id, file)
-                        nav.navigate(Routes.ticket(id)) {
-                            popUpTo(Routes.HOME)
-                        }
-                    },
-                    onAddDetails = {
-                        nav.navigate(Routes.ticket(id)) {
-                            popUpTo(Routes.HOME)
-                        }
-                    },
-                )
-            }
-            composable(
-                Routes.NEW_AV,
-                arguments = listOf(navArgument("ticketId") { type = NavType.StringType }),
-            ) { entry ->
-                val id = entry.arguments?.getString("ticketId") ?: return@composable
-                var stills by remember { mutableStateOf(appVm.ticket(id)?.stillCount ?: 0) }
-                LaunchedEffect(ui.tickets) {
-                    stills = appVm.ticket(id)?.stillCount ?: stills
-                }
-                NewTicketAvScreen(
-                    ticketId = id,
-                    stillCount = stills,
-                    audioFileFactory = { appVm.audioFileFor(id) },
-                    stillFileFactory = { appVm.stillFileFor(id) },
-                    onCancel = {
-                        appVm.closeTicket(id)
-                        nav.popBackStack()
-                    },
-                    onAudioRecorded = { appVm.onAudioCaptured(id, it) },
-                    onStillCaptured = {
-                        appVm.onStillCaptured(id, it)
-                        stills += 1
-                    },
-                    onFinish = {
-                        appVm.runIntakeAgain(id)
-                        nav.navigate(Routes.ticket(id)) {
-                            popUpTo(Routes.HOME)
-                        }
-                    },
-                )
-            }
-            composable(
-                Routes.TICKET,
-                arguments = listOf(navArgument("ticketId") { type = NavType.StringType }),
-            ) { entry ->
-                val id = entry.arguments?.getString("ticketId") ?: return@composable
-                val ticket = ui.tickets.find { it.id == id } ?: appVm.ticket(id)
-                if (ticket == null) {
-                    Text("Ticket missing", color = Danger, modifier = Modifier.padding(16.dp))
-                    return@composable
-                }
-                TicketDetailScreen(
-                    ticket = ticket,
-                    onBack = { nav.popBackStack(Routes.HOME, inclusive = false) },
-                    onManualFill = { title, desc -> appVm.applyManualFill(id, title, desc) },
-                    onAnswer = { q, a -> appVm.answerQuestion(id, q, a) },
-                    onClose = {
-                        appVm.closeTicket(id)
-                        nav.popBackStack(Routes.HOME, inclusive = false)
-                    },
-                    onReopen = { appVm.reopenTicket(id) },
-                    onRunIntake = { appVm.runIntakeAgain(id) },
-                    onRetrySync = { appVm.retrySync(id) },
-                    onSimulateRemoteAhead = { appVm.simulateRemoteAhead(id) },
-                )
-            }
-            composable(Routes.TEST) {
-                Column(Modifier.fillMaxSize().background(Bg)) {
-                    Text(
-                        "← Tickets",
-                        color = Muted,
-                        fontSize = 14.sp,
-                        modifier =
-                            Modifier
-                                .statusBarsPadding()
-                                .padding(horizontal = 12.dp, vertical = 8.dp)
-                                .clickable { nav.popBackStack() },
+            NavHost(
+                navController = nav,
+                startDestination = Routes.HOME,
+                modifier = Modifier.fillMaxSize().background(Bg),
+            ) {
+                composable(Routes.HOME) {
+                    HomeScreen(
+                        tickets = appVm.visibleTickets(),
+                        showArchived = ui.showArchived,
+                        onNewTicket = { nav.navigate(Routes.NEW_MODE) },
+                        onOpenTicket = { nav.navigate(Routes.ticket(it)) },
+                        onSettings = { nav.navigate(Routes.SETTINGS) },
+                        onTestMode = {
+                            onEnsureCameraForTest()
+                            nav.navigate(Routes.TEST)
+                        },
                     )
-                    Box(Modifier.weight(1f).fillMaxSize()) {
-                        TestModeScreen(
-                            state = testState,
-                            onToggleFeed = { onToggleTestFeed(testState.feedOn) },
-                            onToggleScenario = { testVm.toggleScenario() },
-                            onCycleDebugHint = { testVm.cycleDebugHint() },
-                            onReset = { testVm.resetSession() },
-                            analysisExecutor = analysisExecutor,
-                            imageAnalyzer = testVm.imageAnalyzer,
-                            feedOn = testState.feedOn,
+                }
+                composable(Routes.NEW_MODE) {
+                    NewTicketModeScreen(
+                        onCancel = { nav.popBackStack() },
+                        onChoose = { mode ->
+                            when (mode) {
+                                StartMode.TEXT ->
+                                    nav.navigate(Routes.NEW_TEXT) {
+                                        popUpTo(Routes.NEW_MODE) { inclusive = true }
+                                    }
+                                StartMode.AUDIO -> {
+                                    val t = appVm.beginAudioTicket()
+                                    nav.navigate(Routes.newAudio(t.id)) {
+                                        popUpTo(Routes.NEW_MODE) { inclusive = true }
+                                    }
+                                }
+                                StartMode.AUDIO_FRAMES -> {
+                                    val t = appVm.beginAvTicket()
+                                    nav.navigate(Routes.newAv(t.id)) {
+                                        popUpTo(Routes.NEW_MODE) { inclusive = true }
+                                    }
+                                }
+                            }
+                        },
+                    )
+                }
+                composable(Routes.SETTINGS) {
+                    SettingsScreen(
+                        showArchived = ui.showArchived,
+                        onlineSyncEnabled = ui.onlineSyncEnabled,
+                        onShowArchived = appVm::setShowArchived,
+                        onOnlineSyncEnabled = appVm::setOnlineSyncEnabled,
+                        onBack = { nav.popBackStack() },
+                    )
+                }
+                composable(Routes.NEW_TEXT) {
+                    NewTicketTextScreen(
+                        onCancel = { nav.popBackStack() },
+                        onSubmit = { title, desc ->
+                            val t = appVm.createTextTicket(title, desc)
+                            nav.navigate(Routes.ticket(t.id)) {
+                                popUpTo(Routes.HOME)
+                            }
+                        },
+                    )
+                }
+                composable(
+                    Routes.NEW_AUDIO,
+                    arguments = listOf(navArgument("ticketId") { type = NavType.StringType }),
+                ) { entry ->
+                    val id = entry.arguments?.getString("ticketId") ?: return@composable
+                    val live = ui.tickets.find { it.id == id } ?: appVm.ticket(id)
+                    if (live == null) {
+                        LaunchedEffect(id) {
+                            nav.popBackStack(Routes.HOME, inclusive = false)
+                        }
+                        return@composable
+                    }
+                    NewTicketAudioScreen(
+                        ticket = live,
+                        audioFileFactory = { appVm.audioFileFor(id) },
+                        onCancel = {
+                            appVm.closeTicket(id)
+                            nav.popBackStack()
+                        },
+                        onStop = { file ->
+                            appVm.stopAudioRecording(id, file)
+                            nav.navigate(Routes.ticket(id)) {
+                                popUpTo(Routes.HOME)
+                            }
+                        },
+                        onEditProposed = {
+                            nav.navigate(Routes.ticket(id)) {
+                                popUpTo(Routes.HOME)
+                            }
+                        },
+                    )
+                }
+                composable(
+                    Routes.NEW_AV,
+                    arguments = listOf(navArgument("ticketId") { type = NavType.StringType }),
+                ) { entry ->
+                    val id = entry.arguments?.getString("ticketId") ?: return@composable
+                    var stills by remember { mutableStateOf(appVm.ticket(id)?.stillCount ?: 0) }
+                    LaunchedEffect(ui.tickets) {
+                        stills = appVm.ticket(id)?.stillCount ?: stills
+                    }
+                    DisposableEffect(Unit) {
+                        onDispose {
+                            // Ensure mic/camera cleanup paths run when leaving.
+                        }
+                    }
+                    NewTicketAvScreen(
+                        ticketId = id,
+                        stillCount = stills,
+                        audioFileFactory = { appVm.audioFileFor(id) },
+                        stillFileFactory = { appVm.stillFileFor(id) },
+                        onCancel = {
+                            appVm.closeTicket(id)
+                            nav.popBackStack()
+                        },
+                        onAudioRecorded = { appVm.onAudioCaptured(id, it) },
+                        onStillCaptured = {
+                            appVm.onStillCaptured(id, it)
+                            stills += 1
+                        },
+                        onFinish = {
+                            appVm.runIntakeAgain(id)
+                            nav.navigate(Routes.ticket(id)) {
+                                popUpTo(Routes.HOME)
+                            }
+                        },
+                    )
+                }
+                composable(
+                    Routes.TICKET,
+                    arguments = listOf(navArgument("ticketId") { type = NavType.StringType }),
+                ) { entry ->
+                    val id = entry.arguments?.getString("ticketId") ?: return@composable
+                    val ticket = ui.tickets.find { it.id == id } ?: appVm.ticket(id)
+                    if (ticket == null) {
+                        LaunchedEffect(id) {
+                            nav.popBackStack(Routes.HOME, inclusive = false)
+                        }
+                        Text(
+                            "Ticket missing — returning home…",
+                            color = Danger,
+                            modifier = Modifier.padding(16.dp),
                         )
+                        return@composable
+                    }
+                    TicketDetailScreen(
+                        ticket = ticket,
+                        onBack = { nav.popBackStack(Routes.HOME, inclusive = false) },
+                        onManualFill = { title, desc -> appVm.applyManualFill(id, title, desc) },
+                        onAnswer = { q, a -> appVm.answerQuestion(id, q, a) },
+                        onClose = {
+                            appVm.closeTicket(id)
+                            nav.popBackStack(Routes.HOME, inclusive = false)
+                        },
+                        onReopen = { appVm.reopenTicket(id) },
+                        onRunIntake = { appVm.runIntakeAgain(id) },
+                        onRetrySync = { appVm.retrySync(id) },
+                        onSimulateRemoteAhead = { appVm.simulateRemoteAhead(id) },
+                        onRequestReprocess = { note, names ->
+                            appVm.requestReprocess(
+                                ticketId = id,
+                                requestedBy = "user",
+                                addedNames =
+                                    names.split(',').map { it.trim() }.filter { it.isNotEmpty() },
+                                newUserNote = note.ifBlank { null },
+                            )
+                        },
+                    )
+                }
+                composable(Routes.TEST) {
+                    DisposableEffect(Unit) {
+                        onDispose {
+                            if (testVm.state.value.feedOn) {
+                                testVm.setFeedOn(false)
+                            }
+                        }
+                    }
+                    Column(Modifier.fillMaxSize().background(Bg)) {
+                        Text(
+                            "← Tickets",
+                            color = Muted,
+                            fontSize = 14.sp,
+                            modifier =
+                                Modifier
+                                    .statusBarsPadding()
+                                    .padding(horizontal = 12.dp, vertical = 8.dp)
+                                    .clickable {
+                                        if (testVm.state.value.feedOn) {
+                                            testVm.setFeedOn(false)
+                                        }
+                                        nav.popBackStack()
+                                    },
+                        )
+                        Box(Modifier.weight(1f).fillMaxSize()) {
+                            TestModeScreen(
+                                state = testState,
+                                onToggleFeed = { onToggleTestFeed(testState.feedOn) },
+                                onToggleScenario = { testVm.toggleScenario() },
+                                onCycleDebugHint = { testVm.cycleDebugHint() },
+                                onReset = { testVm.resetSession() },
+                                analysisExecutor = analysisExecutor,
+                                imageAnalyzer = testVm.imageAnalyzer,
+                                feedOn = testState.feedOn,
+                            )
+                        }
                     }
                 }
             }

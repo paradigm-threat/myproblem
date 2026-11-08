@@ -4,23 +4,39 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import app.myproblem.testmode.prefs.AppPrefs
+import app.myproblem.testmode.tickets.CoachLines
+import app.myproblem.testmode.tickets.FieldSource
 import app.myproblem.testmode.tickets.IntakeHeuristics
 import app.myproblem.testmode.tickets.IntakeStatus
+import app.myproblem.testmode.tickets.LiveAudioIntakeSim
 import app.myproblem.testmode.tickets.LocalTicket
 import app.myproblem.testmode.tickets.LocalTicketStore
+import app.myproblem.testmode.tickets.RealtimeIntakeStages
+import app.myproblem.testmode.tickets.RealtimeStage
 import app.myproblem.testmode.tickets.StartMode
+import app.myproblem.testmode.tickets.TicketField
 import app.myproblem.testmode.tickets.TicketStatus
 import app.myproblem.testmode.tickets.TicketSyncEngine
 import app.myproblem.testmode.tickets.TimelineEntry
 import app.myproblem.testmode.tickets.TimelineKind
+import app.myproblem.testmode.tickets.TimelinePolicy
+import app.myproblem.testmode.tickets.chipLabel
+import app.myproblem.testmode.tickets.normalizeStuckIntake
+import app.myproblem.testmode.tickets.SyncHealth
+import app.myproblem.testmode.tickets.TicketsApi
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.File
 import java.util.UUID
+import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.atomic.AtomicBoolean
 
 data class AppUiState(
@@ -37,14 +53,19 @@ class AppViewModel(app: Application) : AndroidViewModel(app) {
     private val store = LocalTicketStore(app)
     private val ticketsFlow = MutableStateFlow(store.list())
     private val onlineFlag = AtomicBoolean(true)
+    private val liveJobs = ConcurrentHashMap<String, Job>()
 
     private val syncEngine =
         TicketSyncEngine(
             scope = viewModelScope,
             store = store,
-            onUpdated = { ticketsFlow.value = store.list() },
+            onUpdated = { ticketsFlow.value = store.list().map { it.normalizeStuckIntake() } },
             onlineEnabled = { onlineFlag.get() },
         )
+
+    init {
+        reload()
+    }
 
     val uiState: StateFlow<AppUiState> =
         combine(
@@ -98,13 +119,113 @@ class AppViewModel(app: Application) : AndroidViewModel(app) {
     }
 
     fun reload() {
-        ticketsFlow.value = store.list()
+        val list =
+            store.list().map { t ->
+                val n = t.normalizeStuckIntake()
+                if (n.intake != t.intake || n.coachLine != t.coachLine) store.save(n)
+                n
+            }
+        ticketsFlow.value = list
+        list
+            .filter {
+                it.intake == IntakeStatus.QUEUED || it.intake == IntakeStatus.TRANSCRIBING
+            }
+            .forEach { syncEngine.ensureStatusPoll(it.id) }
     }
 
     fun ticket(id: String): LocalTicket? = store.load(id)
 
     fun retrySync(ticketId: String) {
         syncEngine.enqueueSync(ticketId)
+    }
+
+    /**
+     * Ask server to reprocess ASR/vision. Only succeeds when new context would change the outcome.
+     * [requestedBy] = "user" or "apk_llm". If gate needs reupload, re-POSTs local audio with hotwords.
+     */
+    fun requestReprocess(
+        ticketId: String,
+        requestedBy: String = "user",
+        addedNames: List<String> = emptyList(),
+        addedOcr: List<String> = emptyList(),
+        newUserNote: String? = null,
+    ) {
+        viewModelScope.launch {
+            val t = store.load(ticketId) ?: return@launch
+            val serverId = t.sync.serverTicketId
+            val claim = t.sync.serverClaim
+            // UUID is the capability; claim is optional defense-in-depth.
+            if (serverId == null) {
+                store.save(
+                    t.copy(
+                        sync =
+                            t.sync.copy(
+                                health = SyncHealth.ERROR,
+                                lastError = "Not online yet — sync first",
+                            ),
+                    ),
+                )
+                reload()
+                return@launch
+            }
+            try {
+                val result =
+                    withContext(kotlinx.coroutines.Dispatchers.IO) {
+                        TicketsApi.requestReprocess(
+                            ticketUuid = serverId,
+                            claim = claim,
+                            requestedBy = requestedBy,
+                            addedNames = addedNames,
+                            addedOcr = addedOcr,
+                            newUserNote = newUserNote,
+                            titleChanged = t.titleField.locked,
+                        )
+                    }
+                var next =
+                    appendTimeline(
+                        t,
+                        TimelineKind.SYSTEM,
+                        if (result.ok) {
+                            "Reprocess ${result.action}: ${result.reason}"
+                        } else {
+                            "Reprocess skipped: ${result.reason ?: "http ${result.httpStatus}"}"
+                        },
+                    )
+                if (result.ok && result.needsReupload) {
+                    val audio =
+                        store.mediaDir(ticketId).listFiles()?.filter {
+                            it.extension in listOf("m4a", "wav", "mp3", "bin", "aac")
+                        }?.maxByOrNull { it.lastModified() }
+                    if (audio != null) {
+                        withContext(kotlinx.coroutines.Dispatchers.IO) {
+                            TicketsApi.postEvidenceFile(
+                                ticketUuid = serverId,
+                                claim = claim,
+                                kind = "audio",
+                                file = audio,
+                                mime = "audio/mp4",
+                                isFinal = true,
+                                hotwords = result.hotwords,
+                            )
+                        }
+                        next =
+                            appendTimeline(
+                                next,
+                                TimelineKind.SYSTEM,
+                                "Re-uploaded audio for reprocess (${result.hotwords.size} hotwords)",
+                            )
+                    }
+                }
+                store.save(next)
+                reload()
+                syncEngine.enqueueSync(ticketId)
+            } catch (e: Exception) {
+                store.save(
+                    t.copy(sync = t.sync.copy(health = SyncHealth.ERROR, lastError = e.message)),
+                )
+                reload()
+            }
+        }
     }
 
     fun simulateRemoteAhead(ticketId: String) {
@@ -131,17 +252,35 @@ class AppViewModel(app: Application) : AndroidViewModel(app) {
         return applyIntake(withText)
     }
 
-    fun beginAudioTicket(): LocalTicket =
-        store.create(startMode = StartMode.AUDIO, intake = IntakeStatus.LISTENING).also {
-            reload()
-            notifySync(it.id)
-        }
+    fun beginAudioTicket(): LocalTicket {
+        val t =
+            store.create(startMode = StartMode.AUDIO, intake = IntakeStatus.LISTENING).copy(
+                recording = true,
+                coachLine = CoachLines.STATE_PROBLEM,
+                title = "Listening…",
+                titleField = TicketField(value = "Listening…", source = FieldSource.INTAKE, locked = false),
+            )
+        store.save(t)
+        reload()
+        notifySync(t.id)
+        startLiveChunkLoop(t.id)
+        return t
+    }
 
-    fun beginAvTicket(): LocalTicket =
-        store.create(startMode = StartMode.AUDIO_FRAMES, intake = IntakeStatus.LISTENING).also {
-            reload()
-            notifySync(it.id)
-        }
+    fun beginAvTicket(): LocalTicket {
+        val t =
+            store.create(startMode = StartMode.AUDIO_FRAMES, intake = IntakeStatus.LISTENING).copy(
+                recording = true,
+                coachLine = CoachLines.STATE_PROBLEM,
+                title = "Listening…",
+                titleField = TicketField(value = "Listening…", source = FieldSource.INTAKE, locked = false),
+            )
+        store.save(t)
+        reload()
+        notifySync(t.id)
+        startLiveChunkLoop(t.id)
+        return t
+    }
 
     fun audioFileFor(ticketId: String): File =
         File(store.mediaDir(ticketId), "voice_${System.currentTimeMillis()}.m4a")
@@ -149,29 +288,139 @@ class AppViewModel(app: Application) : AndroidViewModel(app) {
     fun stillFileFor(ticketId: String): File =
         File(store.mediaDir(ticketId), "still_${System.currentTimeMillis()}.jpg")
 
-    fun onAudioCaptured(ticketId: String, file: File): LocalTicket? {
+    /** Simulate uploading an audio chunk while recording (server ASR/intake later). */
+    fun onLiveAudioChunk(ticketId: String, chunkFile: File? = null): LocalTicket? {
         val t = store.load(ticketId) ?: return null
+        if (!t.recording) return t
+        val chunk = t.audioChunkCount + 1
+        val step = LiveAudioIntakeSim.step(chunk, recording = true)
         var next =
             t.copy(
+                audioChunkCount = chunk,
                 hasAudio = true,
                 updatedAtMs = System.currentTimeMillis(),
-                intake = IntakeStatus.TRANSCRIBING,
+                coachLine = step.coachLine,
+                intake = step.intake,
+            )
+        next = applyProposedFields(next, step.title, step.description)
+        // Per-chunk uploads are not timeline events — coach/chip carry realtime status.
+        store.save(next)
+        reload()
+        notifySync(ticketId)
+        return store.load(ticketId)
+    }
+
+    /** AV path / legacy: flush audio the same as Stop (ticket already exists). */
+    fun onAudioCaptured(ticketId: String, file: File): LocalTicket? =
+        stopAudioRecording(ticketId, file)
+
+    fun stopAudioRecording(ticketId: String, finalFile: File?): LocalTicket? {
+        liveJobs.remove(ticketId)?.cancel()
+        val t = store.load(ticketId) ?: return null
+        val usableTitle =
+            t.titleField.locked ||
+                (t.titleField.value.isNotBlank() &&
+                    t.titleField.value != "Listening…" &&
+                    t.titleField.value.length > 4)
+        val after = LiveAudioIntakeSim.afterStop(t.audioChunkCount, hasUsableTitle = usableTitle)
+        var next =
+            t.copy(
+                recording = false,
+                hasAudio = t.hasAudio || finalFile != null,
+                coachLine = after.coachLine,
+                updatedAtMs = System.currentTimeMillis(),
+                intake = after.intake,
+            )
+        if (finalFile != null) {
+            next =
+                appendTimeline(
+                    next,
+                    TimelineKind.USER_AUDIO,
+                    "Final audio (${finalFile.length() / 1024} KB)",
+                    finalFile.absolutePath,
+                )
+        } else if (t.hasAudio || t.audioChunkCount > 0) {
+            next = appendTimeline(next, TimelineKind.USER_AUDIO, "Final audio flush")
+        }
+        // Stay on QUEUED until server/Batch advances — do not fake “Transcribing” or “Figuring out”.
+        store.save(next)
+        reload()
+        notifySync(ticketId)
+        return store.load(ticketId)
+    }
+
+    /** User commits title/description — intake must not overwrite. */
+    fun lockTitleDescription(ticketId: String, title: String, description: String): LocalTicket? {
+        val t = store.load(ticketId) ?: return null
+        val titleTrim = title.trim()
+        val descTrim = description.trim()
+        var next =
+            t.copy(
+                title = titleTrim.ifBlank { t.title },
+                description = descTrim,
+                titleField =
+                    TicketField(
+                        value = titleTrim.ifBlank { t.displayTitle() },
+                        source = FieldSource.USER,
+                        locked = true,
+                    ),
+                descriptionField =
+                    TicketField(
+                        value = descTrim,
+                        source = FieldSource.USER,
+                        locked = true,
+                    ),
+                updatedAtMs = System.currentTimeMillis(),
+                intake = IntakeStatus.FIGURING_OUT,
             )
         next =
             appendTimeline(
                 next,
-                TimelineKind.USER_AUDIO,
-                "Voice note (${file.length() / 1024} KB) — transcription queued locally",
-                file.absolutePath,
+                TimelineKind.USER_TEXT,
+                "Title/description locked by you:\n${next.title}",
             )
-        next =
-            appendTimeline(
-                next,
-                TimelineKind.STATUS,
-                "Transcribing… (server ASR not wired — local intake next)",
-            )
-        next = next.copy(intake = IntakeStatus.FIGURING_OUT)
         return applyIntake(next)
+    }
+
+    private fun startLiveChunkLoop(ticketId: String) {
+        liveJobs.remove(ticketId)?.cancel()
+        liveJobs[ticketId] =
+            viewModelScope.launch {
+                var i = 0
+                while (isActive) {
+                    delay(2_500L)
+                    val cur = store.load(ticketId) ?: break
+                    if (!cur.recording) break
+                    i++
+                    // Chunk file placeholder until real segmenter; still advances intake sim.
+                    onLiveAudioChunk(ticketId, chunkFile = null)
+                }
+            }
+    }
+
+    private fun applyProposedFields(
+        ticket: LocalTicket,
+        title: String?,
+        description: String?,
+    ): LocalTicket {
+        var titleField = ticket.titleField
+        var descField = ticket.descriptionField
+        var titleStr = ticket.title
+        var descStr = ticket.description
+        if (title != null && !titleField.locked) {
+            titleField = TicketField(value = title, source = FieldSource.INTAKE, locked = false)
+            titleStr = title
+        }
+        if (description != null && !descField.locked) {
+            descField = TicketField(value = description, source = FieldSource.INTAKE, locked = false)
+            descStr = description
+        }
+        return ticket.copy(
+            title = titleStr,
+            description = descStr,
+            titleField = titleField,
+            descriptionField = descField,
+        )
     }
 
     fun onStillCaptured(ticketId: String, file: File): LocalTicket? {
@@ -192,23 +441,8 @@ class AppViewModel(app: Application) : AndroidViewModel(app) {
         return applyIntake(next)
     }
 
-    fun applyManualFill(ticketId: String, title: String, description: String): LocalTicket? {
-        val t = store.load(ticketId) ?: return null
-        var next =
-            t.copy(
-                title = title.trim().ifBlank { t.title },
-                description = description.trim(),
-                updatedAtMs = System.currentTimeMillis(),
-                intake = IntakeStatus.FIGURING_OUT,
-            )
-        next =
-            appendTimeline(
-                next,
-                TimelineKind.USER_TEXT,
-                "Updated details:\n${next.title}\n${next.description}",
-            )
-        return applyIntake(next)
-    }
+    fun applyManualFill(ticketId: String, title: String, description: String): LocalTicket? =
+        lockTitleDescription(ticketId, title, description)
 
     fun answerQuestion(ticketId: String, question: String, answer: String): LocalTicket? {
         val t = store.load(ticketId) ?: return null
@@ -222,10 +456,12 @@ class AppViewModel(app: Application) : AndroidViewModel(app) {
     }
 
     fun closeTicket(ticketId: String) {
+        liveJobs.remove(ticketId)?.cancel()
         val t = store.load(ticketId) ?: return
         store.save(
             t.copy(
                 status = TicketStatus.CLOSED,
+                recording = false,
                 updatedAtMs = System.currentTimeMillis(),
             ),
         )
@@ -253,33 +489,45 @@ class AppViewModel(app: Application) : AndroidViewModel(app) {
     private fun applyIntake(ticket: LocalTicket): LocalTicket {
         val decision = IntakeHeuristics.decide(ticket)
         val now = System.currentTimeMillis()
-        var next =
-            ticket.copy(
-                title = decision.title.ifBlank { ticket.title },
-                intake = decision.intake,
-                questions = decision.questions,
-                updatedAtMs = now,
+        var next = ticket.copy(questions = decision.questions, updatedAtMs = now, intake = decision.intake)
+        if (!ticket.titleField.locked) {
+            val title = decision.title.ifBlank { ticket.title }
+            next =
+                next.copy(
+                    title = title,
+                    titleField = TicketField(value = title, source = FieldSource.INTAKE, locked = false),
+                )
+        }
+        if (!ticket.descriptionField.locked && decision.summary.isNotBlank() && ticket.description.isBlank()) {
+            next =
+                next.copy(
+                    description = decision.summary,
+                    descriptionField =
+                        TicketField(value = decision.summary, source = FieldSource.INTAKE, locked = false),
+                )
+        }
+        var intake = decision.intake
+        if (intake == IntakeStatus.QUEUE_PROJECT) {
+            intake = IntakeStatus.INVESTIGATING
+        }
+        val stage = RealtimeIntakeStages.fromIntake(intake)
+        next =
+            next.copy(
+                intake = intake,
+                coachLine =
+                    decision.summary.ifBlank { RealtimeIntakeStages.coachLine(stage) },
             )
         next =
             appendTimeline(
                 next,
                 TimelineKind.SERVER_TITLE,
-                decision.summary,
+                decision.summary.ifBlank { "Intake updated · ${intake.chipLabel()}" },
             )
         decision.questions.forEach { q ->
             next = appendTimeline(next, TimelineKind.SERVER_QUESTION, q)
         }
         if (decision.advice != null) {
             next = appendTimeline(next, TimelineKind.SERVER_ADVICE, decision.advice)
-        }
-        if (decision.intake == IntakeStatus.QUEUE_PROJECT) {
-            next = next.copy(intake = IntakeStatus.INVESTIGATING)
-            next =
-                appendTimeline(
-                    next,
-                    TimelineKind.STATUS,
-                    "Investigating further when capacity frees (local stub).",
-                )
         }
         store.save(next)
         reload()
@@ -297,6 +545,7 @@ class AppViewModel(app: Application) : AndroidViewModel(app) {
         body: String,
         localPath: String? = null,
     ): LocalTicket {
+        if (!TimelinePolicy.isMajor(kind)) return ticket
         val entry =
             TimelineEntry(
                 id = UUID.randomUUID().toString(),

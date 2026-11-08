@@ -29,7 +29,7 @@ Built from **MyProblem Test Mode** offline gate on device **CPH2419** (2026-11-0
 
 **Realtime** (this doc’s SEND path) is only for **smart-enough ticket intake**: coach lines + `capture_request` so the user fills questions, requirements, and **stills**. It is **not** an on-demand frontier solve. **No video files** are uploaded — only unique/worthy stills within rate limits.
 
-**Projects** — deferred, batched server investigation — are the **primary** heavy path once a ticket is packaged and queued by status. Bedrock/frontier is a **rare escalate** inside that batch worker. See [`projects.md`](./projects.md) · [`backbone-escalate.md`](./backbone-escalate.md). Tickets are anon by default ([`anonymous-tickets.md`](./anonymous-tickets.md)).
+**Projects** — deferred, batched server investigation — are the **primary** heavy path once a ticket is packaged and queued by status. The **region KB (git Markdown)** is checked first; Bedrock/frontier is a **rare escalate after KB miss**, then distilled back into the KB. See [`projects.md`](./projects.md) · [`backbone-escalate.md`](./backbone-escalate.md) · [`knowledge-base.md`](./knowledge-base.md). Tickets are anon by default ([`anonymous-tickets.md`](./anonymous-tickets.md)).
 
 **Voice** is not part of the SEND frame path. The client posts **audio Evidence** to the ticket (blob in cheap object store); first attach enqueues ASR; context patches on **open** tickets may run an LLM gate for **retranscription** only. See [`progressive-transcription.md`](./progressive-transcription.md). There is no client `/api/transcribe`.
 
@@ -37,7 +37,7 @@ Built from **MyProblem Test Mode** offline gate on device **CPH2419** (2026-11-0
 |---|---|
 | Realtime SEND | Light VL/OCR for coaching; stills only; update ticket fields; never pretend the Problem is fully solved |
 | Voice Evidence | Accept audio; enqueue first `asr_job`; LLM-gated retranscription on open tickets |
-| Project batch | Deep research ASAP + complete; cache/KB first; rare Bedrock escalate; DIY vs merchant; timeline updates |
+| Project batch | Deep research ASAP + complete; KB git + cache first; allowed browser research (honest limits); rare Bedrock escalate → KB write; DIY vs merchant; timeline updates |
 
 ## Sent with worthy uploads (server needs these for realtime coaching)
 
@@ -94,6 +94,7 @@ Unit tests: Android `./gradlew :app:testDebugUnitTest`; Web `npm test`.
 - [projects.md](./projects.md) — deferred server investigation (primary heavy path)
 - [anonymous-tickets.md](./anonymous-tickets.md) — anon UUID; free recover email; Relay tip SoT
 - [progressive-transcription.md](./progressive-transcription.md) — audio → first ASR; LLM-gated retranscription; no video
-- [backbone-escalate.md](./backbone-escalate.md) — rare Bedrock / frontier escalate
+- [backbone-escalate.md](./backbone-escalate.md) — rare Bedrock / frontier escalate (after KB miss)
+- [knowledge-base.md](./knowledge-base.md) — git Markdown KB; primary learning; browser honesty
 - [capture-guidance.md](./capture-guidance.md) — `capture_request` schema + future 3D / voice notes
 - [onboard-ai.md](./onboard-ai.md) — L0–L4, HF pins, pack format, CDN

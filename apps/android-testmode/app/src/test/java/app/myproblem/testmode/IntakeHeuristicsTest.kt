@@ -43,4 +43,37 @@ class IntakeHeuristicsTest {
             )
         assertThat(d.intake).isEqualTo(IntakeStatus.QUEUE_PROJECT)
     }
+
+    /** Mirrors fixtures/intakes easy scenarios once title/desc are known (post-ASR). */
+    @Test
+    fun fixtureFlatTire_queuesOrAdvice() {
+        val d =
+            IntakeHeuristics.decide(
+                base().copy(
+                    title = "Flat tire on the roadside",
+                    description =
+                        "Front passenger tire is flat. Spare in trunk; unsure about the jack.",
+                    hasAudio = true,
+                ),
+            )
+        assertThat(d.intake).isAnyOf(IntakeStatus.QUEUE_PROJECT, IntakeStatus.ADVICE_READY)
+        assertThat(d.title.lowercase()).contains("tire")
+    }
+
+    @Test
+    fun fixtureGlasses_namedOrQueued() {
+        val d =
+            IntakeHeuristics.decide(
+                base().copy(
+                    title = "Repair glasses frame",
+                    description = "Plastic arm cracked near the hinge; lenses fine; need them for work.",
+                    hasAudio = true,
+                ),
+            )
+        assertThat(
+            d.intake == IntakeStatus.QUEUE_PROJECT ||
+                d.intake == IntakeStatus.NAMED_AND_QUESTIONS ||
+                d.intake == IntakeStatus.ADVICE_READY,
+        ).isTrue()
+    }
 }

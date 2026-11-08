@@ -1,0 +1,429 @@
+{
+  "version": 1,
+  "format": "myproblem.intake_fixtures",
+  "sample_rate_hz": 16000,
+  "channels": 1,
+  "notes": "Golden expect fields use keyword must-include until an LLM judge exists. Exact scenario human recordings are not available under clean licenses; speech is TTS + CC0/synthetic noise beds.",
+  "scenarios": [
+    {
+      "id": "flat_tire_roadside",
+      "difficulty": "easy",
+      "style": "clear",
+      "status": "generate",
+      "script": "Hi. I have a flat tire on the roadside. The front passenger tire is completely flat. I have a spare in the trunk but I'm not sure how to use the jack safely.",
+      "noise": "traffic_light",
+      "snr_db": 14,
+      "expect": {
+        "title_must_include": ["flat", "tire"],
+        "description_must_include_any": ["spare", "roadside", "jack", "passenger"],
+        "intake_targets": ["named_and_questions", "advice_ready"],
+        "eval_surface": "apk_or_server"
+      }
+    },
+    {
+      "id": "glasses_frame_cracked",
+      "difficulty": "easy",
+      "style": "clear",
+      "status": "generate",
+      "script": "How can I repair my glasses frame? The plastic arm on the left side cracked near the hinge. The lenses are fine. I need them for work tomorrow.",
+      "noise": "room_tone",
+      "snr_db": 18,
+      "expect": {
+        "title_must_include": ["glasses"],
+        "description_must_include_any": ["frame", "cracked", "hinge", "arm"],
+        "intake_targets": ["named_and_questions", "advice_ready"],
+        "eval_surface": "apk_or_server"
+      }
+    },
+    {
+      "id": "bird_fell_nest",
+      "difficulty": "easy",
+      "style": "clear",
+      "status": "generate",
+      "script": "A baby bird fell out of its nest in my backyard. It is peeping under the oak tree. The nest is high up and I am worried about cats.",
+      "noise": "wind_light",
+      "snr_db": 12,
+      "expect": {
+        "title_must_include": ["bird"],
+        "description_must_include_any": ["nest", "fell", "baby", "yard", "backyard"],
+        "intake_targets": ["named_and_questions", "advice_ready"],
+        "eval_surface": "apk_or_server"
+      }
+    },
+    {
+      "id": "kitchen_sink_clogged",
+      "difficulty": "easy",
+      "style": "clear",
+      "status": "generate",
+      "script": "My kitchen sink is clogged. Water fills the basin and drains very slowly. I tried hot water. No chemicals yet. There is a garbage disposal.",
+      "noise": "room_tone",
+      "snr_db": 16,
+      "expect": {
+        "title_must_include": ["sink"],
+        "description_must_include_any": ["clog", "drain", "kitchen", "disposal"],
+        "intake_targets": ["named_and_questions", "advice_ready"],
+        "eval_surface": "apk_or_server"
+      }
+    },
+    {
+      "id": "lost_car_keys",
+      "difficulty": "easy",
+      "style": "clear",
+      "status": "generate",
+      "script": "I lost my car keys. Last place I remember having them is the grocery store parking lot about an hour ago. The spare key is at home across town.",
+      "noise": "traffic_light",
+      "snr_db": 13,
+      "expect": {
+        "title_must_include": ["key"],
+        "description_must_include_any": ["car", "lost", "spare", "parking", "grocery"],
+        "intake_targets": ["named_and_questions", "advice_ready"],
+        "eval_surface": "apk_or_server"
+      }
+    },
+    {
+      "id": "minor_cut_see_doctor",
+      "difficulty": "easy",
+      "style": "clear",
+      "status": "generate",
+      "script": "Do I need to see a doctor? I cut my finger while chopping vegetables. It is still bleeding after ten minutes of pressure. It looks deep but I can move the finger.",
+      "noise": "room_tone",
+      "snr_db": 17,
+      "expect": {
+        "title_must_include": ["cut"],
+        "description_must_include_any": ["finger", "bleed", "doctor", "pressure"],
+        "intake_targets": ["named_and_questions", "advice_ready"],
+        "eval_surface": "apk_or_server"
+      }
+    },
+    {
+      "id": "washer_wont_drain",
+      "difficulty": "medium",
+      "style": "rambly",
+      "status": "generate",
+      "script": "Okay so the washing machine finished the cycle but the water is still sitting in the drum. It usually drains fine. I cleaned the filter last month I think. Brand is a Whirlpool front loader. Clothes are soaking wet and I have to leave for work. Is this a drain pump or a hose kink?",
+      "noise": "appliance_hum",
+      "snr_db": 10,
+      "expect": {
+        "title_must_include": ["wash"],
+        "description_must_include_any": ["drain", "water", "drum", "pump", "whirlpool"],
+        "intake_targets": ["named_and_questions", "advice_ready", "queue_project"],
+        "eval_surface": "apk_or_server"
+      }
+    },
+    {
+      "id": "wifi_after_router_move",
+      "difficulty": "medium",
+      "style": "rambly",
+      "status": "generate",
+      "script": "Wi-Fi died after I moved the router to the living room. Phones see the network name but cannot connect. The modem lights look normal. I rebooted twice. Ethernet to the TV still works. Maybe the password got reset? Or the five gigahertz band is broken?",
+      "noise": "room_tone",
+      "snr_db": 14,
+      "expect": {
+        "title_must_include": ["wi"],
+        "description_must_include_any": ["router", "connect", "modem", "ethernet", "network"],
+        "intake_targets": ["named_and_questions", "advice_ready"],
+        "eval_surface": "apk_or_server"
+      }
+    },
+    {
+      "id": "bike_chain_slipped",
+      "difficulty": "medium",
+      "style": "clear",
+      "status": "generate",
+      "script": "My bike chain slipped off the front chainring while I was climbing a hill. I put it back on but it keeps skipping under load. The derailleur looks bent a little. I need to get home five miles away.",
+      "noise": "wind_light",
+      "snr_db": 11,
+      "expect": {
+        "title_must_include": ["bike"],
+        "description_must_include_any": ["chain", "derailleur", "skip", "chainring"],
+        "intake_targets": ["named_and_questions", "advice_ready"],
+        "eval_surface": "apk_or_server"
+      }
+    },
+    {
+      "id": "neighbor_smoke_alarm",
+      "difficulty": "medium",
+      "style": "panic",
+      "status": "generate",
+      "script": "My neighbor's smoke alarm has been chirping for two days through the wall. I knocked once, nobody answered. I do not smell smoke. Should I call the building manager or the fire department? Apartment 4B I think.",
+      "noise": "beep_chirp",
+      "snr_db": 8,
+      "expect": {
+        "title_must_include": ["smoke"],
+        "description_must_include_any": ["alarm", "neighbor", "chirp", "apartment"],
+        "intake_targets": ["named_and_questions", "advice_ready"],
+        "eval_surface": "apk_or_server"
+      }
+    },
+    {
+      "id": "phone_screen_cracked",
+      "difficulty": "medium",
+      "style": "clear",
+      "status": "generate",
+      "script": "I dropped my phone and the screen is cracked but it still works. Touch is fine except the top corner. No insurance. Is a screen replacement worth it or should I use a tempered glass cover for now?",
+      "noise": "cafe_murmur",
+      "snr_db": 9,
+      "expect": {
+        "title_must_include": ["screen"],
+        "description_must_include_any": ["crack", "phone", "touch", "repair", "glass"],
+        "intake_targets": ["named_and_questions", "advice_ready"],
+        "eval_surface": "apk_or_server"
+      }
+    },
+    {
+      "id": "mold_or_dirt_wall",
+      "difficulty": "medium",
+      "style": "rambly",
+      "status": "generate",
+      "script": "Is this mold or just dirt? There are black spots on the bathroom wall near the shower. They wipe off a little but come back. The fan barely works. No smell of mildew that I notice, but I am worried about my kid's asthma.",
+      "noise": "room_tone",
+      "snr_db": 13,
+      "expect": {
+        "title_must_include": ["mold"],
+        "description_must_include_any": ["bathroom", "wall", "shower", "spots", "mildew"],
+        "intake_targets": ["named_and_questions", "advice_ready"],
+        "eval_surface": "apk_or_server"
+      }
+    },
+    {
+      "id": "multi_issue_car_ramble",
+      "difficulty": "hard",
+      "style": "disorganized",
+      "status": "generate",
+      "script": "So um the car — wait, first the tire looked low this morning, maybe flat, but then it started fine, then at the light it almost stalled, and I thought battery? Or alternator? There was a click yesterday. Also the check engine light blinked once then stopped. I am on the shoulder of Route 9. Spare is there. Jump pack is at home. Do I call a tow or try to limp to the gas station a mile away?",
+      "noise": "traffic_heavy",
+      "snr_db": 6,
+      "expect": {
+        "title_must_include": ["car"],
+        "description_must_include_any": ["tire", "battery", "stall", "tow", "engine"],
+        "intake_targets": ["named_and_questions", "queue_project", "needs_user_text"],
+        "eval_surface": "apk_or_server"
+      }
+    },
+    {
+      "id": "medical_triage_red_herrings",
+      "difficulty": "hard",
+      "style": "disorganized",
+      "status": "generate",
+      "script": "Okay I ate leftovers last night, maybe bad chicken, but also I have had this headache for three days, and my wrist hurts from typing, and now I feel dizzy when I stand up. Do I need urgent care or is it dehydration? No fever that I measured. My cousin said go to the ER but she always says that. The headache is behind my eyes.",
+      "noise": "cafe_murmur",
+      "snr_db": 7,
+      "expect": {
+        "title_must_include": ["dizzy"],
+        "description_must_include_any": ["headache", "dizzy", "urgent", "dehydrat", "fever"],
+        "intake_targets": ["named_and_questions", "advice_ready", "needs_user_text"],
+        "eval_surface": "apk_or_server"
+      }
+    },
+    {
+      "id": "appliance_wrong_model_then_fix",
+      "difficulty": "hard",
+      "style": "disorganized",
+      "status": "generate",
+      "script": "The dishwasher error code is E24 — wait no, looking again it is E15. I thought it was a Bosch SHPM65 but the sticker says SHX878. Water pools at the bottom after a cycle. I already ran vinegar. Is this a drain hose or a circulation pump? Manual is online somewhere.",
+      "noise": "appliance_hum",
+      "snr_db": 8,
+      "expect": {
+        "title_must_include": ["dishwasher"],
+        "description_must_include_any": ["error", "E15", "drain", "water", "bosch"],
+        "intake_targets": ["named_and_questions", "queue_project", "advice_ready"],
+        "eval_surface": "apk_or_server"
+      }
+    },
+    {
+      "id": "bird_nest_windy_chaos",
+      "difficulty": "hard",
+      "style": "noisy",
+      "status": "script_only",
+      "script": "There is a fledgling on the ground again — wait the dog is barking — the nest fell partly after the storm. Kids are yelling. Is it safe to put the nest back in the tree or do I call wildlife rehab? The bird can hop but not fly.",
+      "noise": "wind_heavy",
+      "snr_db": 4,
+      "expect": {
+        "title_must_include": ["bird"],
+        "description_must_include_any": ["nest", "fledgling", "wildlife", "storm"],
+        "intake_targets": ["named_and_questions", "advice_ready"],
+        "eval_surface": "server_only"
+      }
+    },
+    {
+      "id": "lease_break_and_mold",
+      "difficulty": "hard",
+      "style": "rambly",
+      "status": "script_only",
+      "script": "I need to know if mold lets me break the lease. Landlord painted over spots last year. Now the closet smells musty and my throat is scratchy. I have photos. Also rent is late because of a job change which is a separate mess. What is the first step in this state?",
+      "noise": "room_tone",
+      "snr_db": 12,
+      "expect": {
+        "title_must_include": ["mold"],
+        "description_must_include_any": ["lease", "landlord", "musty", "closet"],
+        "intake_targets": ["named_and_questions", "queue_project"],
+        "eval_surface": "server_only"
+      }
+    },
+    {
+      "id": "ev_charger_trip_breaker",
+      "difficulty": "hard",
+      "style": "rambly",
+      "status": "script_only",
+      "script": "Home EV charger keeps tripping the breaker when it hits twenty-four amps. Electrician said the panel is fine. Car is a used Bolt. Charger is a JuiceBox. Happens only after thirty minutes. Rainy today — related?",
+      "noise": "rain",
+      "snr_db": 9,
+      "expect": {
+        "title_must_include": ["charger"],
+        "description_must_include_any": ["breaker", "EV", "amps", "panel"],
+        "intake_targets": ["named_and_questions", "queue_project"],
+        "eval_surface": "server_only"
+      }
+    },
+    {
+      "id": "codeswitch_thick_accent_tts",
+      "difficulty": "extreme",
+      "style": "noisy",
+      "status": "script_only",
+      "script": "Eh my fridge no cold, freezer okay, maybe thermostat? Wait — also the ice maker stuck. Compramos this used last month. Do I replace the fan or the whole unit?",
+      "noise": "appliance_hum",
+      "snr_db": 5,
+      "expect": {
+        "title_must_include": ["fridge"],
+        "description_must_include_any": ["cold", "freezer", "ice", "fan"],
+        "intake_targets": ["named_and_questions", "advice_ready"],
+        "eval_surface": "server_only"
+      }
+    },
+    {
+      "id": "whisper_cafe_babble",
+      "difficulty": "extreme",
+      "style": "noisy",
+      "status": "script_only",
+      "script": "I am whispering because I am in a cafe. Someone stole my laptop bag from the chair when I ordered. Passport was inside. What do I do first — police or bank freeze?",
+      "noise": "cafe_murmur",
+      "snr_db": 2,
+      "expect": {
+        "title_must_include": ["laptop"],
+        "description_must_include_any": ["stole", "passport", "police", "cafe"],
+        "intake_targets": ["named_and_questions", "advice_ready"],
+        "eval_surface": "server_only"
+      }
+    },
+    {
+      "id": "three_interleaved_problems",
+      "difficulty": "extreme",
+      "style": "disorganized",
+      "status": "script_only",
+      "script": "The toilet is overflowing — no wait first the water heater is cold — also the breaker for the bathroom tripped. I shut the toilet supply. Kids in the tub. Which emergency first?",
+      "noise": "water_rush",
+      "snr_db": 5,
+      "expect": {
+        "title_must_include": ["toilet"],
+        "description_must_include_any": ["overflow", "heater", "breaker", "water"],
+        "intake_targets": ["named_and_questions", "queue_project", "needs_user_text"],
+        "eval_surface": "server_only"
+      }
+    },
+    {
+      "id": "contradictory_facts_midway",
+      "difficulty": "extreme",
+      "style": "disorganized",
+      "status": "script_only",
+      "script": "My oven will not heat above two hundred. Actually it does heat but the broiler is dead. Wait, the bake element glows. No — it does not. Model is from two thousand eighteen. Or twenty twenty. I never used self clean.",
+      "noise": "room_tone",
+      "snr_db": 11,
+      "expect": {
+        "title_must_include": ["oven"],
+        "description_must_include_any": ["heat", "bake", "broiler", "element"],
+        "intake_targets": ["needs_user_text", "named_and_questions"],
+        "eval_surface": "server_only"
+      }
+    },
+    {
+      "id": "near_silence_then_dump",
+      "difficulty": "extreme",
+      "style": "panic",
+      "status": "script_only",
+      "script": "Um. Okay. So. The basement is flooding from the water heater relief valve. Water is an inch deep near the electrical panel. Main shutoff is stuck. I need steps right now.",
+      "noise": "water_rush",
+      "snr_db": 6,
+      "expect": {
+        "title_must_include": ["flood"],
+        "description_must_include_any": ["basement", "water heater", "panel", "shutoff"],
+        "intake_targets": ["advice_ready", "named_and_questions"],
+        "eval_surface": "server_only"
+      }
+    },
+    {
+      "id": "pet_ate_chocolate_ramble",
+      "difficulty": "medium",
+      "style": "panic",
+      "status": "generate",
+      "script": "My dog ate dark chocolate. Maybe two ounces of seventy percent. He is thirty pounds. Happened twenty minutes ago. He seems fine so far. Do I induce vomiting or go to emergency vet?",
+      "noise": "room_tone",
+      "snr_db": 15,
+      "expect": {
+        "title_must_include": ["dog"],
+        "description_must_include_any": ["chocolate", "vet", "vomit", "ounces"],
+        "intake_targets": ["advice_ready", "named_and_questions"],
+        "eval_surface": "apk_or_server"
+      }
+    },
+    {
+      "id": "locked_out_apartment",
+      "difficulty": "easy",
+      "style": "clear",
+      "status": "generate",
+      "script": "I locked myself out of my apartment. Keys are on the kitchen counter. Building manager office is closed until Monday. It is Friday evening. No spare with neighbors.",
+      "noise": "room_tone",
+      "snr_db": 16,
+      "expect": {
+        "title_must_include": ["lock"],
+        "description_must_include_any": ["apartment", "keys", "manager", "locked out"],
+        "intake_targets": ["named_and_questions", "advice_ready"],
+        "eval_surface": "apk_or_server"
+      }
+    },
+    {
+      "id": "garden_hose_burst",
+      "difficulty": "easy",
+      "style": "clear",
+      "status": "script_only",
+      "script": "My garden hose burst at the spigot and water is spraying the foundation. I cannot turn the outdoor shutoff — the handle is stuck. Indoor valve location unknown.",
+      "noise": "water_rush",
+      "snr_db": 8,
+      "expect": {
+        "title_must_include": ["hose"],
+        "description_must_include_any": ["spigot", "shutoff", "spray", "foundation"],
+        "intake_targets": ["named_and_questions", "advice_ready"],
+        "eval_surface": "apk_or_server"
+      }
+    },
+    {
+      "id": "passport_renewal_confused",
+      "difficulty": "medium",
+      "style": "rambly",
+      "status": "script_only",
+      "script": "I need to renew my passport for a trip in six weeks. The photo rules confuse me. Can I use a booth photo? Also my name changed after marriage and I am not sure which forms.",
+      "noise": "cafe_murmur",
+      "snr_db": 10,
+      "expect": {
+        "title_must_include": ["passport"],
+        "description_must_include_any": ["renew", "photo", "name", "forms"],
+        "intake_targets": ["named_and_questions", "advice_ready"],
+        "eval_surface": "apk_or_server"
+      }
+    },
+    {
+      "id": "power_outage_food_safety",
+      "difficulty": "medium",
+      "style": "clear",
+      "status": "script_only",
+      "script": "Power has been out for eight hours. Fridge was full. Freezer still has ice crystals. What food is safe and when do I throw things out?",
+      "noise": "room_tone",
+      "snr_db": 14,
+      "expect": {
+        "title_must_include": ["power"],
+        "description_must_include_any": ["fridge", "freezer", "food", "outage", "hours"],
+        "intake_targets": ["advice_ready", "named_and_questions"],
+        "eval_surface": "apk_or_server"
+      }
+    }
+  ]
+}

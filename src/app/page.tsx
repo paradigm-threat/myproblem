@@ -47,8 +47,10 @@ export default function HomePage() {
               <p className="eyebrow">Coming soon · Georgia &amp; Israel pilots</p>
               <p className="hero-lead">
                 Free forever for local businesses. Capture the ticket, queue it
-                like JIRA, batch-investigate thoroughly — Bedrock only when we
-                truly need it. Local knowledge for Georgia and Israel.
+                like JIRA, batch-investigate thoroughly — and grow a local
+                knowledge base for solving problems (Georgia &amp; Israel), not
+                a mirror of search ads. No boosting. Bedrock only when we truly
+                need it.
               </p>
               <p className="powered-by">
                 Powered by{" "}
@@ -206,9 +208,10 @@ export default function HomePage() {
                 <p>
                   When there is no ready solution yet, the ticket joins a
                   status queue. Workers investigate ASAP and completely —
-                  cache and local KB first, Bedrock only if truly stuck.
+                  local knowledge base first (problem-solving lessons, not a
+                  copy of Google), then tools; Bedrock only if truly stuck.
+                  Useful lessons go back into the KB so we don’t forget.
                   Timeline updates land in the app (and email if you want).
-                  Many Problems close with AI alone.
                 </p>
               </li>
               <li>
@@ -296,10 +299,10 @@ export default function HomePage() {
                 <h3>Investigate ASAP + completely</h3>
                 <p>
                   Workers drain the queue when Spot frees: local KB and cache
-                  first, then Hugging Face / open VL on Spot for deep photo
-                  reads, optional diagram generation, and mid LLMs. Dig until
-                  DIY, need-more-evidence, merchant-ready, or closed — no
-                  redundant repeats.
+                  first (how to solve it here — not a freeze-frame of the
+                  internet), then Hugging Face / open VL, optional diagrams,
+                  and mid LLMs. Dig until DIY, need-more-evidence,
+                  merchant-ready, or closed — no redundant repeats.
                 </p>
               </article>
               <article className="project-flow-card" role="listitem">
@@ -307,9 +310,9 @@ export default function HomePage() {
                 <h3>Bedrock only when stuck</h3>
                 <p>
                   Advanced math, rare language, or photo understanding/gen that
-                  open models can’t handle → one frontier call, then cache the
-                  gold for the next identical ask. Priority shortens the queue;
-                  it does not invent live on-demand LLM or image APIs.
+                  open models can’t handle → one frontier call, then write the
+                  useful residue into the KB and cache. Priority shortens the
+                  queue; it does not invent live on-demand LLM or image APIs.
                 </p>
               </article>
             </div>
@@ -337,75 +340,80 @@ export default function HomePage() {
           </section>
 
           <section id="knowledge" aria-labelledby="knowledge-heading">
-            <h2 id="knowledge-heading">Shared local knowledge — Georgia &amp; Israel</h2>
+            <h2 id="knowledge-heading">Knowledge for solving problems — not for search ads</h2>
             <p className="section-lead">
-              Global AIs (ChatGPT, Gemini, Grok) and national directories guess
-              at “near me.” Hire-first apps rush you to a pro. MyProblem builds a{" "}
-              <strong className="emph">place-tied knowledge base</strong> from
-              every investigation in Georgia and Israel — public lessons shared,
-              private details protected — so we outcompete on local, Relay-
-              connected truth instead of world-scale trivia.
+              A core job of MyProblem is knowing the{" "}
+              <strong className="emph">best way to solve a problem with local
+              resources</strong> — the layer competitive search rankings and
+              ads fight over. Our shared knowledge base (Georgia &amp; Israel)
+              stores that kind of lesson, plus DIY advice when location does
+              not matter. It is{" "}
+              <strong className="emph">speculative</strong>: built from{" "}
+              <strong className="emph">user contributions</strong> and{" "}
+              <strong className="emph">AI investigations</strong> only.{" "}
+              <strong className="emph">No boosting</strong>, no paid ranking,
+              no freeze-frame of the greater internet.
             </p>
             <div className="project-flow" role="list">
               <article className="project-flow-card" role="listitem">
-                <p className="project-flow-label">Grow</p>
-                <h3>Docs from investigations</h3>
+                <p className="project-flow-label">Purpose</p>
+                <h3>Problem-solving only</h3>
                 <p>
-                  As Projects finish, the AI creates and maintains public
-                  documents: common advice, local facts, even rumors — only when
-                  they come from reliable or identified sources — continuously
-                  updated as more tickets teach the same place.
+                  We write what helps the app solve tickets: local resource
+                  paths, ticket-driven assessments, and general repair advice
+                  when it is useful. We do not copy hours, phones, or pages you
+                  can already find online — those keep changing; we cite them
+                  live instead.
                 </p>
               </article>
               <article className="project-flow-card" role="listitem">
-                <p className="project-flow-label">Scope</p>
-                <h3>Must map to a local point</h3>
+                <p className="project-flow-label">Honesty</p>
+                <h3>Speculative · no boost</h3>
                 <p>
-                  The KB is defined for Georgia and Israel only. An article can
-                  cover almost any topic, but it has to relate to a geographic
-                  point in-region. That keeps growth deep and local — not a
-                  second ChatGPT.
+                  Everything in the KB is provisional investigation assistance
+                  from users and AI — never algorithmically boosted for money
+                  or engagement. Business pages appear only when a Project
+                  thoroughly investigated that shop for a real ticket.
                 </p>
               </article>
               <article className="project-flow-card" role="listitem">
-                <p className="project-flow-label">Privacy</p>
-                <h3>PII off the network</h3>
+                <p className="project-flow-label">Learn</p>
+                <h3>Re-test · refine · don’t forget</h3>
                 <p>
-                  Default is private and client-held. Ticket packaging converts
-                  personal detail to safe locality (city / coarse band). Phone
-                  numbers and full addresses stay out of the KB and mesh —
-                  available only on request through secure direct messaging.
+                  Useful advice is proven over time on new tickets. When it
+                  stops helping, we refine or ditch it — and keep history so we
+                  never throw away what we learned.
                 </p>
               </article>
               <article className="project-flow-card" role="listitem">
                 <p className="project-flow-label">Channels</p>
                 <h3>Anything with a unique id</h3>
                 <p>
-                  A channel is just a unique id. Associate tickets with it —
-                  house, street, town, Wi-Fi, Bluetooth beacon, or other local
-                  tag — and anyone subscribed to that id sees them. Helpers get
-                  place grain, not anonymous internet. More signal → more trust.
+                  Associate tickets with a public channel id — house, street,
+                  town, Wi-Fi, Bluetooth beacon — so subscribers see place
+                  grain without passwords. PII stays client-side unless you
+                  release it by secure DM.
                 </p>
               </article>
             </div>
             <div className="people-promise" style={{ marginTop: "1.75rem" }}>
-              <h3 id="knowledge-why-heading">Why local beats global here</h3>
+              <h3 id="knowledge-why-heading">Why this beats directory scrapes</h3>
               <ul aria-labelledby="knowledge-why-heading">
                 <li>
-                  <strong>Realtime local loop</strong> — knowledge updates from
-                  live Projects, not a yearly crawl of the open web.
+                  <strong>Anti-ad ranking</strong> — we refuse boosting; search
+                  wars stay outside the product.
                 </li>
                 <li>
-                  <strong>No fake “everywhere”</strong> — we refuse out-of-region
-                  KB sprawl so Georgia and Israel stay dense and useful.
+                  <strong>No internet cache</strong> — searchable facts stay on
+                  the live web; the KB holds problem-solving residue.
                 </li>
                 <li>
-                  <strong>Trust without doxxing</strong> — subscribe by public
-                  channel id (house, Wi-Fi, Bluetooth dongle, …), never secrets.
+                  <strong>Continuous learning</strong> — re-test advice; refine
+                  or retire; keep the trail.
                 </li>
                 <li>
-                  <strong>Relay-native</strong> — tips and place channels, not
-                  another global feed.
+                  <strong>Pilots stay dense</strong> — Georgia and Israel only
+                  for now; depth over world sprawl.
                 </li>
               </ul>
             </div>
@@ -415,9 +423,10 @@ export default function HomePage() {
             <h2 id="plan-heading">The plan</h2>
             <p className="section-lead">
               Relay-native investigation service. Problems not chats. Projects
-              for thorough deferred research. A shared local knowledge base for
-              pilot regions. Local businesses as free distribution. Consumer
-              economics after free uses.
+              for thorough deferred research. A shared knowledge base for
+              problem-solving in pilot regions — no boosting, no internet
+              mirror. Local businesses as free distribution. Consumer economics
+              after free uses.
             </p>
             <div className="plan-grid">
               <article>
@@ -437,12 +446,12 @@ export default function HomePage() {
                 </p>
               </article>
               <article>
-                <h3>Local knowledge base</h3>
+                <h3>Knowledge for problem-solving</h3>
                 <p>
-                  Every investigation can enrich public, place-tied docs for
-                  Georgia and Israel — redacting private data — plus channels
-                  by unique id (place, Wi-Fi, Bluetooth, …) so subscribers see
-                  associated tickets locally.
+                  Ticket-earned lessons for Georgia and Israel — local resource
+                  wisdom and DIY when place does not matter. Speculative
+                  (users + AI only); no boosting; never a cache of the public
+                  web. Re-test, refine, or ditch — don’t forget.
                 </p>
               </article>
               <article>
@@ -570,11 +579,11 @@ export default function HomePage() {
             <h2 id="regions-heading">Pilot regions</h2>
             <p className="section-lead">
               We are starting where we can operate tightly — product, merchants,{" "}
-              <em>and</em> the shared knowledge base are scoped to these places
-              only. Expand by request, as new region partitions — not one global
-              brain. Both markets already use ChatGPT/Gemini; we win on thorough
-              deferred Projects and place-tied knowledge — not another chatbot
-              or hire-first lead app.
+              <em>and</em> the problem-solving knowledge base are scoped to
+              these places only. Expand by request, as new region partitions —
+              not one global brain. Both markets already use ChatGPT/Gemini; we
+              win on thorough deferred Projects and local resource wisdom search
+              ads bury — not another chatbot or hire-first lead app.
             </p>
             <ul className="regions">
               <li className="chip">

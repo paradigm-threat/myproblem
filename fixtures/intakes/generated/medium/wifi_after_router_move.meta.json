@@ -1,0 +1,27 @@
+{
+  "id": "wifi_after_router_move",
+  "difficulty": "medium",
+  "style": "rambly",
+  "status": "generated",
+  "audio": "generated/medium/wifi_after_router_move.wav",
+  "noise": "room_tone",
+  "snr_db": 14,
+  "expect": {
+    "title_must_include": [
+      "wi"
+    ],
+    "description_must_include_any": [
+      "router",
+      "connect",
+      "modem",
+      "ethernet",
+      "network"
+    ],
+    "intake_targets": [
+      "named_and_questions",
+      "advice_ready"
+    ],
+    "eval_surface": "apk_or_server"
+  },
+  "script": "Wi-Fi died after I moved the router to the living room. Phones see the network name but cannot connect. The modem lights look normal. I rebooted twice. Ethernet to the TV still works. Maybe the password got reset? Or the five gigahertz band is broken?"
+}

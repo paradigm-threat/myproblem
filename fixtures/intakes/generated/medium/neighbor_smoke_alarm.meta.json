@@ -1,0 +1,26 @@
+{
+  "id": "neighbor_smoke_alarm",
+  "difficulty": "medium",
+  "style": "panic",
+  "status": "generated",
+  "audio": "generated/medium/neighbor_smoke_alarm.wav",
+  "noise": "beep_chirp",
+  "snr_db": 8,
+  "expect": {
+    "title_must_include": [
+      "smoke"
+    ],
+    "description_must_include_any": [
+      "alarm",
+      "neighbor",
+      "chirp",
+      "apartment"
+    ],
+    "intake_targets": [
+      "named_and_questions",
+      "advice_ready"
+    ],
+    "eval_surface": "apk_or_server"
+  },
+  "script": "My neighbor's smoke alarm has been chirping for two days through the wall. I knocked once, nobody answered. I do not smell smoke. Should I call the building manager or the fire department? Apartment 4B I think."
+}

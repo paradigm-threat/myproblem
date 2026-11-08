@@ -3,5 +3,7 @@
     <style name="Theme.MyProblemTestMode" parent="Theme.Material3.Dark.NoActionBar">
         <item name="android:statusBarColor">#0B1410</item>
         <item name="android:navigationBarColor">#0B1410</item>
+        <item name="android:windowBackground">#0B1410</item>
+        <item name="android:enableOnBackInvokedCallback">true</item>
     </style>
 </resources>

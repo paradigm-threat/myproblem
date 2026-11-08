@@ -1,0 +1,28 @@
+{
+  "id": "medical_triage_red_herrings",
+  "difficulty": "hard",
+  "style": "disorganized",
+  "status": "generated",
+  "audio": "generated/hard/medical_triage_red_herrings.wav",
+  "noise": "cafe_murmur",
+  "snr_db": 7,
+  "expect": {
+    "title_must_include": [
+      "dizzy"
+    ],
+    "description_must_include_any": [
+      "headache",
+      "dizzy",
+      "urgent",
+      "dehydrat",
+      "fever"
+    ],
+    "intake_targets": [
+      "named_and_questions",
+      "advice_ready",
+      "needs_user_text"
+    ],
+    "eval_surface": "apk_or_server"
+  },
+  "script": "Okay I ate leftovers last night, maybe bad chicken, but also I have had this headache for three days, and my wrist hurts from typing, and now I feel dizzy when I stand up. Do I need urgent care or is it dehydration? No fever that I measured. My cousin said go to the ER but she always says that. The headache is behind my eyes."
+}

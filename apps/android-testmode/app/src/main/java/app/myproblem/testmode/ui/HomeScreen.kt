@@ -66,7 +66,7 @@ fun HomeScreen(
         Spacer(Modifier.height(16.dp))
         if (tickets.isEmpty()) {
             Text(
-                "No open tickets yet. Tap New ticket — we’ll start in your chosen mode.",
+                "No open tickets yet. Tap New ticket and pick text, audio, or frames.",
                 color = Muted,
                 fontSize = 14.sp,
             )
@@ -94,7 +94,7 @@ private fun TicketRow(
                 .clickable(onClick = onClick)
                 .padding(14.dp),
     ) {
-        Text(ticket.title, color = Warm, fontWeight = FontWeight.SemiBold, fontSize = 16.sp)
+        Text(ticket.displayTitle(), color = Warm, fontWeight = FontWeight.SemiBold, fontSize = 16.sp)
         Spacer(Modifier.height(4.dp))
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             Text(ticket.intake.chipLabel(), color = Accent, fontSize = 12.sp)

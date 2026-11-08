@@ -63,6 +63,24 @@ class LocalTicketStore(context: Context) {
                         localRevision = 1,
                         remoteRevision = 0,
                     ),
+                titleField =
+                    TicketField(
+                        value = title.ifBlank { "New problem" },
+                        source = if (title.isBlank()) FieldSource.INTAKE else FieldSource.USER,
+                        locked = title.isNotBlank(),
+                    ),
+                descriptionField =
+                    TicketField(
+                        value = description,
+                        source = if (description.isBlank()) FieldSource.INTAKE else FieldSource.USER,
+                        locked = description.isNotBlank(),
+                    ),
+                coachLine =
+                    if (startMode == StartMode.AUDIO || startMode == StartMode.AUDIO_FRAMES) {
+                        CoachLines.STATE_PROBLEM
+                    } else {
+                        ""
+                    },
             )
         save(ticket)
         File(root, id).mkdirs()
@@ -99,11 +117,25 @@ class LocalTicketStore(context: Context) {
             .put("intake", t.intake.name)
             .put("stillCount", t.stillCount)
             .put("hasAudio", t.hasAudio)
+            .put("coachLine", t.coachLine)
+            .put("audioChunkCount", t.audioChunkCount)
+            .put("recording", t.recording)
+            .put("titleSource", t.titleField.source.name)
+            .put("titleLocked", t.titleField.locked)
+            .put("titleValue", t.titleField.value)
+            .put("descSource", t.descriptionField.source.name)
+            .put("descLocked", t.descriptionField.locked)
+            .put("descValue", t.descriptionField.value)
             .put("syncPresence", t.sync.presence.name)
             .put("syncHealth", t.sync.health.name)
             .put("localRevision", t.sync.localRevision)
             .put("remoteRevision", t.sync.remoteRevision)
             .put("serverTicketId", t.sync.serverTicketId)
+            .put("serverClaim", t.sync.serverClaim)
+            .put(
+                "uploadedSha256",
+                JSONArray().also { a -> t.uploadedSha256.forEach { a.put(it) } },
+            )
             .put("syncStartedAtMs", t.sync.syncStartedAtMs)
             .put("lastSyncedAtMs", t.sync.lastSyncedAtMs)
             .put("lastSyncError", t.sync.lastError)
@@ -176,6 +208,8 @@ class LocalTicketStore(context: Context) {
                 remoteRevision = o.optLong("remoteRevision", 0),
                 serverTicketId =
                     o.optString("serverTicketId", "").takeIf { it.isNotBlank() },
+                serverClaim =
+                    o.optString("serverClaim", "").takeIf { it.isNotBlank() },
                 syncStartedAtMs =
                     o.optLong("syncStartedAtMs", 0L).takeIf { it > 0L },
                 lastSyncedAtMs =
@@ -191,12 +225,47 @@ class LocalTicketStore(context: Context) {
             title = o.getString("title"),
             description = o.optString("description", ""),
             startMode = StartMode.valueOf(o.getString("startMode")),
-            intake = IntakeStatus.valueOf(o.getString("intake")),
+            intake =
+                runCatching { IntakeStatus.valueOf(o.getString("intake")) }
+                    .getOrElse {
+                        when (o.optString("intake").lowercase()) {
+                            "queued" -> IntakeStatus.QUEUED
+                            "timeout" -> IntakeStatus.TIMEOUT
+                            "transcribing" -> IntakeStatus.TRANSCRIBING
+                            else -> IntakeStatus.DRAFT
+                        }
+                    },
             timeline = timeline,
             stillCount = o.optInt("stillCount", 0),
             hasAudio = o.optBoolean("hasAudio", false),
             questions = questions,
             sync = sync,
+            titleField =
+                TicketField(
+                    value = o.optString("titleValue", o.getString("title")),
+                    source =
+                        runCatching {
+                            FieldSource.valueOf(o.optString("titleSource", FieldSource.INTAKE.name))
+                        }.getOrDefault(FieldSource.INTAKE),
+                    locked = o.optBoolean("titleLocked", false),
+                ),
+            descriptionField =
+                TicketField(
+                    value = o.optString("descValue", o.optString("description", "")),
+                    source =
+                        runCatching {
+                            FieldSource.valueOf(o.optString("descSource", FieldSource.INTAKE.name))
+                        }.getOrDefault(FieldSource.INTAKE),
+                    locked = o.optBoolean("descLocked", false),
+                ),
+            coachLine = o.optString("coachLine", ""),
+            audioChunkCount = o.optInt("audioChunkCount", 0),
+            recording = o.optBoolean("recording", false),
+            uploadedSha256 =
+                buildList {
+                    val arr = o.optJSONArray("uploadedSha256") ?: JSONArray()
+                    for (i in 0 until arr.length()) add(arr.getString(i))
+                },
         )
     }
 }

@@ -6,11 +6,11 @@ Docs: [`docs/apk-ticket-ux.md`](../../docs/apk-ticket-ux.md) · [`docs/progressi
 
 ## Product shell (local drafts)
 
-- Onboarding: choose start mode — **Text** / **Audio** / **Audio+frames**
 - Home: **open** tickets only; closed hidden (Settings → Show archived)
-- Big **New ticket** enters the sticky start mode immediately
-- Ticket timeline + status chips; Manual fill when intake would need text
-- Evidence stays local for now (no server upload yet); stills only — **no video files**
+- **New ticket** → pick **Text** / **Audio** / **Audio+frames** (no onboarding)
+- **Audio**: ticket UUID on mic start; coach lines + progressive proposed title/desc; stop via button or “stop recording”; **no later Submit**. Edit locks fields from auto-guess.
+- Ticket timeline + sync status chips; edit title/desc to lock vs “Proposed by MyProblem”
+- Evidence stays local for now (chunk upload sim until ticket APIs); stills only — **no video files**
 - Menu → **Test Mode** for the offline frame gate
 
 ## Test Mode (debug)

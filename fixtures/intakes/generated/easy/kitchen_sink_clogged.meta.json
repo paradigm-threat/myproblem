@@ -1,0 +1,26 @@
+{
+  "id": "kitchen_sink_clogged",
+  "difficulty": "easy",
+  "style": "clear",
+  "status": "generated",
+  "audio": "generated/easy/kitchen_sink_clogged.wav",
+  "noise": "room_tone",
+  "snr_db": 16,
+  "expect": {
+    "title_must_include": [
+      "sink"
+    ],
+    "description_must_include_any": [
+      "clog",
+      "drain",
+      "kitchen",
+      "disposal"
+    ],
+    "intake_targets": [
+      "named_and_questions",
+      "advice_ready"
+    ],
+    "eval_surface": "apk_or_server"
+  },
+  "script": "My kitchen sink is clogged. Water fills the basin and drains very slowly. I tried hot water. No chemicals yet. There is a garbage disposal."
+}

@@ -1,0 +1,26 @@
+{
+  "id": "bike_chain_slipped",
+  "difficulty": "medium",
+  "style": "clear",
+  "status": "generated",
+  "audio": "generated/medium/bike_chain_slipped.wav",
+  "noise": "wind_light",
+  "snr_db": 11,
+  "expect": {
+    "title_must_include": [
+      "bike"
+    ],
+    "description_must_include_any": [
+      "chain",
+      "derailleur",
+      "skip",
+      "chainring"
+    ],
+    "intake_targets": [
+      "named_and_questions",
+      "advice_ready"
+    ],
+    "eval_surface": "apk_or_server"
+  },
+  "script": "My bike chain slipped off the front chainring while I was climbing a hill. I put it back on but it keeps skipping under load. The derailleur looks bent a little. I need to get home five miles away."
+}

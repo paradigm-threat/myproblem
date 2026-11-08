@@ -12,7 +12,10 @@
     "lint": "eslint",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:android": "cd apps/android-testmode && ./gradlew :app:testDebugUnitTest"
+    "test:android": "cd apps/android-testmode && ./gradlew :app:testDebugUnitTest",
+    "generate:intake-fixtures": "fixtures/intakes/.venv/bin/python fixtures/intakes/scripts/generate_intakes.py --tier easy,medium,hard",
+    "test:intake-fixtures": "vitest run src/lib/intakeFixtures.test.ts src/lib/intakeFixtureScore.test.ts src/lib/realtimeIntakeStages.test.ts",
+    "test:fixture-asr": "node ../myproblem-tickets/workers/batch/drain-and-decommission.mjs fixtures"
   },
   "dependencies": {
     "@neondatabase/serverless": "^1.2.0",

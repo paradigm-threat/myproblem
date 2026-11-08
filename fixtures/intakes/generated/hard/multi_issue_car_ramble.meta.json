@@ -1,0 +1,28 @@
+{
+  "id": "multi_issue_car_ramble",
+  "difficulty": "hard",
+  "style": "disorganized",
+  "status": "generated",
+  "audio": "generated/hard/multi_issue_car_ramble.wav",
+  "noise": "traffic_heavy",
+  "snr_db": 6,
+  "expect": {
+    "title_must_include": [
+      "car"
+    ],
+    "description_must_include_any": [
+      "tire",
+      "battery",
+      "stall",
+      "tow",
+      "engine"
+    ],
+    "intake_targets": [
+      "named_and_questions",
+      "queue_project",
+      "needs_user_text"
+    ],
+    "eval_surface": "apk_or_server"
+  },
+  "script": "So um the car \u2014 wait, first the tire looked low this morning, maybe flat, but then it started fine, then at the light it almost stalled, and I thought battery? Or alternator? There was a click yesterday. Also the check engine light blinked once then stopped. I am on the shoulder of Route 9. Spare is there. Jump pack is at home. Do I call a tow or try to limp to the gas station a mile away?"
+}

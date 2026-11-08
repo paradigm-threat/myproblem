@@ -16,7 +16,7 @@ export const metadata: Metadata = {
 };
 
 const EFFECTIVE =
-  "November 8, 2026 (PII client-held + automatic conversion clarified)";
+  "November 8, 2026 (knowledge-base disclaimer: speculative, no boosting)";
 
 export default function TermsPage() {
   return (
@@ -124,6 +124,39 @@ export default function TermsPage() {
             <strong>You decide</strong> what to do with any output. Clevertree
             LLC and MyProblem are not responsible for outcomes from following,
             ignoring, or misinterpreting suggestions.
+          </p>
+        </section>
+
+        <section className="legal-section" aria-labelledby="kb-heading">
+          <h2 id="kb-heading">4a. Shared knowledge base</h2>
+          <p>
+            MyProblem may maintain a shared knowledge base to help{" "}
+            <strong>solve problems</strong> — especially using{" "}
+            <strong>local resources</strong> — and, when useful, general DIY
+            guidance that does not depend on where you live. That knowledge is
+            meant for the product’s investigation loop, not as a mirror of
+            search-engine results or business directories.
+          </p>
+          <p>
+            <strong>Disclaimer:</strong> knowledge-base content is{" "}
+            <strong>speculative and provisional</strong>. It is based on{" "}
+            <strong>user contributions</strong> and{" "}
+            <strong>AI investigations</strong> only. It is{" "}
+            <strong>not</strong> ranked by advertising, paid placement, or
+            engagement boosting. <strong>Boosting is not allowed.</strong>
+          </p>
+          <p>
+            We do <strong>not</strong> intend to freeze-frame or cache the
+            greater internet (hours, phones, menus, encyclopedia pages, and
+            similar searchable facts). Those stay on the live web; we cite them
+            when needed. We aim to store useful, investigation-earned advice,
+            re-test it over time, refine or retire it when it stops helping,
+            and keep history so lessons are not silently forgotten.
+          </p>
+          <p>
+            Assessments of particular businesses appear only when a Project
+            thoroughly investigated that business for a real ticket — not as a
+            speculative crawl of every local company.
           </p>
         </section>
 

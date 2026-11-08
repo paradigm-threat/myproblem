@@ -1,0 +1,28 @@
+{
+  "id": "appliance_wrong_model_then_fix",
+  "difficulty": "hard",
+  "style": "disorganized",
+  "status": "generated",
+  "audio": "generated/hard/appliance_wrong_model_then_fix.wav",
+  "noise": "appliance_hum",
+  "snr_db": 8,
+  "expect": {
+    "title_must_include": [
+      "dishwasher"
+    ],
+    "description_must_include_any": [
+      "error",
+      "E15",
+      "drain",
+      "water",
+      "bosch"
+    ],
+    "intake_targets": [
+      "named_and_questions",
+      "queue_project",
+      "advice_ready"
+    ],
+    "eval_surface": "apk_or_server"
+  },
+  "script": "The dishwasher error code is E24 \u2014 wait no, looking again it is E15. I thought it was a Bosch SHPM65 but the sticker says SHX878. Water pools at the bottom after a cycle. I already ran vinegar. Is this a drain hose or a circulation pump? Manual is online somewhere."
+}

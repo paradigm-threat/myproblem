@@ -11,10 +11,13 @@ enum class TicketStatus {
     CLOSED,
 }
 
-/** Client-facing intake / async chips (local until server wired). */
+/** Client-facing intake / async chips — must match honest server states. */
 enum class IntakeStatus {
     DRAFT,
     LISTENING,
+    /** Uploaded; waiting for Batch (not yet transcribing). */
+    QUEUED,
+    /** Batch is actively running ASR (short-lived). */
     TRANSCRIBING,
     FIGURING_OUT,
     NAMED_AND_QUESTIONS,
@@ -22,6 +25,8 @@ enum class IntakeStatus {
     QUEUE_PROJECT,
     NEEDS_USER_TEXT,
     INVESTIGATING,
+    /** Queued/processing too long without a result. */
+    TIMEOUT,
 }
 
 enum class TimelineKind {
@@ -77,11 +82,25 @@ data class SyncState(
     val remoteRevision: Long = 0,
     /** Server ticket id once ONLINE. */
     val serverTicketId: String? = null,
+    /** Claim token from create — Authorization Bearer for evidence/reprocess. */
+    val serverClaim: String? = null,
     val syncStartedAtMs: Long? = null,
     val lastSyncedAtMs: Long? = null,
     val lastError: String? = null,
     /** 0f..1f while SYNCING; null when idle. */
     val progress: Float? = null,
+)
+
+enum class FieldSource {
+    INTAKE,
+    USER,
+}
+
+/** Proposed (intake) vs committed (user) title/description. */
+data class TicketField(
+    val value: String = "",
+    val source: FieldSource = FieldSource.INTAKE,
+    val locked: Boolean = false,
 )
 
 data class LocalTicket(
@@ -98,7 +117,18 @@ data class LocalTicket(
     val hasAudio: Boolean = false,
     val questions: List<String> = emptyList(),
     val sync: SyncState = SyncState(),
-)
+    val titleField: TicketField = TicketField(),
+    val descriptionField: TicketField = TicketField(),
+    val coachLine: String = "",
+    val audioChunkCount: Int = 0,
+    val recording: Boolean = false,
+    /** Content hashes already POSTed as Evidence — avoid re-upload on every sync. */
+    val uploadedSha256: List<String> = emptyList(),
+) {
+    fun displayTitle(): String = titleField.value.ifBlank { title }
+
+    fun displayDescription(): String = descriptionField.value.ifBlank { description }
+}
 
 fun SyncState.chipLabel(): String =
     when (health) {
@@ -127,11 +157,61 @@ fun IntakeStatus.chipLabel(): String =
     when (this) {
         IntakeStatus.DRAFT -> "Draft"
         IntakeStatus.LISTENING -> "Listening"
+        IntakeStatus.QUEUED -> "Queued"
         IntakeStatus.TRANSCRIBING -> "Transcribing"
         IntakeStatus.FIGURING_OUT -> "Figuring out…"
         IntakeStatus.NAMED_AND_QUESTIONS -> "Questions"
         IntakeStatus.ADVICE_READY -> "Advice ready"
-        IntakeStatus.QUEUE_PROJECT -> "Queued"
+        IntakeStatus.QUEUE_PROJECT -> "Project queued"
         IntakeStatus.NEEDS_USER_TEXT -> "Needs details"
-        IntakeStatus.INVESTIGATING -> "Investigating"
+        IntakeStatus.INVESTIGATING -> "Processing"
+        IntakeStatus.TIMEOUT -> "Timed out"
     }
+
+/** Local timeouts when sync has not advanced the tip. */
+const val QUEUED_TIMEOUT_MS: Long = 30L * 60L * 1000L
+const val TRANSCRIBING_TIMEOUT_MS: Long = 10L * 60L * 1000L
+
+fun LocalTicket.withHonestLocalTimeout(nowMs: Long = System.currentTimeMillis()): LocalTicket {
+    val age = nowMs - updatedAtMs
+    return when (intake) {
+        IntakeStatus.QUEUED ->
+            if (age > QUEUED_TIMEOUT_MS) {
+                copy(
+                    intake = IntakeStatus.TIMEOUT,
+                    coachLine = CoachLines.TIMEOUT,
+                    updatedAtMs = nowMs,
+                )
+            } else {
+                this
+            }
+        IntakeStatus.TRANSCRIBING ->
+            if (age > TRANSCRIBING_TIMEOUT_MS) {
+                copy(
+                    intake = IntakeStatus.TIMEOUT,
+                    coachLine = "Transcription stalled — pull to sync or retry later.",
+                    updatedAtMs = nowMs,
+                )
+            } else {
+                this
+            }
+        else -> this
+    }
+}
+
+/**
+ * Legacy / offline honesty: Transcribing without a recent sync pull is almost
+ * always a lie (upload used to set it). Demote to Queued; live poll may promote
+ * again when Batch has leased. Always apply local timeout.
+ */
+fun LocalTicket.normalizeStuckIntake(nowMs: Long = System.currentTimeMillis()): LocalTicket {
+    val recentSync =
+        sync.lastSyncedAtMs != null && nowMs - sync.lastSyncedAtMs!! < 20_000L
+    val demoted =
+        if (intake == IntakeStatus.TRANSCRIBING && !recentSync) {
+            copy(intake = IntakeStatus.QUEUED, coachLine = CoachLines.QUEUED)
+        } else {
+            this
+        }
+    return demoted.withHonestLocalTimeout(nowMs)
+}

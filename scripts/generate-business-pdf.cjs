@@ -107,7 +107,7 @@ doc
   .text("Free forever front door — ignore anytime");
 doc.moveDown(0.1);
 body(
-  "We do not answer your shop’s phone (yet). Link your site to ticket creation — audio + stills; Projects investigate thoroughly. Social-style feed: engage or ignore. Customer PII stays on their device; network tickets use safe locality (city / coarse band). Exact address/phone only via secure DM if you request it and they release it. Georgia & Israel pilots.",
+  "We do not answer your shop’s phone (yet). Link your site to ticket creation — audio + stills; Projects investigate thoroughly and grow a problem-solving knowledge base (user+AI lessons only; no ad boosting; we don’t cache directory scrapes). Social-style feed: engage or ignore. Customer PII stays on their device; network tickets use safe locality (city / coarse band). Exact address/phone only via secure DM if you request it and they release it. Georgia & Israel pilots.",
 );
 
 // —— Landscape workflow graphic (ignore-entirely art) ——

@@ -1,0 +1,27 @@
+{
+  "id": "mold_or_dirt_wall",
+  "difficulty": "medium",
+  "style": "rambly",
+  "status": "generated",
+  "audio": "generated/medium/mold_or_dirt_wall.wav",
+  "noise": "room_tone",
+  "snr_db": 13,
+  "expect": {
+    "title_must_include": [
+      "mold"
+    ],
+    "description_must_include_any": [
+      "bathroom",
+      "wall",
+      "shower",
+      "spots",
+      "mildew"
+    ],
+    "intake_targets": [
+      "named_and_questions",
+      "advice_ready"
+    ],
+    "eval_surface": "apk_or_server"
+  },
+  "script": "Is this mold or just dirt? There are black spots on the bathroom wall near the shower. They wipe off a little but come back. The fan barely works. No smell of mildew that I notice, but I am worried about my kid's asthma."
+}
