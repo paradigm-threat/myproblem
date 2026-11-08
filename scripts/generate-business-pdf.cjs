@@ -107,7 +107,7 @@ doc
   .text("Free forever front door — ignore anytime");
 doc.moveDown(0.1);
 body(
-  "MyProblem absorbs “should I call?” before it hits your phone. Capture fills the ticket; deferred Projects investigate thoroughly. Incoming work is a social-style feed: open a fit, or ignore entirely — no SLA, no invoice for silence. Georgia & Israel pilots.",
+  "We do not answer your shop’s phone (yet). Link your website to MyProblem ticket creation — people record audio + stills; deferred Projects investigate thoroughly. Incoming work is a social-style feed: open a fit, or ignore entirely. Georgia & Israel pilots. Future VoIP can automate the same flow.",
 );
 
 // —— Landscape workflow graphic (ignore-entirely art) ——
@@ -132,14 +132,16 @@ bullet("$0 to join — no application fee, monthly bill, or per-lead invoice.");
 bullet(
   "Zero obligation — ignore any request like a social post. Silence is fine.",
 );
-bullet("Lighter front desk — AI triage so routine loops never reach the secretary.");
+bullet(
+  "Website → ticket, not phone — send unsure visitors to MyProblem audio/stills capture (no ringing the desk).",
+);
 bullet("Warmer handoffs — dossier on the tip when you do engage.");
 bullet("Legal stops baked in — emergencies / licensed care redirect.");
 
 h2("How it works");
 [
   "Sign up at $0 — still no duty to answer anyone.",
-  "AI handles unsure callers first (capture now, Project when capacity allows).",
+  "Point your site at ticket creation — audio recording + stills; Project when capacity allows (we do not take phone calls yet).",
   "When real, open the tip with photos + investigation notes already done.",
   "Accept, bid, ask — or ignore entirely. After handshake, the deal is yours.",
 ].forEach((s, i) => {

@@ -8,6 +8,8 @@ Realtime AI in the app exists only to **build the ticket**. Full investigation q
 
 **Product promise:** the AI **does not cut corners** to look instant. It takes the time resources allow to investigate thoroughly. Waiting for capacity is an honest UX; silently downgrading free-tier depth is not.
 
+**Not a phone answering service (today).** Intake is **tickets** — app, web, or a business-site link/QR into audio + stills capture. MyProblem does **not** pick up the shop’s PSTN/VoIP line. Businesses can still deflect “should I call?” traffic by pointing their website at ticket creation (nearly the same spoken flow). **Inbound VoIP → same ticket pipeline** is a planned, automatable investment (see Relay plan `02-vision-product.md` / `05-spend-and-use-of-funds.md`) — fund after web/app tickets prove quality.
+
 Related: [`anonymous-tickets.md`](./anonymous-tickets.md) · [`apk-ticket-ux.md`](./apk-ticket-ux.md) · [`backbone-escalate.md`](./backbone-escalate.md) · [`context-for-server.md`](./context-for-server.md) · [`spot-ai-mvp.md`](./spot-ai-mvp.md) · [`progressive-transcription.md`](./progressive-transcription.md) · [`infra-definition.md`](./infra-definition.md) · [`knowledge-base.md`](./knowledge-base.md).
 
 ---

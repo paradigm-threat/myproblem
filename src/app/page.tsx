@@ -118,11 +118,14 @@ export default function HomePage() {
                 </p>
               </li>
               <li>
-                <strong>AI takes the unsure callers first</strong>
+                <strong>Unsure customers create tickets — not phone calls</strong>
                 <p>
-                  People capture tickets in realtime; deep research runs as
-                  deferred Projects when capacity is free. Routine “is this
-                  urgent?” and redirect loops never reach the secretary.
+                  MyProblem does <strong className="emph">not</strong> answer
+                  your shop’s phone (yet). Link your site (or share a QR) to
+                  ticket creation: people record audio, add stills, and get a
+                  thorough deferred Project. Same outcome as “call first” —
+                  without ringing the front desk. VoIP automation is a planned
+                  later investment.
                 </p>
               </li>
               <li>

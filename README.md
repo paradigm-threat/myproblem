@@ -1,6 +1,6 @@
 # MyProblem (`myproblem.app`)
 
-Coming-soon site for **MyProblem** — free AI front door for local businesses ($0 forever, **zero obligation** — ignore requests like a social feed); Problems not chats; zero-salary Relay vision.
+Coming-soon site for **MyProblem** — free AI front door for local businesses ($0 forever, **zero obligation** — ignore requests like a social feed); **tickets** (audio + stills), not a phone we answer — VoIP later; Problems not chats; zero-salary Relay vision.
 
 **Investigation model:** no on-demand frontier LLM or premium vision. Smart-enough realtime **captures** (stills + audio; no server video) → queues a JIRA-like ticket → **batch Projects** investigate ASAP. Bedrock = rare escalate. See [`docs/projects.md`](docs/projects.md) · [`docs/backbone-escalate.md`](docs/backbone-escalate.md).
 
