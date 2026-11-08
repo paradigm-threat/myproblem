@@ -47,10 +47,10 @@ export default function HomePage() {
               <p className="eyebrow">Coming soon · Georgia &amp; Israel pilots</p>
               <p className="hero-lead">
                 Free forever for local businesses. Capture the ticket, queue it
-                like JIRA, batch-investigate thoroughly — and grow a local
-                knowledge base for solving problems (Georgia &amp; Israel), not
-                a mirror of search ads. No boosting. Bedrock only when we truly
-                need it.
+                like JIRA, batch-investigate thoroughly — and grow a knowledge
+                base for solving problems (Georgia &amp; Israel), from clogged
+                sinks to nearly-free modern websites. Coding help coming soon.
+                No boosting. Bedrock only when we truly need it.
               </p>
               <p className="powered-by">
                 Powered by{" "}
@@ -360,10 +360,11 @@ export default function HomePage() {
                 <h3>Problem-solving only</h3>
                 <p>
                   We write what helps the app solve tickets: local resource
-                  paths, ticket-driven assessments, and general repair advice
-                  when it is useful. We do not copy hours, phones, or pages you
-                  can already find online — those keep changing; we cite them
-                  live instead.
+                  paths, ticket-driven assessments, and general advice when
+                  place does not matter — including how to stand up a modern
+                  website nearly for free. We do not copy hours, phones, or
+                  pages you can already find online — those keep changing; we
+                  cite them live instead.
                 </p>
               </article>
               <article className="project-flow-card" role="listitem">
@@ -424,8 +425,9 @@ export default function HomePage() {
             <p className="section-lead">
               Relay-native investigation service. Problems not chats. Projects
               for thorough deferred research. A shared knowledge base for
-              problem-solving in pilot regions — no boosting, no internet
-              mirror. Local businesses as free distribution. Consumer economics
+              problem-solving — including how to put a modern site online nearly
+              for free. Coding help and “build the website for you” on MyProblem
+              are coming soon. Local businesses free forever. Consumer economics
               after free uses.
             </p>
             <div className="plan-grid">
@@ -449,9 +451,20 @@ export default function HomePage() {
                 <h3>Knowledge for problem-solving</h3>
                 <p>
                   Ticket-earned lessons for Georgia and Israel — local resource
-                  wisdom and DIY when place does not matter. Speculative
+                  wisdom and DIY when place does not matter (including a
+                  nearly-free website path via free-tier hosting). Speculative
                   (users + AI only); no boosting; never a cache of the public
                   web. Re-test, refine, or ditch — don’t forget.
+                </p>
+              </article>
+              <article>
+                <h3>Coding &amp; websites — coming soon</h3>
+                <p>
+                  MyProblem will help with coding projects from phone or
+                  desktop — and aim to be the LLM that builds, deploys, and
+                  maintains your site (database, SEO, and all) on a free host
+                  like Vercel, with the domain as the main yearly cost.{" "}
+                  <strong className="emph">Check back soon.</strong>
                 </p>
               </article>
               <article>
@@ -466,9 +479,10 @@ export default function HomePage() {
               <article>
                 <h3>Spot free / reliable paid</h3>
                 <p>
-                  Free Projects drain elastic Spot GPUs. Priority shortens wait;
-                  it does not invent a rushed free answer. Busy Spot = honest
-                  queue — never a surprise bill to the shop.
+                  Free Projects drain elastic Spot GPUs (cheap heavy hardware
+                  only when needed — same idea we teach for your own stacks via
+                  Spot + modern agents/MCP). Priority shortens wait; busy Spot =
+                  honest queue — never a surprise bill to the shop.
                 </p>
               </article>
               <article>

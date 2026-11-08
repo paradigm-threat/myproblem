@@ -200,7 +200,8 @@ Each job run emits `InvestigationUpdate { at, actor, kind, summary, evidence_ref
 - Merchants = optional anytime; Project can recommend submit when ready.  
 - Updates = app timeline (+ email if enabled).  
 - Public lessons → **region knowledge base** for **problem-solving** (git Markdown; no boosting; no internet freeze-frame); optional **channels** ([`knowledge-base.md`](./knowledge-base.md)).  
-- Research and Bedrock escalate **feed the KB**; the KB is checked **before** the next escalate; advice is **re-tested** over time.
+- Research and Bedrock escalate **feed the KB**; the KB is checked **before** the next escalate; advice is **re-tested** over time.  
+- Digital DIY is in scope (e.g. nearly-free website path in KB); **coding / site-build assist in the app** is **coming soon** ([`coding-and-websites.md`](./coding-and-websites.md)).
 
 Landing / PDF should not promise “instant deep AI answers.” Prefer: *capture now, investigate when capacity allows, get notified.* KB: *local resource wisdom and DIY — speculative, user+AI only, no boosting — not a search-ad mirror.*
 

@@ -45,7 +45,7 @@ export function JsonLd() {
             "Local businesses join free forever. Core consumer help is free; usage fees after free tickets fund infrastructure only. Priority shortens Project queues without weakening free-tier thoroughness.",
         },
         description:
-          "Capture Problem tickets; queue like JIRA; batch Projects investigate thoroughly; KB-first local problem-solving with no boosting; Bedrock only for rare escalate.",
+          "Capture Problem tickets; queue like JIRA; batch Projects investigate thoroughly; KB-first problem-solving (including nearly-free websites); coding/site-build assist coming soon; no boosting.",
       },
     ],
   };

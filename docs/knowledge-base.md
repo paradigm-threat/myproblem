@@ -86,6 +86,8 @@ Research that only re-states Google/Yelp fields does not belong in the KB. Resea
 
 **Repo:** [`myproblem-kb`](../../myproblem-kb) (`MYPROBLEM_KB_ROOT`). E2E: `npm run test:kb` in `myproblem-tickets`.
 
+**Seeded general how-to:** [Set up a website nearly for free](../../myproblem-kb/general/web/set-up-website-nearly-free.md) (Vercel free + domain DNS; LLM build/deploy; Spot/MCP for burst compute). Product follow-on: [`coding-and-websites.md`](./coding-and-websites.md) — MyProblem coding / site-build assist **coming soon**.
+
 ### Before another escalate
 
 ```

@@ -6,7 +6,7 @@ Coming-soon site for **MyProblem** — free AI front door for local businesses (
 
 **Tickets:** anonymous by default (**UUID = access** + APK local backup); free recover email/register to avoid loss on phone change. Dossier in **regional Relay git** (`myproblem-tickets-georgia` / `-israel`); audio/stills off-repo (Bunny prefer). No Neon tip/queue. No PII on server tips. See [`docs/anonymous-tickets.md`](docs/anonymous-tickets.md) · [`docs/pii-and-privacy.md`](docs/pii-and-privacy.md) · [`docs/intake-batch-infra.md`](docs/intake-batch-infra.md).
 
-**Local knowledge (primary learning):** sibling repo **`myproblem-kb`** — Georgia/Israel **git Markdown** for **problem-solving** (local resources + DIY), not a search-ad mirror. Speculative (user + AI only); **no boosting**; cite live web, don’t cache it; re-test / refine / ditch; don’t forget. See [`docs/knowledge-base.md`](docs/knowledge-base.md) · [`../myproblem-kb/docs/STORE_POLICY.md`](../myproblem-kb/docs/STORE_POLICY.md).
+**Local knowledge (primary learning):** sibling repo **`myproblem-kb`** — Georgia/Israel **git Markdown** for **problem-solving** (local resources + DIY), not a search-ad mirror. Speculative (user + AI only); **no boosting**; cite live web, don’t cache it; re-test / refine / ditch; don’t forget. Includes general how-tos such as [nearly-free websites (Vercel + LLM)](../myproblem-kb/general/web/set-up-website-nearly-free.md). **Coming soon:** in-product coding / site-building help ([`docs/coding-and-websites.md`](docs/coding-and-websites.md)). See [`docs/knowledge-base.md`](docs/knowledge-base.md).
 
 ## Stack
 
@@ -42,6 +42,7 @@ npm run dev
 | [`docs/progressive-transcription.md`](docs/progressive-transcription.md) | Audio Evidence → first ASR; LLM retranscription; no video |
 | [`docs/backbone-escalate.md`](docs/backbone-escalate.md) | Rare Bedrock/frontier escalate in batch |
 | [`docs/knowledge-base.md`](docs/knowledge-base.md) | Git Markdown KB (primary learning) + channels + browser honesty |
+| [`docs/coding-and-websites.md`](docs/coding-and-websites.md) | Nearly-free sites (KB) + coding/site-build assist coming soon |
 | [`docs/spot-ai-mvp.md`](docs/spot-ai-mvp.md) | Spot GPU test standup |
 | [`docs/context-for-server.md`](docs/context-for-server.md) | Client gate vs server SEND |
 | [`docs/infra-definition.md`](docs/infra-definition.md) | Free vs premium workload physics |

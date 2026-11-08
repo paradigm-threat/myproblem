@@ -158,6 +158,16 @@ export default function TermsPage() {
             thoroughly investigated that business for a real ticket — not as a
             speculative crawl of every local company.
           </p>
+          <p>
+            General how-tos (for example, setting up a website on a free-tier
+            host with an LLM maintaining it) may live in the knowledge base
+            when they are useful for problem-solving.{" "}
+            <strong>In-product coding help</strong> and MyProblem itself
+            building/deploying sites for you are{" "}
+            <strong>planned features</strong> — availability is not guaranteed
+            until we ship them. Check the product site for “coming soon”
+            status.
+          </p>
         </section>
 
         <section className="legal-section" aria-labelledby="emergency-heading">

@@ -139,6 +139,9 @@ bullet(
   "PII-safe dossiers — street/phone stay off the mesh; request personal detail via secure DM only when needed.",
 );
 bullet("Warmer handoffs — investigation notes on the tip when you engage.");
+bullet(
+  "Shared problem-solving knowledge (no ad boosting) — including how locals can stand up a modern site nearly for free; coding help on MyProblem coming soon.",
+);
 bullet("Legal stops — emergencies / licensed care redirect.");
 
 h2("How it works");
