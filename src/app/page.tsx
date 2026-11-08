@@ -325,11 +325,12 @@ export default function HomePage() {
           <section id="knowledge" aria-labelledby="knowledge-heading">
             <h2 id="knowledge-heading">Shared local knowledge — Georgia &amp; Israel</h2>
             <p className="section-lead">
-              Global AIs and national directories guess at “near me.” MyProblem
-              builds a <strong className="emph">place-tied knowledge base</strong>{" "}
-              from every investigation in our pilots — public lessons shared,
-              private details protected — so we outcompete on local, realtime,
-              Relay-connected truth instead of world-scale trivia.
+              Global AIs (ChatGPT, Gemini, Grok) and national directories guess
+              at “near me.” Hire-first apps rush you to a pro. MyProblem builds a{" "}
+              <strong className="emph">place-tied knowledge base</strong> from
+              every investigation in Georgia and Israel — public lessons shared,
+              private details protected — so we outcompete on local, Relay-
+              connected truth instead of world-scale trivia.
             </p>
             <div className="project-flow" role="list">
               <article className="project-flow-card" role="listitem">
@@ -537,7 +538,9 @@ export default function HomePage() {
               We are starting where we can operate tightly — product, merchants,{" "}
               <em>and</em> the shared knowledge base are scoped to these places
               only. Expand by request, as new region partitions — not one global
-              brain.
+              brain. Both markets already use ChatGPT/Gemini; we win on thorough
+              deferred Projects and place-tied knowledge — not another chatbot
+              or hire-first lead app.
             </p>
             <ul className="regions">
               <li className="chip">
@@ -549,7 +552,22 @@ export default function HomePage() {
                 Israel
               </li>
             </ul>
-            <p style={{ color: "var(--muted)", maxWidth: "36rem", lineHeight: 1.55 }}>
+            <div className="people-promise" style={{ marginTop: "1.5rem" }}>
+              <h3 id="regions-why-heading">Why these two first</h3>
+              <ul aria-labelledby="regions-why-heading">
+                <li>
+                  <strong>Georgia</strong> — LLC home, English product, US
+                  rails; DIY baseline is ChatGPT then Thumbtack-class
+                  marketplaces.
+                </li>
+                <li>
+                  <strong>Israel</strong> — on-ground ops, Hebrew/bilingual UX;
+                  denser AI→local-pro apps plus the same global LLMs — we still
+                  differentiate on tickets, batch investigation, and a local KB.
+                </li>
+              </ul>
+            </div>
+            <p style={{ color: "var(--muted)", maxWidth: "36rem", lineHeight: 1.55, marginTop: "1.25rem" }}>
               Want MyProblem in your city or country? Tell us — we track region
               interest and prioritize where businesses and people both show up.
             </p>
