@@ -89,7 +89,7 @@ export const metadata: Metadata = {
       {
         url: "/og.jpg",
         width: 1024,
-        height: 341,
+        height: 576,
         alt: "MyProblem — turn any problem into a solution",
       },
     ],

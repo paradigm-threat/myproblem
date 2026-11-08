@@ -32,7 +32,7 @@ export default function HomePage() {
                 src="/hero.jpg"
                 alt="MyProblem — turn any problem into a solution, powered by Relay networking, automation, and intelligence"
                 width={1024}
-                height={341}
+                height={576}
                 className="hero-photo"
                 decoding="async"
                 fetchPriority="high"

@@ -269,8 +269,8 @@ textarea:focus-visible,
 }
 
 .hero {
-  /* Left-edge night navy from hero.jpg (0,16,31) — full-bleed wings */
-  --hero-blue: #00101f;
+  /* Left-edge night navy from hero.jpg (~5,20,32) — full-bleed wings */
+  --hero-blue: #051420;
   position: relative;
   width: 100%;
   border-top: none;
