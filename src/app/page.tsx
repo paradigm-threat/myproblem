@@ -44,17 +44,23 @@ export default function HomePage() {
       <main id="main">
         <section className="hero" aria-labelledby="hero-heading">
           <div className="hero-media">
-            <Image
-              src="/hero.jpg"
-              alt="MyProblem — turn any problem into a solution, powered by Relay networking, automation, and intelligence"
-              width={1024}
-              height={341}
-              className="hero-photo"
-              priority
-              quality={100}
-              unoptimized
-              sizes="1024px"
-            />
+            <picture>
+              <source
+                media="(max-width: 767px)"
+                srcSet="/hero-portrait.jpg"
+                width={576}
+                height={1024}
+              />
+              <img
+                src="/hero.jpg"
+                alt="MyProblem — turn any problem into a solution, powered by Relay networking, automation, and intelligence"
+                width={1024}
+                height={341}
+                className="hero-photo"
+                decoding="async"
+                fetchPriority="high"
+              />
+            </picture>
           </div>
           <div className="hero-bar">
             <div className="site hero-bar-inner">
