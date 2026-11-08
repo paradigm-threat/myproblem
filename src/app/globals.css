@@ -251,8 +251,16 @@ textarea:focus-visible,
 }
 
 @media (max-width: 900px) {
+  .nav {
+    position: relative;
+  }
+
   .brand-text {
-    display: none;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
   }
 
   .nav-links-desktop {
