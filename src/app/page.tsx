@@ -623,12 +623,16 @@ export default function HomePage() {
           <span aria-hidden="true"> · </span>
           <a href={SITE_URL}>{SITE_URL.replace("https://", "")}</a>
           <span aria-hidden="true"> · </span>
+          <a href="/terms">Terms</a>
+          <span aria-hidden="true"> · </span>
           <a href="/sitemap.xml">Sitemap</a>
         </nav>
         <p style={{ margin: 0, maxWidth: "40rem", lineHeight: 1.5 }}>
-          Coming soon. Not medical, veterinary, or legal advice. MyProblem
-          helps people investigate Problems and connect with local businesses
-          when needed. Preferred business pricing: free forever. Built on{" "}
+          Coming soon. Operated by Clevertree LLC (Georgia). MyProblem helps
+          people investigate everyday Problems and connect with local businesses
+          when needed — see{" "}
+          <a href="/terms">Terms &amp; Disclaimers</a>. Preferred business
+          pricing: free forever. Built on{" "}
           <a href={RELAY_URL} rel="noopener noreferrer" target="_blank">
             Relay
           </a>

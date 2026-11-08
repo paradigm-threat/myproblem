@@ -10,6 +10,8 @@ Realtime AI in the app exists only to **build the ticket**. Full investigation q
 
 **Not a phone answering service (today).** Intake is **tickets** — app, web, or a business-site link/QR into audio + stills capture. MyProblem does **not** pick up the shop’s PSTN/VoIP line. Businesses can still deflect “should I call?” traffic by pointing their website at ticket creation (nearly the same spoken flow). **Inbound VoIP → same ticket pipeline** is a planned, automatable investment (see Relay plan `02-vision-product.md` / `05-spend-and-use-of-funds.md`) — fund after web/app tickets prove quality.
 
+Public product terms / softer professional disclaimers: [https://myproblem.app/terms](https://myproblem.app/terms) (Clevertree LLC).
+
 Related: [`anonymous-tickets.md`](./anonymous-tickets.md) · [`apk-ticket-ux.md`](./apk-ticket-ux.md) · [`backbone-escalate.md`](./backbone-escalate.md) · [`context-for-server.md`](./context-for-server.md) · [`spot-ai-mvp.md`](./spot-ai-mvp.md) · [`progressive-transcription.md`](./progressive-transcription.md) · [`infra-definition.md`](./infra-definition.md) · [`knowledge-base.md`](./knowledge-base.md).
 
 ---
