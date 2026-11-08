@@ -1,6 +1,7 @@
 "use client";
 
 import { useId, useState } from "react";
+import { CONTACT_EMAIL } from "@/lib/contact";
 import type { SignupRole } from "@/lib/types";
 
 type Props = {
@@ -15,6 +16,10 @@ const roles: { value: SignupRole; label: string }[] = [
   { value: "region_interest", label: "Bring it to my region" },
 ];
 
+function roleLabel(role: SignupRole) {
+  return roles.find((r) => r.value === role)?.label ?? role;
+}
+
 export function SignupForm({ defaultRole = "business", id }: Props) {
   const uid = useId();
   const [role, setRole] = useState<SignupRole>(defaultRole);
@@ -23,59 +28,43 @@ export function SignupForm({ defaultRole = "business", id }: Props) {
   const [businessName, setBusinessName] = useState("");
   const [region, setRegion] = useState("");
   const [message, setMessage] = useState("");
-  const [honeypot, setHoneypot] = useState("");
-  const [status, setStatus] = useState<"idle" | "loading" | "ok" | "error">(
-    "idle",
-  );
-  const [error, setError] = useState("");
 
   const nameId = `${uid}-name`;
   const emailId = `${uid}-email`;
   const businessId = `${uid}-business`;
   const regionId = `${uid}-region`;
   const messageId = `${uid}-message`;
-  const errorId = `${uid}-error`;
-  const okId = `${uid}-ok`;
 
-  async function onSubmit(e: React.FormEvent) {
+  function onSubmit(e: React.FormEvent) {
     e.preventDefault();
-    setStatus("loading");
-    setError("");
-    try {
-      const res = await fetch("/api/signup", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          role,
-          name,
-          email,
-          businessName: role === "business" ? businessName : null,
-          region:
-            role === "region_interest" || region.trim() ? region : null,
-          message: message.trim() || null,
-          company_website: honeypot,
-        }),
-      });
-      const data = (await res.json()) as { error?: string };
-      if (!res.ok) {
-        setStatus("error");
-        setError(data.error || "Something went wrong");
-        return;
-      }
-      setStatus("ok");
-      setName("");
-      setEmail("");
-      setBusinessName("");
-      setRegion("");
-      setMessage("");
-    } catch {
-      setStatus("error");
-      setError("Network error — try again or email us");
+    const lines = [
+      `Role: ${roleLabel(role)}`,
+      `Name: ${name.trim()}`,
+      `Email: ${email.trim()}`,
+    ];
+    if (role === "business" && businessName.trim()) {
+      lines.push(`Business: ${businessName.trim()}`);
     }
+    if (region.trim()) {
+      lines.push(`Region: ${region.trim()}`);
+    }
+    if (message.trim()) {
+      lines.push("", message.trim());
+    }
+    const subject = encodeURIComponent(
+      `MyProblem waitlist — ${roleLabel(role)}`,
+    );
+    const body = encodeURIComponent(lines.join("\n"));
+    window.location.href = `mailto:${CONTACT_EMAIL}?subject=${subject}&body=${body}`;
   }
 
   function onRoleKeyDown(e: React.KeyboardEvent, index: number) {
-    if (e.key !== "ArrowRight" && e.key !== "ArrowLeft" && e.key !== "Home" && e.key !== "End") {
+    if (
+      e.key !== "ArrowRight" &&
+      e.key !== "ArrowLeft" &&
+      e.key !== "Home" &&
+      e.key !== "End"
+    ) {
       return;
     }
     e.preventDefault();
@@ -90,15 +79,7 @@ export function SignupForm({ defaultRole = "business", id }: Props) {
   }
 
   return (
-    <form
-      id={id}
-      onSubmit={onSubmit}
-      className="signup-form"
-      noValidate={false}
-      aria-describedby={
-        status === "error" ? errorId : status === "ok" ? okId : undefined
-      }
-    >
+    <form id={id} onSubmit={onSubmit} className="signup-form">
       <div className="role-tabs" role="tablist" aria-label="Signup type">
         {roles.map((r, index) => (
           <button
@@ -148,7 +129,6 @@ export function SignupForm({ defaultRole = "business", id }: Props) {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           aria-required="true"
-          aria-invalid={status === "error" ? true : undefined}
         />
       </label>
 
@@ -200,35 +180,15 @@ export function SignupForm({ defaultRole = "business", id }: Props) {
         />
       </label>
 
-      <label className="hp" aria-hidden="true">
-        Company website
-        <input
-          tabIndex={-1}
-          autoComplete="off"
-          value={honeypot}
-          onChange={(e) => setHoneypot(e.target.value)}
-        />
-      </label>
-
-      <button
-        type="submit"
-        className="btn-primary"
-        disabled={status === "loading"}
-        aria-busy={status === "loading"}
-      >
-        {status === "loading" ? "Sending…" : "Join the waitlist"}
+      <button type="submit" className="btn-primary">
+        Open email to join
       </button>
 
-      {status === "ok" ? (
-        <p id={okId} className="form-ok" role="status" aria-live="polite">
-          Thanks — we will be in touch.
-        </p>
-      ) : null}
-      {status === "error" ? (
-        <p id={errorId} className="form-err" role="alert" aria-live="assertive">
-          {error}
-        </p>
-      ) : null}
+      <p className="signup-mailto-hint">
+        Or email{" "}
+        <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a> directly —
+        no account required.
+      </p>
     </form>
   );
 }

@@ -605,7 +605,8 @@ export default function HomePage() {
             <h2 id="signup-heading">Get on the list</h2>
             <p className="section-lead" id="signup-lead">
               Businesses, people with Problems, investors, and region interest —
-              one form. Or email{" "}
+              fill the form to open your mail app with a prefilled message, or
+              write us anytime at{" "}
               <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>.
             </p>
             <SignupForm defaultRole="business" id="waitlist" />
