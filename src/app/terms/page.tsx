@@ -15,7 +15,7 @@ export const metadata: Metadata = {
   },
 };
 
-const EFFECTIVE = "November 8, 2026";
+const EFFECTIVE = "November 8, 2026 (network / investor intent clarified)";
 
 export default function TermsPage() {
   return (
@@ -214,8 +214,56 @@ export default function TermsPage() {
           </p>
         </section>
 
+        <section className="legal-section" aria-labelledby="network-heading">
+          <h2 id="network-heading">
+            10. World network intent (investors and hardware)
+          </h2>
+          <p>
+            MyProblem is built to participate in a{" "}
+            <strong>compatible world network</strong> (Relay-aligned tips and
+            tickets), not a pile of unrelated private clones. Our{" "}
+            <strong>stated intent</strong> — which is{" "}
+            <strong>not an offer, license grant, or signed agreement</strong> —
+            is:
+          </p>
+          <ul>
+            <li>
+              Regional or hardware investors / operators who join should keep
+              gear and software{" "}
+              <strong>interoperable with the shared ticket system</strong> so
+              Problems can be found and shared under substantially the same
+              conditions across the network.
+            </li>
+            <li>
+              <strong>Splintering</strong> the network into incompatible
+              forks, walled ticket islands, or IP fragments that block
+              discovery defeats the product purpose. That is not the investor
+              profile we are seeking.
+            </li>
+            <li>
+              <strong>Fees are intended mostly to flow to local hardware
+              handlers</strong> who run compatible capacity — not to fund a
+              traditional salary stack at the center.
+            </li>
+            <li>
+              We may later require{" "}
+              <strong>contracts with early adopters</strong> (hardware, region,
+              or capital). Nothing on this site, including this section, creates
+              those obligations until a separate written agreement says so.
+            </li>
+          </ul>
+          <p>
+            Product membership in Clevertree LLC / MyProblem does{" "}
+            <strong>not</strong> automatically convey ownership of the Relay
+            gateway fleet or unrelated mesh projects unless a written deal says
+            otherwise. See the{" "}
+            <a href="/#investors">Investors</a> section on the home page for
+            the public pitch in plain language.
+          </p>
+        </section>
+
         <section className="legal-section" aria-labelledby="changes-heading">
-          <h2 id="changes-heading">10. Changes and contact</h2>
+          <h2 id="changes-heading">11. Changes and contact</h2>
           <p>
             We may update these terms as the product evolves. The effective date
             above will change when we do. Continued use after an update means
@@ -228,8 +276,9 @@ export default function TermsPage() {
         </section>
 
         <p className="legal-footer-note">
-          By using MyProblem, you acknowledge that you have read this page and
-          understand the softer professional limits described above.
+          By using MyProblem, you acknowledge that you have read this page —
+          including the softer professional limits and the non-binding world-
+          network investor intent above.
         </p>
       </main>
     </>

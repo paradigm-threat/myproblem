@@ -463,12 +463,19 @@ export default function HomePage() {
           </section>
 
           <section id="investors" aria-labelledby="investors-heading">
-            <h2 id="investors-heading">Investor ROI — zero-salary Relay vision</h2>
+            <h2 id="investors-heading">
+              Investors — one world network, not splinter IP
+            </h2>
             <p className="section-lead">
-              Invest in MyProblem for your region — a low-overhead, AI-powered
-              platform you can bring to a local market. Not a SaaS headcount
-              company: a capped growth check into a Georgia LLC with{" "}
-              <strong className="emph">no payroll line</strong>.
+              We want partners who help{" "}
+              <strong className="emph">grow a compatible world network</strong>{" "}
+              — local hardware and ops that stay interoperable with the shared
+              ticket system — not clones that fragment the mesh into private
+              islands. This page states{" "}
+              <strong className="emph">intent only</strong>; it is not an offer
+              or a signed deal. Early adopters may later need a separate
+              contract. See also{" "}
+              <a href="/terms">Terms &amp; Disclaimers</a>.
             </p>
             <figure className="section-graphic">
               <picture>
@@ -480,7 +487,7 @@ export default function HomePage() {
                 />
                 <img
                   src="/investors.jpg"
-                  alt="For investors: fund a region, we launch and operate, local service grows, you earn the majority of usage fees — no salaries, costs limited to infrastructure and advertising"
+                  alt="For investors: fund compatible local hardware in the world network; fees mostly to local handlers; tickets shared under one interoperable system — not a splintered clone"
                   width={1024}
                   height={576}
                   className="section-graphic-img"
@@ -488,49 +495,61 @@ export default function HomePage() {
                 />
               </picture>
               <figcaption className="sr-only">
-                Infographic: regional investment, operations, growth, and fee
-                share with no salary overhead.
+                Infographic: regional investment that stays compatible with the
+                shared ticket network; fees mostly to local hardware handlers.
               </figcaption>
             </figure>
             <div className="investor">
+              <h3
+                id="investors-compat-heading"
+                style={{ margin: "0 0 0.65rem", fontSize: "1.15rem" }}
+              >
+                Compatibility is the product
+              </h3>
               <p style={{ margin: 0, color: "var(--muted)", lineHeight: 1.55 }}>
-                Capital burns on free investigation and match infra. Residual
-                margin comes from{" "}
-                <strong className="emph">consumer</strong> priority / payee fees
-                (and optional payment-rail %), not from invoicing plumbers and
-                vets. Founders are paid like any other operator cut on settled /
-                priority volume — not salaries. Investors take preferred return,
-                then profit share as distributions.
+                If you stand up hardware or a region, it must remain{" "}
+                <strong className="emph">
+                  compatible with the world network and the existing ticket
+                  system
+                </strong>{" "}
+                so Problems can be found and shared under the same conditions
+                everywhere. Splintering — forking a private incompatible stack,
+                walling tickets, or treating the mesh as disposable IP to
+                rebrand alone — defeats the Relay / MyProblem vision. We are{" "}
+                <strong className="emph">not</strong> looking for investors
+                whose plan is to clone and go their own way.
               </p>
-              <ul>
+              <ul aria-labelledby="investors-compat-heading">
                 <li>
-                  Unit cost of a free Project investigation (batch Spot +
-                  storage + bandwidth) vs fake realtime
-                </li>
-                <li>Free consumer uses / Project SLA before priority queue</li>
-                <li>
-                  Share of Problems that resolve without a business vs hand off
-                  with dossier
+                  <strong>One ticket fabric</strong> — same Problem / tip
+                  conditions; discoverable across compatible nodes
                 </li>
                 <li>
-                  Consumer priority fee (and optional checkout %) — not a shop
-                  invoice
+                  <strong>Fees mostly to local hardware handlers</strong> —
+                  usage economics favor the people running compatible gear in
+                  place, not a salary machine at the center
                 </li>
                 <li>
-                  Months to return the check at zero salary — and the same math
-                  if founders later take a draw
+                  <strong>Zero-payroll LLC posture</strong> — Clevertree LLC
+                  (Georgia) / MyProblem product; capital for infra and growth,
+                  not headcount theater
+                </li>
+                <li>
+                  <strong>Intent ≠ agreement</strong> — we may require contracts
+                  with early hardware / region adopters; nothing here binds
+                  either side until that paperwork exists
                 </li>
               </ul>
               <p
                 style={{
                   margin: "1.25rem 0 0",
-                  color: "var(--muted)",
-                  lineHeight: 1.5,
+                  color: "var(--muted)", lineHeight: 1.5,
                 }}
               >
-                This is the Relay company vision: mesh + Problem tips without
-                salary machinery. Investors own membership in the product LLC —
-                not automatically the Relay gateway fleet. Contact{" "}
+                Residual margin still comes from{" "}
+                <strong className="emph">consumer</strong> priority / payee fees
+                (and optional payment-rail %), not from invoicing shops.
+                Investors who fit: builders of the shared network. Contact{" "}
                 <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>.
               </p>
             </div>
