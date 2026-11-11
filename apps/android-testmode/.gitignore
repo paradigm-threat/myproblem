@@ -1,9 +1,18 @@
-/.gradle/
+/# Local Gradle / Kotlin / NDK output. Do not commit.
+.gradle/
+.kotlin/
 **/build/
+.cxx/
+.externalNativeBuild/
 /local.properties
 *.iml
 .idea/
 .DS_Store
 captures/
+*.hprof
+output-metadata.json
+
+# Debug and release APKs from this app stay out of git.
+# The installer published on the site lives in public/demos/.
 *.apk
 !**/fixtures/**

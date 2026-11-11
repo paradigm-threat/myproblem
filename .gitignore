@@ -57,3 +57,9 @@ fixtures/intakes/.tmp_tts/
 **/media/
 **/.cache/
 apps/android-testmode/ticket-detail-smoke.png
+
+# Android compiler caches if a build is run outside apps/android-testmode
+**/.gradle/
+**/.kotlin/
+**/.cxx/
+**/.externalNativeBuild/
