@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
-import { convertPii } from "../../../myproblem-tickets/workers/lib/piiConvert.mjs";
+import { convertPii } from "./tickets/piiConvert";
 import { PHOTO_PATTERNS, analyzeStill, type PhotoPattern, type PhotoScenario } from "./photoAnalysis";
 
 const CATALOG_PATH = join(__dirname, "../../fixtures/photos/catalog.json");
