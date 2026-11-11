@@ -1,0 +1,26 @@
+{
+  "id": "asr_measurements",
+  "difficulty": "medium",
+  "style": "clear",
+  "status": "generated",
+  "audio": "generated/medium/asr_measurements.wav",
+  "noise": "room_tone",
+  "snr_db": 16,
+  "expect": {
+    "title_must_include": [
+      "door"
+    ],
+    "description_must_include_any": [
+      "inch",
+      "feet",
+      "humidity",
+      "sixty"
+    ],
+    "intake_targets": [
+      "named_and_questions",
+      "advice_ready"
+    ],
+    "eval_surface": "apk_or_server"
+  },
+  "script": "The gap under the door is about three quarters of an inch. The room is twelve by fourteen feet. The humidity reads sixty two percent."
+}

@@ -24,7 +24,9 @@ npm run test:android
 npm run generate:intake-fixtures   # needs fixtures/intakes/.venv + ffmpeg
 ```
 
-Full audio→ASR→intake scoring is a follow-on when `asr_job` exists.
+Photo stills live in [`fixtures/photos/catalog.json`](../fixtures/photos/catalog.json) and are scored by `src/lib/photoAnalysis.test.ts` (and the Android `PhotoAnalysisTest`). They cover blur, glare, exposure, duplicates, label OCR, and PII on a shipping label. Patterns are synthetic grayscale. Intake does not caption photos yet, so these tests do not expect a vision-model description.
+
+Ids prefixed `asr_` are transcription-analysis cases: homophones, spoken codes, self-corrections, spelled names, measurements, negation, and PII that Intake must scrub before the transcript is stored. `analysis.transcript_must_include` / `transcript_must_exclude` score the stored transcript, after PII conversion. Spoken numbers are scored in the form Whisper usually writes (`E fifteen` → `E15`, `sixty two percent` → `62%`).
 
 ## Difficulty legend
 

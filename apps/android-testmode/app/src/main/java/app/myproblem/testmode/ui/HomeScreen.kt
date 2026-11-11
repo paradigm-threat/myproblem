@@ -23,6 +23,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import app.myproblem.testmode.tickets.LocalTicket
+import app.myproblem.testmode.tickets.ServerProblem
+import app.myproblem.testmode.tickets.SyncHealth
 import app.myproblem.testmode.tickets.chipLabel
 import java.text.DateFormat
 import java.util.Date
@@ -35,6 +37,7 @@ fun HomeScreen(
     onOpenTicket: (String) -> Unit,
     onSettings: () -> Unit,
     onTestMode: () -> Unit,
+    onRetrySync: (String) -> Unit,
 ) {
     Column(
         modifier =
@@ -64,6 +67,14 @@ fun HomeScreen(
         Spacer(Modifier.height(12.dp))
         PrimaryButton("New ticket", onClick = onNewTicket)
         Spacer(Modifier.height(16.dp))
+        val trouble =
+            tickets.firstOrNull {
+                it.sync.health == SyncHealth.ERROR && it.sync.problem == ServerProblem.UNAVAILABLE
+            } ?: tickets.firstOrNull { it.sync.health == SyncHealth.ERROR }
+        if (trouble != null) {
+            ServerProblemBanner(sync = trouble.sync, onRetry = { onRetrySync(trouble.id) })
+            Spacer(Modifier.height(12.dp))
+        }
         if (tickets.isEmpty()) {
             Text(
                 "No open tickets yet. Tap New ticket and pick text, audio, or frames.",

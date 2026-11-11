@@ -1,0 +1,93 @@
+{
+  "version": 1,
+  "format": "myproblem.photo_fixtures",
+  "width": 64,
+  "height": 48,
+  "notes": "Synthetic grayscale stills. The phone drops blur, glare, bad exposure, and duplicates before upload. OCR text is scored after PII scrub. Intake has no vision caption model, so these fixtures do not expect a generated description.",
+  "scenarios": [
+    {
+      "id": "photo_sharp_stripes",
+      "focus": "quality_sharp",
+      "pattern": "vertical_stripes",
+      "expect": { "decision": "SEND", "drop_reason": "—" }
+    },
+    {
+      "id": "photo_soft_ramp",
+      "focus": "quality_blur",
+      "pattern": "soft_ramp",
+      "expect": { "decision": "DROP", "drop_reason": "blur" }
+    },
+    {
+      "id": "photo_glare_checker",
+      "focus": "quality_glare",
+      "pattern": "checker_glare",
+      "expect": { "decision": "DROP", "drop_reason": "glare" }
+    },
+    {
+      "id": "photo_dark_checker",
+      "focus": "quality_dark",
+      "pattern": "checker_dark",
+      "expect": { "decision": "DROP", "drop_reason": "too dark" }
+    },
+    {
+      "id": "photo_bright_checker",
+      "focus": "quality_bright",
+      "pattern": "checker_bright",
+      "expect": { "decision": "DROP", "drop_reason": "too bright" }
+    },
+    {
+      "id": "photo_duplicate_hold",
+      "focus": "duplicate",
+      "pattern": "vertical_stripes",
+      "prior": "same",
+      "expect": { "decision": "DROP", "drop_reason": "duplicate" }
+    },
+    {
+      "id": "photo_new_framing",
+      "focus": "uniqueness",
+      "pattern": "left_right",
+      "prior": "vertical_stripes",
+      "expect": { "decision": "SEND", "drop_reason": "—" }
+    },
+    {
+      "id": "photo_label_pending",
+      "focus": "ocr_pending",
+      "pattern": "vertical_stripes",
+      "text_contains": "SHX878",
+      "expect": { "decision": "KEEP", "drop_reason": "ocr_pending" }
+    },
+    {
+      "id": "photo_label_code",
+      "focus": "ocr_code",
+      "pattern": "vertical_stripes",
+      "text_contains": "SHX878",
+      "ocr": "Washer model SHX878. The filter is a Frigidaire.",
+      "expect": {
+        "decision": "SEND",
+        "drop_reason": "—",
+        "stored_must_include": ["SHX878", "Frigidaire"]
+      }
+    },
+    {
+      "id": "photo_label_wrong_code",
+      "focus": "ocr_mismatch",
+      "pattern": "vertical_stripes",
+      "text_contains": "E15",
+      "ocr": "The sticker reads E24 only.",
+      "expect": { "decision": "DROP", "drop_reason": "wrong_text" }
+    },
+    {
+      "id": "photo_label_pii",
+      "focus": "pii_scrub",
+      "pattern": "vertical_stripes",
+      "text_contains": "label",
+      "ocr": "The shipping label says 18 Oak Street and 404-555-0199.",
+      "expect": {
+        "decision": "SEND",
+        "drop_reason": "—",
+        "stored_must_include": ["label", "[phone withheld]", "an address"],
+        "stored_must_exclude": ["404-555-0199", "18 Oak"]
+      }
+    }
+  ]
+}

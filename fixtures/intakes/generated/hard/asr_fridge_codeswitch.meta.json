@@ -1,0 +1,26 @@
+{
+  "id": "asr_fridge_codeswitch",
+  "difficulty": "hard",
+  "style": "noisy",
+  "status": "generated",
+  "audio": "generated/hard/asr_fridge_codeswitch.wav",
+  "noise": "appliance_hum",
+  "snr_db": 8,
+  "expect": {
+    "title_must_include": [
+      "fridge"
+    ],
+    "description_must_include_any": [
+      "cold",
+      "freezer",
+      "ice",
+      "fan"
+    ],
+    "intake_targets": [
+      "named_and_questions",
+      "advice_ready"
+    ],
+    "eval_surface": "apk_or_server"
+  },
+  "script": "Eh, the fridge no cold, the freezer is okay. The ice maker is stuck. Do I replace the fan?"
+}

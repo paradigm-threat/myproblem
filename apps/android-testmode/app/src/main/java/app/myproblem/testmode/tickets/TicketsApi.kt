@@ -77,6 +77,7 @@ object TicketsApi {
         file: File,
         mime: String,
         isFinal: Boolean = true,
+        rolling: Boolean = false,
         hotwords: List<String> = emptyList(),
     ): EvidenceResult {
         // Intake commit worker expects JSON + base64 (no multipart).
@@ -86,6 +87,7 @@ object TicketsApi {
             JSONObject()
                 .put("kind", kind)
                 .put("isFinal", isFinal)
+                .put("rolling", rolling)
                 .put("base64", b64)
                 .put("filename", file.name)
                 .put("mime", mime)

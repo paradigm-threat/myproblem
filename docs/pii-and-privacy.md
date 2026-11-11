@@ -53,7 +53,7 @@ Before any commit to `tip.json` / `index.md`:
 | Mode | Behavior |
 |------|----------|
 | **Private to provider** | Provider asks for address/name/phone. Creator approves → client sends PII on a **direct secure channel** to that provider only — **not** written into the public tip. |
-| **Explicit public post** | Rare (e.g. community gathering). Creator **opts in** per field. Prefer coarsened location unless they insist. Default **off**. |
+| **Human handoff post** | When the batch pass is also not confident, the redacted problem is public so a person can assess it or offer a service. Title and description are coarsened again. The claim and media URIs are not copied. See [`confidence-gauge.md`](./confidence-gauge.md). |
 | **No silent publish** | No worker or LLM may publish full PII without that opt-in. |
 
 ---

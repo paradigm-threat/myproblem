@@ -1,0 +1,26 @@
+{
+  "id": "asr_negation_no_smoke",
+  "difficulty": "medium",
+  "style": "clear",
+  "status": "generated",
+  "audio": "generated/medium/asr_negation_no_smoke.wav",
+  "noise": "beep_chirp",
+  "snr_db": 10,
+  "expect": {
+    "title_must_include": [
+      "alarm"
+    ],
+    "description_must_include_any": [
+      "chirp",
+      "smoke",
+      "battery",
+      "fire"
+    ],
+    "intake_targets": [
+      "named_and_questions",
+      "advice_ready"
+    ],
+    "eval_surface": "apk_or_server"
+  },
+  "script": "The alarm is chirping but I do not smell smoke. There is no fire. The battery is probably dead."
+}

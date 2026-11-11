@@ -1,0 +1,25 @@
+{
+  "id": "asr_spelled_shop_name",
+  "difficulty": "medium",
+  "style": "clear",
+  "status": "generated",
+  "audio": "generated/medium/asr_spelled_shop_name.wav",
+  "noise": "room_tone",
+  "snr_db": 16,
+  "expect": {
+    "title_must_include": [
+      "skinner"
+    ],
+    "description_must_include_any": [
+      "glasses",
+      "hinge",
+      "arm"
+    ],
+    "intake_targets": [
+      "named_and_questions",
+      "advice_ready"
+    ],
+    "eval_surface": "apk_or_server"
+  },
+  "script": "The optician is named Skinner. That is S K I N N E R. The left glasses arm cracked at the hinge."
+}

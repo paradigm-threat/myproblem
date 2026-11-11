@@ -1,0 +1,26 @@
+{
+  "id": "asr_correction_rear_tire",
+  "difficulty": "medium",
+  "style": "rambly",
+  "status": "generated",
+  "audio": "generated/medium/asr_correction_rear_tire.wav",
+  "noise": "traffic_light",
+  "snr_db": 13,
+  "expect": {
+    "title_must_include": [
+      "tire"
+    ],
+    "description_must_include_any": [
+      "rear",
+      "passenger",
+      "spare",
+      "donut"
+    ],
+    "intake_targets": [
+      "named_and_questions",
+      "needs_user_text"
+    ],
+    "eval_surface": "apk_or_server"
+  },
+  "script": "The flat is not the front tire. I said front by mistake. It is the rear passenger tire. The spare is a donut."
+}

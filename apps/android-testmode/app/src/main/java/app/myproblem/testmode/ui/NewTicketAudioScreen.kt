@@ -139,6 +139,8 @@ fun NewTicketAudioScreen(
             Text(coach, color = Warm, fontWeight = FontWeight.Medium, fontSize = 16.sp)
             Text(ticket.intake.chipLabel(), color = Accent, fontSize = 12.sp)
         }
+        Spacer(Modifier.height(10.dp))
+        ServerProblemBanner(sync = ticket.sync)
 
         Spacer(Modifier.height(14.dp))
         Text(

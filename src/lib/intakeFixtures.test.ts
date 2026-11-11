@@ -49,7 +49,7 @@ describe("intake fixtures catalog", () => {
     expect(catalog.format).toBe("myproblem.intake_fixtures");
     expect(catalog.version).toBe(1);
     expect(catalog.scenarios.length).toBeGreaterThanOrEqual(24);
-    expect(catalog.scenarios.length).toBeLessThanOrEqual(40);
+    expect(catalog.scenarios.length).toBeLessThanOrEqual(48);
   });
 
   it("has unique ids and required fields", () => {

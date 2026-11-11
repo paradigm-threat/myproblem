@@ -2,6 +2,8 @@
 
 The server AI does **not** re-judge shake/blur. Server and app share **capabilities** to deduce and drill down a Problem in realtime: quality/uniqueness, color/shape/angle filters, OCR text, later pose/3D.
 
+While you talk and show the problem, one question stays on screen above the camera until the requirements are specific. You answer by talking. A spoken conversation with the AI comes later. The sentence is `confidence.ask` ([`confidence-gauge.md`](./confidence-gauge.md)).
+
 Related: [context-for-server.md](./context-for-server.md), [onboard-ai.md](./onboard-ai.md), [progressive-transcription.md](./progressive-transcription.md), [apk-ticket-ux.md](./apk-ticket-ux.md).
 
 **Stills / OCR** remain this capture path. **Voice** is separate: audio posts as ticket Evidence and is batch-transcribed on the server (client never calls ASR). Context patches that include OCR snippets or corrected names on an **open** ticket may trigger the progressive-transcription **LLM gate** to decide whether to re-run ASR — see that doc.

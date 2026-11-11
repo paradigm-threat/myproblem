@@ -35,6 +35,7 @@ class TicketSyncEngine(
                         localRevision = t.sync.localRevision + 1,
                         health = SyncHealth.LOCAL_AHEAD,
                         lastError = null,
+                        problem = null,
                         progress = null,
                         syncStartedAtMs = null,
                     ),
@@ -64,6 +65,7 @@ class TicketSyncEngine(
                         remoteRevision = t.sync.localRevision + 1,
                         health = SyncHealth.REMOTE_AHEAD,
                         lastError = null,
+                        problem = null,
                         progress = null,
                         syncStartedAtMs = null,
                     ),
@@ -92,6 +94,7 @@ class TicketSyncEngine(
                         syncStartedAtMs = started,
                         progress = 0.05f,
                         lastError = null,
+                        problem = null,
                     ),
             )
         store.save(t)
@@ -127,7 +130,7 @@ class TicketSyncEngine(
                     onUpdated()
                 }
 
-                suspend fun maybeUpload(kind: String, file: File, mime: String) {
+                suspend fun maybeUpload(kind: String, file: File, mime: String, rolling: Boolean = false) {
                     val hash = sha256Hex(file)
                     if (hash in uploaded) return
                     val res =
@@ -138,18 +141,29 @@ class TicketSyncEngine(
                             file = file,
                             mime = mime,
                             isFinal = true,
+                            rolling = rolling,
                         )
                     if (res.ok) uploaded.add(hash)
                 }
 
-                for (entry in cur.timeline) {
-                    val path = entry.localPath ?: continue
-                    val file = File(path)
-                    if (!file.exists()) continue
-                    when (entry.kind) {
-                        TimelineKind.USER_AUDIO -> maybeUpload("audio", file, "audio/mp4")
-                        TimelineKind.USER_STILL -> maybeUpload("still", file, "image/jpeg")
-                        else -> Unit
+                // Speech first so a still is described against the transcript.
+                for (kind in listOf(TimelineKind.USER_AUDIO, TimelineKind.USER_STILL)) {
+                    for (entry in cur.timeline) {
+                        if (entry.kind != kind) continue
+                        val path = entry.localPath ?: continue
+                        val file = File(path)
+                        if (!file.exists()) continue
+                        when (kind) {
+                            TimelineKind.USER_AUDIO ->
+                                maybeUpload(
+                                    "audio",
+                                    file,
+                                    "audio/mp4",
+                                    rolling = entry.body.startsWith("Rolling"),
+                                )
+                            TimelineKind.USER_STILL -> maybeUpload("still", file, "image/jpeg")
+                            else -> Unit
+                        }
                     }
                 }
 
@@ -175,17 +189,40 @@ class TicketSyncEngine(
                 onUpdated()
                 ensureStatusPoll(ticketId)
             }
+        } catch (e: kotlinx.coroutines.CancellationException) {
+            throw e
         } catch (e: Exception) {
             val elapsed = System.currentTimeMillis() - started
-            fail(
-                ticketId,
-                if (elapsed > errorAfterMs) {
-                    "Sync timed out — check connection and retry"
+            val raw =
+                if (elapsed > errorAfterMs && e.message.isNullOrBlank()) {
+                    "timed out"
                 } else {
                     e.message ?: "Sync failed"
-                },
-            )
+                }
+            fail(ticketId, raw)
         }
+    }
+
+    /** One pull of the server tip onto the local ticket. Used by phone E2E. */
+    suspend fun pullNow(ticketId: String): LocalTicket? {
+        val cur = store.load(ticketId) ?: return null
+        val serverId = cur.sync.serverTicketId ?: return null
+        val tip =
+            withContext(Dispatchers.IO) {
+                TicketsApi.getTicket(serverId, cur.sync.serverClaim)
+            }
+        val next =
+            applyTipFields(
+                cur = cur,
+                tip = tip,
+                uploaded = cur.uploadedSha256,
+                serverId = serverId,
+                claim = cur.sync.serverClaim,
+                nowMs = System.currentTimeMillis(),
+            )
+        store.save(next)
+        onUpdated()
+        return next
     }
 
     /** Start/stop Batch status polls from the UI after reload. */
@@ -199,7 +236,7 @@ class TicketSyncEngine(
      * (sync substitute for push until FCM is wired).
      */
     private fun maybePollStatus(ticketId: String, intake: IntakeStatus) {
-        if (intake != IntakeStatus.QUEUED && intake != IntakeStatus.TRANSCRIBING) {
+        if (!isWaitingOnServer(intake)) {
             statusPolls.remove(ticketId)?.cancel()
             return
         }
@@ -213,7 +250,7 @@ class TicketSyncEngine(
                     intervalMs = (intervalMs * 3 / 2).coerceAtMost(15_000L)
                     if (!onlineEnabled()) continue
                     val cur = store.load(ticketId) ?: break
-                    if (cur.intake != IntakeStatus.QUEUED && cur.intake != IntakeStatus.TRANSCRIBING) {
+                    if (!isWaitingOnServer(cur.intake)) {
                         break
                     }
                     val serverId = cur.sync.serverTicketId ?: break
@@ -234,18 +271,18 @@ class TicketSyncEngine(
                             )
                         store.save(next)
                         onUpdated()
-                        if (next.intake != IntakeStatus.QUEUED &&
-                            next.intake != IntakeStatus.TRANSCRIBING
-                        ) {
+                        if (!isWaitingOnServer(next.intake)) {
                             break
                         }
-                    } catch (_: Exception) {
-                        // Keep polling; next tick retries.
+                    } catch (e: kotlinx.coroutines.CancellationException) {
+                        throw e
+                    } catch (e: Exception) {
+                        reportReachFailure(ticketId, e.message)
                     }
                 }
                 // Final local honesty if Batch never advanced.
                 val last = store.load(ticketId) ?: return@launch
-                if (last.intake == IntakeStatus.QUEUED || last.intake == IntakeStatus.TRANSCRIBING) {
+                if (isWaitingOnServer(last.intake)) {
                     val timed = last.withHonestLocalTimeout()
                     if (timed.intake == IntakeStatus.TIMEOUT) {
                         store.save(timed)
@@ -328,6 +365,27 @@ class TicketSyncEngine(
                         TicketField(value = desc, source = FieldSource.INTAKE, locked = false),
                 )
         }
+        val qArr = tip.optJSONArray("questions")
+        if (qArr != null && qArr.length() > 0) {
+            val questions = buildList {
+                for (i in 0 until qArr.length()) {
+                    val q = qArr.optString(i).trim()
+                    if (q.isNotEmpty()) add(q)
+                }
+            }
+            if (questions.isNotEmpty()) next = next.copy(questions = questions)
+        }
+        val confidence = tip.optJSONObject("confidence")
+        if (confidence != null) {
+            next =
+                next.copy(
+                    understandingPct = confidence.optInt("understanding"),
+                    solutionPct =
+                        if (confidence.isNull("solution")) null else confidence.optInt("solution"),
+                    confidencePhase = confidence.optString("phase"),
+                    currentAsk = confidence.optString("ask"),
+                )
+        }
         return next.withHonestLocalTimeout(nowMs)
     }
 
@@ -371,17 +429,35 @@ class TicketSyncEngine(
         }
         var asrQueued = false
         var asrLeased = false
+        var visionPending = false
         val jobs = tip.optJSONArray("jobs")
         if (jobs != null) {
             for (i in 0 until jobs.length()) {
                 val j = jobs.getJSONObject(i)
-                if (j.optString("bin") != "asr") continue
-                when (j.optString("state")) {
-                    "queued" -> asrQueued = true
-                    "leased" -> asrLeased = true
+                val state = j.optString("state")
+                when (j.optString("bin")) {
+                    "asr" ->
+                        when (state) {
+                            "queued" -> asrQueued = true
+                            "leased" -> asrLeased = true
+                        }
+                    "vision" -> if (state == "queued" || state == "leased") visionPending = true
                 }
             }
         }
+        if (evidence != null) {
+            for (i in 0 until evidence.length()) {
+                val e = evidence.getJSONObject(i)
+                if (e.optString("kind") == "still" &&
+                    !e.optBoolean("processed", false) &&
+                    e.optString("uri").isNotBlank()
+                ) {
+                    visionPending = true
+                }
+            }
+        }
+        // Keep polling until the stills are described. A transcript alone is not the description.
+        if (hasTranscript && visionPending) return IntakeStatus.QUEUED
         if (hasTranscript) {
             return when (mapped) {
                 IntakeStatus.QUEUED, IntakeStatus.TRANSCRIBING, IntakeStatus.LISTENING ->
@@ -396,15 +472,22 @@ class TicketSyncEngine(
         return mapped
     }
 
+    /** A pull failed while the screen is waiting on the next question. */
+    fun reportReachFailure(ticketId: String, raw: String?) {
+        fail(ticketId, raw ?: "Sync failed")
+    }
+
     private fun fail(ticketId: String, message: String) {
         val cur = store.load(ticketId) ?: return
+        val banner = explainServerFailure(message)
         store.save(
             cur.copy(
                 sync =
                     cur.sync.copy(
                         health = SyncHealth.ERROR,
                         progress = null,
-                        lastError = message,
+                        lastError = banner.body,
+                        problem = banner.problem,
                         syncStartedAtMs = cur.sync.syncStartedAtMs,
                     ),
             ),
@@ -413,6 +496,11 @@ class TicketSyncEngine(
     }
 
     companion object {
+        fun isWaitingOnServer(intake: IntakeStatus) =
+            intake == IntakeStatus.QUEUED ||
+                intake == IntakeStatus.TRANSCRIBING ||
+                intake == IntakeStatus.INVESTIGATING
+
         fun sha256Hex(file: File): String {
             val md = MessageDigest.getInstance("SHA-256")
             file.inputStream().use { input ->

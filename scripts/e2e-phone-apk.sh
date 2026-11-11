@@ -83,7 +83,11 @@ broadcast --es cmd create_text \
   --es title "Phone_E2E_flat_tire" \
   --es description "Spare_in_trunk_from_APK_broadcast"
 CREATE=$(last_e2e)
-echo "$CREATE"
+echo "$CREATE" | python3 -c '
+import json,sys
+j=json.load(sys.stdin)
+print("ok", j.get("ok"), "intake", j.get("intake"), "phase", j.get("phase"), "understanding", j.get("understanding"))
+'
 LOCAL=$(echo "$CREATE" | python3 -c 'import sys,json; print(json.load(sys.stdin)["localId"])')
 SERVER=$(echo "$CREATE" | python3 -c 'import sys,json; print(json.load(sys.stdin)["serverTicketId"])')
 CLAIM=$(echo "$CREATE" | python3 -c 'import sys,json; print(json.load(sys.stdin).get("claim") or "")')
@@ -107,7 +111,7 @@ print("intake", t.get("intake"))
 print("title", (t.get("fields") or {}).get("title",{}).get("value","")[:60])
 print("evidence", [(e["kind"], bool(e.get("uri")), e.get("processed")) for e in t.get("evidence",[])])
 print("jobs", [(j.get("bin"), j.get("state")) for j in t.get("jobs",[])])
-assert t.get("intake") in ("queued","listening","figuring_out","named_and_questions"), t.get("intake")
+assert t.get("intake") in ("queued","listening","figuring_out","named_and_questions","investigating","queue_project"), t.get("intake")
 # Honesty: must not claim transcribing while jobs only queued
 jobs=t.get("jobs") or []
 if any(j.get("bin")=="asr" and j.get("state")=="queued" for j in jobs):
@@ -158,24 +162,48 @@ if [[ "$NEED" == "True" || "$NEED" == "true" ]]; then
     (adb push "$WAV" /data/local/tmp/mp_e2e_audio.wav >/dev/null && adb shell run-as "$PKG" cp /data/local/tmp/mp_e2e_audio.wav files/e2e/audio.wav)
   broadcast --es cmd upload_audio --es localId "$LOCAL" --es path e2e/audio.wav
   echo "$(last_e2e)"
-  if [[ -n "$OPS" ]]; then
-    PROC=$(curl_intake -H "x-ops-secret: $OPS" -X POST "$BASE/api/ops/process-jobs?limit=10")
-  else
-    PROC=$(curl_intake -X POST "$BASE/api/ops/process-jobs?limit=10")
-  fi
-  echo "$PROC"
-  echo "$PROC" | python3 -c '
-import sys,json
-d=json.load(sys.stdin)
-errs=[r for r in d.get("results") or [] if r.get("error")]
-assert not errs, f"regression: process errors after re-upload {errs}"
-assert (d.get("processed") or 0) >= 1, d
+  echo "== wait until the re-uploaded audio is transcribed =="
+  READY=""
+  for _ in $(seq 1 24); do
+    TIP=$(curl_intake "${AUTH[@]}" "$BASE/api/tickets/$SERVER")
+    if echo "$TIP" | python3 -c '
+import json,sys
+t=json.load(sys.stdin)
+jobs=t.get("jobs") or []
+busy=[j for j in jobs if j.get("bin")=="asr" and j.get("state") in ("queued","leased")]
+txs=[e for e in t.get("evidence") or [] if e.get("kind")=="transcript" and (e.get("text") or "").strip()]
+errs=[j for j in jobs if j.get("state")=="error"]
+assert not errs, errs
+sys.exit(0 if len(txs) >= 2 and not busy else 1)
+'; then
+      READY=1
+      echo "$TIP" | python3 -c '
+import json,sys
+t=json.load(sys.stdin)
+print("intake", t.get("intake"))
+print("transcripts", sum(1 for e in t.get("evidence") or [] if e.get("kind")=="transcript"))
+print("jobs", [(j.get("bin"), j.get("state")) for j in t.get("jobs") or []])
 '
+      break
+    fi
+    sleep 2
+  done
+  [[ -n "$READY" ]]
 fi
 
 echo "== APK sync pull =="
 broadcast --es cmd sync --es localId "$LOCAL"
-echo "$(last_e2e)"
+SYNC=$(last_e2e)
+echo "$SYNC" | python3 -c '
+import json,sys
+j=json.load(sys.stdin)
+assert j.get("ok") is True, j.get("error")
+print("intake", j.get("intake"), "phase", j.get("phase"), "understanding", j.get("understanding"), "solution", j.get("solution"))
+'
+if [[ -n "$CLAIM" ]]; then
+  curl_intake "${AUTH[@]}" -X POST "$BASE/api/tickets/$SERVER/close" -H "content-type: application/json" -d '{}' >/dev/null
+  echo "closed"
+fi
 
 echo "== cleanup phone media =="
 adb shell rm -f /data/local/tmp/mp_e2e_audio.wav /data/local/tmp/mp_e2e_still.jpg >/dev/null || true

@@ -46,6 +46,8 @@ Client + capture coach reach a natural fork:
 
 Then the app **packages the ticket** and enqueues a Project instead of burning premium GPU/LLM for an instant deep answer.
 
+The live gauge decides that fork with two numbers. **Understanding** stays in questions until the problem is specific. **Solution** is shown only after that, and a next step is attached only at 65 or above. Under 65 the coach stops advising and offers the batch pass. If the batch pass is also under 65, a person continues and a PII-free post is published. Contract: [`confidence-gauge.md`](./confidence-gauge.md).
+
 User can still:
 
 - Wait for deferred results (default / cheapest quality path).

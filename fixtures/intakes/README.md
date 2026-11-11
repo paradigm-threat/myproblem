@@ -66,6 +66,13 @@ Treat as public-domain / CC0-equivalent for this repo.
 
 ## Counts (v1)
 
-- Catalog scenarios: see `catalog.json`  
-- Generated on `--tier easy,medium,hard` with `status: generate`: 17 WAVs  
+- Catalog scenarios: see `catalog.json` (problem cases plus `asr_*` transcription-analysis cases)
+- Generated on `--tier easy,medium,hard` with `status: generate`
 - Remaining rows: `script_only` targets for later
+
+Regenerate only the transcription set:
+
+```bash
+fixtures/intakes/.venv/bin/python fixtures/intakes/scripts/generate_intakes.py \
+  --ids asr_flatbed_not_tire,asr_error_code_spoken,asr_correction_rear_tire,asr_pii_phone_street,asr_spelled_shop_name,asr_measurements,asr_negation_no_smoke,asr_fridge_codeswitch
+```

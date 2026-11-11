@@ -21,7 +21,9 @@ Flow covered: APK create → upload audio/still → wake → process/purge → r
 
 ## One-sentence rule
 
-> **Ticket-first home; New ticket jumps into your chosen start mode; stream Evidence; server intake names the Problem or asks you to type; deep work is a batched Project.**
+> **Ticket-first home; New ticket jumps into your chosen start mode; stream Evidence; one question stays on screen while you talk and show the problem; the confidence gauge stops advice when it should; deep work is a batched Project.**
+
+On the audio-and-frames screen the current question is a large band **above** the camera. You answer by talking. The question updates as clips and stills come back. A spoken reply from the AI comes later. The ticket screen shows **Understanding N%** and **Solution N%** once the server has scored the problem ([`confidence-gauge.md`](./confidence-gauge.md)). Solution stays “still learning the problem” while questions are open. Under the solution threshold the line says we are not confident enough to advise further. After the batch pass gives up, the line says a person should continue.
 
 ---
 

@@ -64,6 +64,7 @@ Prefer **Bunny** (or peer CDN/object) for $/GB. See [`05-spend-and-use-of-funds.
 - Exact-path GET only: `tickets/<uuid>/…`
 - No directory index, search across tips, or “list open tickets” API
 - Wrong UUID → `404`
+- A **published** human-handoff post is a separate redacted file. `GET /api/public/posts` lists those posts only. It is not a list of private tickets. The published id is the ticket UUID. The claim stays secret, so the UUID does not grant edit access while claims are required.
 
 ---
 

@@ -14,16 +14,25 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableLongStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import app.myproblem.testmode.tickets.SYNC_ERROR_AFTER_MS
+import app.myproblem.testmode.tickets.ServerProblem
 import app.myproblem.testmode.tickets.SyncHealth
 import app.myproblem.testmode.tickets.SyncPresence
 import app.myproblem.testmode.tickets.SyncState
 import app.myproblem.testmode.tickets.chipLabel
+import app.myproblem.testmode.tickets.serverBanner
+import kotlinx.coroutines.delay
 
 @Composable
 fun SyncStatusBadge(
@@ -73,8 +82,37 @@ fun SyncStatusBadge(
                 trackColor = Chip,
             )
         }
-        if (!compact && sync.lastError != null && sync.health == SyncHealth.ERROR) {
-            Text(sync.lastError, color = Danger, fontSize = 11.sp)
+    }
+}
+
+@Composable
+fun ServerProblemBanner(
+    sync: SyncState,
+    onRetry: (() -> Unit)? = null,
+    modifier: Modifier = Modifier,
+) {
+    var now by remember { mutableLongStateOf(System.currentTimeMillis()) }
+    LaunchedEffect(sync.health, sync.syncStartedAtMs) {
+        val started = sync.syncStartedAtMs ?: return@LaunchedEffect
+        if (sync.health != SyncHealth.SYNCING) return@LaunchedEffect
+        val wait = (SYNC_ERROR_AFTER_MS - (System.currentTimeMillis() - started)).coerceAtLeast(0L)
+        delay(wait + 50L)
+        now = System.currentTimeMillis()
+    }
+    val banner = sync.serverBanner(now) ?: return
+    val tone = if (banner.problem == ServerProblem.UNAVAILABLE) Danger else Warm
+    Column(
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .background(Card, RoundedCornerShape(12.dp))
+                .padding(14.dp),
+        verticalArrangement = Arrangement.spacedBy(6.dp),
+    ) {
+        Text(banner.title, color = tone, fontWeight = FontWeight.SemiBold, fontSize = 16.sp)
+        Text(banner.body, color = Warm, fontSize = 14.sp)
+        if (onRetry != null && !banner.waiting) {
+            SecondaryButton("Retry", onClick = onRetry)
         }
     }
 }
@@ -99,6 +137,7 @@ fun SyncStatusCard(
             fontWeight = FontWeight.SemiBold,
             fontSize = 14.sp,
         )
+        ServerProblemBanner(sync = sync)
         SyncStatusBadge(sync = sync, compact = false)
         Text(
             "rev local ${sync.localRevision} · remote ${sync.remoteRevision}",

@@ -31,7 +31,9 @@ import androidx.navigation.navArgument
 import app.myproblem.testmode.AppViewModel
 import app.myproblem.testmode.TestModeScreen
 import app.myproblem.testmode.TestModeViewModel
+import app.myproblem.testmode.tickets.CurrentAsk
 import app.myproblem.testmode.tickets.StartMode
+import app.myproblem.testmode.tickets.SyncState
 import java.util.concurrent.ExecutorService
 
 object Routes {
@@ -104,6 +106,7 @@ fun MyProblemApp(
                             onEnsureCameraForTest()
                             nav.navigate(Routes.TEST)
                         },
+                        onRetrySync = { appVm.retrySync(it) },
                     )
                 }
                 composable(Routes.NEW_MODE) {
@@ -197,9 +200,13 @@ fun MyProblemApp(
                             // Ensure mic/camera cleanup paths run when leaving.
                         }
                     }
+                    val live = ui.tickets.firstOrNull { it.id == id }
+                    val ask = live?.let { CurrentAsk.forTicket(it) } ?: CurrentAsk.OPENING
                     NewTicketAvScreen(
                         ticketId = id,
                         stillCount = stills,
+                        ask = ask,
+                        sync = live?.sync ?: SyncState(),
                         audioFileFactory = { appVm.audioFileFor(id) },
                         stillFileFactory = { appVm.stillFileFor(id) },
                         onCancel = {
@@ -207,10 +214,13 @@ fun MyProblemApp(
                             nav.popBackStack()
                         },
                         onAudioRecorded = { appVm.onAudioCaptured(id, it) },
+                        onRollingClip = { appVm.onRollingClip(id, it) },
                         onStillCaptured = {
                             appVm.onStillCaptured(id, it)
                             stills += 1
                         },
+                        onRefreshAsk = { appVm.refreshAsk(id) },
+                        onRetrySync = { appVm.retrySync(id) },
                         onFinish = {
                             appVm.runIntakeAgain(id)
                             nav.navigate(Routes.ticket(id)) {

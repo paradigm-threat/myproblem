@@ -25,6 +25,8 @@ Related: [`projects.md`](./projects.md) · [`infra-definition.md`](./infra-defin
 
 **On-demand premium media ≠ product path.** Priority buys a **faster Project queue / SLA**, not live SDXL or live Claude vision.
 
+The live session’s own brain is the confidence gauge ([`confidence-gauge.md`](./confidence-gauge.md)): gather the problem, ask until it is specific, and stop advising when a next step would be a guess or a hazard. Grok and other outside models are a **backup inside the batch pass** for a clearer wording or a better image read. They do not replace the gauge and they are not a second general assistant.
+
 ---
 
 ## Pipeline (canonical)

@@ -47,6 +47,13 @@ class AudioCapture {
         }
     }
 
+    /** Finish the current clip and keep recording into a new file. */
+    fun rotate(nextFile: File): File? {
+        val done = stop()
+        start(nextFile)
+        return done
+    }
+
     fun stop(): File? {
         val f = outputFile
         try {

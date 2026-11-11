@@ -22,8 +22,11 @@ import app.myproblem.testmode.tickets.TimelineKind
 import app.myproblem.testmode.tickets.TimelinePolicy
 import app.myproblem.testmode.tickets.chipLabel
 import app.myproblem.testmode.tickets.normalizeStuckIntake
+import app.myproblem.testmode.tickets.ServerProblem
 import app.myproblem.testmode.tickets.SyncHealth
+import app.myproblem.testmode.tickets.explainServerFailure
 import app.myproblem.testmode.tickets.TicketsApi
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -162,6 +165,7 @@ class AppViewModel(app: Application) : AndroidViewModel(app) {
                             t.sync.copy(
                                 health = SyncHealth.ERROR,
                                 lastError = "Not online yet — sync first",
+                                problem = ServerProblem.UNAVAILABLE,
                             ),
                     ),
                 )
@@ -220,8 +224,16 @@ class AppViewModel(app: Application) : AndroidViewModel(app) {
                 reload()
                 syncEngine.enqueueSync(ticketId)
             } catch (e: Exception) {
+                val banner = explainServerFailure(e.message)
                 store.save(
-                    t.copy(sync = t.sync.copy(health = SyncHealth.ERROR, lastError = e.message)),
+                    t.copy(
+                        sync =
+                            t.sync.copy(
+                                health = SyncHealth.ERROR,
+                                lastError = banner.body,
+                                problem = banner.problem,
+                            ),
+                    ),
                 )
                 reload()
             }
@@ -441,6 +453,42 @@ class AppViewModel(app: Application) : AndroidViewModel(app) {
         return applyIntake(next)
     }
 
+    /** A finished clip while the person is still talking. Sync uploads it as rolling. */
+    fun onRollingClip(ticketId: String, file: File) {
+        val t = store.load(ticketId) ?: return
+        val next =
+            appendTimeline(
+                t.copy(hasAudio = true, updatedAtMs = System.currentTimeMillis()),
+                TimelineKind.USER_AUDIO,
+                "Rolling audio clip",
+                file.absolutePath,
+            )
+        store.save(next)
+        reload()
+        notifySync(ticketId)
+        viewModelScope.launch {
+            delay(4_000)
+            refreshAsk(ticketId)
+        }
+    }
+
+    fun refreshAsk(ticketId: String) {
+        val cur = store.load(ticketId) ?: return
+        if (cur.sync.serverTicketId.isNullOrBlank()) return
+        viewModelScope.launch {
+            try {
+                val pulled = syncEngine.pullNow(ticketId) ?: return@launch
+                store.save(pulled)
+                reload()
+            } catch (e: kotlinx.coroutines.CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                syncEngine.reportReachFailure(ticketId, e.message)
+                reload()
+            }
+        }
+    }
+
     fun applyManualFill(ticketId: String, title: String, description: String): LocalTicket? =
         lockTitleDescription(ticketId, title, description)
 
@@ -487,9 +535,15 @@ class AppViewModel(app: Application) : AndroidViewModel(app) {
     }
 
     private fun applyIntake(ticket: LocalTicket): LocalTicket {
+        val keepServerAsk = ticket.currentAsk.isNotBlank() || ticket.coachLine.startsWith("Safety warning")
         val decision = IntakeHeuristics.decide(ticket)
         val now = System.currentTimeMillis()
-        var next = ticket.copy(questions = decision.questions, updatedAtMs = now, intake = decision.intake)
+        var next =
+            ticket.copy(
+                questions = if (keepServerAsk) ticket.questions else decision.questions,
+                updatedAtMs = now,
+                intake = if (keepServerAsk) ticket.intake else decision.intake,
+            )
         if (!ticket.titleField.locked) {
             val title = decision.title.ifBlank { ticket.title }
             next =
@@ -506,27 +560,32 @@ class AppViewModel(app: Application) : AndroidViewModel(app) {
                         TicketField(value = decision.summary, source = FieldSource.INTAKE, locked = false),
                 )
         }
-        var intake = decision.intake
+        var intake = if (keepServerAsk) ticket.intake else decision.intake
         if (intake == IntakeStatus.QUEUE_PROJECT) {
             intake = IntakeStatus.INVESTIGATING
         }
         val stage = RealtimeIntakeStages.fromIntake(intake)
-        next =
-            next.copy(
-                intake = intake,
-                coachLine =
-                    decision.summary.ifBlank { RealtimeIntakeStages.coachLine(stage) },
-            )
+        if (!keepServerAsk) {
+            next =
+                next.copy(
+                    intake = intake,
+                    coachLine =
+                        decision.summary.ifBlank { RealtimeIntakeStages.coachLine(stage) },
+                )
+        }
         next =
             appendTimeline(
                 next,
                 TimelineKind.SERVER_TITLE,
-                decision.summary.ifBlank { "Intake updated · ${intake.chipLabel()}" },
+                if (keepServerAsk) ticket.currentAsk.ifBlank { "Intake updated" }
+                else decision.summary.ifBlank { "Intake updated · ${intake.chipLabel()}" },
             )
-        decision.questions.forEach { q ->
-            next = appendTimeline(next, TimelineKind.SERVER_QUESTION, q)
+        if (!keepServerAsk) {
+            decision.questions.forEach { q ->
+                next = appendTimeline(next, TimelineKind.SERVER_QUESTION, q)
+            }
         }
-        if (decision.advice != null) {
+        if (!keepServerAsk && decision.advice != null) {
             next = appendTimeline(next, TimelineKind.SERVER_ADVICE, decision.advice)
         }
         store.save(next)

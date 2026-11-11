@@ -14,6 +14,16 @@ object IntakeHeuristics {
         val descOk = ticket.displayDescription().isNotBlank() && ticket.displayDescription().length >= 8
         val stillsOk = ticket.stillCount > 0
         val audioOk = ticket.hasAudio
+        val hazard = SafetyGuard.classify("${ticket.displayTitle()}\n${ticket.displayDescription()}")
+        if (hazard != null) {
+            return IntakeDecision(
+                intake = IntakeStatus.NAMED_AND_QUESTIONS,
+                title = ticket.displayTitle(),
+                summary = hazard.warning,
+                questions = hazard.questions,
+                advice = hazard.warning,
+            )
+        }
 
         return when {
             stillsOk && !titleOk && !descOk && !audioOk ->

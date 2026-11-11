@@ -1,0 +1,24 @@
+{
+  "id": "asr_pii_phone_street",
+  "difficulty": "hard",
+  "style": "clear",
+  "status": "generated",
+  "audio": "generated/hard/asr_pii_phone_street.wav",
+  "noise": "room_tone",
+  "snr_db": 16,
+  "expect": {
+    "title_must_include": [
+      "sink"
+    ],
+    "description_must_include_any": [
+      "leak",
+      "sink"
+    ],
+    "intake_targets": [
+      "named_and_questions",
+      "advice_ready"
+    ],
+    "eval_surface": "apk_or_server"
+  },
+  "script": "The leak is under the sink. You can reach me at 404-555-0199. The house is 18 Oak Street, apartment 4B."
+}

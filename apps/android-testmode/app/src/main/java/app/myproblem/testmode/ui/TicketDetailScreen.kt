@@ -34,6 +34,7 @@ import app.myproblem.testmode.tickets.IntakeStatus
 import app.myproblem.testmode.tickets.LocalTicket
 import app.myproblem.testmode.tickets.TicketStatus
 import app.myproblem.testmode.tickets.TimelineKind
+import app.myproblem.testmode.tickets.ConfidenceCopy
 import app.myproblem.testmode.tickets.chipLabel
 
 @Composable
@@ -96,9 +97,25 @@ fun TicketDetailScreen(
                 fontSize = 11.sp,
             )
         }
+        if (ticket.understandingPct != null) {
+            Spacer(Modifier.height(8.dp))
+            Text(ConfidenceCopy.understanding(ticket.understandingPct), color = Accent, fontSize = 13.sp)
+            val uncertain = ticket.confidencePhase == "batch" || ticket.confidencePhase == "human"
+            Text(
+                ConfidenceCopy.solution(ticket.solutionPct, ticket.confidencePhase),
+                color = if (uncertain) Danger else Muted,
+                fontSize = 13.sp,
+            )
+        }
         if (ticket.coachLine.isNotBlank()) {
             Spacer(Modifier.height(8.dp))
-            Text(ticket.coachLine, color = Accent, fontSize = 13.sp)
+            val safety = ticket.coachLine.startsWith("Safety warning")
+            Text(
+                ticket.coachLine,
+                color = if (safety) Danger else Accent,
+                fontWeight = if (safety) FontWeight.SemiBold else FontWeight.Normal,
+                fontSize = 13.sp,
+            )
         }
         Spacer(Modifier.height(12.dp))
         SyncStatusCard(
@@ -121,7 +138,7 @@ fun TicketDetailScreen(
             Spacer(Modifier.height(8.dp))
         }
 
-        if (ticket.questions.isNotEmpty() && ticket.intake == IntakeStatus.NAMED_AND_QUESTIONS) {
+        if (ticket.questions.isNotEmpty()) {
             Text("Quick questions", color = Accent, fontWeight = FontWeight.Medium)
             ticket.questions.forEach { q ->
                 Text(

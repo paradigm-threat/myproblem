@@ -139,11 +139,16 @@ class LocalTicketStore(context: Context) {
             .put("syncStartedAtMs", t.sync.syncStartedAtMs)
             .put("lastSyncedAtMs", t.sync.lastSyncedAtMs)
             .put("lastSyncError", t.sync.lastError)
+            .put("syncProblem", t.sync.problem?.name)
             .put("syncProgress", t.sync.progress?.toDouble() ?: JSONObject.NULL)
             .put(
                 "questions",
                 JSONArray().also { a -> t.questions.forEach { a.put(it) } },
             )
+            .put("understandingPct", t.understandingPct ?: JSONObject.NULL)
+            .put("solutionPct", t.solutionPct ?: JSONObject.NULL)
+            .put("confidencePhase", t.confidencePhase)
+            .put("currentAsk", t.currentAsk)
             .put(
                 "timeline",
                 JSONArray().also { a ->
@@ -215,6 +220,10 @@ class LocalTicketStore(context: Context) {
                 lastSyncedAtMs =
                     o.optLong("lastSyncedAtMs", 0L).takeIf { it > 0L },
                 lastError = o.optString("lastSyncError", "").takeIf { it.isNotBlank() },
+                problem =
+                    runCatching {
+                        o.optString("syncProblem", "").takeIf { it.isNotBlank() }?.let { ServerProblem.valueOf(it) }
+                    }.getOrNull(),
                 progress = progress,
             )
         return LocalTicket(
@@ -259,6 +268,10 @@ class LocalTicketStore(context: Context) {
                     locked = o.optBoolean("descLocked", false),
                 ),
             coachLine = o.optString("coachLine", ""),
+            understandingPct = if (o.has("understandingPct") && !o.isNull("understandingPct")) o.optInt("understandingPct") else null,
+            solutionPct = if (o.has("solutionPct") && !o.isNull("solutionPct")) o.optInt("solutionPct") else null,
+            confidencePhase = o.optString("confidencePhase", ""),
+            currentAsk = o.optString("currentAsk", ""),
             audioChunkCount = o.optInt("audioChunkCount", 0),
             recording = o.optBoolean("recording", false),
             uploadedSha256 =

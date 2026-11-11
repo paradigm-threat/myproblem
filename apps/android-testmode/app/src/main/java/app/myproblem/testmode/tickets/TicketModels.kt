@@ -87,6 +87,8 @@ data class SyncState(
     val syncStartedAtMs: Long? = null,
     val lastSyncedAtMs: Long? = null,
     val lastError: String? = null,
+    /** Slow vs unreachable. Set with [lastError] when health is ERROR. */
+    val problem: ServerProblem? = null,
     /** 0f..1f while SYNCING; null when idle. */
     val progress: Float? = null,
 )
@@ -124,6 +126,12 @@ data class LocalTicket(
     val recording: Boolean = false,
     /** Content hashes already POSTed as Evidence — avoid re-upload on every sync. */
     val uploadedSha256: List<String> = emptyList(),
+    /** Server gauge. Null until intake has scored the problem. */
+    val understandingPct: Int? = null,
+    val solutionPct: Int? = null,
+    val confidencePhase: String = "",
+    /** The one question the capture screen shows. Empty until intake has one. */
+    val currentAsk: String = "",
 ) {
     fun displayTitle(): String = titleField.value.ifBlank { title }
 
@@ -139,7 +147,12 @@ fun SyncState.chipLabel(): String =
                 localRevision > remoteRevision -> "Uploading…"
                 else -> "Syncing…"
             }
-        SyncHealth.ERROR -> "Sync error"
+        SyncHealth.ERROR ->
+            when (problem) {
+                ServerProblem.SLOW -> "Server slow"
+                ServerProblem.UNAVAILABLE -> "Server unavailable"
+                null -> "Sync error"
+            }
         SyncHealth.LOCAL_AHEAD ->
             if (presence == SyncPresence.LOCAL_ONLY) "Local only" else "Local ahead"
         SyncHealth.REMOTE_AHEAD -> "Server ahead"

@@ -1,0 +1,25 @@
+{
+  "id": "asr_error_code_spoken",
+  "difficulty": "medium",
+  "style": "clear",
+  "status": "generated",
+  "audio": "generated/medium/asr_error_code_spoken.wav",
+  "noise": "appliance_hum",
+  "snr_db": 12,
+  "expect": {
+    "title_must_include": [
+      "error"
+    ],
+    "description_must_include_any": [
+      "fifteen",
+      "frigidaire",
+      "filter"
+    ],
+    "intake_targets": [
+      "named_and_questions",
+      "advice_ready"
+    ],
+    "eval_surface": "apk_or_server"
+  },
+  "script": "The washer error is E fifteen, not E twenty four. The model sticker says S H X eight seven eight. The filter is a Frigidaire."
+}

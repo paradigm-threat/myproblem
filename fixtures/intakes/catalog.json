@@ -3,7 +3,7 @@
   "format": "myproblem.intake_fixtures",
   "sample_rate_hz": 16000,
   "channels": 1,
-  "notes": "Golden expect fields use keyword must-include until an LLM judge exists. Exact scenario human recordings are not available under clean licenses; speech is TTS + CC0/synthetic noise beds.",
+  "notes": "Golden expect fields use keyword must-include until an LLM judge exists. Scenarios with analysis.focus stress transcription (homophones, codes, spelling, negation, PII scrub), not only the problem keyword. Speech is TTS + procedural noise.",
   "scenarios": [
     {
       "id": "flat_tire_roadside",
@@ -422,6 +422,166 @@
         "title_must_include": ["power"],
         "description_must_include_any": ["fridge", "freezer", "food", "outage", "hours"],
         "intake_targets": ["advice_ready", "named_and_questions"],
+        "eval_surface": "apk_or_server"
+      }
+    },
+    {
+      "id": "asr_flatbed_not_tire",
+      "difficulty": "medium",
+      "style": "clear",
+      "status": "generate",
+      "script": "I need a flatbed tow truck, not a tire change. The car will not go into gear. It is an automatic.",
+      "noise": "traffic_light",
+      "snr_db": 14,
+      "analysis": {
+        "focus": "homophone",
+        "transcript_must_include": ["flatbed", "tow"],
+        "transcript_must_exclude": ["flat tire"]
+      },
+      "expect": {
+        "title_must_include": ["flatbed"],
+        "description_must_include_any": ["tow", "gear", "automatic"],
+        "intake_targets": ["named_and_questions", "advice_ready"],
+        "eval_surface": "apk_or_server"
+      }
+    },
+    {
+      "id": "asr_error_code_spoken",
+      "difficulty": "medium",
+      "style": "clear",
+      "status": "generate",
+      "script": "The washer error is E fifteen, not E twenty four. The model sticker says S H X eight seven eight. The filter is a Frigidaire.",
+      "noise": "appliance_hum",
+      "snr_db": 12,
+      "analysis": {
+        "focus": "alphanumeric",
+        "transcript_must_include": ["e15", "frigidaire"],
+        "transcript_must_exclude": []
+      },
+      "expect": {
+        "title_must_include": ["error"],
+        "description_must_include_any": ["fifteen", "frigidaire", "filter"],
+        "intake_targets": ["named_and_questions", "advice_ready"],
+        "eval_surface": "apk_or_server"
+      }
+    },
+    {
+      "id": "asr_correction_rear_tire",
+      "difficulty": "medium",
+      "style": "rambly",
+      "status": "generate",
+      "script": "The flat is not the front tire. I said front by mistake. It is the rear passenger tire. The spare is a donut.",
+      "noise": "traffic_light",
+      "snr_db": 13,
+      "analysis": {
+        "focus": "self_correction",
+        "transcript_must_include": ["rear", "not the front"],
+        "transcript_must_exclude": []
+      },
+      "expect": {
+        "title_must_include": ["tire"],
+        "description_must_include_any": ["rear", "passenger", "spare", "donut"],
+        "intake_targets": ["named_and_questions", "needs_user_text"],
+        "eval_surface": "apk_or_server"
+      }
+    },
+    {
+      "id": "asr_pii_phone_street",
+      "difficulty": "hard",
+      "style": "clear",
+      "status": "generate",
+      "script": "The leak is under the sink. You can reach me at 404-555-0199. The house is 18 Oak Street, apartment 4B.",
+      "noise": "room_tone",
+      "snr_db": 16,
+      "analysis": {
+        "focus": "pii_scrub",
+        "transcript_must_include": ["sink", "[phone withheld]"],
+        "transcript_must_exclude": ["404-555-0199", "18 Oak Street"]
+      },
+      "expect": {
+        "title_must_include": ["sink"],
+        "description_must_include_any": ["leak", "sink"],
+        "intake_targets": ["named_and_questions", "advice_ready"],
+        "eval_surface": "apk_or_server"
+      }
+    },
+    {
+      "id": "asr_spelled_shop_name",
+      "difficulty": "medium",
+      "style": "clear",
+      "status": "generate",
+      "script": "The optician is named Skinner. That is S K I N N E R. The left glasses arm cracked at the hinge.",
+      "noise": "room_tone",
+      "snr_db": 16,
+      "analysis": {
+        "focus": "spelling",
+        "transcript_must_include": ["skinner", "hinge"],
+        "transcript_must_exclude": []
+      },
+      "expect": {
+        "title_must_include": ["skinner"],
+        "description_must_include_any": ["glasses", "hinge", "arm"],
+        "intake_targets": ["named_and_questions", "advice_ready"],
+        "eval_surface": "apk_or_server"
+      }
+    },
+    {
+      "id": "asr_measurements",
+      "difficulty": "medium",
+      "style": "clear",
+      "status": "generate",
+      "script": "The gap under the door is about three quarters of an inch. The room is twelve by fourteen feet. The humidity reads sixty two percent.",
+      "noise": "room_tone",
+      "snr_db": 16,
+      "analysis": {
+        "focus": "measurements",
+        "transcript_must_include": ["inch", "feet", "62"],
+        "transcript_must_exclude": []
+      },
+      "expect": {
+        "title_must_include": ["door"],
+        "description_must_include_any": ["inch", "feet", "humidity", "sixty"],
+        "intake_targets": ["named_and_questions", "advice_ready"],
+        "eval_surface": "apk_or_server"
+      }
+    },
+    {
+      "id": "asr_negation_no_smoke",
+      "difficulty": "medium",
+      "style": "clear",
+      "status": "generate",
+      "script": "The alarm is chirping but I do not smell smoke. There is no fire. The battery is probably dead.",
+      "noise": "beep_chirp",
+      "snr_db": 10,
+      "analysis": {
+        "focus": "negation",
+        "transcript_must_include": ["alarm", "not", "smoke"],
+        "transcript_must_exclude": []
+      },
+      "expect": {
+        "title_must_include": ["alarm"],
+        "description_must_include_any": ["chirp", "smoke", "battery", "fire"],
+        "intake_targets": ["named_and_questions", "advice_ready"],
+        "eval_surface": "apk_or_server"
+      }
+    },
+    {
+      "id": "asr_fridge_codeswitch",
+      "difficulty": "hard",
+      "style": "noisy",
+      "status": "generate",
+      "script": "Eh, the fridge no cold, the freezer is okay. The ice maker is stuck. Do I replace the fan?",
+      "noise": "appliance_hum",
+      "snr_db": 8,
+      "analysis": {
+        "focus": "codeswitch",
+        "transcript_must_include": ["fridge", "freezer"],
+        "transcript_must_exclude": []
+      },
+      "expect": {
+        "title_must_include": ["fridge"],
+        "description_must_include_any": ["cold", "freezer", "ice", "fan"],
+        "intake_targets": ["named_and_questions", "advice_ready"],
         "eval_surface": "apk_or_server"
       }
     }

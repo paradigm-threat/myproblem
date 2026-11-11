@@ -39,7 +39,7 @@ class E2eDebugReceiver : BroadcastReceiver() {
                 val store = LocalTicketStore(app)
                 val result =
                     when (cmd) {
-                        "create_text" -> createText(store, intent)
+                        "create_text" -> createText(app, store, intent)
                         "upload_audio" -> uploadMedia(app, store, intent, kind = "audio")
                         "upload_still" -> uploadMedia(app, store, intent, kind = "still")
                         "reprocess" -> reprocess(store, intent)
@@ -57,9 +57,15 @@ class E2eDebugReceiver : BroadcastReceiver() {
         }
     }
 
-    private fun createText(store: LocalTicketStore, intent: Intent): JSONObject {
+    private suspend fun createText(context: Context, store: LocalTicketStore, intent: Intent): JSONObject {
         val title = intent.getStringExtra("title") ?: "E2E phone ticket"
-        val desc = intent.getStringExtra("description") ?: "Created from ADB E2E"
+        val fileDesc = intent.getStringExtra("descriptionFile")
+        val desc =
+            if (!fileDesc.isNullOrBlank()) {
+                resolveFile(context, fileDesc).readText()
+            } else {
+                intent.getStringExtra("description") ?: "Created from ADB E2E"
+            }
         val t =
             store.create(
                 startMode = StartMode.TEXT,
@@ -80,37 +86,31 @@ class E2eDebugReceiver : BroadcastReceiver() {
                         lastSyncedAtMs = System.currentTimeMillis(),
                     ),
             )
-        try {
-            val conn =
-                URL("${TicketsApi.baseUrl}/api/tickets/${created.ticketUuid}")
-                    .openConnection() as HttpURLConnection
-            conn.requestMethod = "PATCH"
-            if (!created.claim.isNullOrBlank()) {
-                conn.setRequestProperty("authorization", "Bearer ${created.claim}")
-            }
-            conn.setRequestProperty("content-type", "application/json")
-            conn.doOutput = true
-            conn.outputStream.use {
-                it.write(
-                    JSONObject()
-                        .put("title", title)
-                        .put("description", desc)
-                        .put("userLocked", true)
-                        .toString()
-                        .toByteArray(),
-                )
-            }
-            conn.responseCode
-            conn.disconnect()
-        } catch (_: Exception) {
+        val conn =
+            URL("${TicketsApi.baseUrl}/api/tickets/${created.ticketUuid}")
+                .openConnection() as HttpURLConnection
+        conn.requestMethod = "PATCH"
+        if (!created.claim.isNullOrBlank()) {
+            conn.setRequestProperty("authorization", "Bearer ${created.claim}")
         }
+        conn.setRequestProperty("content-type", "application/json")
+        conn.doOutput = true
+        conn.outputStream.use {
+            it.write(
+                JSONObject()
+                    .put("title", title)
+                    .put("description", desc)
+                    .put("userLocked", true)
+                    .toString()
+                    .toByteArray(),
+            )
+        }
+        val code = conn.responseCode
+        conn.disconnect()
+        if (code !in 200..299) throw IllegalStateException("patch_$code")
         store.save(synced)
-        return JSONObject()
-            .put("ok", true)
-            .put("cmd", "create_text")
-            .put("localId", synced.id)
-            .put("serverTicketId", created.ticketUuid)
-            .put("claim", created.claim)
+        val pulled = engine(store).pullNow(synced.id) ?: synced
+        return gaugeResult(pulled, "create_text").put("claim", created.claim)
     }
 
     private fun resolveFile(context: Context, path: String): File {
@@ -202,20 +202,33 @@ class E2eDebugReceiver : BroadcastReceiver() {
             .put("hotwords", JSONArray(r.hotwords))
     }
 
-    private fun sync(store: LocalTicketStore, intent: Intent): JSONObject {
+    private suspend fun sync(store: LocalTicketStore, intent: Intent): JSONObject {
         val localId = intent.getStringExtra("localId") ?: return err("missing localId")
-        val t = store.load(localId) ?: return err("ticket_not_found")
-        val serverId = t.sync.serverTicketId ?: return err("not_online")
-        val claim = t.sync.serverClaim
-        val tip = TicketsApi.getTicket(serverId, claim)
-        return JSONObject()
-            .put("ok", true)
-            .put("cmd", "sync")
-            .put("serverTicketId", serverId)
-            .put("intake", tip.optString("intake"))
-            .put("title", tip.optJSONObject("fields")?.optJSONObject("title")?.optString("value"))
-            .put("evidenceCount", tip.optJSONArray("evidence")?.length() ?: 0)
+        val pulled = engine(store).pullNow(localId) ?: return err("ticket_not_found")
+        return gaugeResult(pulled, "sync")
     }
+
+    private fun engine(store: LocalTicketStore) =
+        TicketSyncEngine(
+            scope = scope,
+            store = store,
+            onUpdated = {},
+            onlineEnabled = { true },
+        )
+
+    private fun gaugeResult(t: app.myproblem.testmode.tickets.LocalTicket, cmd: String): JSONObject =
+        JSONObject()
+            .put("ok", true)
+            .put("cmd", cmd)
+            .put("localId", t.id)
+            .put("serverTicketId", t.sync.serverTicketId)
+            .put("intake", t.intake.name)
+            .put("coach", t.coachLine)
+            .put("understanding", t.understandingPct ?: JSONObject.NULL)
+            .put("solution", t.solutionPct ?: JSONObject.NULL)
+            .put("phase", t.confidencePhase)
+            .put("ask", t.currentAsk)
+            .put("questions", JSONArray(t.questions))
 
     private fun status(store: LocalTicketStore, intent: Intent): JSONObject {
         val localId = intent.getStringExtra("localId")

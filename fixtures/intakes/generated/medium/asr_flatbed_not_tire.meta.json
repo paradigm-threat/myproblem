@@ -1,0 +1,25 @@
+{
+  "id": "asr_flatbed_not_tire",
+  "difficulty": "medium",
+  "style": "clear",
+  "status": "generated",
+  "audio": "generated/medium/asr_flatbed_not_tire.wav",
+  "noise": "traffic_light",
+  "snr_db": 14,
+  "expect": {
+    "title_must_include": [
+      "flatbed"
+    ],
+    "description_must_include_any": [
+      "tow",
+      "gear",
+      "automatic"
+    ],
+    "intake_targets": [
+      "named_and_questions",
+      "advice_ready"
+    ],
+    "eval_surface": "apk_or_server"
+  },
+  "script": "I need a flatbed tow truck, not a tire change. The car will not go into gear. It is an automatic."
+}
