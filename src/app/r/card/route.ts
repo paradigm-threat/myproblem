@@ -2,8 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { SITE_URL } from "@/lib/contact";
 
 /** Print-card QR lander — attributes traffic and routes to stores when configured. */
-export const runtime = "edge";
-
 const SOURCE = "print_card";
 const COOKIE = "mp_from";
 const COOKIE_MAX_AGE = 60 * 60 * 24 * 90; // 90 days
