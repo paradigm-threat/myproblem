@@ -57,6 +57,12 @@ need_device
 adb shell input keyevent KEYCODE_WAKEUP >/dev/null || true
 adb shell wm dismiss-keyguard >/dev/null 2>&1 || true
 adb shell am force-stop "$PKG" >/dev/null || true
+# ColorOS / app standby blocks background DNS (blockedReasons includes APP_STANDBY).
+# Keep the process in the active bucket and on screen so Intake calls can resolve.
+adb shell am set-standby-bucket "$PKG" active >/dev/null || true
+adb shell cmd deviceidle whitelist +"$PKG" >/dev/null 2>&1 || true
+adb shell am start -n "$PKG/.MainActivity" >/dev/null
+sleep 1
 adb logcat -c >/dev/null || true
 
 # Stage fixtures into app private files/ via run-as (no storage permission)
