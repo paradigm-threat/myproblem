@@ -5,13 +5,18 @@ import android.content.Context
 import android.content.Intent
 import android.util.Log
 import app.myproblem.testmode.tickets.CoachLines
+import app.myproblem.testmode.tickets.CurrentAsk
 import app.myproblem.testmode.tickets.IntakeStatus
+import app.myproblem.testmode.tickets.LocalTicket
 import app.myproblem.testmode.tickets.LocalTicketStore
+import app.myproblem.testmode.tickets.SYNC_ERROR_AFTER_MS
 import app.myproblem.testmode.tickets.StartMode
 import app.myproblem.testmode.tickets.SyncHealth
 import app.myproblem.testmode.tickets.SyncPresence
 import app.myproblem.testmode.tickets.TicketSyncEngine
 import app.myproblem.testmode.tickets.TicketsApi
+import app.myproblem.testmode.tickets.chipLabel
+import app.myproblem.testmode.tickets.serverBanner
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -45,6 +50,9 @@ class E2eDebugReceiver : BroadcastReceiver() {
                         "reprocess" -> reprocess(store, intent)
                         "sync" -> sync(store, intent)
                         "status" -> status(store, intent)
+                        "capture" -> capture(store, intent)
+                        "inject_reach" -> injectReach(store, intent)
+                        "mark_slow" -> markSlow(store, intent)
                         else -> JSONObject().put("ok", false).put("error", "unknown_cmd").put("cmd", cmd)
                     }
                 Log.i(TAG, "E2E_RESULT $result")
@@ -229,6 +237,61 @@ class E2eDebugReceiver : BroadcastReceiver() {
             .put("phase", t.confidencePhase)
             .put("ask", t.currentAsk)
             .put("questions", JSONArray(t.questions))
+
+    private fun capture(store: LocalTicketStore, intent: Intent): JSONObject {
+        val localId = intent.getStringExtra("localId") ?: return err("missing localId")
+        val t = store.load(localId) ?: return err("ticket_not_found")
+        return captureState(t, "capture")
+    }
+
+    /** Apply the same failure the sync engine stores, then return the banner the UI shows. */
+    private fun injectReach(store: LocalTicketStore, intent: Intent): JSONObject {
+        val localId = intent.getStringExtra("localId") ?: return err("missing localId")
+        if (store.load(localId) == null) return err("ticket_not_found")
+        val raw = intent.getStringExtra("raw") ?: "timed out"
+        engine(store).reportReachFailure(localId, raw)
+        val t = store.load(localId) ?: return err("ticket_not_found")
+        return captureState(t, "inject_reach")
+    }
+
+    /** A sync that has already run past the slow threshold, still in flight. */
+    private fun markSlow(store: LocalTicketStore, intent: Intent): JSONObject {
+        val localId = intent.getStringExtra("localId") ?: return err("missing localId")
+        val t = store.load(localId) ?: return err("ticket_not_found")
+        val started = System.currentTimeMillis() - SYNC_ERROR_AFTER_MS - 50L
+        store.save(
+            t.copy(
+                sync =
+                    t.sync.copy(
+                        health = SyncHealth.SYNCING,
+                        syncStartedAtMs = started,
+                        lastError = null,
+                        problem = null,
+                        progress = 0.2f,
+                    ),
+            ),
+        )
+        val saved = store.load(localId) ?: return err("ticket_not_found")
+        return captureState(saved, "mark_slow")
+    }
+
+    private fun captureState(t: LocalTicket, cmd: String): JSONObject {
+        val banner = t.sync.serverBanner()
+        return JSONObject()
+            .put("ok", true)
+            .put("cmd", cmd)
+            .put("localId", t.id)
+            .put("ask", CurrentAsk.forTicket(t))
+            .put("answerByTalking", CurrentAsk.ANSWER_BY_TALKING)
+            .put("chrome", JSONArray(CurrentAsk.captureChrome(t)))
+            .put("questionAbovePreview", CurrentAsk.questionIsAbovePreview())
+            .put("bannerTitle", banner?.title ?: JSONObject.NULL)
+            .put("bannerBody", banner?.body ?: JSONObject.NULL)
+            .put("bannerProblem", banner?.problem?.name ?: JSONObject.NULL)
+            .put("bannerWaiting", banner?.waiting == true)
+            .put("chip", t.sync.chipLabel())
+            .put("syncHealth", t.sync.health.name)
+    }
 
     private fun status(store: LocalTicketStore, intent: Intent): JSONObject {
         val localId = intent.getStringExtra("localId")

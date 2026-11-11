@@ -15,6 +15,21 @@ object CurrentAsk {
     fun questionIsAbovePreview(): Boolean =
         sectionOrder.indexOf("question") < sectionOrder.indexOf("preview")
 
+    /**
+     * Bands the capture screen draws, top to bottom. The server line appears
+     * only when Intake is slow or unreachable, and it stays off the preview.
+     */
+    fun captureChrome(ticket: LocalTicket, nowMs: Long = System.currentTimeMillis()): List<String> {
+        val bands = mutableListOf("question")
+        if (ticket.sync.serverBanner(nowMs) != null) bands += "server"
+        bands += "preview"
+        return bands
+    }
+
+    /** A later still must not replace a server question or a safety warning. */
+    fun shouldKeep(ticket: LocalTicket): Boolean =
+        ticket.currentAsk.isNotBlank() || ticket.coachLine.startsWith("Safety warning")
+
     fun pick(text: String, serverAsk: String?, visionAsk: String?): String {
         val hazard = SafetyGuard.classify(text)
         if (hazard != null) return hazard.questions.first()

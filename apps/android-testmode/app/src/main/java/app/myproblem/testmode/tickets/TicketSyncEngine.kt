@@ -159,7 +159,7 @@ class TicketSyncEngine(
                                     "audio",
                                     file,
                                     "audio/mp4",
-                                    rolling = entry.body.startsWith("Rolling"),
+                                    rolling = isRollingAudio(entry.body),
                                 )
                             TimelineKind.USER_STILL -> maybeUpload("still", file, "image/jpeg")
                             else -> Unit
@@ -496,6 +496,8 @@ class TicketSyncEngine(
     }
 
     companion object {
+        fun isRollingAudio(body: String) = body.startsWith("Rolling")
+
         fun isWaitingOnServer(intake: IntakeStatus) =
             intake == IntakeStatus.QUEUED ||
                 intake == IntakeStatus.TRANSCRIBING ||

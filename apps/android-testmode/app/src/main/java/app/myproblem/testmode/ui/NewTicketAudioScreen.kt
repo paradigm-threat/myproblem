@@ -46,6 +46,7 @@ fun NewTicketAudioScreen(
     onCancel: () -> Unit,
     onStop: (File?) -> Unit,
     onEditProposed: () -> Unit,
+    onRetrySync: () -> Unit,
 ) {
     val context = LocalContext.current
     val capture = remember { AudioCapture() }
@@ -140,7 +141,7 @@ fun NewTicketAudioScreen(
             Text(ticket.intake.chipLabel(), color = Accent, fontSize = 12.sp)
         }
         Spacer(Modifier.height(10.dp))
-        ServerProblemBanner(sync = ticket.sync)
+        ServerProblemBanner(sync = ticket.sync, onRetry = onRetrySync)
 
         Spacer(Modifier.height(14.dp))
         Text(

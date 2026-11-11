@@ -65,6 +65,7 @@ If the batch pass is still under 65, the phase becomes **human**:
 - The private tip still requires the claim. Publishing the UUID does not grant edit access.
 - Street, phone, email, and repair-step sentences are removed before the post is stored.
 - Closing a ticket without preserve removes the public post.
+- An emergency stays private. A crisis, a child in a hot car, a medical problem, fire, gas, chemicals, water near electricity, a collapse, a fall, or live sparks are not written to the public board. The safety warning stays, and the coach says a person should continue. A hazard that is not an active emergency, such as a garage wiring repair with no sparks, can still be posted so a person can assess it.
 
 ---
 

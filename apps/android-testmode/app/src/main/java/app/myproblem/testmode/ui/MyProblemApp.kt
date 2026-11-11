@@ -184,6 +184,7 @@ fun MyProblemApp(
                                 popUpTo(Routes.HOME)
                             }
                         },
+                        onRetrySync = { appVm.retrySync(id) },
                     )
                 }
                 composable(

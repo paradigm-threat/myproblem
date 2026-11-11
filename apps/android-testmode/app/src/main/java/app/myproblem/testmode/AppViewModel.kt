@@ -5,6 +5,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import app.myproblem.testmode.prefs.AppPrefs
 import app.myproblem.testmode.tickets.CoachLines
+import app.myproblem.testmode.tickets.CurrentAsk
 import app.myproblem.testmode.tickets.FieldSource
 import app.myproblem.testmode.tickets.IntakeHeuristics
 import app.myproblem.testmode.tickets.IntakeStatus
@@ -535,7 +536,7 @@ class AppViewModel(app: Application) : AndroidViewModel(app) {
     }
 
     private fun applyIntake(ticket: LocalTicket): LocalTicket {
-        val keepServerAsk = ticket.currentAsk.isNotBlank() || ticket.coachLine.startsWith("Safety warning")
+        val keepServerAsk = CurrentAsk.shouldKeep(ticket)
         val decision = IntakeHeuristics.decide(ticket)
         val now = System.currentTimeMillis()
         var next =

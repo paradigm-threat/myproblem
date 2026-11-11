@@ -73,6 +73,12 @@ fun SyncState.serverBanner(nowMs: Long = System.currentTimeMillis()): ServerBann
     return null
 }
 
+/** Home shows one banner. An unreachable server wins over a slow one. */
+fun pickHomeTrouble(tickets: List<LocalTicket>): LocalTicket? =
+    tickets.firstOrNull {
+        it.sync.health == SyncHealth.ERROR && it.sync.problem == ServerProblem.UNAVAILABLE
+    } ?: tickets.firstOrNull { it.sync.health == SyncHealth.ERROR }
+
 private fun bannerCopy(problem: ServerProblem, waiting: Boolean): ServerBanner =
     when (problem) {
         ServerProblem.SLOW ->
