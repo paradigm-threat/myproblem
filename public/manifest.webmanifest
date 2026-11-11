@@ -6,10 +6,22 @@
   "display": "standalone",
   "lang": "en-US",
   "dir": "ltr",
-  "background_color": "#070d18",
-  "theme_color": "#0b1a2e",
+  "background_color": "#ffffff",
+  "theme_color": "#007F86",
   "categories": ["business", "productivity", "utilities"],
   "icons": [
+    {
+      "src": "/icons/android-chrome-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/android-chrome-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
     {
       "src": "/icons/icon-192.png",
       "sizes": "192x192",
@@ -23,14 +35,14 @@
       "purpose": "any"
     },
     {
-      "src": "/icons/icon-192.png",
-      "sizes": "192x192",
+      "src": "/icons/android-chrome-512.png",
+      "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
     },
     {
-      "src": "/icons/icon-512.png",
-      "sizes": "512x512",
+      "src": "/icons/android-adaptive-foreground.png",
+      "sizes": "432x432",
       "type": "image/png",
       "purpose": "maskable"
     }
