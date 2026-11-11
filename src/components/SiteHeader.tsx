@@ -9,7 +9,10 @@ type NavItem = { href: string; label: string };
 const HOME_LINKS: NavItem[] = [
   { href: "/#businesses", label: "For businesses" },
   { href: "/#people", label: "For people" },
-  { href: "/#features", label: "Features" },
+  { href: "/#projects", label: "Projects" },
+  { href: "/#knowledge", label: "Knowledge" },
+  { href: "/#investors", label: "Investors" },
+  { href: "/#regions", label: "Regions" },
   { href: "/how-we-run", label: "How we run" },
   { href: "/#signup", label: "Join" },
 ];
