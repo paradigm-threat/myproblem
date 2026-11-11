@@ -1,38 +1,46 @@
 import type { MetadataRoute } from "next";
 import { SITE_URL } from "@/lib/contact";
 
+/** Change this when a public page's content changes. Do not use new Date(). */
+const CONTENT_UPDATED = new Date("2026-11-11");
+
 export default function sitemap(): MetadataRoute.Sitemap {
-  const now = new Date();
   return [
     {
       url: SITE_URL,
-      lastModified: now,
+      lastModified: CONTENT_UPDATED,
       changeFrequency: "weekly",
       priority: 1,
     },
     {
+      url: `${SITE_URL}/how-we-run`,
+      lastModified: CONTENT_UPDATED,
+      changeFrequency: "monthly",
+      priority: 0.9,
+    },
+    {
       url: `${SITE_URL}/demo`,
-      lastModified: now,
+      lastModified: CONTENT_UPDATED,
       changeFrequency: "weekly",
-      priority: 0.8,
+      priority: 0.6,
     },
     {
       url: `${SITE_URL}/terms`,
-      lastModified: now,
+      lastModified: CONTENT_UPDATED,
       changeFrequency: "monthly",
-      priority: 0.7,
+      priority: 0.5,
     },
     {
       url: `${SITE_URL}/privacy`,
-      lastModified: now,
+      lastModified: CONTENT_UPDATED,
       changeFrequency: "monthly",
-      priority: 0.7,
+      priority: 0.5,
     },
     {
       url: `${SITE_URL}/myproblem-for-businesses.pdf`,
-      lastModified: now,
+      lastModified: CONTENT_UPDATED,
       changeFrequency: "monthly",
-      priority: 0.6,
+      priority: 0.4,
     },
   ];
 }

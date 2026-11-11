@@ -18,7 +18,7 @@ export function JsonLd() {
           RELAY_URL,
         ],
         description:
-          "AI investigation service for Problems — free forever for local businesses; deferred Projects; Georgia- and Israel knowledge base for problem-solving (speculative, user+AI only, no boosting); free core help for people. Powered by Relay.",
+          "Investigation service for Problems. Free forever. You should never expect to enter a card. If the help was good, tip the person, the AI, or both. No salaries. Powered by Relay.",
       },
       {
         "@type": "WebSite",
@@ -31,6 +31,16 @@ export function JsonLd() {
         inLanguage: "en-US",
       },
       {
+        "@type": "WebPage",
+        "@id": `${SITE_URL}/how-we-run#webpage`,
+        url: `${SITE_URL}/how-we-run`,
+        name: "How we run",
+        description:
+          "No salaries and no subscription. Free forever. A card appears only when someone wants to tip the person, the AI, or both. Intent, not a contract.",
+        isPartOf: { "@id": `${SITE_URL}/#website` },
+        about: { "@id": `${SITE_URL}/#organization` },
+      },
+      {
         "@type": "SoftwareApplication",
         "@id": `${SITE_URL}/#app`,
         name: "MyProblem",
@@ -39,13 +49,14 @@ export function JsonLd() {
         url: SITE_URL,
         offers: {
           "@type": "Offer",
+          name: "Free forever",
           price: "0",
           priceCurrency: "USD",
           description:
-            "Local businesses join free forever. Core consumer help is free; usage fees after free tickets fund infrastructure only. Priority shortens Project queues without weakening free-tier thoroughness.",
+            "The service is free. No card is required to post, to answer, or to keep using it. A tip is optional, after a good experience, for the person who helped, the AI that helped, or both.",
         },
         description:
-          "Capture Problem tickets; queue like JIRA; batch Projects investigate thoroughly; KB-first problem-solving (including nearly-free websites); major coming soon: batched coding/docs/media work (not realtime IDE chat); no boosting.",
+          "While you talk and show the problem, one question stays on screen until the requirements are specific. Then a queued Project investigates it. Free forever. No card expected. No salaries.",
       },
     ],
   };

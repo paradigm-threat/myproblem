@@ -9,22 +9,15 @@ type NavItem = { href: string; label: string };
 const HOME_LINKS: NavItem[] = [
   { href: "/#businesses", label: "For businesses" },
   { href: "/#people", label: "For people" },
-  { href: "/#projects", label: "Projects" },
-  { href: "/#knowledge", label: "Knowledge" },
-  { href: "/#investors", label: "Investors" },
-  { href: "/#regions", label: "Regions" },
-  { href: "/#signup", label: "Signup" },
-  { href: "/demo", label: "Demos" },
-  { href: "/test-mode", label: "Test Mode" },
-  { href: "/terms", label: "Terms" },
-  { href: "/privacy", label: "Privacy" },
+  { href: "/#features", label: "Features" },
+  { href: "/how-we-run", label: "How we run" },
+  { href: "/#signup", label: "Join" },
 ];
 
 const DEMO_LINKS: NavItem[] = [
   { href: "/", label: "Home" },
-  { href: "/demo", label: "Demos" },
-  { href: "/test-mode", label: "Web Test Mode" },
-  { href: "/#signup", label: "Signup" },
+  { href: "/how-we-run", label: "How we run" },
+  { href: "/#signup", label: "Join" },
   { href: "/terms", label: "Terms" },
   { href: "/privacy", label: "Privacy" },
 ];

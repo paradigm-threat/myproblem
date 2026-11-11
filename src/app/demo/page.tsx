@@ -76,9 +76,10 @@ export default async function DemoPage() {
         <section className="demo-card" aria-labelledby="apk-heading">
           <h2 id="apk-heading">Android Test Mode</h2>
           <p>
-            Offline camera gate on your phone: unique/clear frames, angle
-            sectors, optional color/text asks, on-device OCR. Nothing uploads in
-            this build.
+            While you talk and show the problem, one question stays above the
+            camera until the requirements are specific. You answer by talking.
+            A spoken conversation with the AI comes later. Clear, new frames
+            are kept. No video file is uploaded.
           </p>
           {manifest ? (
             <ul className="demo-meta">

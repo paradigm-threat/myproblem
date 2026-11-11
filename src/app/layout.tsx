@@ -33,21 +33,8 @@ export const metadata: Metadata = {
     template: "%s · MyProblem",
   },
   description:
-    "Coming soon. Capture tickets, queue like JIRA, batch-investigate thoroughly. Knowledge base for local problem-solving — speculative, user+AI only, no boosting, no internet cache. Businesses free forever.",
+    "Free forever for local businesses and for people. You should never expect to enter a card. If the help was good, tip the person, the AI, or both. No salaries. Pilots in Georgia and Israel.",
   applicationName: "MyProblem",
-  keywords: [
-    "MyProblem",
-    "AI problem solving",
-    "deferred investigation",
-    "Projects",
-    "local knowledge base",
-    "Georgia",
-    "Israel",
-    "local businesses",
-    "free for businesses",
-    "anonymous AI help",
-    "Problem ticket",
-  ],
   category: "technology",
   manifest: "/manifest.webmanifest",
   robots: {
@@ -80,7 +67,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "MyProblem — Free AI front door for local businesses",
     description:
-      "Free forever for shops. Deferred Projects + Georgia/Israel local knowledge base. Problems, not chats. Zero-salary Relay vision.",
+      "Free forever. You should never expect to enter a card. If the help was good, tip the person, the AI, or both.",
     url: SITE_URL,
     siteName: "MyProblem",
     locale: "en_US",
@@ -98,7 +85,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "MyProblem — Free AI front door for local businesses",
     description:
-      "Free forever for shops. Thorough Projects + local shared knowledge for GA and Israel.",
+      "Free forever. You should never expect to enter a card. If the help was good, tip the person, the AI, or both.",
     images: ["/og.jpg"],
   },
   appleWebApp: {

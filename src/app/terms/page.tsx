@@ -245,8 +245,12 @@ export default function TermsPage() {
           <p>
             Preferred stance: local businesses join at{" "}
             <strong>$0</strong> with <strong>zero obligation</strong> to
-            respond. Incoming requests work like a social feed — shops may
-            engage or ignore entirely, with no SLA and no penalty for silence.
+            respond. The service stays free for the shop and for the person
+            with the Problem. You should not expect to enter a credit card.
+            Any money is a voluntary tip, after a good experience, for a
+            person, the AI, or both. Incoming requests work like a social feed
+            — shops may engage or ignore entirely, with no SLA and no penalty
+            for silence.
           </p>
           <p>
             We do not guarantee leads, bookings, or revenue. MyProblem does not
@@ -328,9 +332,10 @@ export default function TermsPage() {
               profile we are seeking.
             </li>
             <li>
-              <strong>Fees are intended mostly to flow to local hardware
-              handlers</strong> who run compatible capacity — not to fund a
-              traditional salary stack at the center.
+              <strong>Voluntary tips meant for hosting are intended mostly
+              to reach local hardware handlers</strong> who run compatible
+              capacity — not to fund a traditional salary stack at the center.
+              A tip is never required to use the service.
             </li>
             <li>
               We may later require{" "}
@@ -344,8 +349,8 @@ export default function TermsPage() {
             <strong>not</strong> automatically convey ownership of the Relay
             gateway fleet or unrelated mesh projects unless a written deal says
             otherwise. See the{" "}
-            <a href="/#investors">Investors</a> section on the home page for
-            the public pitch in plain language.
+            <a href="/how-we-run">How we run</a> page for the public statement
+            in plain language.
           </p>
         </section>
 

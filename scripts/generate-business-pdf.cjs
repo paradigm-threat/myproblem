@@ -166,6 +166,7 @@ leftY = bullets(
     "$0 forever — no application fee, monthly bill, or per-lead invoice.",
     "Zero obligation — ignore any request. Silence is fine.",
     "Website → ticket, not phone — unsure visitors capture audio + stills (desk stays quiet).",
+    "One question on screen while they talk and show the problem, until the requirements are specific.",
     "PII-safe dossiers — street/phone stay off the network; request details via secure DM only when needed.",
     "Warmer handoffs — investigation notes on the tip when you engage.",
     "Legal stops — emergencies and licensed care redirect.",
