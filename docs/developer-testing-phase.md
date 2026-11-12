@@ -1,75 +1,113 @@
-# MyProblem — Developer Guide: Testing Phase (Frontend / Device)
+# MyProblem — LLM Developer Guide: Testing Phase (Android Frontend / Device)
 
-**Audience:** Other developers (or LLM-assisted work) building and fine-tuning the Android (and later iOS) frontend.  
-**Goal:** Get the app into real device testing with a finished product UI for the full capture experience.
+**Purpose:** Drop this document into an LLM (along with the Android source in `apps/android-testmode` and the linked docs). The LLM should drive as much work as possible autonomously. The human developer only intervenes for physical device actions, real-world scenario invention, and final judgment calls.
 
-You can connect the APK (or source) to an LLM and point it at this document + the existing contracts in `docs/`. Stay inside the architecture: tickets, stills + audio only (no video files uploaded), batch Projects for deep work, free forever with optional tip.
+**Goal:** Produce a device-tested Android build with a finished product UI that supports simultaneous audio + camera stills + live AI coaching, packages a complete ticket, and sends it for batch Project investigation. Prefer free / least-resistance paths. Optional tip at the end.
 
-## What Needs to Be Done (Priority Order)
+## Hard Constraints (never violate)
 
-### 1. Finish the product UI (highest priority)
-Right now there are mostly test pages. Deliver a clear, usable product flow:
-
-- **Home:** Open tickets list + big “New ticket”.
-- **New ticket:** Choose Text / Audio / Audio+frames, then jump straight in.
-- **Capture screen (Audio + frames):** Simultaneous experience — camera preview, audio recording, and live AI coaching/questions all at once. User talks and shows the problem; one clear question or coach line stays visible. Stills are gated and uploaded; no video files to the server.
-- **Ticket timeline:** Evidence, status chips (Listening / Transcribing / Figuring out / Investigating…), confidence gauge, proposed vs locked title/description.
-- Settings, Test Mode (debug) still accessible but not the main path.
-
-Reference: `docs/apk-ticket-ux.md`, existing Kotlin shell in `apps/android-testmode`.
-
-### 2. Full simultaneous capture + AI conversation
-- User can record audio and show the problem with the camera while talking to the AI.
-- AI coaches in real time (capture guidance, clarifying questions) to gather requirements for the ticket.
-- Package a complete ticket and send it to the server for higher-end **batch** AI processing (Project) and/or human review. Prefer both.
-- Local experience should feel continuous and responsive even though deep answers are deferred.
-
-### 3. Everyday problems & least-resistance path (testing focus)
-Validate the full loop on real cases such as “fixing a fence”:
-
-- Analyze the problem from what the user shows and says.
-- Identify tools needed.
-- Scan existing tools (photos + OCR/context) to see if the user already has enough to fix it themselves.
-- Recommend what to buy and where (local, cheap, free options first).
-- If local/DIY solutions fail, surface local hired help (list resources, draft outreach, or post the ticket publicly on the MyProblem network so anyone — including automated AI — can help).
-- Always prefer the free / least path of resistance.
-
-Public posting of a PII-safe ticket is part of the testing goal so the network can participate.
-
-### 4. Tip at the end (optional)
-After the process (investigation complete or handed off), offer an optional tip (Lyft-style).  
-If the user does not tip, the entire process remains completely free. No obligation.
-
-### 5. Device testing & performance
-- Build and install on real Android devices.
-- Test the full flow end-to-end: start → capture (audio + stills + coaching) → upload → server intake → Project queue.
-- Fine-tune for performance and experience (smooth preview, reliable stop/start, battery, frame quality, clear coach UI).
-- Report issues with logs; server logging is handled separately.
-
-## How to Work With an LLM
-
-1. Clone or open the Android module: `apps/android-testmode`.
-2. Point the LLM at this document + `docs/apk-ticket-ux.md`, `docs/capture-guidance.md`, `docs/projects.md`, `docs/progressive-transcription.md`.
-3. Ask it to implement the missing product screens and simultaneous capture experience while reusing existing ticket models, sync, and camera/audio code.
-4. Build the debug APK, install on a device, and test.
-5. Iterate on UX and performance.
-
-## Architecture Constraints (do not break)
-
-- Stills + audio only to the server. No video file uploads.
-- Realtime AI = thin capture coach only. Deep investigation = deferred batch Project.
+- Upload **stills + audio only**. Never upload video files.
+- Realtime AI = thin capture coach only (questions, guidance, field filling). Deep investigation = deferred batch Project.
 - Anonymous tickets by default (UUID = access).
-- Free forever; tip is optional.
-- Region pilots (Georgia & Israel) and KB-first approach remain.
+- Free forever; tip is optional and never required.
+- Reuse existing ticket models, local store, sync, CameraX, audio capture, and coach code. Do not rewrite from scratch.
+- Stay consistent with: `docs/apk-ticket-ux.md`, `docs/capture-guidance.md`, `docs/projects.md`, `docs/progressive-transcription.md`, `docs/confidence-gauge.md`.
 
-## Deliverables for this phase
+## Task Execution Model
 
-- Polished Android product UI for the full capture → ticket flow.
-- Device-tested build that successfully creates and sends tickets for real everyday problems.
-- Notes on what worked / broke so server logging and batch investigation can be refined.
+For every task below:
+1. The LLM implements code / UI changes.
+2. The LLM builds the debug APK (`./gradlew :app:assembleDebug` from `apps/android-testmode`).
+3. The LLM outputs clear install/test commands and expected results.
+4. **HUMAN CHECKPOINT** only when a physical device, real-world input, or new scenario is required.
+5. After human feedback, the LLM iterates.
 
-Once Android is solid, the same document and contracts can guide an iOS version.
+Automate everything that does not require a physical phone, real human voice, or real physical problem.
+
+## Priority Tasks
+
+### Task 1: Finish product UI (highest priority)
+**LLM does:**
+- Replace test/debug surfaces with a clear product flow:
+  - Home: list of open tickets + prominent “New ticket” button.
+  - New ticket: chooser for Text / Audio / Audio+frames → immediately enter that mode.
+  - Capture (Audio+frames): simultaneous camera preview, audio recording, and one clear coach question/line always visible.
+  - Ticket timeline: evidence list, status chips (Listening / Transcribing / Figuring out… / Investigating), confidence gauge, proposed vs locked title/description.
+- Keep Settings and Test Mode reachable but secondary.
+- Wire to existing ViewModels, ticket store, and sync.
+
+**HUMAN CHECKPOINT:**
+- Install the APK on a real Android device.
+- Walk through the new screens and report visual/layout issues, missing states, or navigation problems.
+- Confirm the coach line is readable while the camera is active.
+
+### Task 2: Simultaneous capture + AI coaching experience
+**LLM does:**
+- Ensure audio recording, camera stills gating, and live coach updates run together without blocking the UI.
+- Surface server-driven `capture_request` hints and progressive title/description proposals.
+- Make stop conditions clear (button + spoken “stop recording”).
+- Keep the experience feeling continuous even though deep answers are deferred.
+
+**HUMAN CHECKPOINT:**
+- On device: start an Audio+frames ticket, talk about a real problem while showing it to the camera.
+- Note whether the coach responds, stills are captured usefully, and the ticket packages correctly.
+- Report any lag, crashes, or confusing states.
+
+### Task 3: Everyday problem scenarios (testing catalog)
+**LLM does:**
+- Prepare the ticket flow so it can handle typical DIY cases (analyze problem, identify tools, scan existing tools via stills+OCR, suggest free/cheap buys, fall back to local help or public post).
+- Add or improve any missing UI for “scan tools”, “what to buy”, “post publicly”, and “hire local help”.
+- Generate sample test data or fixtures if useful for offline development.
+
+**HUMAN CHECKPOINT — invent and run scenarios:**
+- Create 2–3 real-world problems (examples: fixing a fence, clogged sink, broken chair, missing tool).
+- For each: capture audio + stills of the problem and of tools you already have.
+- Observe whether the ticket gathers enough info for a later batch Project.
+- Note what the AI coach asked, what was missing, and whether the least-resistance (preferably free) path is clear.
+- Suggest any new scenarios that should be added to the catalog.
+
+### Task 4: Optional tip at the end
+**LLM does:**
+- After a ticket reaches a terminal state (investigation done, handed off, or closed), show an optional tip UI (Lyft-style).
+- Make it clear that skipping the tip leaves the entire process free.
+- Do not block any core flow on tipping.
+
+**HUMAN CHECKPOINT:**
+- Complete a ticket flow on device and verify the tip prompt appears only at the end and is skippable.
+
+### Task 5: Device testing, performance, and reliability
+**LLM does:**
+- Add or improve logging that helps diagnose issues (coach events, sync status, frame quality).
+- Optimize obvious performance issues (UI jank on camera, memory, battery-friendly frame analysis).
+- Prepare clear reproduction steps and expected logs for common failures.
+
+**HUMAN CHECKPOINT (repeat as needed):**
+- Install latest APK on one or more real devices.
+- Run the full end-to-end flow: New ticket → simultaneous capture → stop → timeline → server sync.
+- Test edge cases the LLM cannot: poor lighting, background noise, slow network, phone orientation changes, battery saver.
+- Report crashes, high battery use, missed stills, or sync failures with any available logs.
+- Invent additional stress scenarios if the basic ones pass.
+
+## Automation Guidance for the LLM
+
+- Prefer code changes, unit/UI tests (where feasible), and clear build/install instructions over asking the human to do manual coding.
+- After each major change, output:
+  - What changed
+  - How to build and install
+  - Exact steps for the human to test on device
+  - What “success” looks like
+- When the human reports a problem, fix it in code first; only ask for another device test when the fix needs physical verification.
+- Keep changes small and reviewable.
+- Never claim something works on device until a human has confirmed it.
+
+## Deliverables
+
+- Working Android product UI for the full capture → ticket flow.
+- Device-tested APK that successfully creates and sends tickets for real everyday problems.
+- Short notes (from human + LLM) on what worked, what broke, and any new scenarios discovered.
+
+Once the Android path is solid, the same guide and contracts can be adapted for iOS.
 
 ---
 
-See also the companion roadmap: `docs/roadmap-testing-phase.md`.
+Companion roadmap: `docs/roadmap-testing-phase.md`.
