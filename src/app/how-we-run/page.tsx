@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import { SiteHeader } from "@/components/SiteHeader";
-import { CONTACT_EMAIL, SITE_URL } from "@/lib/contact";
+import { CONTACT_EMAIL, OG_IMAGE, SITE_URL } from "@/lib/contact";
 
 const TITLE = "How we run";
 const DESCRIPTION =
-  "MyProblem does not pay salaries or ask for a subscription. You should never expect to enter a card. If the help was good, tip the person, the AI, or both. Intent, not a contract.";
+  "No salaries or subscriptions. Never enter a card. Tip the person, the AI, or both when help was good. Intent, not a contract.";
 
 export const metadata: Metadata = {
   title: TITLE,
@@ -15,6 +15,13 @@ export const metadata: Metadata = {
     title: "How we run MyProblem",
     description: DESCRIPTION,
     url: `${SITE_URL}/how-we-run`,
+    images: [OG_IMAGE],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "How we run MyProblem",
+    description: DESCRIPTION,
+    images: [OG_IMAGE.url],
   },
 };
 

@@ -1,17 +1,26 @@
 import type { Metadata } from "next";
 import { SiteHeader } from "@/components/SiteHeader";
-import { CONTACT_EMAIL, SITE_URL } from "@/lib/contact";
+import { CONTACT_EMAIL, OG_IMAGE, SITE_URL } from "@/lib/contact";
+
+const DESCRIPTION =
+  "How MyProblem handles personal information: PII stays on your devices by default; shared tickets use automatic safe conversion.";
 
 export const metadata: Metadata = {
   title: "Privacy",
-  description:
-    "How MyProblem handles personal information: PII stays on your devices by default; shared tickets use automatic safe conversion.",
+  description: DESCRIPTION,
   alternates: { canonical: `${SITE_URL}/privacy` },
   openGraph: {
     title: "MyProblem — Privacy",
     description:
       "Client-held PII, automatic conversion on network tickets, and private share-on-request for providers.",
     url: `${SITE_URL}/privacy`,
+    images: [OG_IMAGE],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "MyProblem — Privacy",
+    description: DESCRIPTION,
+    images: [OG_IMAGE.url],
   },
 };
 

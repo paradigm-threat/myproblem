@@ -1,7 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Fraunces, Manrope } from "next/font/google";
 import { JsonLd } from "@/components/JsonLd";
-import { CONTACT_EMAIL, SITE_URL } from "@/lib/contact";
+import { CONTACT_EMAIL, OG_IMAGE, SITE_URL } from "@/lib/contact";
 import "./globals.css";
 
 const fraunces = Fraunces({
@@ -33,7 +33,7 @@ export const metadata: Metadata = {
     template: "%s · MyProblem",
   },
   description:
-    "Free forever for local businesses and for people. You should never expect to enter a card. If the help was good, tip the person, the AI, or both. No salaries. Pilots in Georgia and Israel.",
+    "Free forever for local businesses and people. Never enter a card. Tip the person, the AI, or both when help was good. Pilots in Georgia and Israel.",
   applicationName: "MyProblem",
   category: "technology",
   manifest: "/manifest.webmanifest",
@@ -72,21 +72,14 @@ export const metadata: Metadata = {
     siteName: "MyProblem",
     locale: "en_US",
     type: "website",
-    images: [
-      {
-        url: "/og.jpg",
-        width: 1024,
-        height: 576,
-        alt: "MyProblem — turn any problem into a solution",
-      },
-    ],
+    images: [OG_IMAGE],
   },
   twitter: {
     card: "summary_large_image",
     title: "MyProblem — Free AI front door for local businesses",
     description:
       "Free forever. You should never expect to enter a card. If the help was good, tip the person, the AI, or both.",
-    images: ["/og.jpg"],
+    images: [OG_IMAGE.url],
   },
   appleWebApp: {
     capable: true,

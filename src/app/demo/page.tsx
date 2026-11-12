@@ -2,18 +2,27 @@ import type { Metadata } from "next";
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { SiteHeader } from "@/components/SiteHeader";
-import { CONTACT_EMAIL, SITE_URL } from "@/lib/contact";
+import { CONTACT_EMAIL, OG_IMAGE, SITE_URL } from "@/lib/contact";
+
+const DESCRIPTION =
+  "Try early MyProblem demos — Android Test Mode APK and browser tools. Check back as we ship more.";
 
 export const metadata: Metadata = {
   title: "Demos",
-  description:
-    "Try early MyProblem demos — Android Test Mode APK and browser tools. Check back as we ship more.",
+  description: DESCRIPTION,
   alternates: { canonical: `${SITE_URL}/demo` },
   openGraph: {
     title: "MyProblem demos",
     description:
       "Sideload the Android Test Mode APK and explore early capture-gate demos. More coming soon.",
     url: `${SITE_URL}/demo`,
+    images: [OG_IMAGE],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "MyProblem demos",
+    description: DESCRIPTION,
+    images: [OG_IMAGE.url],
   },
 };
 

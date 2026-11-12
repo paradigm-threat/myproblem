@@ -1,17 +1,26 @@
 import type { Metadata } from "next";
 import { SiteHeader } from "@/components/SiteHeader";
-import { CONTACT_EMAIL, RELAY_URL, SITE_URL } from "@/lib/contact";
+import { CONTACT_EMAIL, OG_IMAGE, RELAY_URL, SITE_URL } from "@/lib/contact";
+
+const DESCRIPTION =
+  "Terms and disclaimers for MyProblem by Clevertree LLC (Georgia). Ticket-based help — not a substitute for licensed professional advice.";
 
 export const metadata: Metadata = {
   title: "Terms of Service & Disclaimers",
-  description:
-    "Terms of Service and product disclaimers for MyProblem by Clevertree LLC (Georgia). Ticket-based investigation help — not a substitute for licensed professional advice.",
+  description: DESCRIPTION,
   alternates: { canonical: `${SITE_URL}/terms` },
   openGraph: {
     title: "MyProblem — Terms & Disclaimers",
     description:
       "Clevertree LLC terms for MyProblem.app: everyday problem investigation, softer professional limits, and pilot service rules.",
     url: `${SITE_URL}/terms`,
+    images: [OG_IMAGE],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "MyProblem — Terms & Disclaimers",
+    description: DESCRIPTION,
+    images: [OG_IMAGE.url],
   },
 };
 
