@@ -2,7 +2,7 @@ import type { MetadataRoute } from "next";
 import { SITE_URL } from "@/lib/contact";
 
 /** Change this when a public page's content changes. Do not use new Date(). */
-const CONTENT_UPDATED = new Date("2026-11-11");
+const CONTENT_UPDATED = new Date("2026-11-12");
 
 export default function sitemap(): MetadataRoute.Sitemap {
   return [
