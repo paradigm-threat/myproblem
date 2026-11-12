@@ -67,7 +67,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "MyProblem — Free AI front door for local businesses",
     description:
-      "Free forever. You should never expect to enter a card. If the help was good, tip the person, the AI, or both.",
+      "Free forever for local businesses and people. Never enter a card. Tip the person, the AI, or both when help was good.",
     url: SITE_URL,
     siteName: "MyProblem",
     locale: "en_US",
@@ -78,7 +78,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "MyProblem — Free AI front door for local businesses",
     description:
-      "Free forever. You should never expect to enter a card. If the help was good, tip the person, the AI, or both.",
+      "Free forever for local businesses and people. Never enter a card. Tip the person, the AI, or both when help was good.",
     images: [OG_IMAGE.url],
   },
   appleWebApp: {

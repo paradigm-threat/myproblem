@@ -32,11 +32,22 @@ export function JsonLd() {
       },
       {
         "@type": "WebPage",
+        "@id": `${SITE_URL}/#webpage`,
+        url: SITE_URL,
+        name: "MyProblem — Free AI front door for local businesses",
+        description:
+          "Free forever for local businesses and people. Never enter a card. Tip the person, the AI, or both when help was good. Pilots in Georgia and Israel.",
+        isPartOf: { "@id": `${SITE_URL}/#website` },
+        about: { "@id": `${SITE_URL}/#organization` },
+        primaryImageOfPage: `${SITE_URL}/og.jpg`,
+      },
+      {
+        "@type": "WebPage",
         "@id": `${SITE_URL}/how-we-run#webpage`,
         url: `${SITE_URL}/how-we-run`,
         name: "How we run",
         description:
-          "No salaries and no subscription. Free forever. A card appears only when someone wants to tip the person, the AI, or both. Intent, not a contract.",
+          "No salaries or subscriptions. Never enter a card. Tip the person, the AI, or both when help was good. Intent, not a contract.",
         isPartOf: { "@id": `${SITE_URL}/#website` },
         about: { "@id": `${SITE_URL}/#organization` },
       },
