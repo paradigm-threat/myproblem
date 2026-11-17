@@ -1,6 +1,12 @@
 import type { Metadata } from "next";
 import { SiteHeader } from "@/components/SiteHeader";
-import { CONTACT_EMAIL, OG_IMAGE, SITE_URL } from "@/lib/contact";
+import {
+  CONTACT_EMAIL,
+  OG_IMAGE,
+  SITE_URL,
+  SI_FULL,
+  TICKET_TRAINING_NOTICE,
+} from "@/lib/contact";
 
 const DESCRIPTION =
   "How MyProblem handles personal information: PII stays on your devices by default; shared tickets use automatic safe conversion.";
@@ -24,7 +30,7 @@ export const metadata: Metadata = {
   },
 };
 
-const EFFECTIVE = "November 8, 2026";
+const EFFECTIVE = "November 17, 2026";
 
 export default function PrivacyPage() {
   return (
@@ -81,7 +87,7 @@ export default function PrivacyPage() {
         <section className="legal-section" aria-labelledby="convert-heading">
           <h2 id="convert-heading">3. Automatic PII conversion</h2>
           <p>
-            When AI or intake packages a ticket for the network, personal
+            When {SI_FULL} or intake packages a ticket for the network, personal
             identifiers that are not needed for shared context should be{" "}
             <strong>converted or withheld</strong> — for example a spoken street
             address becomes a city or coarse safe band. Client-side redaction is
@@ -102,8 +108,19 @@ export default function PrivacyPage() {
           </p>
         </section>
 
+        <section className="legal-section" aria-labelledby="train-heading">
+          <h2 id="train-heading">5. Anonymized tickets and SI training</h2>
+          <p>{TICKET_TRAINING_NOTICE}</p>
+          <p>
+            Shared tips are meant to be scrubbed of names, street addresses,
+            phones, and emails before they feed investigation learning or model
+            improvement. Waitlist contact email is separate from ticket training
+            data.
+          </p>
+        </section>
+
         <section className="legal-section" aria-labelledby="limits-heading">
-          <h2 id="limits-heading">5. Limits</h2>
+          <h2 id="limits-heading">6. Limits</h2>
           <p>
             No system is perfect. Do not put secrets in tickets you would not
             want mishandled. Logs, backups, and ephemeral media processing may

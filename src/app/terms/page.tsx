@@ -1,6 +1,13 @@
 import type { Metadata } from "next";
 import { SiteHeader } from "@/components/SiteHeader";
-import { CONTACT_EMAIL, OG_IMAGE, RELAY_URL, SITE_URL } from "@/lib/contact";
+import {
+  CONTACT_EMAIL,
+  OG_IMAGE,
+  RELAY_URL,
+  SITE_URL,
+  SI_FULL,
+  TICKET_TRAINING_NOTICE,
+} from "@/lib/contact";
 
 const DESCRIPTION =
   "Terms and disclaimers for MyProblem by Clevertree LLC (Georgia). Ticket-based help — not a substitute for licensed professional advice.";
@@ -25,7 +32,7 @@ export const metadata: Metadata = {
 };
 
 const EFFECTIVE =
-  "November 8, 2026 (knowledge-base disclaimer: speculative, no boosting)";
+  "November 17, 2026 (KB speculative / no boosting; tickets anonymized for SI training)";
 
 export default function TermsPage() {
   return (
@@ -152,9 +159,10 @@ export default function TermsPage() {
             <strong>Disclaimer:</strong> knowledge-base content is{" "}
             <strong>speculative and provisional</strong>. It is based on{" "}
             <strong>user contributions</strong> and{" "}
-            <strong>AI investigations</strong> only. It is{" "}
+            <strong>{SI_FULL} investigations</strong> only. It is{" "}
             <strong>not</strong> ranked by advertising, paid placement, or
-            engagement boosting. <strong>Boosting is not allowed.</strong>
+            engagement boosting. <strong>Boosting is not allowed.</strong>{" "}
+            {TICKET_TRAINING_NOTICE}
           </p>
           <p>
             We do <strong>not</strong> intend to freeze-frame or cache the
@@ -181,6 +189,17 @@ export default function TermsPage() {
             until we ship them. Check the product site for “coming soon”
             status.
           </p>
+          <p>
+            <strong>Clevertree Chat</strong> (
+            <a href="https://clevertree.chat">clevertree.chat</a>) is the
+            planned main way people communicate on a ticket: comments and
+            standing debates live on a separate{" "}
+            <strong>comments</strong> branch of the same ticket repositories.
+            The same SI batch system that investigates Projects may organize
+            those threads and, after redaction, contribute reusable lessons to
+            the knowledge base. That is communication on Problems — not a
+            guarantee of realtime frontier chat answers.
+          </p>
         </section>
 
         <section className="legal-section" aria-labelledby="emergency-heading">
@@ -200,6 +219,12 @@ export default function TermsPage() {
             access if you change devices. Losing a phone without backup or
             recover email can mean losing those tickets — we warn about that
             because absolute “never lose” access is impossible.
+          </p>
+          <p>
+            <strong>Training:</strong> {TICKET_TRAINING_NOTICE} Submitting a
+            ticket means you understand anonymized ticket content may improve
+            the SI and related models. Identity and raw PII are not the training
+            target — see the PII policy below.
           </p>
           <p>
             You are responsible for content you submit (audio, photos, text).
@@ -222,7 +247,7 @@ export default function TermsPage() {
             fields.
           </p>
           <p>
-            When the AI packages a ticket for the network, it should perform{" "}
+            When the SI packages a ticket for the network, it should perform{" "}
             <strong>automatic PII conversion</strong>: e.g. turn a spoken street
             address into a city or coarse safe location band so investigation
             can proceed without putting your precise personal location on the
@@ -257,7 +282,7 @@ export default function TermsPage() {
             respond. The service stays free for the shop and for the person
             with the Problem. You should not expect to enter a credit card.
             Any money is a voluntary tip, after a good experience, for a
-            person, the AI, or both. Incoming requests work like a social feed
+            person, the SI, or both. Incoming requests work like a social feed
             — shops may engage or ignore entirely, with no SLA and no penalty
             for silence.
           </p>

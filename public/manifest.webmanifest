@@ -1,7 +1,7 @@
 {
   "name": "MyProblem",
   "short_name": "MyProblem",
-  "description": "Free AI front door for local businesses. Problems, not chats.",
+  "description": "Free SI (Super Intelligence, i.e. AI) front door for local businesses. Problems, not chats.",
   "start_url": "/",
   "display": "standalone",
   "lang": "en-US",

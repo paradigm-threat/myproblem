@@ -1,7 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Fraunces, Manrope } from "next/font/google";
 import { JsonLd } from "@/components/JsonLd";
-import { CONTACT_EMAIL, OG_IMAGE, SITE_URL } from "@/lib/contact";
+import { CONTACT_EMAIL, OG_IMAGE, SITE_URL, SI_FULL } from "@/lib/contact";
 import "./globals.css";
 
 const fraunces = Fraunces({
@@ -29,11 +29,10 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: "MyProblem — Free AI front door for local businesses",
+    default: "MyProblem — Free SI front door for local businesses",
     template: "%s · MyProblem",
   },
-  description:
-    "Free forever for local businesses and people. Never enter a card. Tip the person, the AI, or both when help was good. Pilots in Georgia and Israel.",
+  description: `Free forever for local businesses and people. Never enter a card. Tip the person, the ${SI_FULL}, or both when help was good. Pilots in Georgia and Israel.`,
   applicationName: "MyProblem",
   category: "technology",
   manifest: "/manifest.webmanifest",
@@ -65,9 +64,8 @@ export const metadata: Metadata = {
     shortcut: ["/favicon.ico"],
   },
   openGraph: {
-    title: "MyProblem — Free AI front door for local businesses",
-    description:
-      "Free forever for local businesses and people. Never enter a card. Tip the person, the AI, or both when help was good.",
+    title: "MyProblem — Free SI front door for local businesses",
+    description: `Free forever for local businesses and people. Never enter a card. Tip the person, the ${SI_FULL}, or both when help was good.`,
     url: SITE_URL,
     siteName: "MyProblem",
     locale: "en_US",
@@ -76,9 +74,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "MyProblem — Free AI front door for local businesses",
-    description:
-      "Free forever for local businesses and people. Never enter a card. Tip the person, the AI, or both when help was good.",
+    title: "MyProblem — Free SI front door for local businesses",
+    description: `Free forever for local businesses and people. Never enter a card. Tip the person, the ${SI_FULL}, or both when help was good.`,
     images: [OG_IMAGE.url],
   },
   appleWebApp: {

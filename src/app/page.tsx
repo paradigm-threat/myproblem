@@ -6,6 +6,8 @@ import {
   CONTACT_EMAIL,
   RELAY_URL,
   SITE_URL,
+  SI_FULL,
+  TICKET_TRAINING_NOTICE,
 } from "@/lib/contact";
 
 const VIRTUES = [
@@ -56,7 +58,7 @@ export default function HomePage() {
                 on screen until the requirements are specific. The person gets a
                 real investigation before anyone has to meet. You should never
                 expect to enter a card. If the help was good, tip the person,
-                the AI, or both.
+                the {SI_FULL}, or both.
               </p>
               <p className="powered-by">
                 Powered by{" "}
@@ -127,7 +129,7 @@ export default function HomePage() {
                 />
                 <img
                   src="/businesses.jpg"
-                  alt="MyProblem for local businesses: free forever, no obligation — receive requests, review the AI dossier, accept or ignore entirely like a social feed"
+                  alt="MyProblem for local businesses: free forever, no obligation — receive requests, review the SI dossier, accept or ignore entirely like a social feed"
                   width={1024}
                   height={512}
                   className="section-graphic-img"
@@ -192,14 +194,14 @@ export default function HomePage() {
           <section id="people" aria-labelledby="people-heading">
             <h2 id="people-heading">How it works for people</h2>
             <p className="section-lead">
-              Get thorough help — anonymously or with an account. Core AI help
+              Get thorough help — anonymously or with an account. Core SI help
               is <strong className="emph">free, private, and forever</strong>.
               Personal identifiers stay on{" "}
               <strong className="emph">your device</strong> by default; the
               network ticket is auto-scrubbed to safe context. Deep
               investigation runs as a Project when capacity allows — thorough,
               not rushed. You should never expect to enter a card. If the help
-              was good, tip the person, the AI, or both.
+              was good, tip the person, the SI, or both.
             </p>
             <figure className="section-graphic">
               <picture>
@@ -211,7 +213,7 @@ export default function HomePage() {
                 />
                 <img
                   src="/people.jpg"
-                  alt="MyProblem for people: investigate a problem with AI, solve it yourself or get a recommendation, then connect with local help — free core help, anonymous mode, optional tip"
+                  alt="MyProblem for people: investigate a problem with SI, solve it yourself or get a recommendation, then connect with local help — free core help, anonymous mode, optional tip"
                   width={1024}
                   height={512}
                   className="section-graphic-img"
@@ -227,7 +229,7 @@ export default function HomePage() {
               <li>
                 <strong>Capture a new Problem (ticket)</strong>
                 <p>
-                  Real-time AI helps only while you gather evidence — camera
+                  Real-time SI helps only while you gather evidence — camera
                   coaching and clarifying questions — so the ticket is complete.
                   Deep answers are not expected in that live session.
                 </p>
@@ -264,7 +266,7 @@ export default function HomePage() {
                   has a real need and you release them.
                 </li>
                 <li>
-                  <strong>Automatic PII conversion</strong> — when the AI packs
+                  <strong>Automatic PII conversion</strong> — when the SI packs
                   a ticket, spoken or typed personal detail becomes safe
                   context (e.g. city or a coarse location band) so helpers can
                   work without your street address living on the mesh.
@@ -275,7 +277,7 @@ export default function HomePage() {
                   channel — not into the public ticket dossier or network cache.
                 </li>
                 <li>
-                  <strong>Free forever</strong> for core private / anonymous AI
+                  <strong>Free forever</strong> for core private / anonymous SI
                   help — no login required for the basics. No card expected.
                 </li>
                 <li>
@@ -284,7 +286,7 @@ export default function HomePage() {
                 </li>
                 <li>
                   <strong>Optional tip</strong> — if the help was good, tip the
-                  person, the AI, or both. Never required. See{" "}
+                  person, the SI, or both. Never required. See{" "}
                   <a href="/how-we-run">how we run</a>.
                 </li>
               </ul>
@@ -384,9 +386,9 @@ export default function HomePage() {
               lesson, plus DIY advice when location does not matter. It is{" "}
               <strong className="emph">speculative</strong>: built from{" "}
               <strong className="emph">user contributions</strong> and{" "}
-              <strong className="emph">AI investigations</strong> only.{" "}
+              <strong className="emph">SI investigations</strong> only.{" "}
               <strong className="emph">No boosting</strong>, no paid ranking,
-              no freeze-frame of the greater internet.
+              no freeze-frame of the greater internet. {TICKET_TRAINING_NOTICE}
             </p>
             <div className="project-flow" role="list">
               <article className="project-flow-card" role="listitem">
@@ -406,7 +408,7 @@ export default function HomePage() {
                 <h3>Speculative · no boost</h3>
                 <p>
                   Everything in the KB is provisional investigation assistance
-                  from users and AI — never algorithmically boosted for money
+                  from users and SI — never algorithmically boosted for money
                   or engagement. Business pages appear only when a Project
                   thoroughly investigated that shop for a real ticket.
                 </p>
@@ -457,23 +459,27 @@ export default function HomePage() {
           <section id="plan" aria-labelledby="plan-heading">
             <h2 id="plan-heading">The plan</h2>
             <p className="section-lead">
-              Relay-native investigation service. Problems not chats. Projects
-              for thorough deferred research. A shared knowledge base for
-              problem-solving — including how to put a modern site online nearly
-              for free.{" "}
+              Relay-native investigation service. Problems first — not a frontier
+              chatbot. Clevertree Chat on every ticket for people to communicate;
+              Projects for thorough deferred research. A shared knowledge base
+              for problem-solving — including how to put a modern site online
+              nearly for free.{" "}
               <strong className="emph">Major coming soon:</strong> batched
               automated coding, networking, documents, and heavy digital jobs —
               thorough finish when capacity allows, not a realtime Cursor-style
-              chat. Local businesses free forever. Tips optional — never a
+              IDE. Local businesses free forever. Tips optional — never a
               required card.
             </p>
             <div className="plan-grid">
               <article>
-                <h3>Problems, not chats</h3>
+                <h3>Problems + Clevertree Chat</h3>
                 <p>
                   Context is the Problem record — photos, facts, stops,
-                  attempts, status. The model gets a compiled brief, not a
-                  rolling token dump.
+                  attempts, status. People communicate on the ticket through{" "}
+                  <a href="https://clevertree.chat">Clevertree Chat</a>; the
+                  same SI batch organizes those threads into reusable knowledge.
+                  Investigation is still a compiled brief and a Project queue —
+                  not a rolling chatbot dump.
                 </p>
               </article>
               <article>
@@ -490,7 +496,7 @@ export default function HomePage() {
                   Ticket-earned lessons for Georgia and Israel — local resource
                   wisdom and DIY when place does not matter (including a
                   nearly-free website path via free-tier hosting). Speculative
-                  (users + AI only); no boosting; never a cache of the public
+                  (users + SI only); no boosting; never a cache of the public
                   web. Re-test, refine, or ditch — don’t forget.
                 </p>
               </article>
@@ -674,7 +680,7 @@ export default function HomePage() {
                 </li>
                 <li>
                   <strong>Israel</strong> — on-ground ops, Hebrew/bilingual UX;
-                  denser AI→local-pro apps plus the same global LLMs — we still
+                  denser SI→local-pro apps plus the same global LLMs — we still
                   differentiate on tickets, batch investigation, and a local KB.
                 </li>
               </ul>

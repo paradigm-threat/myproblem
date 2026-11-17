@@ -1,7 +1,7 @@
 "use client";
 
 import { useId, useState } from "react";
-import { CONTACT_EMAIL } from "@/lib/contact";
+import { CONTACT_EMAIL, TICKET_TRAINING_NOTICE } from "@/lib/contact";
 import type { SignupRole } from "@/lib/types";
 
 type Props = {
@@ -179,6 +179,10 @@ export function SignupForm({ defaultRole = "business", id }: Props) {
           placeholder="What do you want us to know?"
         />
       </label>
+
+      <p className="signup-disclaimer" role="note">
+        {TICKET_TRAINING_NOTICE}
+      </p>
 
       <button type="submit" className="btn-primary">
         Open email to join

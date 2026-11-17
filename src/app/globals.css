@@ -841,6 +841,13 @@ section h2 {
   overflow: hidden;
 }
 
+.signup-disclaimer {
+  margin: 0.15rem 0 0.75rem;
+  color: var(--muted);
+  font-size: 0.88rem;
+  line-height: 1.45;
+}
+
 .signup-mailto-hint {
   margin: 0.35rem 0 0;
   color: var(--muted);

@@ -1,11 +1,10 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import { SiteHeader } from "@/components/SiteHeader";
-import { CONTACT_EMAIL, OG_IMAGE, SITE_URL } from "@/lib/contact";
+import { CONTACT_EMAIL, OG_IMAGE, SITE_URL, SI_FULL } from "@/lib/contact";
 
 const TITLE = "How we run";
-const DESCRIPTION =
-  "No salaries or subscriptions. Never enter a card. Tip the person, the AI, or both when help was good. Intent, not a contract.";
+const DESCRIPTION = `No salaries or subscriptions. Never enter a card. Tip the person, the ${SI_FULL}, or both when help was good. Intent, not a contract.`;
 
 export const metadata: Metadata = {
   title: TITLE,
@@ -34,7 +33,7 @@ const FAQ = [
   {
     question: "When does anyone pay?",
     answer:
-      "Only when they want to. You should never expect to enter a card. If the help was good, tip the person who helped, the AI that helped, or both. A gift to the AI keeps the machines running. $1, $5, and $10 are examples, not prices.",
+      `Only when they want to. You should never expect to enter a card. If the help was good, tip the person who helped, the ${SI_FULL} that helped, or both. A gift to the SI keeps the machines running. $1, $5, and $10 are examples, not prices.`,
   },
   {
     question: "What about people who cannot tip?",
@@ -83,7 +82,7 @@ export default function HowWeRunPage() {
         <p className="section-lead">
           Relay already left salaries behind. The next break is the tip, the
           old way of paying for good work. You should never expect to enter a
-          card. If the help was good, tip the person, the AI, or both. This
+          card. If the help was good, tip the person, the {SI_FULL}, or both. This
           page is intent. It is not a contract and not an offer.
         </p>
 
@@ -96,8 +95,8 @@ export default function HowWeRunPage() {
               card.
             </li>
             <li>
-              If the help was good, tip the person who helped, the AI that
-              helped, or both. A gift to the AI keeps the machines running.
+              If the help was good, tip the person who helped, the SI that
+              helped, or both. A gift to the SI keeps the machines running.
               Part of a tip to a person, or a second tip, can do the same.
             </li>
             <li>
@@ -117,7 +116,7 @@ export default function HowWeRunPage() {
             <dt>Tip</dt>
             <dd>
               A voluntary thank-you after a good experience, for a person, for
-              the AI and its hosting, or both. Any time, any amount. $1, $5,
+              the SI and its hosting, or both. Any time, any amount. $1, $5,
               and $10 are examples.
             </dd>
           </dl>
@@ -163,14 +162,14 @@ export default function HowWeRunPage() {
               src="/investors.jpg?v=2"
               width={1024}
               height={576}
-              alt="MyProblem for investors. No promised return. Using the service never requires a payment. A tip can go to the person, the AI, or both. A five or ten dollar tip from a delighted person beats one dollar. Most people will not tip."
+              alt="MyProblem for investors. No promised return. Using the service never requires a payment. A tip can go to the person, the SI, or both. A five or ten dollar tip from a delighted person beats one dollar. Most people will not tip."
             />
           </picture>
           <p>
             This is the Relay compensation we want. It helps the most people,
             because a missing card never blocks the help. Money shows up only
-            when the AI or another person actually came through. A happy person
-            might leave $1, $5, or $10, for the person who helped, the AI that
+            when the SI or another person actually came through. A happy person
+            might leave $1, $5, or $10, for the person who helped, the SI that
             helped, or both. That feeling is the signal a subscription cannot
             make. We still want a compatible world network: the same tickets,
             findable across places, with gifts able to reach the people running
@@ -180,7 +179,7 @@ export default function HowWeRunPage() {
           </p>
           <h3 id="illustration-heading">An illustration, not a forecast</h3>
           <p>
-            A Relay node can start small. The AI bill cannot. One region of
+            A Relay node can start small. The SI bill cannot. One region of
             vision is on the order of a few hundred dollars a month, and a
             two-region pilot is about $700 to $2,000. A modest computer does
             not pay that bill.
@@ -202,7 +201,7 @@ export default function HowWeRunPage() {
           <p>
             A delighted $5 or $10 beats a $1 subscription from that one person.
             The average does not, unless many people do it. Tipping a person is
-            an old habit. Tipping the machines that ran the AI is the hard
+            an old habit. Tipping the machines that ran the SI is the hard
             part, and it is the gift that keeps the project running. We have no
             users yet, so these rates are arithmetic, not a measurement. Gifts
             might later cover a busy region. They do not guarantee that a

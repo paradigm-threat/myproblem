@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { SiteHeader } from "@/components/SiteHeader";
-import { CONTACT_EMAIL, OG_IMAGE, SITE_URL } from "@/lib/contact";
+import { CONTACT_EMAIL, OG_IMAGE, SITE_URL, SI_FULL } from "@/lib/contact";
 
 const DESCRIPTION =
   "Try early MyProblem demos — Android Test Mode APK and browser tools. Check back as we ship more.";
@@ -87,7 +87,7 @@ export default async function DemoPage() {
           <p>
             While you talk and show the problem, one question stays above the
             camera until the requirements are specific. You answer by talking.
-            A spoken conversation with the AI comes later. Clear, new frames
+            A spoken conversation with the {SI_FULL} comes later. Clear, new frames
             are kept. No video file is uploaded.
           </p>
           {manifest ? (

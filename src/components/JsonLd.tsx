@@ -1,4 +1,10 @@
-import { CONTACT_EMAIL, RELAY_SOURCE_URL, RELAY_URL, SITE_URL } from "@/lib/contact";
+import {
+  CONTACT_EMAIL,
+  RELAY_SOURCE_URL,
+  RELAY_URL,
+  SITE_URL,
+  SI_FULL,
+} from "@/lib/contact";
 
 export function JsonLd() {
   const data = {
@@ -17,16 +23,14 @@ export function JsonLd() {
           RELAY_SOURCE_URL,
           RELAY_URL,
         ],
-        description:
-          "Investigation service for Problems. Free forever. You should never expect to enter a card. If the help was good, tip the person, the AI, or both. No salaries. Powered by Relay.",
+        description: `Investigation service for Problems. Free forever. You should never expect to enter a card. If the help was good, tip the person, the ${SI_FULL}, or both. No salaries. Powered by Relay.`,
       },
       {
         "@type": "WebSite",
         "@id": `${SITE_URL}/#website`,
         url: SITE_URL,
         name: "MyProblem",
-        description:
-          "Free AI front door for local businesses. Deferred Projects and a problem-solving knowledge base for Georgia and Israel — not a search-ad mirror.",
+        description: `Free ${SI_FULL} front door for local businesses. Deferred Projects and a problem-solving knowledge base for Georgia and Israel — not a search-ad mirror.`,
         publisher: { "@id": `${SITE_URL}/#organization` },
         inLanguage: "en-US",
       },
@@ -34,9 +38,8 @@ export function JsonLd() {
         "@type": "WebPage",
         "@id": `${SITE_URL}/#webpage`,
         url: SITE_URL,
-        name: "MyProblem — Free AI front door for local businesses",
-        description:
-          "Free forever for local businesses and people. Never enter a card. Tip the person, the AI, or both when help was good. Pilots in Georgia and Israel.",
+        name: "MyProblem — Free SI front door for local businesses",
+        description: `Free forever for local businesses and people. Never enter a card. Tip the person, the ${SI_FULL}, or both when help was good. Pilots in Georgia and Israel.`,
         isPartOf: { "@id": `${SITE_URL}/#website` },
         about: { "@id": `${SITE_URL}/#organization` },
         primaryImageOfPage: `${SITE_URL}/og.jpg`,
@@ -46,8 +49,7 @@ export function JsonLd() {
         "@id": `${SITE_URL}/how-we-run#webpage`,
         url: `${SITE_URL}/how-we-run`,
         name: "How we run",
-        description:
-          "No salaries or subscriptions. Never enter a card. Tip the person, the AI, or both when help was good. Intent, not a contract.",
+        description: `No salaries or subscriptions. Never enter a card. Tip the person, the ${SI_FULL}, or both when help was good. Intent, not a contract.`,
         isPartOf: { "@id": `${SITE_URL}/#website` },
         about: { "@id": `${SITE_URL}/#organization` },
       },
@@ -63,8 +65,7 @@ export function JsonLd() {
           name: "Free forever",
           price: "0",
           priceCurrency: "USD",
-          description:
-            "The service is free. No card is required to post, to answer, or to keep using it. A tip is optional, after a good experience, for the person who helped, the AI that helped, or both.",
+          description: `The service is free. No card is required to post, to answer, or to keep using it. A tip is optional, after a good experience, for the person who helped, the ${SI_FULL} that helped, or both.`,
         },
         description:
           "While you talk and show the problem, one question stays on screen until the requirements are specific. Then a queued Project investigates it. Free forever. No card expected. No salaries.",

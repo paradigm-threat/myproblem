@@ -38,7 +38,7 @@ const doc = new PDFDocument({
     Title: "MyProblem.app for Businesses & Service Providers",
     Author: "MyProblem",
     Subject:
-      "Free forever for businesses and service providers — zero obligation AI tickets",
+      "Free forever for businesses and service providers — zero obligation SI (Super Intelligence, i.e. AI) tickets",
   },
 });
 
@@ -140,7 +140,7 @@ doc
   });
 y = doc.y + 2;
 y = para(
-  "Zero obligation. Ignore anytime. Website → AI tickets (we do not answer your phone yet).",
+  "Zero obligation. Ignore anytime. Website → SI (Super Intelligence, i.e. AI) tickets (we do not answer your phone yet).",
   left,
   y,
   contentW,
@@ -182,7 +182,7 @@ const imgX = rightColX + Math.max(0, (rightColW - imgW) / 2);
 doc.image(businessesWidePath, imgX, bodyTop, { width: imgW, height: imgH });
 let rightY = bodyTop + imgH + 5;
 rightY = para(
-  "Receive → review AI dossier → accept, ask, or ignore entirely → manage only what you accept.",
+  "Receive → review SI dossier → accept, ask, or ignore entirely → manage only what you accept.",
   rightColX,
   rightY,
   rightColW,
