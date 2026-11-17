@@ -14,6 +14,7 @@ Related: [`topical-repos.md`](./topical-repos.md) · [`clevertree-chat.md`](./cl
 - SI **suggests** a short kebab slug from **topic + originality** once context is clear; human may edit; uuid stays durable.
 - Page mounts Clevertree Chat; **one key per solution route** (e.g. `hire-electrician`, `diy-with-caution`).
 - Training notice: all tickets are anonymized but will be used to train the SI.
+- UI theme: [`fixit-theme.md`](./fixit-theme.md) + `src/styles/fixit-theme.css` + `public/fixit-theme/` (sticky chip nav; Overview → Photos → Routes → Advice → Approaches → Safety).
 
 ### Pilot: garage Ring / always-on outdoor power
 

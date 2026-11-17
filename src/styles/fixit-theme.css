@@ -1,0 +1,442 @@
+/* FixIt Theme — MyProblem problem / ticket pages
+   Navy glass palette. Mobile-first. Sticky horizontal chip nav under hero.
+   Sections: Overview · Photos · Routes · Advice / Chat · Approaches · Safety
+   Fonts come from next/font (--font-fraunces / --font-manrope) on the root layout.
+*/
+
+.fixit-theme {
+  --navy: #070d18;
+  --navy-glass: #0f1a2c;
+  --mint: #5fd4a4;
+  --ticket-blue: #4eb8ff;
+  --gold: #f0c14b;
+  --text: #e8eef6;
+  --text-secondary: #a0b0c4;
+  --border: rgba(255, 255, 255, 0.08);
+  --surface: rgba(15, 26, 44, 0.85);
+  --hazard: #f0c14b;
+  --radius: 14px;
+  --shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
+  --font-display: var(--font-fraunces), Georgia, serif;
+  --font-body: var(--font-manrope), system-ui, sans-serif;
+
+  margin: 0;
+  font-family: var(--font-body);
+  background: var(--navy) url("/fixit-theme/bg-navy.jpg") center / cover fixed;
+  background-blend-mode: multiply;
+  color: var(--text);
+  line-height: 1.55;
+  scroll-behavior: smooth;
+  min-height: 100%;
+}
+
+.fixit-theme * {
+  box-sizing: border-box;
+}
+
+/* Sticky hazard bar (shown after scrolling past hero callout) */
+.fixit-hazard-sticky {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  background: rgba(7, 13, 24, 0.92);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--gold);
+  color: var(--gold);
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 0.4rem 1rem;
+  text-align: center;
+  display: none;
+}
+.fixit-hazard-sticky.visible {
+  display: block;
+}
+
+/* Hero */
+.fixit-hero {
+  position: relative;
+  padding: 1.75rem 1rem 1rem;
+  background: linear-gradient(180deg, rgba(7, 13, 24, 0.4) 0%, var(--navy) 100%);
+  border-bottom: 1px solid var(--border);
+}
+.fixit-hero-inner {
+  max-width: 960px;
+  margin: 0 auto;
+}
+.fixit-status-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: rgba(79, 184, 255, 0.15);
+  color: var(--ticket-blue);
+  padding: 0.3rem 0.7rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+}
+.fixit-status-chip.is-solved {
+  background: rgba(95, 212, 164, 0.15);
+  color: var(--mint);
+}
+.fixit-hazard-hero {
+  background: rgba(240, 193, 75, 0.12);
+  border: 1px solid var(--gold);
+  color: var(--gold);
+  padding: 0.6rem 0.9rem;
+  border-radius: 10px;
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+  font-weight: 500;
+}
+.fixit-title {
+  font-family: var(--font-display);
+  font-size: clamp(1.7rem, 5vw, 2.6rem);
+  font-weight: 700;
+  margin: 0 0 0.5rem;
+  line-height: 1.15;
+  color: #fff;
+}
+.fixit-subtitle {
+  color: var(--text-secondary);
+  font-size: 1rem;
+  max-width: 65ch;
+  margin: 0 0 1rem;
+}
+
+/* Share actions near top */
+.fixit-share-row {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-top: 0.5rem;
+  align-items: center;
+  position: relative;
+}
+.fixit-share-row .ticket-vault {
+  display: inline-flex;
+  position: relative;
+}
+.fixit-share-row .ticket-vault-toggle {
+  background: transparent;
+  color: var(--text-secondary);
+  border: 1px solid var(--border);
+  padding: 0.55rem 1rem;
+  border-radius: 999px;
+  font-weight: 600;
+  font-family: inherit;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+.fixit-share-row .ticket-vault-panel {
+  position: absolute;
+  z-index: 35;
+  margin-top: 0.4rem;
+  max-width: 22rem;
+  background: var(--navy-glass);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 0.9rem;
+  box-shadow: var(--shadow);
+}
+
+/* Sticky chip nav */
+.fixit-chip-nav {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  background: rgba(7, 13, 24, 0.88);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border);
+  padding: 0.5rem 0;
+}
+.fixit-hazard-sticky.visible ~ .fixit-chip-nav,
+.fixit-theme:has(.fixit-hazard-sticky.visible) .fixit-chip-nav {
+  top: 2rem;
+}
+.fixit-chips {
+  display: flex;
+  gap: 0.4rem;
+  overflow-x: auto;
+  scrollbar-width: none;
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+.fixit-chips::-webkit-scrollbar {
+  display: none;
+}
+.fixit-chip {
+  flex: 0 0 auto;
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  padding: 0.4rem 0.85rem;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s;
+}
+.fixit-chip:hover,
+.fixit-chip.active {
+  background: var(--mint);
+  color: var(--navy);
+  border-color: var(--mint);
+}
+
+/* Container & cards */
+.fixit-container {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 1.25rem 1rem 3rem;
+}
+.fixit-section {
+  margin-bottom: 2rem;
+  scroll-margin-top: 5.5rem;
+}
+.fixit-card {
+  background: var(--surface);
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem;
+  margin-bottom: 1rem;
+  box-shadow: var(--shadow);
+}
+.fixit-section h2,
+.fixit-card h2 {
+  font-family: var(--font-display);
+  font-size: 1.45rem;
+  margin: 0 0 0.75rem;
+  color: #fff;
+}
+.fixit-lead {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  margin: 0 0 1rem;
+}
+
+/* Photos grid + lightbox */
+.fixit-gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 0.6rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.fixit-gallery .thumb {
+  aspect-ratio: 1;
+  background: #1a2740;
+  border-radius: 10px;
+  overflow: hidden;
+  cursor: pointer;
+  border: 1px solid var(--border);
+  padding: 0;
+  display: block;
+  width: 100%;
+}
+.fixit-gallery .thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.fixit-lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  background: rgba(0, 0, 0, 0.88);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+.fixit-lightbox img {
+  max-width: min(96vw, 1100px);
+  max-height: 90vh;
+  object-fit: contain;
+  border-radius: 8px;
+}
+.fixit-lightbox-close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+}
+
+/* Routes */
+.fixit-routes {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.75rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+@media (min-width: 640px) {
+  .fixit-routes {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+.fixit-route {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1rem;
+  cursor: pointer;
+  transition: border-color 0.15s, transform 0.15s;
+  text-align: left;
+  color: inherit;
+  font: inherit;
+  width: 100%;
+}
+.fixit-route:hover,
+.fixit-route.active {
+  border-color: var(--mint);
+  transform: translateY(-1px);
+}
+.fixit-route strong {
+  display: block;
+  color: var(--mint);
+  font-size: 0.95rem;
+  margin-bottom: 0.25rem;
+}
+.fixit-route p {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+.fixit-route .advise {
+  margin-top: 0.6rem;
+  font-size: 0.8rem;
+  color: var(--ticket-blue);
+  font-weight: 600;
+}
+
+/* Advice / Chat compact */
+.fixit-advice-compact {
+  min-height: 120px;
+}
+.fixit-advice-full {
+  margin-top: 1rem;
+}
+.fixit-advice-full .ticket-chat-host {
+  min-height: 22rem;
+  border: 1px solid var(--border);
+  border-radius: 0.75rem;
+  background: rgba(7, 13, 24, 0.55);
+  padding: 0.5rem;
+  overflow: auto;
+}
+.fixit-expand-btn {
+  margin-top: 0.75rem;
+}
+.fixit-route-focus {
+  display: inline-block;
+  margin-top: 0.5rem;
+  font-size: 0.8rem;
+  color: var(--mint);
+  font-weight: 600;
+}
+
+/* Approaches */
+.fixit-approaches {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.fixit-approach {
+  padding: 0.6rem 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.9rem;
+}
+.fixit-approach:last-child {
+  border-bottom: none;
+}
+.fixit-approach h3 {
+  margin: 0 0 0.2rem;
+  font-size: 1rem;
+  color: var(--mint);
+  font-family: var(--font-body);
+}
+.fixit-approach p {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+}
+
+/* Safety footer */
+.fixit-safety {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+.fixit-safety strong {
+  color: var(--gold);
+}
+.fixit-safety a {
+  color: var(--ticket-blue);
+}
+
+/* Buttons */
+.fixit-btn {
+  background: var(--mint);
+  color: var(--navy);
+  border: none;
+  padding: 0.55rem 1rem;
+  border-radius: 999px;
+  font-weight: 600;
+  font-family: inherit;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+.fixit-btn:hover {
+  filter: brightness(1.1);
+}
+.fixit-btn.secondary {
+  background: transparent;
+  color: var(--mint);
+  border: 1px solid var(--mint);
+}
+.fixit-btn.ghost {
+  background: transparent;
+  color: var(--text-secondary);
+  border: 1px solid var(--border);
+}
+
+/* Notices */
+.fixit-notice {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  margin-top: 1rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--border);
+}
+
+@media (min-width: 900px) {
+  .fixit-container {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+  .fixit-routes {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+/* Ticket page shell under FixIt */
+.ticket-page.fixit-theme {
+  max-width: none;
+  padding: 0;
+  background: transparent;
+}
+.ticket-page.fixit-theme > .site-header,
+.fixit-theme .site-header {
+  max-width: 960px;
+  margin: 0 auto;
+}

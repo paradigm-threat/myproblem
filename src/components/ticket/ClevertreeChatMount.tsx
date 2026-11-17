@@ -8,16 +8,25 @@ type Props = {
   /** Clevertree topic key (= private ticket_uuid). Not shown in the page URL. */
   topic: string;
   title?: string;
+  /** Optional solution-route key to surface when advising. */
+  focusRoute?: string | null;
+  expanded?: boolean;
 };
 
 /**
  * Mount official Clevertree Chat board snippet.
  * Visitor UUID is created on first interaction path (mount primes localStorage).
  */
-export function ClevertreeChatMount({ topic, title }: Props) {
+export function ClevertreeChatMount({
+  topic,
+  title,
+  focusRoute,
+  expanded = true,
+}: Props) {
   const hostRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    if (!expanded) return;
     getOrCreateVisitorId();
     const host = hostRef.current;
     if (!host || !topic) return;
@@ -29,6 +38,7 @@ export function ClevertreeChatMount({ topic, title }: Props) {
     board.setAttribute("data-api-base", CHAT_API_BASE);
     board.setAttribute("data-topic", topic);
     if (title) board.setAttribute("data-title", title);
+    if (focusRoute) board.setAttribute("data-category", focusRoute);
     host.appendChild(board);
 
     const cssId = "clevertree-board-css";
@@ -40,7 +50,9 @@ export function ClevertreeChatMount({ topic, title }: Props) {
       document.head.appendChild(link);
     }
 
-    const prev = document.querySelector<HTMLScriptElement>("script[data-clevertree-board-js]");
+    const prev = document.querySelector<HTMLScriptElement>(
+      "script[data-clevertree-board-js]",
+    );
     if (prev) prev.remove();
     const script = document.createElement("script");
     script.src = `${CHAT_API_BASE}/fronts/snippet/clevertree-board.js`;
@@ -51,17 +63,9 @@ export function ClevertreeChatMount({ topic, title }: Props) {
     return () => {
       host.innerHTML = "";
     };
-  }, [topic, title]);
+  }, [topic, title, focusRoute, expanded]);
 
-  return (
-    <section className="ticket-chat" aria-label="Discuss this problem">
-      <h2 className="ticket-section-title">Talk it through</h2>
-      <p className="ticket-section-lead">
-        Anonymous chat geared toward finding solutions. Use one solution-route
-        key per path (hire-electrician, diy-with-caution, …). The SI organizes
-        after batch curation — it does not pick a winner.
-      </p>
-      <div ref={hostRef} className="ticket-chat-host" />
-    </section>
-  );
+  if (!expanded) return null;
+
+  return <div ref={hostRef} className="ticket-chat-host" />;
 }

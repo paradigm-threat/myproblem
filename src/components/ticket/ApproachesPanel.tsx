@@ -48,7 +48,6 @@ function normalizeApproaches(view: BoardView | null): Approach[] {
 
 /**
  * Solution approaches = Clevertree Chat category keys for this ticket topic.
- * Shows every key with generous space (not a tiny accordion).
  */
 export function ApproachesPanel({ topic, suggestedRoutes = [] }: Props) {
   const [approaches, setApproaches] = useState<Approach[]>([]);
@@ -83,42 +82,48 @@ export function ApproachesPanel({ topic, suggestedRoutes = [] }: Props) {
     return () => clearInterval(t);
   }, [load]);
 
+  const waiting = approaches.length === 0 && suggestedRoutes.length > 0;
+
   return (
-    <section className="ticket-approaches" aria-label="Solution approaches">
-      <h2 className="ticket-section-title">Approaches</h2>
-      <p className="ticket-section-lead">
-        Possible paths to a solution. One key per route. The SI files posts under
-        these after batch curation.
-      </p>
-      {error ? <p className="ticket-approaches-empty">{error}</p> : null}
-      {approaches.length === 0 && suggestedRoutes.length > 0 ? (
-        <ul className="ticket-approaches-list">
-          {suggestedRoutes.map((key) => (
-            <li key={key} className="ticket-approach">
-              <h3>{key}</h3>
-              <p>Waiting for posts — use this key when you advise.</p>
-            </li>
-          ))}
-        </ul>
-      ) : null}
-      {approaches.length === 0 && !suggestedRoutes.length && !error ? (
-        <p className="ticket-approaches-empty">
-          No approaches yet — start the conversation above. Keys appear once posts are curated.
+    <section className="fixit-section" id="approaches" aria-label="Solution approaches">
+      <h2>Approaches</h2>
+      <div className="fixit-card">
+        {error ? <p className="fixit-lead">{error}</p> : null}
+        {waiting ? (
+          <ul className="fixit-approaches">
+            {suggestedRoutes.map((key) => (
+              <li key={key} className="fixit-approach">
+                <h3>{key}</h3>
+                <p>Waiting for posts — use this key when you advise.</p>
+              </li>
+            ))}
+          </ul>
+        ) : null}
+        {approaches.length === 0 && !suggestedRoutes.length && !error ? (
+          <p className="fixit-lead">
+            No approaches yet — start the conversation above. Keys appear once
+            posts are curated.
+          </p>
+        ) : null}
+        {approaches.length > 0 ? (
+          <ul className="fixit-approaches">
+            {approaches.map((a) => (
+              <li key={a.key} className="fixit-approach">
+                <h3>{a.title || a.key}</h3>
+                {a.position ? <p>{a.position}</p> : null}
+                {typeof a.count === "number" ? (
+                  <p>
+                    {a.count} note{a.count === 1 ? "" : "s"}
+                  </p>
+                ) : null}
+              </li>
+            ))}
+          </ul>
+        ) : null}
+        <p className="fixit-notice">
+          Possible paths. SI files posts under these after batch curation.
         </p>
-      ) : null}
-      {approaches.length > 0 ? (
-        <ul className="ticket-approaches-list">
-          {approaches.map((a) => (
-            <li key={a.key} className="ticket-approach">
-              <h3>{a.title || a.key}</h3>
-              {a.position ? <p>{a.position}</p> : null}
-              {typeof a.count === "number" ? (
-                <p className="ticket-approach-meta">{a.count} note{a.count === 1 ? "" : "s"}</p>
-              ) : null}
-            </li>
-          ))}
-        </ul>
-      ) : null}
+      </div>
     </section>
   );
 }
