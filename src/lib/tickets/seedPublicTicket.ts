@@ -1,6 +1,5 @@
-import { readFile } from "node:fs/promises";
-import { join } from "node:path";
 import type { PublicProblemView } from "./slugResolve";
+import garageRingPower from "../../../content/public-tickets/garage-ring-power.json";
 
 export type SeedPublicTicket = {
   schema: string;
@@ -18,24 +17,18 @@ export type SeedPublicTicket = {
   note?: string;
 };
 
-const SEED_DIR = join(process.cwd(), "content/public-tickets");
+/** Bundled pilot seeds — prefer these over Intake so public pages stay online. */
+const SEEDS: Record<string, SeedPublicTicket> = {
+  "garage-ring-power": garageRingPower as SeedPublicTicket,
+};
 
-export async function loadSeedPublicTicket(
-  slug: string,
-): Promise<SeedPublicTicket | null> {
+export function loadSeedPublicTicket(slug: string): SeedPublicTicket | null {
   const key = String(slug || "")
     .trim()
     .toLowerCase()
     .replace(/[^a-z0-9-]/g, "");
   if (!key) return null;
-  try {
-    const raw = await readFile(join(SEED_DIR, `${key}.json`), "utf8");
-    const data = JSON.parse(raw) as SeedPublicTicket;
-    if (!data?.slug || !data?.title) return null;
-    return data;
-  } catch {
-    return null;
-  }
+  return SEEDS[key] || null;
 }
 
 export function seedToPublicProblemView(seed: SeedPublicTicket): PublicProblemView {

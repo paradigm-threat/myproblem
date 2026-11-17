@@ -20,12 +20,14 @@ export function generateStaticParams() {
 }
 
 async function loadPublicProblem(slug: string): Promise<PublicProblemView | null> {
+  // Bundled seeds first — no Intake round-trip, keeps pilot pages static/online.
+  const seed = loadSeedPublicTicket(slug);
+  if (seed) return seedToPublicProblemView(seed);
+
   const resolved = await resolveSlugOnIntake(slug);
   if (resolved?.tip) {
     return toPublicProblemView(resolved.tip, resolved.slug, resolved.region);
   }
-  const seed = await loadSeedPublicTicket(slug);
-  if (seed) return seedToPublicProblemView(seed);
   return null;
 }
 
