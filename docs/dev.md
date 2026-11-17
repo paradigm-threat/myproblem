@@ -48,9 +48,9 @@ Access may require an invite. Email [ari@asu.edu](mailto:ari@asu.edu) if you wan
 - Web `/submit` (text + photos) with **opt-in** public slug; mint_slug:false by default on web
 - Unpublish-slug API (drop public link; tip kept)
 - This `/dev` page + living `docs/dev.md`
+- Intake production Spot redeploy with `mint_slug`, `suggest-slug`, `unpublish-slug`, Bunny expire helpers
 
 ### In progress
-- Deploy Intake `mint_slug` / `unpublish-slug` to production Spot
 - Polish web submit UX; more device QA
 - Keep FixIt / public ticket UI iterating from real shares
 
