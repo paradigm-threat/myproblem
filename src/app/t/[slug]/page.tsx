@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { Suspense } from "react";
 import { ProblemTicketView } from "@/components/ticket/ProblemTicketView";
 import { SiteHeader } from "@/components/SiteHeader";
 import { OG_IMAGE, SITE_URL, TICKET_TRAINING_NOTICE } from "@/lib/contact";
@@ -13,6 +14,10 @@ import { resolveSlugOnIntake } from "@/lib/tickets/slugResolve";
 import type { PublicProblemView } from "@/lib/tickets/slugResolve";
 
 type Ctx = { params: Promise<{ slug: string }> };
+
+export function generateStaticParams() {
+  return [{ slug: "garage-ring-power" }];
+}
 
 async function loadPublicProblem(slug: string): Promise<PublicProblemView | null> {
   const resolved = await resolveSlugOnIntake(slug);
@@ -53,11 +58,26 @@ export async function generateMetadata({ params }: Ctx): Promise<Metadata> {
   };
 }
 
-export default async function TicketSlugPage({ params }: Ctx) {
+async function TicketMain({ params }: Ctx) {
   const { slug } = await params;
   const problem = await loadPublicProblem(slug);
   if (!problem) notFound();
 
+  return (
+    <>
+      <ProblemTicketView problem={problem} />
+      <p className="ticket-footer-note">
+        {TICKET_TRAINING_NOTICE} Public link is this short slug while the
+        problem is live.{" "}
+        <Link href="/privacy">Privacy</Link>
+        {" · "}
+        <Link href="/terms">Terms</Link>
+      </p>
+    </>
+  );
+}
+
+export default function TicketSlugPage({ params }: Ctx) {
   return (
     <>
       <a className="skip-link" href="#main">
@@ -65,14 +85,13 @@ export default async function TicketSlugPage({ params }: Ctx) {
       </a>
       <SiteHeader variant="demo" />
       <main id="main" className="ticket-page site">
-        <ProblemTicketView problem={problem} />
-        <p className="ticket-footer-note">
-          {TICKET_TRAINING_NOTICE} Public link is this short slug while the
-          problem is live.{" "}
-          <Link href="/privacy">Privacy</Link>
-          {" · "}
-          <Link href="/terms">Terms</Link>
-        </p>
+        <Suspense
+          fallback={
+            <p className="ticket-section-lead">Loading this problem…</p>
+          }
+        >
+          <TicketMain params={params} />
+        </Suspense>
       </main>
     </>
   );
