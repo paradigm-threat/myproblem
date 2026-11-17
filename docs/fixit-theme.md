@@ -24,7 +24,7 @@ MyProblem problem / ticket pages. Navy glass palette, mobile-first, sticky horiz
 - Fonts: Fraunces (display) + Manrope (body)
 
 ## Key behaviors
-- Hazard soft-stop: full callout in hero; thin sticky bar on scroll. Outranks status.
+- Hazard soft-stop: full callout in the hero only (not sticky). Outranks status.
 - Share + Remember near top (peer to Advise).
 - Advise / join chat near each route.
 - Routes never collapse. Empty routes stay quiet “waiting for posts”.

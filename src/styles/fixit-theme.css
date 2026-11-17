@@ -34,25 +34,6 @@
   box-sizing: border-box;
 }
 
-/* Sticky hazard bar (shown after scrolling past hero callout) */
-.fixit-hazard-sticky {
-  position: sticky;
-  top: 0;
-  z-index: 40;
-  background: rgba(7, 13, 24, 0.92);
-  backdrop-filter: blur(12px);
-  border-bottom: 1px solid var(--gold);
-  color: var(--gold);
-  font-size: 0.8rem;
-  font-weight: 600;
-  padding: 0.4rem 1rem;
-  text-align: center;
-  display: none;
-}
-.fixit-hazard-sticky.visible {
-  display: block;
-}
-
 /* Hero */
 .fixit-hero {
   position: relative;
@@ -150,10 +131,6 @@
   backdrop-filter: blur(16px);
   border-bottom: 1px solid var(--border);
   padding: 0.5rem 0;
-}
-.fixit-hazard-sticky.visible ~ .fixit-chip-nav,
-.fixit-theme:has(.fixit-hazard-sticky.visible) .fixit-chip-nav {
-  top: 2rem;
 }
 .fixit-chips {
   display: flex;

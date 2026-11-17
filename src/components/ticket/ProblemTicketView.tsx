@@ -7,7 +7,6 @@ import { TICKET_TRAINING_NOTICE } from "@/lib/contact";
 import { ApproachesPanel } from "./ApproachesPanel";
 import { FixitAdviceSection } from "./FixitAdviceSection";
 import { FixitChipNav } from "./FixitChipNav";
-import { FixitHazardSticky } from "./FixitHazardSticky";
 import { FixitPhotoGallery } from "./FixitPhotoGallery";
 import { FixitShareRow } from "./FixitShareRow";
 import { RememberTicket } from "./RememberTicket";
@@ -41,8 +40,6 @@ export function ProblemTicketView({ problem }: { problem: PublicProblemView }) {
     <article className="ticket-problem">
       <RememberTicket problem={problem} />
 
-      {problem.hazard ? <FixitHazardSticky hazard={problem.hazard} /> : null}
-
       <header className="fixit-hero" id="overview">
         <div className="fixit-hero-inner">
           <div
@@ -52,11 +49,7 @@ export function ProblemTicketView({ problem }: { problem: PublicProblemView }) {
             {solved ? "Solved" : "Unsolved"}
           </div>
           {problem.hazard ? (
-            <div
-              className="fixit-hazard-hero"
-              id="fixit-hazard-hero"
-              role="status"
-            >
+            <div className="fixit-hazard-hero" role="status">
               Hazard: {problem.hazard}. Soft stop — humans advise; SI organizes
               solution routes, it does not authorize live panel work.
             </div>
