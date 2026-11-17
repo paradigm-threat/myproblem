@@ -10,6 +10,7 @@ import { FixitChipNav } from "./FixitChipNav";
 import { FixitPhotoGallery } from "./FixitPhotoGallery";
 import { FixitShareRow } from "./FixitShareRow";
 import { RememberTicket } from "./RememberTicket";
+import { TicketStatusCard } from "./TicketStatusCard";
 
 const DEFAULT_ROUTES = [
   "hire-electrician",
@@ -20,7 +21,6 @@ const DEFAULT_ROUTES = [
 ];
 
 export function ProblemTicketView({ problem }: { problem: PublicProblemView }) {
-  const solved = problem.resolution === "solved";
   const routes =
     problem.solutionRoutes?.length ? problem.solutionRoutes : DEFAULT_ROUTES;
   const [focusRoute, setFocusRoute] = useState<string | null>(null);
@@ -42,19 +42,13 @@ export function ProblemTicketView({ problem }: { problem: PublicProblemView }) {
 
       <header className="fixit-hero" id="overview">
         <div className="fixit-hero-inner">
-          <div
-            className={`fixit-status-chip${solved ? " is-solved" : ""}`}
-            aria-label={solved ? "Solved" : "Unsolved"}
-          >
-            {solved ? "Solved" : "Unsolved"}
-          </div>
           {problem.hazard ? (
             <div className="fixit-hazard-hero" role="status">
               Hazard: {problem.hazard}. Soft stop — humans advise; SI organizes
               solution routes, it does not authorize live panel work.
             </div>
           ) : null}
-          <h1 className="fixit-title">{problem.title}</h1>
+          <TicketStatusCard problem={problem} />
           {problem.description ? (
             <p className="fixit-subtitle">{problem.description}</p>
           ) : (
