@@ -84,6 +84,8 @@ When the batch LLM must **research** — public web, local maps, business hours,
 
 Research that only re-states Google/Yelp fields does not belong in the KB. Research that produces a **ticket-driven assessment** compounds.
 
+**Local resources + forums:** Batch may search allowed public pages and forums for place-tied help (`hire-electrician`, AHJ, co-ops). Store **short helper briefs + live URL cites** — not full-thread scrapes. Honest Limits when bots are blocked. **No boosting.** See `myproblem-tickets/workers/batch/local-resource-research.mjs` · [`fixit-and-repair.md`](./fixit-and-repair.md).
+
 **Repo:** [`myproblem-kb`](../../myproblem-kb) (`MYPROBLEM_KB_ROOT`). E2E: `npm run test:kb` in `myproblem-tickets`.
 
 **Seeded general how-to:** [Set up a website nearly for free](../../myproblem-kb/general/web/set-up-website-nearly-free.md) (Vercel free + domain DNS; LLM build/deploy; Spot/MCP for burst compute). Product follow-on: [`batched-agent-work.md`](./batched-agent-work.md) — **major coming soon:** batched coding/docs/media (not realtime IDE); [`coding-and-websites.md`](./coding-and-websites.md).

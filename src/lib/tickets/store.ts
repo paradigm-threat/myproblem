@@ -13,15 +13,24 @@ function tipPath(id: string) {
   return join(DATA_ROOT, id, "tip.json");
 }
 
-export function emptyTip(id: string, region: TicketRegion = "georgia"): TicketTip {
+export function emptyTip(
+  id: string,
+  region: TicketRegion = "georgia",
+  opts?: { raiser_visitor_id?: string | null; live_slug?: string | null },
+): TicketTip {
   const now = Date.now();
   return {
     schema: "myproblem.ticket.tip.v1",
     ticket_uuid: id,
+    region,
     claim: null,
+    preserve: false,
     createdAtMs: now,
     updatedAtMs: now,
     status: "open",
+    resolution: "unsolved",
+    raiser_visitor_id: opts?.raiser_visitor_id ?? null,
+    live_slug: opts?.live_slug ?? null,
     fields: {
       title: { value: "Listening…", source: "intake", locked: false },
       description: { value: "", source: "intake", locked: false },
@@ -39,9 +48,7 @@ export function emptyTip(id: string, region: TicketRegion = "georgia"): TicketTi
         atMs: now,
       },
     ],
-    // extended fields carried in JSON even if types lag
-    ...( { region, preserve: false } as object),
-  } as TicketTip;
+  };
 }
 
 export function saveTip(tip: TicketTip) {

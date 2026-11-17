@@ -61,6 +61,9 @@ export type TimelineEntry = {
 
 export type TicketRegion = "georgia" | "israel";
 
+/** SI/batch-owned. Live clients never set this. */
+export type TicketResolution = "unsolved" | "solved";
+
 export type TicketTip = {
   schema: "myproblem.ticket.tip.v1";
   ticket_uuid: string;
@@ -72,6 +75,15 @@ export type TicketTip = {
   createdAtMs: number;
   updatedAtMs: number;
   status: "open" | "closed";
+  /** Problem resolution — batch SI only. */
+  resolution: TicketResolution;
+  /**
+   * Clevertree Chat / device visitor id of who raised the ticket.
+   * Used by rule sheets for raiser weight — not a public identity.
+   */
+  raiser_visitor_id?: string | null;
+  /** Live share slug while mapped; omit/null when permalink revoked. */
+  live_slug?: string | null;
   fields: {
     title: TicketField;
     description: TicketField;

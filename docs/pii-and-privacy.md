@@ -29,6 +29,7 @@ Before any commit to `tip.json` / `index.md`:
 | Phone, email | Withheld |
 | Precise GPS | Coarse geohash / city |
 | OCR of mail / ID / faces in stills | Drop or coarsen — never dump raw into tip text |
+| Faces / bodies / street numbers / plates in **public** stills | Batch scrub (blur/crop) + strip EXIF before Bunny or `myproblem.app/t/…` — fail closed ([`fixit/batch-prompt-pack.md`](./fixit/batch-prompt-pack.md)) |
 
 - Prefer **client-side** redaction before upload when possible.
 - **Server-side conversion is mandatory** so accidental uploads still become safe before git commit.

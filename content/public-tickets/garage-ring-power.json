@@ -1,0 +1,27 @@
+{
+  "schema": "myproblem.public.seed.v1",
+  "slug": "garage-ring-power",
+  "ticket_uuid": "pilot-garage-ring-power",
+  "region": "georgia",
+  "resolution": "unsolved",
+  "chatTopic": "garage-ring-power",
+  "title": "Garage lights kill outdoor / Ring power",
+  "description": "I want the outdoor feed (Ring camera / always-on outlet) to stay powered when the garage lights are switched off. Right now the wall socket that feeds outside appears tied into the light-switch circuit — power drops when the lights go off. Photos show mixed older wiring: metal boxes, conduit, yellow NM cable into a secondary box at the switch. Goal: leave lighting switched; move the yellow outdoor feed onto an always-hot source if that is safe and correct. Looking for advice organized by path: hire an electrician vs DIY-with-caution vs need more evidence.",
+  "coachLine": "Safety warning: electrical work can injure or kill. Do not touch live conductors. Prefer a licensed electrician if you are unsure. This page collects advice for humans — it is not a wiring permit or verified splice plan.",
+  "hazard": "electrical",
+  "solutionRoutes": [
+    "hire-electrician",
+    "diy-with-caution",
+    "more-evidence-needed",
+    "permit-or-ahj",
+    "other"
+  ],
+  "stills": [
+    { "id": "01", "uri": "/pilot/garage-ring-power/01-junction-box.jpg", "alt": "Cropped junction box wiring" },
+    { "id": "02", "uri": "/pilot/garage-ring-power/02-open-wiring.jpg", "alt": "Cropped open box conductors" },
+    { "id": "03", "uri": "/pilot/garage-ring-power/03-yellow-cable.jpg", "alt": "Cropped yellow cable path" },
+    { "id": "04", "uri": "/pilot/garage-ring-power/04-switch-conduit.jpg", "alt": "Cropped switch and conduit" },
+    { "id": "05", "uri": "/pilot/garage-ring-power/05-ceiling-runs.jpg", "alt": "Cropped ceiling cable runs" }
+  ],
+  "note": "Pilot public ticket. Photos are cropped and re-encoded without EXIF. Wide exterior shots omitted. All tickets are anonymized but may be used to train the SI (Super Intelligence, i.e. AI)."
+}

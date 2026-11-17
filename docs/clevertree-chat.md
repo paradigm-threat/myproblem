@@ -35,8 +35,11 @@ Related: [`projects.md`](./projects.md) · [`knowledge-base.md`](./knowledge-bas
 | Knowledge-base reader articles | Article stays the KB page; debate hangs off it |
 | Marketing / public myproblem.app pages that make a claim | Optional standing debate |
 | Published handoff posts | Redacted public file; debate allowed on that public object |
+| **`myproblem.app/t/[slug]`** | Public help ticket page: Clevertree board + **solution-route** keys (hire-electrician, diy-with-caution, …) |
 
 Loading a page or tip does **not** invent a topic. A topic exists when a person submits the **first words** (Clevertree Chat rule).
+
+**Repair / public help tickets:** use solution-finding rules — **one key per solution route**. Template: [`fixit/solution-route-rules.md`](./fixit/solution-route-rules.md). SI organizes; humans prefer.
 
 ---
 
@@ -119,12 +122,19 @@ Private tip evidence and raw comment PII never jump straight into public KB arti
 
 ---
 
+## Web ticket mount
+
+- Public page: `https://myproblem.app/t/<live-slug>` ([`anonymous-tickets.md`](./anonymous-tickets.md)).
+- Topic key for Clevertree Chat = private `ticket_uuid` (not in the URL).
+- Category keys render as **solution approaches** below chat.
+- Problem/solution + raiser-weight policy lives in rule sheets (`default-rules.md` + `myproblem-tickets/schema/comments-rules.myproblem.md`), not Next if/else.
+
 ## Implementation checklist (docs → code)
 
-1. Mount Clevertree Chat on ticket UI (Intake/APK/web tip view) with topic key ↔ `ticket_uuid`.  
-2. Ensure **home** topical ticket repos have a published **`comments` branch** layout compatible with clevertree-chat.  
+1. ~~Mount Clevertree Chat on ticket UI (web `/t/[slug]`) with topic key ↔ `ticket_uuid`.~~  
+2. Ensure **home** topical ticket repos have a published **`comments` branch** layout compatible with clevertree-chat (bootstrap from `schema/comments-rules.myproblem.md`).  
 3. Enqueue comment jobs on submit; Batch drains home `comments` with existing wake/decommission scripts (or shared wake that covers both tip + comments bins).  
-4. After useful curation: redacted writes to **associated** KBs ([`knowledge-base.md`](./knowledge-base.md)).  
+4. After useful curation: redacted writes to **associated** KBs ([`knowledge-base.md`](./knowledge-base.md)); on `solved`, drop live slug via Intake.  
 5. Keep tip dossier and debate storage separate (branch split).  
 6. Align marketing: communication = Clevertree Chat; investigation = Project batch.  
 7. Update embed/snippet from `clevertree-chat` rather than inventing a second comment stack.  

@@ -50,6 +50,7 @@ Batch (SJC A30) ──► Groq Whisper + VL/Project
 - Close without `preserve` → delete tip tree; with `preserve` → keep closed tip.
 - Mesh clones trim history (~**48h**); one offline master backup for integrity/anti-fraud only.
 - PII: see [`pii-and-privacy.md`](./pii-and-privacy.md).
+- Public share: `myproblem.app/t/[slug]`; SI suggests topical slug via `POST /api/tickets/:id/suggest-slug` after context is clear (human may edit + apply). Scrubbed Bunny stills while live; expire on solve.
 
 Job bins are **files** under each tip (not Neon):
 

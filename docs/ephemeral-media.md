@@ -12,7 +12,8 @@
 | Purge after success | After the job is `done`, Intake **deletes** the temp file and clears `evidence.uri` (keep `sha256`, `kind`, ids). |
 | No media in git | `*.wav` / `*.mp3` / `*.m4a` / `*.bin` under fixtures and `.data/` stay gitignored. Catalogs + goldens are text. |
 | No video Evidence | Stills only. Preview buffers never leave the device as video files. |
-| Future links | Tip may later point at short-lived S3/IPFS URLs; same purge-after-process contract. |
+| Bunny live stills (public) | After **scrub**, stills for a **live** public tip may use Bunny CDN URLs (`bunnyMedia.mjs`). **Expire/delete** when ticket is solved, public post removed, or that Evidence is removed. Public pages never link raw uploads. |
+| Pilot static | Manual scrubbed crops under `public/pilot/<slug>/` on myproblem.app until Bunny is wired. |
 
 ## Tip Evidence shape (after process)
 
@@ -46,8 +47,13 @@ See [`progressive-transcription.md`](./progressive-transcription.md) § Reproces
 | Local / Docker | `.data/cache/…` |
 | Vercel in-process | Prefer proxy to Intake; if local, `/tmp/myproblem-cache/…` (ephemeral per instance) |
 
+## Scrub before public
+
+Batch must blur/remove faces, bodies, street numbers, plates, and strip EXIF before Bunny or public links (`stillScrub.mjs` · [`fixit/batch-prompt-pack.md`](./fixit/batch-prompt-pack.md)). Fail closed.
+
 ## Related
 
 - [`intake-batch-infra.md`](./intake-batch-infra.md)
 - [`progressive-transcription.md`](./progressive-transcription.md)
 - [`apk-ticket-ux.md`](./apk-ticket-ux.md)
+- [`fixit-and-repair.md`](./fixit-and-repair.md)

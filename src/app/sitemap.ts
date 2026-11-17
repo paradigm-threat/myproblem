@@ -2,7 +2,7 @@ import type { MetadataRoute } from "next";
 import { SITE_URL } from "@/lib/contact";
 
 /** Change this when a public page's content changes. Do not use new Date(). */
-const CONTENT_UPDATED = new Date("2026-11-12");
+const CONTENT_UPDATED = new Date("2026-11-17");
 
 export default function sitemap(): MetadataRoute.Sitemap {
   return [
@@ -11,6 +11,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       lastModified: CONTENT_UPDATED,
       changeFrequency: "weekly",
       priority: 1,
+    },
+    {
+      url: `${SITE_URL}/t/garage-ring-power`,
+      lastModified: CONTENT_UPDATED,
+      changeFrequency: "weekly",
+      priority: 0.7,
     },
     {
       url: `${SITE_URL}/how-we-run`,

@@ -1155,3 +1155,246 @@ section h2 {
     transition: none !important;
   }
 }
+
+/* —— Ticket problem page (/t/[slug]) —— */
+.ticket-page {
+  padding: 1.5rem 1.25rem 4rem;
+  max-width: 52rem;
+  margin: 0 auto;
+}
+
+.ticket-problem-top {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1.5rem;
+}
+
+.ticket-eyebrow {
+  font-size: 0.85rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin: 0 0 0.5rem;
+}
+
+.ticket-resolution {
+  display: inline-block;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 0.25rem 0.65rem;
+  border-radius: 0.35rem;
+  margin: 0 0 0.75rem;
+}
+
+.ticket-resolution.is-unsolved {
+  background: rgba(240, 193, 75, 0.18);
+  color: var(--warm);
+  border: 1px solid rgba(240, 193, 75, 0.35);
+}
+
+.ticket-resolution.is-solved {
+  background: rgba(95, 212, 164, 0.16);
+  color: var(--accent);
+  border: 1px solid rgba(95, 212, 164, 0.35);
+}
+
+.ticket-title {
+  font-family: var(--font-display);
+  font-size: clamp(1.85rem, 4vw, 2.6rem);
+  font-weight: 550;
+  letter-spacing: -0.03em;
+  margin: 0 0 0.75rem;
+  line-height: 1.15;
+}
+
+.ticket-description {
+  font-size: 1.05rem;
+  line-height: 1.55;
+  margin: 0 0 0.75rem;
+  color: var(--ink);
+}
+
+.ticket-description.is-muted,
+.ticket-coach,
+.ticket-section-lead,
+.ticket-stills-empty,
+.ticket-approaches-empty,
+.ticket-vault-warn,
+.ticket-vault-empty,
+.ticket-footer-note,
+.ticket-approach-meta {
+  color: var(--muted);
+}
+
+.ticket-coach {
+  font-size: 0.95rem;
+  margin: 0;
+}
+
+.ticket-hazard {
+  margin: 0.5rem 0 0;
+  padding: 0.65rem 0.85rem;
+  border-left: 3px solid #e2a33a;
+  background: rgba(226, 163, 58, 0.12);
+  color: var(--ink);
+  font-size: 0.95rem;
+  line-height: 1.45;
+}
+
+.ticket-note {
+  margin: 0.75rem 0 0;
+  font-size: 0.92rem;
+  line-height: 1.45;
+  color: var(--muted);
+}
+
+.ticket-routes-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  list-style: none;
+  margin: 0.75rem 0 0;
+  padding: 0;
+}
+
+.ticket-routes-list code {
+  display: inline-block;
+  padding: 0.35rem 0.55rem;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.06);
+  font-size: 0.85rem;
+}
+
+.ticket-section-title {
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+  font-weight: 550;
+  margin: 2.25rem 0 0.4rem;
+}
+
+.ticket-section-lead {
+  margin: 0 0 1rem;
+  font-size: 0.95rem;
+  line-height: 1.45;
+}
+
+.ticket-stills-grid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(9.5rem, 1fr));
+  gap: 0.65rem;
+}
+
+.ticket-stills-grid img {
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+  border-radius: 0.5rem;
+  border: 1px solid var(--line);
+  background: var(--bg-elevated);
+}
+
+.ticket-chat-host {
+  min-height: 18rem;
+  border: 1px solid var(--line);
+  border-radius: 0.75rem;
+  background: var(--bg-elevated);
+  padding: 0.5rem;
+  overflow: auto;
+}
+
+.ticket-approaches-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  min-height: 12rem;
+}
+
+.ticket-approach {
+  border: 1px solid var(--line);
+  border-radius: 0.75rem;
+  padding: 1.1rem 1.2rem;
+  background: rgba(15, 26, 44, 0.65);
+}
+
+.ticket-approach h3 {
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  margin: 0 0 0.4rem;
+  font-weight: 550;
+}
+
+.ticket-approach p {
+  margin: 0;
+  line-height: 1.5;
+  font-size: 0.98rem;
+}
+
+.ticket-share,
+.ticket-vault-toggle {
+  appearance: none;
+  border: 1px solid var(--line);
+  background: var(--bg-elevated);
+  color: var(--ink);
+  font: inherit;
+  font-size: 0.9rem;
+  padding: 0.45rem 0.85rem;
+  border-radius: 0.45rem;
+  cursor: pointer;
+}
+
+.ticket-share:hover,
+.ticket-vault-toggle:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.ticket-vault {
+  position: relative;
+}
+
+.ticket-vault-panel {
+  position: absolute;
+  z-index: 20;
+  top: calc(100% + 0.4rem);
+  left: 0;
+  width: min(22rem, 90vw);
+  padding: 0.9rem 1rem;
+  border-radius: 0.6rem;
+  border: 1px solid var(--line);
+  background: #0c1524;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.45);
+}
+
+.ticket-vault-warn {
+  font-size: 0.82rem;
+  line-height: 1.4;
+  margin: 0 0 0.75rem;
+}
+
+.ticket-vault-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.ticket-vault-list li {
+  margin: 0 0 0.45rem;
+  font-size: 0.92rem;
+}
+
+.ticket-footer-note {
+  margin-top: 3rem;
+  font-size: 0.88rem;
+  line-height: 1.45;
+}

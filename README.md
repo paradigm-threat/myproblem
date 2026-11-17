@@ -42,6 +42,9 @@ npm run dev
 | [`docs/progressive-transcription.md`](docs/progressive-transcription.md) | Audio Evidence → first ASR; LLM retranscription; no video |
 | [`docs/backbone-escalate.md`](docs/backbone-escalate.md) | Rare Bedrock/frontier escalate in batch |
 | [`docs/knowledge-base.md`](docs/knowledge-base.md) | Git Markdown KB (primary learning) + channels + browser honesty |
+| [`docs/topical-repos.md`](docs/topical-repos.md) | Progressive topical ticket+KB repos; human mint; server cache if missing |
+| [`docs/fixit-and-repair.md`](docs/fixit-and-repair.md) | Repair scope; public `/t/` tickets; Bunny scrub; garage pilot |
+| [`docs/clevertree-chat.md`](docs/clevertree-chat.md) | Clevertree on tickets + public `/t/` solution routes |
 | [`docs/coding-and-websites.md`](docs/coding-and-websites.md) | Nearly-free sites (KB) + coding/site-build assist coming soon |
 | [`docs/batched-agent-work.md`](docs/batched-agent-work.md) | **Major coming soon:** batched coding/docs/media vs realtime Cursor/Codex |
 | [`docs/spot-ai-mvp.md`](docs/spot-ai-mvp.md) | Spot GPU test standup |

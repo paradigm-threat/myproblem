@@ -60,7 +60,7 @@ If the batch pass is still under 65, the phase becomes **human**:
 
 - The coach says a person should continue.
 - A redacted post is written to `public/<ticket_uuid>.json` in the regional repo.
-- `GET /api/public/posts/:uuid` returns that post with no claim and no media URIs.
+- `GET /api/public/posts/:uuid` returns that post with no claim. Media URIs only when stills are **scrubbed** (Bunny / pilot); never raw uploads. Public HTML: `myproblem.app/t/[slug]`.
 - `GET /api/public/posts` lists **published posts only**. `GET /api/tickets` is still not a list.
 - The private tip still requires the claim. Publishing the UUID does not grant edit access.
 - Street, phone, email, and repair-step sentences are removed before the post is stored.
