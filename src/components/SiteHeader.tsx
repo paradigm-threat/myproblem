@@ -7,6 +7,7 @@ import { useEffect, useId, useState } from "react";
 type NavItem = { href: string; label: string };
 
 const HOME_LINKS: NavItem[] = [
+  { href: "/submit", label: "Try it now" },
   { href: "/#businesses", label: "For businesses" },
   { href: "/#people", label: "For people" },
   { href: "/#projects", label: "Projects" },
@@ -14,13 +15,14 @@ const HOME_LINKS: NavItem[] = [
   { href: "/#investors", label: "Investors" },
   { href: "/#regions", label: "Regions" },
   { href: "/how-we-run", label: "How we run" },
-  { href: "/#signup", label: "Join" },
+  { href: "/dev", label: "Dev" },
 ];
 
 const DEMO_LINKS: NavItem[] = [
   { href: "/", label: "Home" },
+  { href: "/submit", label: "Try it now" },
   { href: "/how-we-run", label: "How we run" },
-  { href: "/#signup", label: "Join" },
+  { href: "/dev", label: "Dev" },
   { href: "/terms", label: "Terms" },
   { href: "/privacy", label: "Privacy" },
 ];

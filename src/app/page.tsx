@@ -1,5 +1,4 @@
 import Image from "next/image";
-import { SignupForm } from "@/components/SignupForm";
 import { SiteHeader } from "@/components/SiteHeader";
 import {
   BUSINESS_PDF_PATH,
@@ -47,7 +46,9 @@ export default function HomePage() {
           <div className="hero-bar">
             <div className="site hero-bar-inner">
               <p className="eyebrow">
-                Pilots in Georgia and Israel. The product is not finished.
+                Pilots in Georgia and Israel. Work in progress — building as we
+                go. Looking for help where appropriate →{" "}
+                <a href="/dev">Dev</a>.
               </p>
               <h1 id="hero-heading" className="hero-title">
                 Free for local businesses. Thorough help for people.
@@ -69,8 +70,8 @@ export default function HomePage() {
                 <a href="/how-we-run">How we run</a>.
               </p>
               <div className="cta-row">
-                <a className="btn-primary" href="#signup">
-                  Join the business waitlist
+                <a className="btn-primary" href="/submit">
+                  Try it now
                 </a>
                 <a
                   className="btn-secondary"
@@ -697,21 +698,14 @@ export default function HomePage() {
               interest and prioritize where businesses and people both show up.
             </p>
             <p style={{ marginTop: "1.25rem" }}>
-              <a className="btn-primary" href="#signup">
-                Request your region
+              <a className="btn-primary" href={`mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent("MyProblem region interest")}`}>
+                Email region interest
+              </a>
+              {" "}
+              <a className="btn-secondary" href="/dev">
+                Help build it
               </a>
             </p>
-          </section>
-
-          <section id="signup" aria-labelledby="signup-heading">
-            <h2 id="signup-heading">Get on the list</h2>
-            <p className="section-lead" id="signup-lead">
-              Businesses, people with Problems, investors, and region interest —
-              fill the form to open your mail app with a prefilled message, or
-              write us anytime at{" "}
-              <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>.
-            </p>
-            <SignupForm defaultRole="business" id="waitlist" />
           </section>
         </div>
       </main>
@@ -730,7 +724,11 @@ export default function HomePage() {
         <nav className="footer-nav" aria-label="Footer">
           <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>
           <span aria-hidden="true"> · </span>
+          <a href="/submit">Try it now</a>
+          <span aria-hidden="true"> · </span>
           <a href="/how-we-run">How we run</a>
+          <span aria-hidden="true"> · </span>
+          <a href="/dev">Dev</a>
           <span aria-hidden="true"> · </span>
           <a
             href={BUSINESS_PDF_PATH}
@@ -755,8 +753,9 @@ export default function HomePage() {
         </nav>
         <p>
           Operated by Clevertree LLC (Georgia). Pilots in Georgia and Israel.
-          The product is not finished. You should never expect to enter a
-          card. Built on{" "}
+          Work in progress — building as we go. Looking for help →{" "}
+          <a href="/dev">Dev</a>. You should never expect to enter a card. Built
+          on{" "}
           <a href={RELAY_URL} rel="noopener noreferrer" target="_blank">
             Relay
           </a>

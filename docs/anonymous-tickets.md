@@ -21,9 +21,13 @@ Related: [`projects.md`](./projects.md) · [`apk-ticket-ux.md`](./apk-ticket-ux.
 | **Map SoT** | Private Relay file `live-slugs.json` per region (repo **not** world-readable) | Tip path key |
 | **Kill switch** | Drop row on solved / closed / TTL / revoke → public link **404** | May still reach preserved tip with uuid+claim privately |
 
-- Mint on create; return `slug` + `ticket_uuid` + `claim` to the creator client only.
-- Web vault (`localStorage`) stores private uuid + current slug on-device. No server ticket directory.
+- APK may mint a live slug on create (`mint_slug` default true). **Web `/submit` sends `mint_slug: false`** and only mints if the user opts into a public slug (`suggest-slug` apply).
+- Return `ticket_uuid` + `claim` (+ `slug` when minted) to the creator client only. UUID may display on the owner success screen; **never** in public nav, share CTAs, OG, or the address bar.
+- Web vault (`localStorage`) stores private uuid + claim + current slug on-device. No server ticket directory.
+- Unpublish: `POST /api/tickets/:id/unpublish-slug` drops the live slug (public `/t/` → 404); tip remains.
+- **Delete or mark resolved deletes uploaded assets (photos) unless instructions say otherwise** (close purges evidence URIs; solved expires Bunny media).
 - Ticket pages are `noindex`; `/t/` is disallowed in robots.
+- Web submit details: [`web-submit.md`](./web-submit.md) · status: [`dev.md`](./dev.md).
 
 ## Resolution (problem solved?)
 

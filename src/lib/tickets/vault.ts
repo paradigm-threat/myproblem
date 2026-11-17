@@ -10,6 +10,8 @@ export const TICKET_VAULT_KEY = "myproblem.ticketVault";
 
 export type VaultTicket = {
   ticket_uuid: string;
+  /** Capability secret for owner session — never put in public nav/URLs. */
+  claim?: string | null;
   slug?: string | null;
   title?: string;
   seenAt: number;
@@ -51,9 +53,10 @@ function writeTicketVault(entries: VaultTicket[]) {
   localStorage.setItem(TICKET_VAULT_KEY, JSON.stringify(entries.slice(0, 100)));
 }
 
-/** Remember a ticket on this device (private uuid + optional live slug). */
+/** Remember a ticket on this device (private uuid + optional claim + live slug). */
 export function rememberTicket(entry: {
   ticket_uuid: string;
+  claim?: string | null;
   slug?: string | null;
   title?: string;
   resolution?: "unsolved" | "solved";
@@ -62,6 +65,7 @@ export function rememberTicket(entry: {
   const list = readTicketVault().filter((t) => t.ticket_uuid !== entry.ticket_uuid);
   list.unshift({
     ticket_uuid: entry.ticket_uuid,
+    claim: entry.claim ?? null,
     slug: entry.slug ?? null,
     title: entry.title,
     resolution: entry.resolution,

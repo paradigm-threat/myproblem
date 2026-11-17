@@ -76,10 +76,10 @@ export default function PrivacyPage() {
               description only (city-level when needed). Not an identity file.
             </li>
             <li>
-              <strong>Waitlist / contact email</strong> — if you email us, we
-              see what you send in that message. The public signup CTA opens
-              your mail client; we are not running a separate marketing
-              database from that form.
+              <strong>Contact email</strong> — if you email us, we see what you
+              send in that message. Region interest and contributor outreach use
+              mailto; ticket submit uses Intake (see{" "}
+              <a href="/submit">/submit</a>).
             </li>
           </ul>
         </section>
