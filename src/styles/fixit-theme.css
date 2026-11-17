@@ -122,12 +122,12 @@
   box-shadow: var(--shadow);
 }
 
-/* Sticky chip nav */
+/* Sticky chip nav — sits under .site-header (measured into --fixit-sticky-top) */
 .fixit-chip-nav {
   position: sticky;
-  top: 0;
-  z-index: 30;
-  background: rgba(7, 13, 24, 0.88);
+  top: var(--fixit-sticky-top, 4rem);
+  z-index: 150;
+  background: rgba(7, 13, 24, 0.94);
   backdrop-filter: blur(16px);
   border-bottom: 1px solid var(--border);
   padding: 0.5rem 0;
@@ -173,7 +173,11 @@
 }
 .fixit-section {
   margin-bottom: 2rem;
-  scroll-margin-top: 5.5rem;
+  /* header + chip nav clearance when jumping */
+  scroll-margin-top: calc(var(--fixit-sticky-top, 4rem) + 3.25rem);
+}
+#overview {
+  scroll-margin-top: var(--fixit-sticky-top, 4rem);
 }
 .fixit-card {
   background: var(--surface);

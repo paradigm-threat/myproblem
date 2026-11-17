@@ -11,8 +11,32 @@ const SECTIONS = [
   { id: "safety", label: "Safety" },
 ] as const;
 
+function syncStickyOffset() {
+  const header = document.querySelector<HTMLElement>(".site-header");
+  const height = header ? Math.ceil(header.getBoundingClientRect().height) : 64;
+  document.documentElement.style.setProperty(
+    "--fixit-sticky-top",
+    `${height}px`,
+  );
+}
+
 export function FixitChipNav() {
   const [active, setActive] = useState<string>("overview");
+
+  useEffect(() => {
+    syncStickyOffset();
+    const header = document.querySelector(".site-header");
+    const ro =
+      typeof ResizeObserver !== "undefined" && header
+        ? new ResizeObserver(() => syncStickyOffset())
+        : null;
+    if (header && ro) ro.observe(header);
+    window.addEventListener("resize", syncStickyOffset);
+    return () => {
+      ro?.disconnect();
+      window.removeEventListener("resize", syncStickyOffset);
+    };
+  }, []);
 
   useEffect(() => {
     const nodes = SECTIONS.map((s) => document.getElementById(s.id)).filter(
@@ -27,7 +51,7 @@ export function FixitChipNav() {
           .sort((a, b) => b.intersectionRatio - a.intersectionRatio);
         if (visible[0]?.target?.id) setActive(visible[0].target.id);
       },
-      { rootMargin: "-20% 0px -55% 0px", threshold: [0.1, 0.35, 0.6] },
+      { rootMargin: "-25% 0px -55% 0px", threshold: [0.1, 0.35, 0.6] },
     );
     nodes.forEach((n) => observer.observe(n));
     return () => observer.disconnect();
