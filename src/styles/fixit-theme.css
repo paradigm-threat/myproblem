@@ -45,6 +45,24 @@
   max-width: 960px;
   margin: 0 auto;
 }
+.fixit-kicker {
+  margin: 0 0 0.55rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
+
+.fixit-kicker a {
+  color: var(--ticket-blue);
+  text-decoration: none;
+}
+
+.fixit-kicker a:hover {
+  text-decoration: underline;
+}
+
 .fixit-status-chip {
   display: inline-flex;
   align-items: center;
@@ -60,6 +78,91 @@
 .fixit-status-chip.is-solved {
   background: rgba(95, 212, 164, 0.15);
   color: var(--mint);
+}
+
+.ticket-status {
+  margin: 0 0 1.1rem;
+  padding: 0.9rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+.ticket-status-head {
+  display: flex;
+  gap: 0.9rem;
+  align-items: flex-start;
+}
+.ticket-status-thumb {
+  width: 4.5rem;
+  height: 4.5rem;
+  flex: 0 0 auto;
+  object-fit: cover;
+  border-radius: 12px;
+  background: rgba(79, 184, 255, 0.12);
+  border: 1px solid var(--border);
+}
+.ticket-status-thumb.is-empty {
+  background:
+    linear-gradient(160deg, rgba(79, 184, 255, 0.25), rgba(15, 26, 44, 0.2));
+}
+.ticket-status-copy {
+  min-width: 0;
+}
+.ticket-status-copy .fixit-status-chip {
+  margin-bottom: 0.4rem;
+}
+.ticket-status-copy .fixit-title {
+  font-size: clamp(1.25rem, 4vw, 1.7rem);
+  margin-bottom: 0.35rem;
+}
+.ticket-status-summary {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+}
+.ticket-status-steps {
+  list-style: none;
+  margin: 0.9rem 0 0;
+  padding: 0.75rem 0 0;
+  border-top: 1px solid var(--border);
+  display: grid;
+  gap: 0.45rem;
+}
+.ticket-status-step {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+.ticket-status-mark {
+  width: 1.15rem;
+  height: 1.15rem;
+  flex: 0 0 auto;
+  border-radius: 999px;
+  border: 2px solid var(--border);
+  box-sizing: border-box;
+}
+.ticket-status-step.is-done {
+  color: var(--mint);
+}
+.ticket-status-step.is-done .ticket-status-mark {
+  background: var(--mint);
+  border-color: var(--mint);
+  box-shadow: inset 0 0 0 3px var(--navy-glass);
+}
+.ticket-status-step.is-current {
+  color: var(--ticket-blue);
+}
+.ticket-status-step.is-current .ticket-status-mark {
+  border-color: var(--ticket-blue);
+  background: rgba(79, 184, 255, 0.2);
+  box-shadow: 0 0 0 4px rgba(79, 184, 255, 0.15);
+}
+.ticket-status-step.is-later {
+  color: var(--text-secondary);
+  font-weight: 500;
 }
 .fixit-hazard-hero {
   background: rgba(240, 193, 75, 0.12);

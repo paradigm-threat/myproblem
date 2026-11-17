@@ -26,7 +26,7 @@ Related: [`projects.md`](./projects.md) · [`apk-ticket-ux.md`](./apk-ticket-ux.
 - Web vault (`localStorage`) stores private uuid + claim + current slug on-device. No server ticket directory.
 - Unpublish: `POST /api/tickets/:id/unpublish-slug` drops the live slug (public `/t/` → 404); tip remains.
 - **Delete or mark resolved deletes uploaded assets (photos) unless instructions say otherwise** (close purges evidence URIs + Bunny; solved/unpublish expire Bunny). Evidence POST never hits Bunny — Batch `choice-media` links only final choice stills.
-- Ticket pages are `noindex`; `/t/` is disallowed in robots.
+- **SEO / share:** Live Intake `/t/<slug>` pages are `noindex` (ephemeral anon). Curated pilot seeds (e.g. `garage-ring-power`) may be indexed and listed in the sitemap. Titles, Open Graph, and JSON-LD always brand the URL as a **problem ticket on MyProblem.app** (uuid never in OG/URL). See [`ticket-public-seo.md`](./ticket-public-seo.md).
 - Web submit details: [`web-submit.md`](./web-submit.md) · status: [`dev.md`](./dev.md).
 
 ## Resolution (problem solved?)

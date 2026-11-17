@@ -42,6 +42,7 @@ Access may require an invite. Email [ari@asu.edu](mailto:ari@asu.edu) if you wan
 
 ### Done
 - Public ticket pages `/t/[slug]` + FixIt theme (sticky chip nav, photos, routes, compact→expand chat)
+- Per-ticket SEO: branded “Problem ticket · MyProblem” titles/OG/JSON-LD; live tips noindex; pilots may index ([`ticket-public-seo.md`](./ticket-public-seo.md))
 - SI terminology + training notice on site/legal
 - Nextdoor pilot seed `garage-ring-power`
 - Intake: topical slug suggest, Bunny expire helpers, still scrub / local research contracts

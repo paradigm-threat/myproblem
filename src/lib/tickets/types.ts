@@ -43,6 +43,10 @@ export type TicketEvidence = {
   version?: number;
   audioEvidenceId?: string;
   model?: string;
+  /** APK nomination or Batch-final public still. */
+  choice?: boolean;
+  /** Safe for public / Bunny after scrub. */
+  scrubbed?: boolean;
 };
 
 export type TimelineEntry = {

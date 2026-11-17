@@ -10,7 +10,7 @@ Related: [`topical-repos.md`](./topical-repos.md) · [`clevertree-chat.md`](./cl
 
 ## Public ticket URL
 
-- Canonical: `https://myproblem.app/t/[slug-or-uuid]`
+- Canonical: `https://myproblem.app/t/[slug]` only (never uuid). SEO: [`ticket-public-seo.md`](./ticket-public-seo.md).
 - SI **suggests** a short kebab slug from **topic + originality** once context is clear; human may edit; uuid stays durable.
 - Page mounts Clevertree Chat; **one key per solution route** (e.g. `hire-electrician`, `diy-with-caution`).
 - Training notice: all tickets are anonymized but will be used to train the SI.

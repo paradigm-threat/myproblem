@@ -6,8 +6,18 @@ export function toPublicProblemView(
   slug: string,
   region: string,
 ): PublicProblemView {
+  // Public page: choice/scrubbed CDN or pilot paths only — never raw cache://.
   const stills = (tip.evidence || [])
-    .filter((e) => e.kind === "still" && e.uri)
+    .filter((e) => {
+      if (e.kind !== "still" || !e.uri) return false;
+      const uri = String(e.uri);
+      if (uri.startsWith("cache://")) return false;
+      if (uri.startsWith("/pilot/")) return true;
+      if (uri.includes("b-cdn.net") && (e.scrubbed === true || e.choice === true)) {
+        return true;
+      }
+      return e.scrubbed === true && !uri.startsWith("cache://");
+    })
     .map((e) => ({ id: e.id, uri: e.uri }));
   return {
     ticket_uuid: tip.ticket_uuid,

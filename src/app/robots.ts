@@ -7,6 +7,8 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: "*",
         allow: "/",
+        // Live Intake tickets are noindex via page metadata. Curated pilots
+        // under /t/ (e.g. garage-ring-power) stay crawlable via sitemap.
         disallow: ["/test-mode", "/api/", "/r/"],
       },
     ],
