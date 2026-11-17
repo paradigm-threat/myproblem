@@ -22,6 +22,9 @@ See `workers/batch/local-resource-research.mjs`. Cite forums and local pages int
 
 Primary artifact is a trimmed tip for human review ([`../fixit-and-repair.md`](../fixit-and-repair.md)). Generic SI framing only; no licensed how-to as the product answer.
 
-## Bunny TTL
+## Bunny / choice stills
 
-Upload scrubbed stills via `bunnyMedia.mjs`. Expire on solve / unpublish / Evidence remove.
+1. APK nominates clear + unique frames (`choice: true` on evidence) — cache only.
+2. After scrub, call Intake `POST /api/tickets/:id/choice-media` with `{ "choice_ids": [...], "confirm_scrubbed": true }`.
+3. That uploads **only** those stills to Bunny using the tip repo’s `media-upload.json` (`path_prefix` georgia|israel|fixit; shared zone for now). Unused cached stills are deleted.
+4. Expire on solve / unpublish / close via `bunnyExpireTicketMedia`.

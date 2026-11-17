@@ -66,7 +66,7 @@ export default function HomePage() {
                 <a href={RELAY_URL} rel="noopener noreferrer" target="_blank">
                   Relay
                 </a>
-                . No salaries, and no card required.{" "}
+                . No card required.{" "}
                 <a href="/how-we-run">How we run</a>.
               </p>
               <div className="cta-row">
@@ -620,13 +620,13 @@ export default function HomePage() {
                 </li>
                 <li>
                   <strong>Economics favor local hardware handlers</strong> —
-                  people running compatible gear in place, not a salary machine
+                  people running compatible gear in place, not a payroll machine
                   at the center
                 </li>
                 <li>
                   <strong>Zero-payroll LLC posture</strong> — Clevertree LLC
                   (Georgia) / MyProblem product; capital for infra and growth,
-                  not headcount theater. Tips replace salaries — see{" "}
+                  not headcount theater. Tips fund the mesh — see{" "}
                   <a href="/how-we-run">how we run</a>
                 </li>
                 <li>

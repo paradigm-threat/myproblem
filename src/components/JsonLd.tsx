@@ -23,7 +23,7 @@ export function JsonLd() {
           RELAY_SOURCE_URL,
           RELAY_URL,
         ],
-        description: `Investigation service for Problems. Free forever. You should never expect to enter a card. If the help was good, tip the person, the ${SI_FULL}, or both. No salaries. Powered by Relay.`,
+        description: `Investigation service for Problems. Free forever. You should never expect to enter a card. If the help was good, tip the person, the ${SI_FULL}, or both. Powered by Relay.`,
       },
       {
         "@type": "WebSite",
@@ -68,7 +68,7 @@ export function JsonLd() {
           description: `The service is free. No card is required to post, to answer, or to keep using it. A tip is optional, after a good experience, for the person who helped, the ${SI_FULL} that helped, or both.`,
         },
         description:
-          "While you talk and show the problem, one question stays on screen until the requirements are specific. Then a queued Project investigates it. Free forever. No card expected. No salaries.",
+          "While you talk and show the problem, one question stays on screen until the requirements are specific. Then a queued Project investigates it. Free forever. No card expected.",
       },
     ],
   };

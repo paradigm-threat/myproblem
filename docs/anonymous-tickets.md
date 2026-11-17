@@ -25,7 +25,7 @@ Related: [`projects.md`](./projects.md) · [`apk-ticket-ux.md`](./apk-ticket-ux.
 - Return `ticket_uuid` + `claim` (+ `slug` when minted) to the creator client only. UUID may display on the owner success screen; **never** in public nav, share CTAs, OG, or the address bar.
 - Web vault (`localStorage`) stores private uuid + claim + current slug on-device. No server ticket directory.
 - Unpublish: `POST /api/tickets/:id/unpublish-slug` drops the live slug (public `/t/` → 404); tip remains.
-- **Delete or mark resolved deletes uploaded assets (photos) unless instructions say otherwise** (close purges evidence URIs; solved expires Bunny media).
+- **Delete or mark resolved deletes uploaded assets (photos) unless instructions say otherwise** (close purges evidence URIs + Bunny; solved/unpublish expire Bunny). Evidence POST never hits Bunny — Batch `choice-media` links only final choice stills.
 - Ticket pages are `noindex`; `/t/` is disallowed in robots.
 - Web submit details: [`web-submit.md`](./web-submit.md) · status: [`dev.md`](./dev.md).
 

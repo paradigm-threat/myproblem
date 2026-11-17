@@ -41,7 +41,7 @@ Related: [`topical-repos.md`](./topical-repos.md) · [`clevertree-chat.md`](./cl
 
 ## Bunny + scrub
 
-While live: scrubbed stills may use Bunny CDN URLs on the tip / public post. **Expire** on solve, unpublish, or media remove. Batch scrub instructions: `stillScrub.mjs` + [`fixit/batch-prompt-pack.md`](./fixit/batch-prompt-pack.md).
+Evidence POST is **cache only**. Batch alone links choice stills via `POST /api/tickets/:id/choice-media` (after scrub). Destination: tip-repo `media-upload.json` (shared zone + `path_prefix` for georgia / israel / fixit). **Expire** on solve, unpublish, or close. Scrub instructions: `stillScrub.mjs` + [`fixit/batch-prompt-pack.md`](./fixit/batch-prompt-pack.md).
 
 ---
 

@@ -21,7 +21,7 @@ MyProblem is a free SI (Super Intelligence, i.e. AI) front door for local proble
 | **myproblem-tickets** | Intake + batch workers, regional tip repos (georgia / israel) |
 | **myproblem-kb** | Git Markdown knowledge base (speculative; no boosting) |
 | **Clevertree Chat** | Communication on tickets / public pages; SI organizes after batch |
-| **Bunny / ephemeral cache** | Scrubbed stills while live; expire on solve / close / unpublish |
+| **Bunny / ephemeral cache** | Evidence = cache only; Batch `choice-media` links scrubbed stills; expire on solve / close / unpublish |
 | **Spot / batch** | Deferred investigation workers (wake on demand) |
 
 ---
