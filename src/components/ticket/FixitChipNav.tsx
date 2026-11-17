@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useState } from "react";
 
 const SECTIONS = [
   { id: "overview", label: "Overview" },
@@ -23,7 +23,7 @@ function syncStickyOffset() {
 export function FixitChipNav() {
   const [active, setActive] = useState<string>("overview");
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     syncStickyOffset();
     const header = document.querySelector(".site-header");
     const ro =
