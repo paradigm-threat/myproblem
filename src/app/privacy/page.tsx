@@ -119,8 +119,27 @@ export default function PrivacyPage() {
           </p>
         </section>
 
+        <section className="legal-section" aria-labelledby="android-heading">
+          <h2 id="android-heading">6. Android app</h2>
+          <p>
+            The MyProblem app on Google Play asks for the camera and the
+            microphone only after you start a ticket that needs them. Stills
+            and audio describe the problem. When online sync is on, the text
+            you enter, the audio you record, and the stills you keep are sent
+            to Intake at intake.myproblem.app so the service can understand the
+            problem. Copies stay on your phone. Turning sync off keeps the
+            ticket on the device.
+          </p>
+          <p>
+            The app does not use the advertising ID and does not sell this
+            information. Ticket access secrets stay on the device and are not
+            included in Android backup. MyProblem is not a medical, legal, or
+            emergency service. Those limits are in the <a href="/terms">Terms</a>.
+          </p>
+        </section>
+
         <section className="legal-section" aria-labelledby="limits-heading">
-          <h2 id="limits-heading">6. Limits</h2>
+          <h2 id="limits-heading">7. Limits</h2>
           <p>
             No system is perfect. Do not put secrets in tickets you would not
             want mishandled. Logs, backups, and ephemeral media processing may
