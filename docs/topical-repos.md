@@ -10,7 +10,7 @@ Related: [`knowledge-base.md`](./knowledge-base.md) · [`fixit-and-repair.md`](.
 
 ## One-sentence rule
 
-> **Score only repos that already exist; multi-associate; one home tip; if nothing fits or a new topic is proposed, cache on the server and wait for a human during batch — humans mint ticket+KB pairs manually; SI writes tips/KB after remotes exist, public reads.**
+> **Score only repos that already exist; multi-associate; one home tip; if nothing fits or a new topic is proposed, cache on the server and wait for a human during batch — humans mint private ticket + public KB remotes manually; batch (Cursor Phase 1 / Spot Phase 2) writes tips/KB after remotes exist; public reads KB, tips stay capability-private.**
 
 ---
 
@@ -23,7 +23,8 @@ Related: [`knowledge-base.md`](./knowledge-base.md) · [`fixit-and-repair.md`](.
 | Renameable keys | Catalog `key` + `aliases[]`. |
 | No unorganized | Unmatched tips stay in **server cache / blocked batch**; human mints remotes. |
 | Human mint | SI may recommend a key; Batch blocks while remotes missing. |
-| Access | SI commits tips/KB after remotes exist; public read. |
+| Access | Batch commits tips (private) + KB (public) after remotes exist. |
+| Privacy | Tips + `comments` on **private** remotes; KB on **public** remotes — not one repo ([`batch-phases.md`](./batch-phases.md)). |
 
 ```
 Ticket capture
@@ -43,3 +44,5 @@ Ticket capture
 | Server cache + human mint | Replaces catch-all remote |
 
 Prefer craft keys such as **`fixit`** when DIY/physical repair is the home (see [`fixit-and-repair.md`](./fixit-and-repair.md)).
+
+**Social / animals pilot:** place-tied cat tips home in **`georgia`**. The `savannah-cat-rescue` **collection** is a localized roster of Savannah forums (health + strays/…), not a new tip remote ([`social-group-monitor.md`](./social-group-monitor.md)). Mint a craft remote later only if RULES clearly prefer it over georgia.

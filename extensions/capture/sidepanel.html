@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MyProblem X</title>
+  <link rel="stylesheet" href="sidepanel.css">
+</head>
+<body>
+  <div class="mpx">
+    <header class="mpx-head">
+      <p class="mpx-brand">MyProblem X</p>
+      <h1 class="mpx-collection-title" id="collection-title">Savannah Cat Rescue</h1>
+      <p class="mpx-tag" id="collection-tag">Savannah, GA · sync member groups · craft IRC</p>
+      <p class="mpx-conn" id="conn-line" role="status">Checking Nextdoor connection…</p>
+      <p class="mpx-meta" id="status-line">Loading…</p>
+      <p class="mpx-stats" id="stats-line" hidden></p>
+    </header>
+
+    <nav class="mpx-tabs" role="tablist" aria-label="Panel">
+      <button type="button" class="mpx-tab is-active" id="tab-main" role="tab" aria-selected="true">Main</button>
+      <button type="button" class="mpx-tab" id="tab-lab" role="tab" aria-selected="false">Lab</button>
+    </nav>
+
+    <section id="panel-main" class="mpx-panel" role="tabpanel">
+      <div class="mpx-actions mpx-actions-fix">
+        <button type="button" id="btn-fix">Fix connection</button>
+      </div>
+      <div class="mpx-actions">
+        <button type="button" id="btn-deep">Deep capture</button>
+        <button type="button" id="btn-deep-stop" class="danger" hidden>Stop deep</button>
+      </div>
+      <p class="mpx-hint">Deep capture walks the group feed. Always available when connected.</p>
+
+      <section class="mpx-section" aria-labelledby="page-h">
+        <h2 id="page-h">Current page</h2>
+        <p class="mpx-meta" id="page-line">Detecting…</p>
+        <p class="mpx-meta" id="entry-line">Collection: …</p>
+        <p class="mpx-meta" id="irc-line">Craft IRC: …</p>
+      </section>
+
+      <section class="mpx-section" aria-labelledby="roster-h">
+        <h2 id="roster-h">Groups to sync</h2>
+        <p class="mpx-hint" id="roster-empty">Load collection to see member groups.</p>
+        <ul id="roster-list" class="mpx-roster" hidden></ul>
+      </section>
+
+      <section class="mpx-section" aria-labelledby="topics-h">
+        <h2 id="topics-h">Topics</h2>
+        <p class="mpx-hint" id="topics-empty">No collection topics yet.</p>
+        <div id="topic-chips" class="mpx-chips" hidden></div>
+      </section>
+
+      <section class="mpx-section" aria-labelledby="posts-h">
+        <h2 id="posts-h">Session posts <span id="ticket-count"></span></h2>
+        <ul id="ticket-list" class="mpx-list"></ul>
+      </section>
+
+      <section class="mpx-section" aria-labelledby="outliers-h">
+        <h2 id="outliers-h">Outliers <span id="outlier-count"></span></h2>
+        <ul id="outlier-list" class="mpx-list"></ul>
+      </section>
+
+      <section class="mpx-section" aria-labelledby="replies-h">
+        <h2 id="replies-h">Replies ready</h2>
+        <p class="mpx-hint" id="replies-empty">No reply templates yet. Import a batch or run Cursor-as-batch.</p>
+        <ul id="replies-list" class="mpx-list"></ul>
+      </section>
+
+      <section class="mpx-section" aria-labelledby="irc-compose-h">
+        <h2 id="irc-compose-h">Craft room</h2>
+        <p class="mpx-hint">Sends via Clevertree WS (mirrors IRC). Tag prepended; UI shows a link icon, not the raw id.</p>
+        <p class="mpx-meta" id="ref-preview" aria-live="polite"></p>
+        <textarea id="irc-draft" class="mpx-draft" rows="3" placeholder="Message to #ga-savannah-cat-rescue…"></textarea>
+        <div class="mpx-actions">
+          <button type="button" id="btn-irc-send" class="secondary">Send to craft room</button>
+        </div>
+        <ul id="irc-log" class="mpx-list" aria-label="Recent craft messages"></ul>
+      </section>
+    </section>
+
+    <section id="panel-lab" class="mpx-panel" role="tabpanel" hidden>
+      <div class="mpx-actions">
+        <button type="button" id="btn-capture">Capture this page</button>
+        <button type="button" id="btn-ready">Mark ready</button>
+        <button type="button" id="btn-validate" class="secondary">Resubmit / Validate</button>
+        <button type="button" id="btn-upload" class="secondary" disabled>Upload to server</button>
+        <button type="button" id="btn-probe" class="secondary">Probe DOM only</button>
+        <button type="button" id="btn-copy-debug" class="secondary">Copy debug for Cursor</button>
+        <button type="button" id="btn-export" class="secondary">Export JSON</button>
+        <button type="button" id="btn-fetch-media" class="secondary">Fetch media now</button>
+        <button type="button" id="btn-export-media" class="secondary">Export ZIP (JSON + media)</button>
+        <button type="button" id="btn-clear" class="danger">Clear cache</button>
+      </div>
+      <label class="mpx-import">
+        Import batch JSON
+        <input type="file" id="import-file" accept="application/json,.json">
+      </label>
+      <section class="mpx-section" aria-labelledby="debug-h">
+        <h2 id="debug-h">Debug</h2>
+        <pre id="debug-pre" class="mpx-debug"></pre>
+      </section>
+    </section>
+
+    <footer class="mpx-foot">
+      <span id="ext-version-foot"></span>
+      ·
+      <a href="https://myproblem.app/extension" target="_blank" rel="noopener">myproblem.app/extension</a>
+      · Never auto-sends · Never auto-uploads · Scrubs PII before export
+    </footer>
+  </div>
+  <script src="lib/scrub.js"></script>
+  <script src="lib/topics.js"></script>
+  <script src="lib/external-id.js"></script>
+  <script src="lib/media-idb.js"></script>
+  <script src="lib/zip-pack.js"></script>
+  <script src="sidepanel.js"></script>
+</body>
+</html>

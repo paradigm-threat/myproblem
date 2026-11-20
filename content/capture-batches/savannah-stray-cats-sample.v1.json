@@ -1,0 +1,180 @@
+{
+  "schema": "myproblem.capture_batch.v1",
+  "channel_hint": "savannah-stray-cats",
+  "region_hint": "georgia",
+  "source": {
+    "site": "nextdoor",
+    "group_secure_id": "z0m2zzlro",
+    "group_name": "Savannah Stray Cats :)"
+  },
+  "captured_at": "2026-11-19T14:30:00.000Z",
+  "status": "ready",
+  "ready_at": "2026-11-19T14:30:00.000Z",
+  "validated_at": "2026-11-19T14:30:00.000Z",
+  "validation_pass": 1,
+  "upload": {
+    "state": "never",
+    "last_uploaded_at": null,
+    "last_content_hash": null
+  },
+  "stats": {
+    "ticket_count": 5,
+    "outlier_count": 2,
+    "by_reason": {
+      "off-topic": 1,
+      "promo": 1
+    }
+  },
+  "notes": "Anonymized v1 sample. Each post is a ticket candidate; outliers are stats+link only. Import into MyProblem X to demo Ready / Upload UI.",
+  "threads": [
+    {
+      "id": "nd_sample_rehome_01",
+      "gate": "ticket",
+      "skip": false,
+      "body_redacted": "Still looking for a home for this sweet kitten. Litter mates placed. Super sweet and playful; carries toys; good with dogs. DM if interested — not giving to just anybody.",
+      "external_ref": {
+        "site": "nextdoor",
+        "post_id": "sample_rehome_01",
+        "url": "https://nextdoor.com/p/sample_rehome_01/"
+      },
+      "suggested_topics": ["rehome"],
+      "value_rank": 0.87,
+      "media": [
+        {
+          "id": "m1",
+          "kind": "image",
+          "source_url": "https://example.invalid/kitten.jpg",
+          "local_name": "nd_sample_rehome_01_0.jpg",
+          "sha256": null,
+          "bytes": null,
+          "scrubbed_locally": false,
+          "downloaded": false
+        }
+      ],
+      "reply_templates": [
+        {
+          "id": "r_rehome_1",
+          "tone": "helpful",
+          "body": "Thanks for screening carefully — that protects the kitten. If useful, neighbors can also track open rehome needs on MyProblem (channel savannah-stray-cats) so helpers who are not always in this feed still see them. Happy to share TNR/rehome checklists if you want them."
+        }
+      ]
+    },
+    {
+      "id": "nd_sample_lost_01",
+      "gate": "ticket",
+      "skip": false,
+      "body_redacted": "Cat missing since last weekend. About two years old, pink fuzzy collar. Last seen near a southside neighborhood off the bluff road. Please say if you have seen him.",
+      "external_ref": {
+        "site": "nextdoor",
+        "post_id": "sample_lost_01",
+        "url": "https://nextdoor.com/p/sample_lost_01/"
+      },
+      "suggested_topics": ["lost-found"],
+      "value_rank": 0.9,
+      "reply_templates": [
+        {
+          "id": "r_lost_1",
+          "tone": "helpful",
+          "body": "Sorry you are searching — pink collar + age helps. Standard steps: flyer at coarse intersections, check under porches at dusk, ask nearby feeders, and file found/lost with local shelters. If you want a redacted public tip so more helpers can watch without this thread getting buried, MyProblem can host one (georgia / savannah-stray-cats)."
+        }
+      ]
+    },
+    {
+      "id": "nd_sample_colony_01",
+      "gate": "ticket",
+      "skip": false,
+      "body_redacted": "Been feeding a group of strays; many fixed with help. No longer safe at this house — neighbor harassment and poison threats. Trying to relocate ASAP; may not be able to take them. Thank you for any help.",
+      "external_ref": {
+        "site": "nextdoor",
+        "post_id": "sample_colony_01",
+        "url": "https://nextdoor.com/p/sample_colony_01/"
+      },
+      "suggested_topics": ["colony-care", "tnr", "rehome"],
+      "value_rank": 0.92,
+      "reply_templates": [
+        {
+          "id": "r_colony_1",
+          "tone": "careful",
+          "body": "That sounds urgent and stressful. Focus on safe relocation and established TNR/rescue partners — avoid escalating neighbor conflict in public comments. If you share coarse area only (no street/address), helpers subscribed to MyProblem’s savannah-stray-cats channel may be able to coordinate traps/foster without this post disappearing in the feed."
+        }
+      ]
+    },
+    {
+      "id": "nd_sample_tnr_01",
+      "gate": "ticket",
+      "skip": false,
+      "body_redacted": "Mama cat keeps bringing five or six kittens onto porches and under cars. Needs to be caught and fixed ASAP — someone who knows traps please.",
+      "external_ref": {
+        "site": "nextdoor",
+        "post_id": "sample_tnr_01",
+        "url": "https://nextdoor.com/p/sample_tnr_01/"
+      },
+      "suggested_topics": ["tnr", "volunteer"],
+      "value_rank": 0.9,
+      "reply_templates": [
+        {
+          "id": "r_tnr_1",
+          "tone": "helpful",
+          "body": "Agree — TNR before the next litter is the win. If you can borrow a trap from a local TNR group and keep a consistent feeding time, trapping success goes up. Happy to help draft a trap-night checklist; MyProblem georgia tips can also point at public TNR resources without boosting any business."
+        }
+      ]
+    },
+    {
+      "id": "nd_sample_feeder_01",
+      "gate": "ticket",
+      "skip": false,
+      "body_redacted": "Need a reliable feeder for a southside apartment colony. About 15 minutes daily, mornings preferred. Many already ear-tipped. Food can be provided for the first week. DM if dependable.",
+      "external_ref": {
+        "site": "nextdoor",
+        "post_id": "sample_feeder_01",
+        "url": "https://nextdoor.com/p/sample_feeder_01/"
+      },
+      "suggested_topics": ["volunteer", "colony-care"],
+      "value_rank": 0.8,
+      "reply_templates": [
+        {
+          "id": "r_feed_1",
+          "tone": "helpful",
+          "body": "Clear ask — thank you for keeping them fed. Neighbors who can commit to a short daily slot: ask the OP for location by DM. Longer-term, a MyProblem channel post can keep the ask visible if this thread ages out of the group feed."
+        }
+      ]
+    },
+    {
+      "id": "nd_sample_skip_cleaner",
+      "gate": "outlier",
+      "skip": true,
+      "outlier_reason": "off-topic",
+      "body_redacted": "Need a cleaner in my house with good pay.",
+      "external_ref": {
+        "site": "nextdoor",
+        "post_id": "sample_skip_cleaner",
+        "url": "https://nextdoor.com/p/sample_skip_cleaner/"
+      },
+      "suggested_topics": [],
+      "value_rank": 0.05,
+      "reply_templates": []
+    },
+    {
+      "id": "nd_sample_skip_promo",
+      "gate": "outlier",
+      "skip": true,
+      "outlier_reason": "promo",
+      "body_redacted": "Started a pet care business — dog walking and drop-ins. Details on my site.",
+      "external_ref": {
+        "site": "nextdoor",
+        "post_id": "sample_skip_promo",
+        "url": "https://nextdoor.com/p/sample_skip_promo/"
+      },
+      "suggested_topics": [],
+      "value_rank": 0.05,
+      "reply_templates": []
+    }
+  ],
+  "debug": [
+    {
+      "reason": "sample_batch",
+      "url": "https://nextdoor.com/g/z0m2zzlro/",
+      "notes": "Synthetic anonymized v1 threads for extension import demo + docs. Outliers have empty topics."
+    }
+  ]
+}

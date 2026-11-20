@@ -1,0 +1,48 @@
+{
+  "schema": "myproblem.forum-collection.v1",
+  "id": "savannah-cat-rescue",
+  "kind": "forum_collection",
+  "name": "Savannah Cat Rescue",
+  "place": "Savannah, GA",
+  "region_tip_home": "georgia",
+  "irc_channel": "#ga-savannah-cat-rescue",
+  "ws_topic": "ga-savannah-cat-rescue",
+  "aliases": ["savannah-stray-cats"],
+  "topics": [
+    "cat-health",
+    "colony-care",
+    "feeding",
+    "foster",
+    "found",
+    "fundraiser",
+    "lost",
+    "medical",
+    "rehome",
+    "relocate",
+    "sighting",
+    "supplies",
+    "tnr",
+    "volunteer"
+  ],
+  "groups": [
+    {
+      "site": "nextdoor",
+      "group_secure_id": "z0m2zzlro",
+      "group_name": "Savannah Stray Cats :)",
+      "url": "https://nextdoor.com/g/z0m2zzlro/",
+      "id": "ndg-z0m2zzlro"
+    }
+  ],
+  "sync": {
+    "goal": "Visit every member group regularly; capture updates; draft human-sent replies; post updates back when useful",
+    "cadence": "human + MyProblem X session; batch organizes",
+    "events": [
+      "session_capture",
+      "batch_organize",
+      "reply_assist_draft",
+      "human_origin_post",
+      "roster_add_group"
+    ]
+  },
+  "notes": "Collection owns the group roster — no post catalogs. Tip home stays georgia. Craft IRC encodes repo (ga) + collection slug."
+}

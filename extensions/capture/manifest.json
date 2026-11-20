@@ -1,0 +1,62 @@
+{
+  "manifest_version": 3,
+  "name": "MyProblem X · v0.1.21",
+  "version": "0.1.21",
+  "description": "MyProblem X captures session-locked social posts (platforms ban bots) and helps you paste research-backed reply drafts—you always edit and send. Shared knowledge for real local problems, including Savannah Cat Rescue. Not a bot scraper. Toolbar only on social sites.",
+  "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "action": {
+    "default_title": "MyProblem X · v0.1.21 (social sites only)",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "32": "icons/icon32.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "side_panel": {
+    "default_path": "sidepanel.html"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "permissions": [
+    "sidePanel",
+    "storage",
+    "tabs",
+    "activeTab",
+    "clipboardWrite",
+    "scripting",
+    "downloads",
+    "declarativeContent"
+  ],
+  "host_permissions": [
+    "https://nextdoor.com/*",
+    "https://*.nextdoor.com/*",
+    "https://*.nextdoor-media.com/*",
+    "https://*.ndimg.com/*",
+    "https://*.amazonaws.com/*",
+    "https://*.cloudfront.net/*",
+    "https://*.akamaized.net/*",
+    "https://*.googleusercontent.com/*",
+    "https://api.clevertree.chat/*",
+    "https://myproblem.app/*"
+  ],
+  "content_scripts": [
+    {
+      "matches": ["https://nextdoor.com/*", "https://*.nextdoor.com/*"],
+      "js": ["lib/scrub.js", "lib/topics.js", "lib/external-id.js", "content.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["data/*.json"],
+      "matches": ["https://nextdoor.com/*", "https://*.nextdoor.com/*"]
+    }
+  ]
+}

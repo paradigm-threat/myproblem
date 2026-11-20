@@ -1,6 +1,6 @@
 # Shared local knowledge base (primary learning)
 
-MyProblem’s **primary means of knowledge and research** is a **region-scoped git repo of Markdown files** — not a bigger server LLM, not a global chatbot corpus, and not Neon tables.
+MyProblem’s **primary means of knowledge and research** is a **public region-scoped git repo of Markdown files** (`myproblem-kb`, separate from **private** tip remotes — [`batch-phases.md`](./batch-phases.md)) — not a bigger server LLM, not a global chatbot corpus, and not Neon tables.
 
 **Purpose of the app:** solve problems. That often means knowing the **best way to solve a problem with local resources** — exactly the layer search ads and ranking wars obscure. The KB holds that layer (and place-independent DIY advice when location does not matter). It does **not** freeze-frame the greater internet.
 
@@ -23,9 +23,11 @@ Paid search and directories fight over **advertisement rankings**. MyProblem sta
 | Weights as “memory” | Continuously **re-tested** git Markdown; retire dead advice |
 | Escalate first, forget later | **KB first**; never forget lessons without trail |
 
-**Growth rule:** store only what serves **problem-solving for the app** — local resource wisdom and general repair/DIY guidance when it is useful and grounded. Do not absorb world trivia or fine-tune the server model for facts.
+**Growth rule:** store only what serves **problem-solving for the app** — local resource wisdom, general repair/DIY when grounded, **best sources**, **batch prompts**, and **escalate recipes** (Bedrock, Grok, …) the SI uses when confidence is low. Do not absorb world trivia or treat model weights as the knowledge store.
 
-**Searchable ≠ store (locked):** Hours, phone, menus, Wikipedia, directory scrapes stay on the live web — **cite, don’t cache**. Store **ticket-driven assessments**, DIY lessons, automation Limits, and other **useful, provable-enough** advice. Full policy: [`STORE_POLICY.md`](../../myproblem-kb/docs/STORE_POLICY.md).
+**Searchable ≠ store (locked):** Hours, phone, menus, Wikipedia, directory scrapes stay on the live web — **cite, don’t cache**. Store **ticket-driven assessments**, DIY lessons, automation Limits, investigation prompts, and other **useful, provable-enough** advice. Full policy: [`STORE_POLICY.md`](../../myproblem-kb/docs/STORE_POLICY.md).
+
+**Who writes:** Batch only (Phase 1 Cursor / Phase 2 Spot). Intake does not commit KB files.
 
 **Ticket-driven business pages only:** An assessment of a company exists **only** because a Project thoroughly investigated that company **for someone’s ticket** — never a crawl of every shop.
 
@@ -155,6 +157,8 @@ A **channel** is defined only by a **unique `channel_id`**. The physical or soci
 
 Helpers do not need passwords or pairing codes to follow a channel — only the public id + subscribe.
 
+**Example (Georgia pilot):** collection / `channel_id` = `savannah-cat-rescue` (**Savannah Cat Rescue**) — cat health + stray/colony/TNR/lost-found, localized to Savannah. Stub: [`../content/collections/savannah-cat-rescue.md`](../content/collections/savannah-cat-rescue.md). Capture via [MyProblem X](./capture-extension.md); tip home stays `georgia` ([`social-group-monitor.md`](./social-group-monitor.md)). Qualifying posts become tips; **outlier** counts (promo / off-topic / memorial) may roll into collection stats without storing outlier bodies in the tip repo. Alias: former `savannah-stray-cats`.
+
 ---
 
 ## Relationship to Projects and models
@@ -184,6 +188,8 @@ Realtime capture does not publish to the KB.
 ---
 
 ## Browser automation — honesty contract
+
+Session-locked social **group** feeds (e.g. Nextdoor groups) are **not** harvested by server bots — use [MyProblem X](./capture-extension.md) (human browse). See [`social-group-monitor.md`](./social-group-monitor.md).
 
 | Do | Don’t |
 |---|---|

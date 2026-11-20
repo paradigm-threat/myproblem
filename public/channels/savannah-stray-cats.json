@@ -1,0 +1,9 @@
+{
+  "schema": "myproblem.forum-group.v1",
+  "id": "ndg-z0m2zzlro",
+  "kind": "alias",
+  "alias_of": "savannah-cat-rescue",
+  "collection_url": "/collections/savannah-cat-rescue.json",
+  "group_secure_id": "z0m2zzlro",
+  "notes": "Retired channel id. Use collection savannah-cat-rescue."
+}
