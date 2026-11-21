@@ -22,8 +22,8 @@ class AppPrefs(private val context: Context) {
 
     val startMode: Flow<StartMode> =
         context.dataStore.data.map {
-            runCatching { StartMode.valueOf(it[startModeKey] ?: StartMode.AUDIO.name) }
-                .getOrDefault(StartMode.AUDIO)
+            runCatching { StartMode.valueOf(it[startModeKey] ?: StartMode.VIDEO_MESSAGE.name) }
+                .getOrDefault(StartMode.VIDEO_MESSAGE)
         }
 
     val showArchived: Flow<Boolean> =

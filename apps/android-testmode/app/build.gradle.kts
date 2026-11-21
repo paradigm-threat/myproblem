@@ -6,17 +6,20 @@ plugins {
 
 android {
     namespace = "app.myproblem.testmode"
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
-        applicationId = "app.myproblem.testmode"
+        applicationId = "app.myproblem"
         minSdk = 26
-        targetSdk = 35
-        versionCode = 8
-        versionName = "0.3.1-reprocess-ui"
+        targetSdk = 36
+        versionCode = 9
+        versionName = "0.4.0"
     }
 
     buildTypes {
+        debug {
+            applicationIdSuffix = ".testmode"
+        }
         release {
             isMinifyEnabled = false
             proguardFiles(
@@ -40,6 +43,9 @@ android {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
+        jniLibs {
+            useLegacyPackaging = false
+        }
     }
 }
 
@@ -60,6 +66,7 @@ dependencies {
     implementation("androidx.camera:camera-camera2:$camerax")
     implementation("androidx.camera:camera-lifecycle:$camerax")
     implementation("androidx.camera:camera-view:$camerax")
+    implementation("androidx.camera:camera-video:$camerax")
 
     implementation("androidx.core:core-ktx:1.15.0")
     implementation("com.google.android.material:material:1.12.0")

@@ -11,7 +11,10 @@
     <header class="mpx-head">
       <p class="mpx-brand">MyProblem X</p>
       <h1 class="mpx-collection-title" id="collection-title">Savannah Cat Rescue</h1>
-      <p class="mpx-tag" id="collection-tag">Savannah, GA · sync member groups · craft IRC</p>
+      <p class="mpx-mission" id="collection-mission">
+        First job: connect litters / unfixed moms to the TNR trap network.
+      </p>
+      <p class="mpx-tag" id="collection-tag">Savannah, GA · sync member groups</p>
       <p class="mpx-conn" id="conn-line" role="status">Checking Nextdoor connection…</p>
       <p class="mpx-meta" id="status-line">Loading…</p>
       <p class="mpx-stats" id="stats-line" hidden></p>
@@ -23,6 +26,19 @@
     </nav>
 
     <section id="panel-main" class="mpx-panel" role="tabpanel">
+      <section class="mpx-section mpx-section-priority" aria-labelledby="job-h">
+        <h2 id="job-h">TNR matches</h2>
+        <p class="mpx-hint" id="tnr-empty">
+          Capture a member group feed. Posts about kittens, pregnant/unfixed
+          strays, or trap help surface here first.
+        </p>
+        <ul id="tnr-list" class="mpx-list" hidden></ul>
+        <p class="mpx-hint mpx-hint-tight">
+          Next step: open the post → draft a useful reply → or send a craft note
+          so trappers can coordinate (human sends on Nextdoor).
+        </p>
+      </section>
+
       <div class="mpx-actions mpx-actions-fix">
         <button type="button" id="btn-fix">Fix connection</button>
       </div>
@@ -30,10 +46,10 @@
         <button type="button" id="btn-deep">Deep capture</button>
         <button type="button" id="btn-deep-stop" class="danger" hidden>Stop deep</button>
       </div>
-      <p class="mpx-hint">Deep capture walks the group feed. Always available when connected.</p>
+      <p class="mpx-hint">Walk the open group feed to find TNR needs and other tickets.</p>
 
       <section class="mpx-section" aria-labelledby="page-h">
-        <h2 id="page-h">Current page</h2>
+        <h2 id="page-h">This tab</h2>
         <p class="mpx-meta" id="page-line">Detecting…</p>
         <p class="mpx-meta" id="entry-line">Collection: …</p>
         <p class="mpx-meta" id="irc-line">Craft IRC: …</p>
@@ -45,6 +61,20 @@
         <ul id="roster-list" class="mpx-roster" hidden></ul>
       </section>
 
+      <section class="mpx-section" aria-labelledby="irc-compose-h">
+        <h2 id="irc-compose-h">Coordinate trappers</h2>
+        <p class="mpx-hint">
+          Craft room for the TNR network (Clevertree WS → IRC). Origin replies
+          stay on Nextdoor. Tag prepended; UI shows a link icon.
+        </p>
+        <p class="mpx-meta" id="ref-preview" aria-live="polite"></p>
+        <textarea id="irc-draft" class="mpx-draft" rows="3" placeholder="e.g. [tnr] litter on westside — need trapper Thu…"></textarea>
+        <div class="mpx-actions">
+          <button type="button" id="btn-irc-send" class="secondary">Send to craft room</button>
+        </div>
+        <ul id="irc-log" class="mpx-list" aria-label="Recent craft messages"></ul>
+      </section>
+
       <section class="mpx-section" aria-labelledby="topics-h">
         <h2 id="topics-h">Topics</h2>
         <p class="mpx-hint" id="topics-empty">No collection topics yet.</p>
@@ -52,13 +82,8 @@
       </section>
 
       <section class="mpx-section" aria-labelledby="posts-h">
-        <h2 id="posts-h">Session posts <span id="ticket-count"></span></h2>
+        <h2 id="posts-h">All session tickets <span id="ticket-count"></span></h2>
         <ul id="ticket-list" class="mpx-list"></ul>
-      </section>
-
-      <section class="mpx-section" aria-labelledby="outliers-h">
-        <h2 id="outliers-h">Outliers <span id="outlier-count"></span></h2>
-        <ul id="outlier-list" class="mpx-list"></ul>
       </section>
 
       <section class="mpx-section" aria-labelledby="replies-h">
@@ -67,15 +92,9 @@
         <ul id="replies-list" class="mpx-list"></ul>
       </section>
 
-      <section class="mpx-section" aria-labelledby="irc-compose-h">
-        <h2 id="irc-compose-h">Craft room</h2>
-        <p class="mpx-hint">Sends via Clevertree WS (mirrors IRC). Tag prepended; UI shows a link icon, not the raw id.</p>
-        <p class="mpx-meta" id="ref-preview" aria-live="polite"></p>
-        <textarea id="irc-draft" class="mpx-draft" rows="3" placeholder="Message to #ga-savannah-cat-rescue…"></textarea>
-        <div class="mpx-actions">
-          <button type="button" id="btn-irc-send" class="secondary">Send to craft room</button>
-        </div>
-        <ul id="irc-log" class="mpx-list" aria-label="Recent craft messages"></ul>
+      <section class="mpx-section" aria-labelledby="outliers-h">
+        <h2 id="outliers-h">Outliers <span id="outlier-count"></span></h2>
+        <ul id="outlier-list" class="mpx-list"></ul>
       </section>
     </section>
 

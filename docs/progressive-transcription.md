@@ -30,7 +30,7 @@ Related: [`projects.md`](./projects.md) · [`apk-ticket-ux.md`](./apk-ticket-ux.
 | **Server ticket** (Relay tip) is SoT for **text** + Evidence **refs** | Audio/still **bytes** are temp cache only; purge after Batch success ([`ephemeral-media.md`](./ephemeral-media.md)) |
 | **Closed** tickets do not re-enter retranscription batches | Avoid infinite cost after the Problem is done |
 | Reprocess is optional UX | User **or** APK on-device LLM may **suggest** reprocess; server allows only when gate says new context would change the outcome |
-| **No video Evidence** on the server | Camera = unique/worthy **stills** within rate limits; preview must not upload a video blob |
+| **No realtime video Evidence** | Camera = unique/worthy **stills** within rate limits; preview must not upload a video blob. Deferred video uses Batch frame-select ([`ephemeral-media.md`](./ephemeral-media.md)). |
 | **No media in git** | Repos = tickets text + links; fixtures regenerate wavs locally |
 
 ---
@@ -70,7 +70,7 @@ Because audio is purged after the first successful pass, a **reprocess that need
 | `audio` | Client (upload) | Temp cache URI until processed; then purged — tip keeps `sha256` only |
 | `transcript` | Server (ASR worker) | Versioned text; refs parent `audio` Evidence id |
 | `still` / OCR snippets | Capture path | See [`capture-guidance.md`](./capture-guidance.md); patches can feed the **retranscription** gate |
-| ~~`video`~~ | — | **Not accepted** server-side |
+| `video` (deferred) | Batch inbox only | **Not** on realtime Evidence; frame-select → choice stills ([`ephemeral-media.md`](./ephemeral-media.md)) |
 
 ### First ASR vs retranscription
 
@@ -120,7 +120,7 @@ There is **no** client-facing “transcribe this blob” endpoint. Workers load 
 | Route | Role |
 |---|---|
 | `POST /api/tickets` | Create open ticket **at mic start** (anon `ticket_uuid` + claim) — no later Submit |
-| `POST /api/tickets/[id]/evidence` | Attach **audio** chunks (`chunkIndex`, `isFinal`) or **stills**; audio enqueues `asr`; **reject video**; bytes → temp cache |
+| `POST /api/tickets/[id]/evidence` | Attach **audio** chunks (`chunkIndex`, `isFinal`) or **stills** on the realtime path (reject live video). Deferred/social may attach `video` / `other` into cache/inbox for Batch `media_frame_select` ([`ephemeral-media.md`](./ephemeral-media.md)). |
 | `PATCH /api/tickets/[id]` | Context / **user-locked** title/description; may feed reprocess gate |
 | `POST /api/tickets/[id]/reprocess` | User or APK LLM asks re-ASR / re-vision; body includes `contextDelta`; gate must approve |
 | `GET /api/tickets/[id]` | Timeline + Evidence + jobs + `coachLine` + proposed/locked title/desc |
@@ -196,12 +196,13 @@ Client may keep a **local cache** of the audio file for Play / offline review. S
 
 ---
 
-## Video — hard no (server)
+## Video — realtime no; deferred yes
 
-- **Start feed** = Preview + ImageAnalysis only → **no** video file upload, ever.
-- Unique/worthy **stills** only, within APK + server rate limits ([`context-for-server.md`](./context-for-server.md)).
-- Do **not** offer “Record video” / “Auto-record video” as a path that posts `video` Evidence.
-- Optional on-device preview buffer stays on device and is discarded — never a server blob.
+- **Start feed** = Preview + ImageAnalysis only → **no** realtime video file upload.
+- **Deferred** video may enter Batch inbox → `media_frame_select` → Bunny choice stills → purge unused ([`ephemeral-media.md`](./ephemeral-media.md) · [`batch-phases.md`](./batch-phases.md)).
+- Unique/worthy **stills** only on the live path, within APK + server rate limits ([`context-for-server.md`](./context-for-server.md)).
+- Do **not** offer “Record video” / “Auto-record video” as a path that posts `video` on the **realtime** Evidence API.
+- Optional on-device preview buffer stays on device and is discarded — never a live-path server blob.
 
 ---
 
@@ -209,4 +210,4 @@ Client may keep a **local cache** of the audio file for Play / offline review. S
 
 - Tip Evidence rows may briefly point at a **temp cache** path/URL; after Batch success the URI is cleared ([`ephemeral-media.md`](./ephemeral-media.md)).
 - Optional future: short-lived S3/IPFS links with the same purge contract — repos still never store bytes.
-- `relay.ai.asr` ([`spot-ai-mvp.md`](./spot-ai-mvp.md)): batch worker reads from cache → Whisper → transcript Evidence → **purge**. Until Spot A30 Batch is up, Intake/ops may call hosted Whisper **from the server**, never from the APK.
+- `relay.ai.asr` ([`spot-ai-mvp.md`](./spot-ai-mvp.md)): batch agent reads from cache → Whisper → transcript Evidence → **purge**. Phase 1: Cursor (or hosted Whisper invoked from the **batch** path, never the APK). Phase 2: Spot Batch. See [`batch-phases.md`](./batch-phases.md).

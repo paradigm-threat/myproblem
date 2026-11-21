@@ -89,6 +89,13 @@ class LocalTicketStore(context: Context) {
 
     fun mediaDir(ticketId: String): File = File(root, ticketId).also { it.mkdirs() }
 
+    /** Drop a ticket that never reached the server. */
+    fun forget(id: String) {
+        File(root, "$id.json").delete()
+        File(root, id).deleteRecursively()
+        writeIndex(readIndex().filter { it != id })
+    }
+
     private fun readIndex(): List<String> {
         if (!indexFile.exists()) return emptyList()
         return runCatching {

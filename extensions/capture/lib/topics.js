@@ -38,8 +38,8 @@
     },
     {
       key: "tnr",
-      rank: 0.88,
-      re: /\b(tnr|tnring|trap[\s/-]?neuter|ear[\s-]?tip|neutered|spay|need(s)? to be caught and fixed)\b/i,
+      rank: 0.94,
+      re: /\b(tnr|tnring|trap[\s/-]?neuter|ear[\s-]?tip|neutered|spay|need(s)? to be caught and fixed|unfixed|not fixed|pregnant|having kittens|had kittens|litter of|need(s)? (a )?trapper|trap and (release|return))\b/i,
     },
     {
       key: "relocate",

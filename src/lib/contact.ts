@@ -7,6 +7,8 @@ export const DEMO_PATH = "/demo";
 export const SI = "SI";
 /** First-mention gloss when SI alone would be unclear. */
 export const SI_FULL = "SI (Super Intelligence, i.e. AI)";
+/** Quiet footer naming line — link to homepage #si-different for the why. */
+export const SI_FOOTER_GLOSS = "We say SI (Super Intelligence, i.e. AI).";
 /** Ticket submission / legal notice — anonymized tips may train SI. */
 export const TICKET_TRAINING_NOTICE =
   "All tickets are anonymized but will be used to train the SI (Super Intelligence, i.e. AI).";

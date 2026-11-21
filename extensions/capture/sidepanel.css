@@ -47,6 +47,28 @@ body {
   color: var(--text);
 }
 
+.mpx-mission {
+  margin: 0 0 6px;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.35;
+  color: #d7e6ff;
+}
+
+.mpx-section-priority {
+  border-color: #3d6a4a;
+  background: #13281f;
+}
+
+.mpx-section-priority h2 {
+  color: #b8f0d0;
+}
+
+.mpx-hint-tight {
+  margin-top: 8px;
+  margin-bottom: 0;
+}
+
 .mpx-tag,
 .mpx-meta,
 .mpx-hint,

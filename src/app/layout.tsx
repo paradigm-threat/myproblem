@@ -29,10 +29,10 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: "MyProblem — Free SI front door for local businesses",
+    default: "MyProblem — Free forever for everyone",
     template: "%s · MyProblem",
   },
-  description: `Free forever for local businesses and people. Never enter a card. Tip the person, the ${SI_FULL}, or both when help was good. Pilots in Georgia and Israel.`,
+  description: `Free forever for everyone. Never enter a card. Tip the person, the ${SI_FULL}, or both when help was good. Local problems in Georgia and Israel pilots.`,
   applicationName: "MyProblem",
   category: "technology",
   manifest: "/manifest.webmanifest",
@@ -64,8 +64,8 @@ export const metadata: Metadata = {
     shortcut: ["/favicon.ico"],
   },
   openGraph: {
-    title: "MyProblem — Free SI front door for local businesses",
-    description: `Free forever for local businesses and people. Never enter a card. Tip the person, the ${SI_FULL}, or both when help was good.`,
+    title: "MyProblem — Free forever for everyone",
+    description: `Free forever for everyone. Never enter a card. Tip the person, the ${SI_FULL}, or both when help was good.`,
     url: SITE_URL,
     siteName: "MyProblem",
     locale: "en_US",
@@ -74,8 +74,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "MyProblem — Free SI front door for local businesses",
-    description: `Free forever for local businesses and people. Never enter a card. Tip the person, the ${SI_FULL}, or both when help was good.`,
+    title: "MyProblem — Free forever for everyone",
+    description: `Free forever for everyone. Never enter a card. Tip the person, the ${SI_FULL}, or both when help was good.`,
     images: [OG_IMAGE.url],
   },
   appleWebApp: {

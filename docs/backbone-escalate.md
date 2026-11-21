@@ -8,6 +8,8 @@
 | **Advanced photo analysis** | Spot GPU + **Hugging Face** / open VL (Florence-class, OCR, detectors) | Bedrock VL / GPT-4o-class only on unique hard frames |
 | **Photo / diagram generation** | HF / open image models on Spot or a cheap batch API | Frontier image APIs only if open path fails |
 
+Escalate paths and prompts live in the **public KB** as recipes; batch (Cursor Phase 1 / Spot Phase 2) runs them after KB miss ([`batch-phases.md`](./batch-phases.md)).
+
 Related: [`projects.md`](./projects.md) · [`infra-definition.md`](./infra-definition.md) · [`onboard-ai.md`](./onboard-ai.md) (HF pins for on-device) · [`knowledge-base.md`](./knowledge-base.md) · plan [`08`](../../relay/clevertree-llc-plan/08-realtime-vision-infra-cost.md).
 
 ---

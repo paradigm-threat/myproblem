@@ -5,6 +5,7 @@ import {
   OG_IMAGE,
   SITE_URL,
   SI_FULL,
+  SI_FOOTER_GLOSS,
   TICKET_TRAINING_NOTICE,
 } from "@/lib/contact";
 
@@ -151,8 +152,8 @@ export default function PrivacyPage() {
         </section>
 
         <p className="legal-footer-note">
-          Operated by Clevertree LLC ·{" "}
-          <a href="/terms">Terms &amp; Disclaimers</a> ·{" "}
+          <a href="/#si-different">{SI_FOOTER_GLOSS}</a> Operated by Clevertree
+          LLC · <a href="/terms">Terms &amp; Disclaimers</a> ·{" "}
           <a href="/">{SITE_URL.replace("https://", "")}</a>
         </p>
       </main>

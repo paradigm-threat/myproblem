@@ -38,7 +38,7 @@ const doc = new PDFDocument({
     Title: "MyProblem.app for Businesses & Service Providers",
     Author: "MyProblem",
     Subject:
-      "Free forever for businesses and service providers — zero obligation SI (Super Intelligence, i.e. AI) tickets",
+      "Free forever for everyone — zero obligation SI (Super Intelligence, i.e. AI) tickets for businesses and service providers",
   },
 });
 
@@ -115,7 +115,7 @@ doc
   .fontSize(9)
   .fillColor(accent)
   .text(
-    "Free forever for businesses & service providers · Zero obligation · Powered by Relay",
+    "Free forever for everyone · Zero obligation for shops · Powered by Relay",
     left + logoSize + 10,
     headerY + 20,
     { width: contentW - logoSize - 10, lineBreak: false },
@@ -135,7 +135,7 @@ doc
   .font("Helvetica-Bold")
   .fontSize(15)
   .fillColor(ink)
-  .text("Free forever for businesses & service providers", left, y, {
+  .text("Free forever for everyone — including your shop", left, y, {
     width: contentW,
   });
 y = doc.y + 2;
@@ -156,7 +156,7 @@ const rightColW = contentW - leftColW - gutter;
 const bodyTop = y;
 
 const lead =
-  "MyProblem gives providers a free intake path: visitors capture audio and stills; Projects investigate; you open a dossier only when you choose to look. No application fee, monthly bill, or per-lead invoice — businesses and service providers stay $0. Customer PII stays on their device; network tickets use safe locality (city / coarse band). Georgia & Israel pilots.";
+  "MyProblem is free forever for everyone. Providers get a free intake path: visitors capture audio and stills; Projects investigate; you open a dossier only when you choose to look. No application fee, monthly bill, or per-lead invoice — people and shops stay $0. Customer PII stays on their device; network tickets use safe locality (city / coarse band). Georgia & Israel pilots.";
 
 let leftY = para(lead, left, bodyTop, leftColW, { size: 9.5, lineGap: 1.5 });
 leftY += 10;
@@ -232,7 +232,7 @@ for (let i = 0; i < steps.length; i++) {
 // Who pays
 let c1 = sectionLabel("Who pays (not you)", colXs[1], lowerTop, colW);
 c1 = para(
-  "Businesses and service providers never pay. Infrastructure is funded by consumer free uses and optional consumer priority fees. We do not invoice providers or punish silence.",
+  "Nobody pays to use MyProblem — people or shops. Infrastructure is funded by optional tips after good help (person, SI, or both). We do not invoice anyone or punish silence.",
   colXs[1],
   c1,
   colW,
@@ -271,7 +271,7 @@ doc
   .fontSize(7.5)
   .fillColor(legal)
   .text(
-    "Coming soon. Clevertree LLC · myproblem.app/privacy · /terms. Not medical, veterinary, or legal advice. Free forever for businesses & service providers. PII client-held + auto-convert.",
+    "Coming soon. Clevertree LLC · myproblem.app/privacy · /terms. Not medical, veterinary, or legal advice. Free forever for everyone. PII client-held + auto-convert.",
     left,
     footerRuleY + 6,
     { width: contentW, lineGap: 1.05 },

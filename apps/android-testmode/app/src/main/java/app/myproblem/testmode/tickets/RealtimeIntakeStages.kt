@@ -164,6 +164,7 @@ object TimelinePolicy {
             TimelineKind.USER_TEXT,
             TimelineKind.USER_AUDIO,
             TimelineKind.USER_STILL,
+            TimelineKind.USER_VIDEO,
             TimelineKind.SERVER_TITLE,
             TimelineKind.SERVER_QUESTION,
             TimelineKind.SERVER_ADVICE,

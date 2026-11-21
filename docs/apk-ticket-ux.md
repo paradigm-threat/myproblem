@@ -2,9 +2,9 @@
 
 Product home for the Android app **beyond Test Mode**: open-ticket list, big **New ticket**, onboarding-chosen start mode, multimodal Evidence, and a ticket **timeline** that feels competitive with modern LLM apps — without pretending frontier answers are instantaneous.
 
-Related: [`anonymous-tickets.md`](./anonymous-tickets.md) · [`pii-and-privacy.md`](./pii-and-privacy.md) · [`progressive-transcription.md`](./progressive-transcription.md) · [`intake-fixtures.md`](./intake-fixtures.md) · [`intake-batch-infra.md`](./intake-batch-infra.md) · [`projects.md`](./projects.md) · [`capture-guidance.md`](./capture-guidance.md) · [`context-for-server.md`](./context-for-server.md).
+Related: [`anonymous-tickets.md`](./anonymous-tickets.md) · [`pii-and-privacy.md`](./pii-and-privacy.md) · [`progressive-transcription.md`](./progressive-transcription.md) · [`intake-fixtures.md`](./intake-fixtures.md) · [`intake-batch-infra.md`](./intake-batch-infra.md) · [`projects.md`](./projects.md) · [`capture-guidance.md`](./capture-guidance.md) · [`capture-follow-up.md`](./capture-follow-up.md) · [`context-for-server.md`](./context-for-server.md).
 
-**Status:** UX contract + APK shell. TicketsApi → **`https://intake.myproblem.app`** (regional git SoT; UUID = access; region georgia|israel). Vercel is marketing/APK only. Media is device-local + ephemeral server cache ([`ephemeral-media.md`](./ephemeral-media.md)).
+**Status:** UX contract + APK shell. TicketsApi → **`https://intake.myproblem.app`** (regional git SoT; UUID = access; region georgia|israel). Vercel is marketing/APK only. Media is device-local + ephemeral server cache ([`ephemeral-media.md`](./ephemeral-media.md)). Capture surface: **Chat + Record** (Max and simple). Live realtime coaching is deferred.
 
 ### Phone E2E
 
@@ -21,64 +21,55 @@ Flow covered: APK create → upload audio/still → wake → process/purge → r
 
 ## One-sentence rule
 
-> **Ticket-first home; New ticket jumps into your chosen start mode; stream Evidence; one question stays on screen while you talk and show the problem; the confidence gauge stops advice when it should; deep work is a batched Project.**
+> **Ticket-first home; New ticket is Chat or Record; Record is one deferred clip (mic and camera toggles); the batch investigates thoroughly; deep work is a batched Project.**
 
-On the audio-and-frames screen the current question is a large band **above** the camera. You answer by talking. The question updates as clips and stills come back. A spoken reply from the AI comes later. The ticket screen shows **Understanding N%** and **Solution N%** once the server has scored the problem ([`confidence-gauge.md`](./confidence-gauge.md)). Solution stays “still learning the problem” while questions are open. Under the solution threshold the line says we are not confident enough to advise further. After the batch pass gives up, the line says a person should continue.
+**Max and simple:** two starts only. Live rolling stills / chunked realtime coaching is shelved ([`capture-follow-up.md`](./capture-follow-up.md)). The ticket screen shows **Understanding N%** and **Solution N%** once the server has scored the problem ([`confidence-gauge.md`](./confidence-gauge.md)). Solution stays “still learning the problem” while questions are open. Under the solution threshold the line says we are not confident enough to advise further. After the batch pass gives up, the line says a person should continue.
 
 ---
+
+## Same design as the site
+
+The app draws the FixIt screens itself. It does not load myproblem.app in a WebView.
+
+Shared screens use the tokens in `src/styles/fixit-theme.css`: navy `#070d18`, glass `#0f1a2c`, mint `#5fd4a4`, ticket blue `#4eb8ff`, gold `#f0c14b`. A window under 900px is the phone layout. At 900px or wider, a ticket uses the desktop arrangement (content capped at 960, questions in two columns). The status card uses the same words as `src/lib/tickets/ticketStatus.ts`.
+
+Camera, microphone, and the on-device ticket list stay native. Marketing, privacy, and terms stay on the website and open in the browser.
 
 ## Information architecture
 
 | Screen | Purpose |
 |---|---|
 | **Home** | **Open** tickets only (title, status chip, last update). Closed/archived hidden (Settings → Show archived). Big **New ticket**. Menu: Settings, Test Mode (debug). |
-| **New ticket** | Chooser: **Text** / **Audio** / **Audio + frame analysis** — then opens that mode. No onboarding start-mode gate. |
-| **Ticket detail** | Timeline of Evidence + server cards; compose to add text / mic / stills. |
+| **New ticket** | Chooser: **Chat** / **Record** — then opens that mode. |
+| **Ticket detail** | Timeline of Evidence + server cards; compose to add text. |
 | **Manual fill** | When intake returns `needs_user_text` — title + description; re-queue intake. |
 | **Test Mode** | Debug frame gate lab — not product home. |
 
 ---
 
-## Three start modes (chosen per New ticket)
+## Two start modes (Max and simple)
 
-### Text only
+### Chat
 - Form: **title first**, then description / what you tried.
-- Local draft until Send → create ticket + text fields (later: `POST` ticket).
-- No mic/camera until user adds them on detail.
+- Local draft until Send → create ticket + text fields.
+- Camera and microphone stay off.
 
-### Audio only (live intake — no later Submit)
-- Mic start → **create ticket UUID immediately** (server + local); audio/context stream to that id.
-- While talking, **proposed** title/description update as understanding improves (server intake on chunks; APK shows them live).
-- Stop via button or spoken **“stop recording”** → flush final audio; intake may still refine.
-- User edit of title/description → **locked** (committed); auto-guess must not overwrite.
-- No separate Submit — ticket is already on the server; light intake may hand off to Project queue.
+### Record
+- One feed. **Mic** and **Camera** toggles; the person can turn video on mid-recording.
+- Always one deferred **mp4** (`lane: batch`, `scrubbed_locally: false`). Camera off → black/covered preview feel; mic off → muted audio. Not a second start mode.
+- Local ticket on Record start; **no** sync until Send. No rolling clips, no unique-frame gate, no live question band.
+- Stop → Send uploads the file to the private batch inbox. Phone may keep the clip until Send finishes. Server copy is temporary; batch scrubs or deletes ([`ephemeral-media.md`](./ephemeral-media.md)).
+- Follow-up capture instructions after batch: later ([`capture-follow-up.md`](./capture-follow-up.md)).
 
-#### Realtime status (coach + chip, lockstep)
-
-| Stage | Chip | Coach | When |
-|---|---|---|---|
-| Listening (prompt) | Listening | **Please state your problem.** | Mic live, no usable partial yet |
-| Listening (partial) | Listening | **Got it — keep talking to refine…** | First proposed title/desc |
-| Listening (refine) | Listening | Refine + soft **Say “stop recording” when you’re done.** | Stronger draft while still recording |
-| Transcribing | Transcribing | **Transcribing…** | Stop flushed; ASR finishing — **before** figuring out |
-| Figuring out | Figuring out… | **Figuring out…** | Intake naming / questions |
-| Clarify | Needs details | **Please clarify… / wait for server** | Too little audio or no title |
-| Terminal | Questions / Advice ready / Investigating | Outcome summary | After intake decision |
-
-**Timeliness:** never skip **Transcribing** into **Figuring out**; never return to Listening after stop.
-
-**Timeline / log:** major ticket mutations only (opened, final audio, user lock, server title/questions/advice). Not every chunk or coach refresh. See [`intake-fixtures.md`](./intake-fixtures.md).
-
-### Audio + frame analysis
-- Starts mic + camera **stills** path (Preview + ContextBuilder).
-- **Never** mux or upload video files — unique/worthy JPEGs only.
-- VL/intake may name from a clear still alone (e.g. flat tire); else Manual fill.
+**Legacy:** old tickets may still be `AUDIO` or `AUDIO_FRAMES` (Live). Those modes are not on the chooser.
 
 ---
 
 ## Upload and intake
 
-**Immediate ticket** on Audio/AV start. Stream Evidence as produced (audio **chunks** ~2–4s + final, worthy still, text patch). Cheap **intake** (not full Project):
+**Chat:** create on Send. **Record:** create server ticket on sync after Send, then upload `kind: video` with `lane: batch`.
+
+Cheap **intake** outcomes after batch / ASR (not full Project):
 
 | Outcome | Client |
 |---|---|

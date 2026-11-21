@@ -1,6 +1,7 @@
 package app.myproblem.testmode
 
 import android.Manifest
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
@@ -10,6 +11,9 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.core.content.ContextCompat
 import app.myproblem.testmode.ui.MyProblemApp
 
@@ -18,6 +22,7 @@ class MainActivity : ComponentActivity() {
     private val testVm: TestModeViewModel by viewModels()
 
     private var startFeedAfterPermission = false
+    private var openTicketId by mutableStateOf<String?>(null)
 
     private val cameraPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
@@ -41,6 +46,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        openTicketId = intent.getStringExtra("openTicket")
         setContent {
             MyProblemApp(
                 appVm = appVm,
@@ -48,8 +54,15 @@ class MainActivity : ComponentActivity() {
                 analysisExecutor = testVm.analysisExecutor,
                 onEnsureCameraForTest = { ensureCameraPermission(requestIfMissing = true) },
                 onToggleTestFeed = { feedOn -> onToggleFeedClicked(feedOn) },
+                openTicketId = openTicketId,
             )
         }
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        openTicketId = intent.getStringExtra("openTicket")
     }
 
     private fun onToggleFeedClicked(feedOn: Boolean) {

@@ -1,7 +1,7 @@
 # Cursor batch playbook (Phase 1)
 
-Operator checklist when Cursor is the Relay-wide batch agent.  
-Canonical phases: [`batch-phases.md`](./batch-phases.md).
+Operator checklist when Cursor is the Relay-wide batch SI (Spot Phase 2 uses the **same** steps).  
+Canonical phases: [`batch-phases.md`](./batch-phases.md) — shared across MyProblem, QuizGate, and Clevertree; product tips differ, procedure and tool kit do not.
 
 **Trigger:** human ask in Cursor **or** local cron that opens/resumes a drain session.
 
@@ -56,20 +56,38 @@ A Clevertree room may use **another product’s tip UUID** (or a stable translat
 
 ---
 
-## Per job
+## Per job (drain → commit queue)
+
+Same steps whether this session is Cursor or Spot. Do **not** push remotes mid-drain.
 
 1. **Load rules** from `rules_ref` (repo defaults + per-ticket overrides when present).
 2. **Download** only needed cache/Bunny inputs into a scratch directory unique to this job.
-3. **Run site playbook** (below). Prefer KB recipes (sources, prompts, escalate paths) before frontier calls ([`backbone-escalate.md`](./backbone-escalate.md)).
-4. **Commit** standing outputs only:
+3. **Run site playbook** (below). Prefer KB recipes (sources, prompts, escalate paths) before frontier calls ([`backbone-escalate.md`](./backbone-escalate.md)). Perform investigations, mint reply templates, and prepare standing file updates as long as the job requires.
+4. **Enqueue a proposed commit** (do not push yet) onto that remote’s **commit queue** for this cycle:
    - Private tip remotes: tip JSON/MD, comments/debate filing, job done markers.
    - Public KB: redacted lessons, best sources, prompts — **cite-don’t-cache** the open web.
-5. **Bunny:** upload choice frames / curated assets; update tip links; **delete** superseded inbox/cache objects for this job.
+   - Include metadata: job id, enqueue time (default priority hint), rules_ref, site/kind.
+5. **Bunny:** upload choice frames / curated assets; update tip links in the proposed commit; **delete** superseded inbox/cache objects for this job.
 6. **Confidence:**
    - MyProblem: Understanding + Solution on tip/timeline ([`confidence-gauge.md`](./confidence-gauge.md)).
    - Operator: record correct / accurate / fast for this run (feed Phase 2 bar).
 7. **Wipe local scratch** (downloads, clones used only for this job, temp exports).
-8. Mark queue job **done** / **blocked** (e.g. human mint required) / **failed** with reason.
+8. Mark intake job **done** / **blocked** (e.g. human mint required) / **failed** with reason.
+
+---
+
+## Merge phase (after this repo’s drain for the cycle)
+
+Canonical detail: [`batch-phases.md`](./batch-phases.md) — Shared SI batch procedure. Checklist:
+
+1. Confirm no remaining intake jobs for this remote’s cycle slice (or cycle budget closed).
+2. Load the **commit queue** for the remote.
+3. **Soundness / integrity:** Relay rules + posted `rules.md` / defaults; recheck drain outputs; reject compromised or rule-breaking diffs.
+4. **Conflict / mesh:** detect overlapping paths, duplicate tips, push storms; drop or reorder.
+5. **Kickback:** remove unsound items from this merge; re-queue the job for a **later** cycle (visible failure — not an infinite inner loop). After retry budget → **failed / human**.
+6. **Priority order:** merge accepted commits by rules-driven priority (urgency / value); FIFO enqueue time is the default when rules are silent.
+7. **Push** accepted commits to the private tip / public KB / comments remotes; clear commit-queue entries.
+8. Record merge summary in the drain report (accepted / kicked / failed).
 
 ---
 
@@ -104,11 +122,11 @@ Kinds include: enqueue body filing, IRC log batches, spam ascertain, key mint/re
 
 ---
 
-## After drain session
+## After drain + merge session
 
-1. Summarize tips inventoried / deleted / curated, jobs done / blocked / failed, operator confidence.
-2. Write a short drain report (e.g. `docs/ops/batch-drain-YYYY-MM-DD.md`) when the pass changes tip remotes.
-3. Note any batch-server code/docs/tests that must change so Spot Phase 2 matches this run ([`batch-phases.md`](./batch-phases.md) Phase 1.5).
+1. Summarize tips inventoried / deleted / curated, jobs done / blocked / failed, commit-queue accepted / kicked, operator confidence.
+2. Write a short drain report (e.g. `docs/ops/batch-drain-YYYY-MM-DD.md`) when the pass changes tip remotes (include merge-phase outcomes).
+3. Note any batch-server code/docs/tests that must change so Spot Phase 2 matches this run ([`batch-phases.md`](./batch-phases.md) Phase 1.5) — Spot must implement the **same** drain → commit queue → merge procedure.
 4. Ensure no leftover scratch dirs or orphaned Bunny inbox objects from this session.
 
 ---

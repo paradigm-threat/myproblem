@@ -1,14 +1,17 @@
 package app.myproblem.testmode.ui
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
@@ -25,16 +28,20 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import app.myproblem.testmode.BuildFlags
 import app.myproblem.testmode.tickets.FieldSource
 import app.myproblem.testmode.tickets.IntakeStatus
 import app.myproblem.testmode.tickets.LocalTicket
 import app.myproblem.testmode.tickets.TicketStatus
 import app.myproblem.testmode.tickets.TimelineKind
 import app.myproblem.testmode.tickets.ConfidenceCopy
+import app.myproblem.testmode.tickets.SiteLayout
+import app.myproblem.testmode.tickets.TicketPageStatus
 import app.myproblem.testmode.tickets.chipLabel
 
 @Composable
@@ -57,25 +64,47 @@ fun TicketDetailScreen(
     var answering by remember { mutableStateOf<String?>(null) }
     var answerText by remember { mutableStateOf("") }
 
+    BoxWithConstraints(
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .background(Bg),
+    ) {
+    val desktop = SiteLayout.mode(maxWidth.value.toInt()) == SiteLayout.Mode.DESKTOP
     Column(
         modifier =
             Modifier
                 .fillMaxSize()
-                .background(Bg)
+                .then(if (desktop) Modifier.widthIn(max = 960.dp).align(Alignment.TopCenter) else Modifier)
                 .statusBarsPadding()
                 .navigationBarsPadding()
-                .padding(16.dp),
+                .padding(if (desktop) 24.dp else 16.dp),
     ) {
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
             Text("← Back", color = Muted, modifier = Modifier.clickable(onClick = onBack))
             Text(ticket.intake.chipLabel(), color = Accent, fontSize = 13.sp)
         }
         Spacer(Modifier.height(8.dp))
-        Text(
-            ticket.displayTitle(),
-            color = Warm,
-            fontWeight = FontWeight.SemiBold,
-            fontSize = 22.sp,
+        val safety = ticket.coachLine.startsWith("Safety warning")
+        if (safety) {
+            Text(
+                ticket.coachLine,
+                color = Gold,
+                fontWeight = FontWeight.Medium,
+                fontSize = 14.sp,
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .background(Gold.copy(alpha = 0.12f), RoundedCornerShape(10.dp))
+                        .border(1.dp, Gold, RoundedCornerShape(10.dp))
+                        .padding(horizontal = 12.dp, vertical = 8.dp),
+            )
+            Spacer(Modifier.height(10.dp))
+        }
+        TicketPageStatusCard(
+            status = TicketPageStatus.of(solved = ticket.status != TicketStatus.OPEN),
+            title = ticket.displayTitle(),
+            stillPath = ticket.timeline.lastOrNull { it.kind == TimelineKind.USER_STILL }?.localPath,
             modifier = Modifier.clickable { showFill = true },
         )
         Text(
@@ -107,21 +136,16 @@ fun TicketDetailScreen(
                 fontSize = 13.sp,
             )
         }
-        if (ticket.coachLine.isNotBlank()) {
+        if (ticket.coachLine.isNotBlank() && !safety) {
             Spacer(Modifier.height(8.dp))
-            val safety = ticket.coachLine.startsWith("Safety warning")
-            Text(
-                ticket.coachLine,
-                color = if (safety) Danger else Accent,
-                fontWeight = if (safety) FontWeight.SemiBold else FontWeight.Normal,
-                fontSize = 13.sp,
-            )
+            Text(ticket.coachLine, color = TicketBlue, fontSize = 13.sp)
         }
         Spacer(Modifier.height(12.dp))
         SyncStatusCard(
             sync = ticket.sync,
             onRetry = onRetrySync,
-            onSimulateRemote = onSimulateRemoteAhead,
+            onSimulateRemote = if (BuildFlags.SHOW_DEV_TOOLS) onSimulateRemoteAhead else null,
+            showDiagnostics = BuildFlags.SHOW_DEV_TOOLS,
         )
         Spacer(Modifier.height(12.dp))
 
@@ -140,22 +164,27 @@ fun TicketDetailScreen(
 
         if (ticket.questions.isNotEmpty()) {
             Text("Quick questions", color = Accent, fontWeight = FontWeight.Medium)
-            ticket.questions.forEach { q ->
-                Text(
-                    q,
-                    color = Warm,
-                    fontSize = 14.sp,
-                    modifier =
-                        Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 6.dp)
-                            .background(Chip, RoundedCornerShape(8.dp))
-                            .clickable {
-                                answering = q
-                                answerText = ""
-                            }
-                            .padding(10.dp),
-                )
+            val rows = if (desktop) ticket.questions.chunked(2) else ticket.questions.map { listOf(it) }
+            rows.forEach { row ->
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.fillMaxWidth()) {
+                    row.forEach { q ->
+                        Text(
+                            q,
+                            color = Warm,
+                            fontSize = 14.sp,
+                            modifier =
+                                Modifier
+                                    .weight(1f)
+                                    .padding(vertical = 6.dp)
+                                    .background(Chip, RoundedCornerShape(8.dp))
+                                    .clickable {
+                                        answering = q
+                                        answerText = ""
+                                    }
+                                    .padding(10.dp),
+                        )
+                    }
+                }
             }
             Spacer(Modifier.height(8.dp))
         }
@@ -200,6 +229,7 @@ fun TicketDetailScreen(
         } else {
             SecondaryButton("Reopen", onClick = onReopen)
         }
+    }
     }
 
     if (showReprocess) {

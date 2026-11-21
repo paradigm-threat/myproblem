@@ -130,7 +130,14 @@ class TicketSyncEngine(
                     onUpdated()
                 }
 
-                suspend fun maybeUpload(kind: String, file: File, mime: String, rolling: Boolean = false) {
+                suspend fun maybeUpload(
+                    kind: String,
+                    file: File,
+                    mime: String,
+                    rolling: Boolean = false,
+                    lane: String? = null,
+                    scrubbedLocally: Boolean? = null,
+                ) {
                     val hash = sha256Hex(file)
                     if (hash in uploaded) return
                     val res =
@@ -142,12 +149,18 @@ class TicketSyncEngine(
                             mime = mime,
                             isFinal = true,
                             rolling = rolling,
+                            lane = lane,
+                            scrubbedLocally = scrubbedLocally,
                         )
-                    if (res.ok) uploaded.add(hash)
+                    if (!res.ok) {
+                        throw IllegalStateException(res.error ?: "Upload failed")
+                    }
+                    uploaded.add(hash)
+                    if (kind == "video") file.delete()
                 }
 
                 // Speech first so a still is described against the transcript.
-                for (kind in listOf(TimelineKind.USER_AUDIO, TimelineKind.USER_STILL)) {
+                for (kind in listOf(TimelineKind.USER_AUDIO, TimelineKind.USER_STILL, TimelineKind.USER_VIDEO)) {
                     for (entry in cur.timeline) {
                         if (entry.kind != kind) continue
                         val path = entry.localPath ?: continue
@@ -162,6 +175,14 @@ class TicketSyncEngine(
                                     rolling = isRollingAudio(entry.body),
                                 )
                             TimelineKind.USER_STILL -> maybeUpload("still", file, "image/jpeg")
+                            TimelineKind.USER_VIDEO ->
+                                maybeUpload(
+                                    "video",
+                                    file,
+                                    "video/mp4",
+                                    lane = "batch",
+                                    scrubbedLocally = false,
+                                )
                             else -> Unit
                         }
                     }

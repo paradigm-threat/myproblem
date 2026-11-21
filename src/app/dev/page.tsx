@@ -56,6 +56,9 @@ export default function DevPage() {
             <Link className="btn-primary" href="/submit">
               Try it now
             </Link>
+            <Link className="btn-secondary" href="/extension">
+              MyProblem X
+            </Link>
             <Link className="btn-secondary" href="/how-we-run">
               How we run
             </Link>
@@ -87,16 +90,16 @@ export default function DevPage() {
               public tickets)
             </li>
             <li>
-              <strong>intake.myproblem.app</strong> — tip SoT, evidence, slugs,
-              Clevertree board host
+              <strong>intake.myproblem.app</strong> — cache + enqueue (media,
+              jobs, slugs); tip/KB commits only from batch
             </li>
             <li>
-              <strong>Clevertree Chat</strong> — discussion; SI organizes after
-              batch
+              <strong>Clevertree Chat</strong> — discussion on tip UUID rooms;
+              SI organizes after batch
             </li>
             <li>
-              <strong>KB + Bunny/cache</strong> — git Markdown lessons; scrubbed
-              stills while live
+              <strong>KB + Bunny/cache</strong> — cite-don’t-cache KB; per-repo
+              Bunny; Phase 1 Cursor-as-batch on shared queue
             </li>
           </ul>
         </section>
@@ -122,6 +125,17 @@ export default function DevPage() {
 
         <section className="dev-card" aria-labelledby="phases-heading">
           <h2 id="phases-heading">Phases</h2>
+          <p style={{ marginBottom: "0.75rem" }}>
+            Product SoT:{" "}
+            <a
+              href="https://gitlab.com/clevertree/myproblem/-/blob/main/docs/batch-phases.md"
+              rel="noopener noreferrer"
+              target="_blank"
+            >
+              batch-phases.md
+            </a>
+            . Home <Link href="/#plan">Now / Next</Link> matches this list.
+          </p>
           <ul className="dev-phases">
             <li>
               <span className="phase">Done</span>
@@ -131,17 +145,22 @@ export default function DevPage() {
               </div>
             </li>
             <li>
-              <span className="phase is-wip">In progress</span>
+              <span className="phase is-wip">Now</span>
               <div>
-                Intake deploy for mint_slug / unpublish; web submit polish;
-                device + web QA.
+                Tickets + Clevertree on the same tip UUID;{" "}
+                <Link href="/extension">MyProblem X</Link> + local ZIP; confidence
+                gauges; KB cite-don’t-cache + private tip remotes; Phase 1
+                Cursor-as-batch / Intake cache+enqueue; ephemeral Spot thesis (
+                <Link href="/#si-different">SI different</Link>).
               </div>
             </li>
             <li>
               <span className="phase is-next">Next</span>
               <div>
-                APK capture parity on web; recover email; topical human mint;
-                richer photo tooling.
+                Phase 2 Spot automation; deferred video → choice stills + Bunny;
+                batched coding/docs/networking Projects; shared QuizGate +
+                Clevertree queue drain; recover email / register; FixIt remote
+                when minted; broader regions.
               </div>
             </li>
           </ul>

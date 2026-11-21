@@ -28,6 +28,12 @@ Website/KB companion: [`coding-and-websites.md`](./coding-and-websites.md) · KB
 6. Report on the ticket timeline; close or wait-for-user.  
 7. **Delete ephemeral caches** (clones, encode scratch, temp exports) after publish.
 
+### Phase 1: Cursor-as-batch (Relay-wide)
+
+Until product **Phase 2** Spot go-live ([`batch-phases.md`](./batch-phases.md)), **Cursor** is the batch agent for the **shared queue** (MyProblem, QuizGate, Clevertree) — ask + local cron. Playbook: [`cursor-batch-playbook.md`](./cursor-batch-playbook.md).
+
+Intake **caches + enqueues** only; Cursor mints/updates private tips, public KB, Bunny choice-media, and wipes scratch. Capture path: scrubbed `myproblem.capture_batch.v1` (after **Mark ready**) or Intake inbox when wired — process only `gate: "ticket"` posts; outliers = channel stats ([`social-group-monitor.md`](./social-group-monitor.md) · [`capture-extension.md`](./capture-extension.md)).
+
 Same pattern covers **programming**, **networking setup**, **documents**, **spreadsheets/office files**, and **heavy media pipelines** (e.g. NLE/timeline projects → verify → final file somewhere durable → purge scratch). We do not keep giant working trees on the shared tip store.
 
 ---

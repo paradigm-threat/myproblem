@@ -1,7 +1,13 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import { SiteHeader } from "@/components/SiteHeader";
-import { CONTACT_EMAIL, OG_IMAGE, SITE_URL, SI_FULL } from "@/lib/contact";
+import {
+  CONTACT_EMAIL,
+  OG_IMAGE,
+  SITE_URL,
+  SI_FULL,
+  SI_FOOTER_GLOSS,
+} from "@/lib/contact";
 
 const TITLE = "How we run";
 const DESCRIPTION = `No salaries or subscriptions. Never enter a card. Tip the person, the ${SI_FULL}, or both when help was good. Intent, not a contract.`;
@@ -26,12 +32,12 @@ export const metadata: Metadata = {
 
 const FAQ = [
   {
-    question: "Do shops pay?",
+    question: "Does anyone pay?",
     answer:
-      "No. A business never pays to join, to see a request, or to answer. There is no membership, no lead invoice, and no subscription. A shop can leave a tip after a good experience. It is never required.",
+      "No. Free forever for everyone — people and shops. Nobody pays to join, to file a ticket, to see a request, or to answer. There is no membership, no lead invoice, and no subscription. Anyone can leave a tip after a good experience. It is never required.",
   },
   {
-    question: "When does anyone pay?",
+    question: "When does anyone tip?",
     answer:
       `Only when they want to. You should never expect to enter a card. If the help was good, tip the person who helped, the ${SI_FULL} that helped, or both. A gift to the SI keeps the machines running. $1, $5, and $10 are examples, not prices.`,
   },
@@ -91,8 +97,9 @@ export default function HowWeRunPage() {
           <ul>
             <li>No salaries, and no subscription.</li>
             <li>
-              The service is free forever. You should never expect to enter a
-              card.
+              Free forever for everyone.{" "}
+              <strong>Max and simple</strong> — anonymous first, no paywall, no
+              fee later. You should never expect to enter a card.
             </li>
             <li>
               If the help was good, tip the person who helped, the SI that
@@ -125,6 +132,11 @@ export default function HowWeRunPage() {
         <section aria-labelledby="virtues-heading">
           <h2 id="virtues-heading">Virtues</h2>
           <ul>
+            <li>
+              <strong>Max and simple</strong> — full help behind few modes. Free
+              for everyone (anonymous first, no paywall). Free forever (no fee
+              later).
+            </li>
             <li>Thorough over instant.</li>
             <li>A shop may stay silent. Silence is a valid outcome.</li>
             <li>No paid ranking of lessons or businesses.</li>
@@ -215,7 +227,8 @@ export default function HowWeRunPage() {
         </section>
 
         <p className="legal-footer-note">
-          Operated by Clevertree LLC (Georgia), public brand MyProblem. Contact{" "}
+          <a href="/#si-different">{SI_FOOTER_GLOSS}</a> Operated by Clevertree
+          LLC (Georgia), public brand MyProblem. Contact{" "}
           <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>. No
           percentages and no promised return.{" "}
           <a href="/">Back to the product</a>.
@@ -234,6 +247,8 @@ export default function HowWeRunPage() {
         </div>
         <nav className="footer-nav" aria-label="Footer">
           <a href="/">Home</a>
+          <span aria-hidden="true"> · </span>
+          <a href="/#si-different">Why this SI</a>
           <span aria-hidden="true"> · </span>
           <a href="/terms">Terms</a>
           <span aria-hidden="true"> · </span>

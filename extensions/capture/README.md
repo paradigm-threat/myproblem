@@ -2,7 +2,7 @@
 
 Session-bound capture + human-approved reply paste for locked social feeds (Nextdoor pilot).
 
-**v0.1.21:** Savannah Cat Rescue collection UI (header + groups-to-sync roster); craft IRC `#ga-savannah-cat-rescue`. See `../../content/collections/savannah-cat-rescue.md`.
+**v0.1.22:** Main leads with **TNR matches** (litters / unfixed moms → trap network); collection mission + craft “Coordinate trappers”. See `../../content/collections/savannah-cat-rescue.md`.
 
 **Not a bot scraper.** Platforms ban unattended scrapers. You browse; the extension harvests what you can already see, caches a local batch, scrubs PII, suggests topics, and helps paste batch-drafted reply templates that **you** edit and send.
 

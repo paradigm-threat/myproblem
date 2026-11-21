@@ -4,7 +4,7 @@
 
 **We do not need an on-demand frontier LLM or on-demand premium vision.** We need a **smart-enough** model to capture the question, requirements, and photos; **queue a JIRA-like ticket by status**; then **batch-investigate ASAP and as completely as possible** — **region KB first**, then Hugging Face / Spot / allowed browser research — without waste or redundant calls. Bedrock / other frontier APIs are a **rare backbone escalate after KB miss**, and useful results **write back into the KB** — see [`backbone-escalate.md`](./backbone-escalate.md) · [`knowledge-base.md`](./knowledge-base.md).
 
-Realtime AI in the app exists only to **build the ticket**. Full investigation quality runs later, when Spot / batch capacity (and optional internet / multi-LLM queries) are cheap and available.
+Realtime AI in the app exists only to **build the ticket** (capture → Intake cache/queue). Full investigation quality runs in **batch** — Phase 1 **Cursor**, Phase 2 Spot ([`batch-phases.md`](./batch-phases.md)) — when capacity (and optional internet / multi-LLM queries) are cheap and available.
 
 **Product promise:** the AI **does not cut corners** to look instant. It takes the time resources allow to investigate thoroughly. Waiting for capacity is an honest UX; silently downgrading free-tier depth is not.
 
@@ -12,7 +12,7 @@ Realtime AI in the app exists only to **build the ticket**. Full investigation q
 
 Public product terms / softer professional disclaimers: [https://myproblem.app/terms](https://myproblem.app/terms) (Clevertree LLC).
 
-Related: [`anonymous-tickets.md`](./anonymous-tickets.md) · [`apk-ticket-ux.md`](./apk-ticket-ux.md) · [`backbone-escalate.md`](./backbone-escalate.md) · [`context-for-server.md`](./context-for-server.md) · [`spot-ai-mvp.md`](./spot-ai-mvp.md) · [`progressive-transcription.md`](./progressive-transcription.md) · [`infra-definition.md`](./infra-definition.md) · [`knowledge-base.md`](./knowledge-base.md).
+Related: [`batch-phases.md`](./batch-phases.md) · [`anonymous-tickets.md`](./anonymous-tickets.md) · [`apk-ticket-ux.md`](./apk-ticket-ux.md) · [`backbone-escalate.md`](./backbone-escalate.md) · [`context-for-server.md`](./context-for-server.md) · [`spot-ai-mvp.md`](./spot-ai-mvp.md) · [`progressive-transcription.md`](./progressive-transcription.md) · [`infra-definition.md`](./infra-definition.md) · [`knowledge-base.md`](./knowledge-base.md).
 
 ---
 
@@ -64,7 +64,7 @@ User can still:
 | **On-device gate** | Frame-time | Drop shake/blur/dupe; never upload junk | Free / local |
 | **Realtime capture coach** | Seconds | “Turn left,” “read the label,” “what have you tried?” — **ticket intake only** | Cheap / free pool; capped |
 | **Project investigation (primary)** | Minutes → hours (honest ETA) | Deep VL (HF/Spot), optional image gen, multi-step LLM, web tools, dossier compile, rare Bedrock escalate | **Batch / Spot / off-peak** — much cheaper than on-demand premium |
-| **Merchant / human update** | Async | Accept, decline, ask for more info, schedule — **or ignore entirely** (no SLA; social-feed freedom) | Businesses free + zero obligation; silence is valid; timeline still on ticket |
+| **Merchant / human update** | Async | Accept, decline, ask for more info, schedule — **or ignore entirely** (no SLA; social-feed freedom) | Free forever for everyone + zero obligation for shops; silence is valid; timeline still on ticket |
 
 **Do not** design the product around realtime “frontier investigation while the user stares at a spinner.” That path is optional premium later if ever; it is **not** the default.
 
@@ -170,7 +170,7 @@ UX promise: **one place** for investigative progress and handoff status—not a 
 |---|---|---|
 | On-demand frontier for every hard Q | Looks “smart” | Wasteful; redundant; fights free forever |
 | **Deferred batch Project + rare Bedrock** | Thorough ASAP; cache/KB dedupe | Spot + pennies per unique escalate |
-| Immediate merchant submit | No AI depth | Always allowed; businesses still $0 and may ignore |
+| Immediate merchant submit | No AI depth | Always allowed; everyone stays $0; shops may ignore |
 
 Free-tier honesty: “We’re researching this; you’ll get updates when capacity runs” beats silent downgrade or surprise bills. Priority shortens the **queue**, it does not buy live Sonnet.
 
@@ -204,6 +204,7 @@ Each job run emits `InvestigationUpdate { at, actor, kind, summary, evidence_ref
 - Public lessons → **region knowledge base** for **problem-solving** (git Markdown; no boosting; no internet freeze-frame); optional **channels** ([`knowledge-base.md`](./knowledge-base.md)).  
 - Research and Bedrock escalate **feed the KB**; the KB is checked **before** the next escalate; advice is **re-tested** over time.  
 - Digital DIY is in scope (e.g. nearly-free website path in KB); **batched agent work** (coding, networking, docs, heavy media jobs — thorough finish + notify, not realtime Cursor) is a **major coming soon** ([`batched-agent-work.md`](./batched-agent-work.md) · [`coding-and-websites.md`](./coding-and-websites.md)).
+- **MyProblem X** — session capture + human reply-assist for locked social groups ([`capture-extension.md`](./capture-extension.md) · [myproblem.app/extension](https://myproblem.app/extension)); Georgia stray-cats channel pilot.
 
 Landing / PDF should not promise “instant deep AI answers.” Prefer: *capture now, investigate when capacity allows, get notified.* KB: *local resource wisdom and DIY — speculative, user+AI only, no boosting — not a search-ad mirror.*
 
@@ -225,7 +226,7 @@ Landing / PDF should not promise “instant deep AI answers.” Prefer: *capture
 ## Implementation checklist (docs → code)
 
 1. Regional Relay tip schema: Problem + InvestigationUpdate + Evidence **links**; job files for leases.
-2. Object store for audio/stills; reject video; no binaries in git.
+2. Object store for audio/stills; reject **realtime** video; deferred video → Batch frame-select then choice stills; no binaries in git.
 3. Queue: Batch wakes from queued job files on Intake worktree ([`intake-batch-infra.md`](./intake-batch-infra.md)).
 4. Realtime stays coach-only; enqueue Project via tip job file.
 5. Notify: anon poll; email when recover/account attached.

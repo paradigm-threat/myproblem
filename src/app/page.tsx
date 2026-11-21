@@ -6,10 +6,15 @@ import {
   RELAY_URL,
   SITE_URL,
   SI_FULL,
+  SI_FOOTER_GLOSS,
   TICKET_TRAINING_NOTICE,
 } from "@/lib/contact";
 
 const VIRTUES = [
+  {
+    title: "Max and simple",
+    body: "Full help behind few modes. Free for everyone — anonymous first, no paywall. Free forever — no fee later.",
+  },
   {
     title: "Thorough over instant",
     body: "A free investigation waits for capacity instead of a shorter answer.",
@@ -51,15 +56,17 @@ export default function HomePage() {
                 <a href="/dev">Dev</a>.
               </p>
               <h1 id="hero-heading" className="hero-title">
-                Free for local businesses. Thorough help for people.
+                Free forever for everyone. Thorough help for people.
               </h1>
               <p className="hero-lead">
-                A shop sends unsure people into a ticket instead of a phone
-                loop. While they talk and show the problem, one question stays
-                on screen until the requirements are specific. The person gets a
-                real investigation before anyone has to meet. You should never
-                expect to enter a card. If the help was good, tip the person,
-                the {SI_FULL}, or both.
+                <strong className="emph">Max and simple</strong> — full help
+                behind few modes. Free for everyone, anonymous first, no
+                paywall. Free forever, no fee later. A shop sends unsure people
+                into a ticket instead of a phone loop. While they talk and show
+                the problem, one question stays on screen until the requirements
+                are specific. The person gets a real investigation before anyone
+                has to meet. You should never expect to enter a card. If the
+                help was good, tip the person, the {SI_FULL}, or both.
               </p>
               <p className="powered-by">
                 Powered by{" "}
@@ -110,7 +117,8 @@ export default function HomePage() {
           <section id="businesses" aria-labelledby="businesses-heading">
             <h2 id="businesses-heading">How it works for businesses</h2>
             <p className="section-lead">
-              $0 application. $0 subscription. Free forever — and{" "}
+              $0 application. $0 subscription. Free forever —{" "}
+              <strong className="emph">Max and simple</strong>, and{" "}
               <strong className="emph">zero obligation</strong>. Incoming
               requests work like a social feed: open what looks like a fit, or{" "}
               <strong className="emph">ignore entirely</strong> when you have
@@ -130,7 +138,7 @@ export default function HomePage() {
                 />
                 <img
                   src="/businesses.jpg"
-                  alt="MyProblem for local businesses: free forever, no obligation — receive requests, review the SI dossier, accept or ignore entirely like a social feed"
+                  alt="MyProblem for local businesses: free forever for everyone, zero obligation — receive requests, review the SI dossier, accept or ignore entirely like a social feed"
                   width={1024}
                   height={512}
                   className="section-graphic-img"
@@ -278,8 +286,8 @@ export default function HomePage() {
                   channel — not into the public ticket dossier or network cache.
                 </li>
                 <li>
-                  <strong>Free forever</strong> for core private / anonymous SI
-                  help — no login required for the basics. No card expected.
+                  <strong>Free forever for everyone</strong> — people and shops.
+                  No login required for the basics. No card expected.
                 </li>
                 <li>
                   <strong>Thorough over instant</strong> — deferred Projects
@@ -461,85 +469,188 @@ export default function HomePage() {
             <h2 id="plan-heading">The plan</h2>
             <p className="section-lead">
               Relay-native investigation service. Problems first — not a frontier
-              chatbot. Clevertree Chat on every ticket for people to communicate;
-              Projects for thorough deferred research. A shared knowledge base
-              for problem-solving — including how to put a modern site online
-              nearly for free.{" "}
-              <strong className="emph">Major coming soon:</strong> batched
-              automated coding, networking, documents, and heavy digital jobs —
-              thorough finish when capacity allows, not a realtime Cursor-style
-              IDE. Local businesses free forever. Tips optional — never a
-              required card.
+              chatbot. One tip UUID is the unit: a problem, a chat room, and
+              (on sibling products) a user or topic. Clevertree Chat mounts on
+              that same id. Free forever for everyone. Tips optional — never a
+              required card. Why the SI stays ephemeral →{" "}
+              <a href="#si-different">Why is this SI different?</a>
+            </p>
+
+            <h3 id="plan-now-heading" style={{ marginTop: "1.5rem" }}>
+              Now — live / in pilot
+            </h3>
+            <div className="plan-grid">
+              <article>
+                <h3>Tickets + public pilots</h3>
+                <p>
+                  Web <a href="/submit">submit</a>, public{" "}
+                  <a href="/t/garage-ring-power">/t/</a> help pages, and
+                  private tip remotes (Georgia / Israel). FixIt craft remote
+                  waits until a real repair tip needs it.
+                </p>
+              </article>
+              <article>
+                <h3>Clevertree Chat on the tip</h3>
+                <p>
+                  People talk on the problem through{" "}
+                  <a href="https://clevertree.chat">Clevertree Chat</a> using
+                  the <strong className="emph">same tip UUID</strong> as the
+                  room — no forced second id. SI organizes; it does not vote.
+                </p>
+              </article>
+              <article>
+                <h3>MyProblem X</h3>
+                <p>
+                  Session capture + reply assist while you browse (
+                  <a href="/extension">extension</a>). Local ZIP export of JSON
+                  + media. Not a bot scraper.
+                </p>
+              </article>
+              <article>
+                <h3>Confidence gauges</h3>
+                <p>
+                  Understanding + Solution scores on the capture path — show how
+                  ready the ask is before advising.
+                </p>
+              </article>
+              <article>
+                <h3>KB + private tips</h3>
+                <p>
+                  Public knowledge base cites the live web (no scrape mirror).
+                  Tips stay on private remotes. Speculative; no boosting.
+                </p>
+              </article>
+              <article>
+                <h3>Phase 1 batch (Cursor)</h3>
+                <p>
+                  Always-on Intake <strong className="emph">caches and
+                  enqueues</strong> only. Cursor invents tip/KB commits on a
+                  shared multi-site queue (ask + cron) until Spot Phase 2.
+                </p>
+              </article>
+            </div>
+
+            <h3 id="plan-next-heading" style={{ marginTop: "1.75rem" }}>
+              Next — planned
+            </h3>
+            <div className="plan-grid">
+              <article>
+                <h3>Phase 2 Spot automation</h3>
+                <p>
+                  Same queue contract on ephemeral Rackspace Spot GPUs —
+                  reconstruct, work, retain by rule, wipe. Go-live after
+                  parity, tests, fine-tune, and operator confidence.
+                </p>
+              </article>
+              <article>
+                <h3>Deferred video → choice stills</h3>
+                <p>
+                  Batch inbox video/audio → frame-select → Bunny choice stills
+                  (per-repo upload source); purge unused.
+                </p>
+              </article>
+              <article>
+                <h3>Batched coding &amp; digital work</h3>
+                <p>
+                  Not a realtime Cursor clone. Leave instructions; a batch
+                  worker finishes implement/test/deploy and notifies you —
+                  sites, docs, networking, heavy pipelines with scratch purge.
+                </p>
+              </article>
+              <article>
+                <h3>Shared queue for all Relay sites</h3>
+                <p>
+                  Production drain for QuizGate (tip = user) and Clevertree
+                  (tip = topic) on the same Phase 1→2 path as MyProblem.
+                </p>
+              </article>
+              <article>
+                <h3>Recover email / register</h3>
+                <p>
+                  Free durable reclaim so a lost phone does not lose anon
+                  tickets.
+                </p>
+              </article>
+              <article>
+                <h3>Broader regions + FixIt remote</h3>
+                <p>
+                  Expand beyond Georgia / Israel by request. Mint FixIt
+                  tip+KB pair when DIY/repair needs its own home.
+                </p>
+              </article>
+            </div>
+          </section>
+
+          <section id="si-different" aria-labelledby="si-different-heading">
+            <h2 id="si-different-heading">
+              Why is this SI different from other SIs?
+            </h2>
+            <p className="section-lead">
+              MyProblem runs on the same Relay pattern as QuizGate and Clevertree
+              Chat: batch {SI_FULL} on temporary hardware — not a permanent cloud
+              brain you only audit through a retention policy. Typical cloud AIs
+              stay attached to always-on services; leftover retention is what you
+              hope a vendor honored. Here leftover retention is the exception the
+              rules chose to keep.
             </p>
             <div className="plan-grid">
               <article>
-                <h3>Problems + Clevertree Chat</h3>
+                <h3>Ephemeral batch hardware</h3>
                 <p>
-                  Context is the Problem record — photos, facts, stops,
-                  attempts, status. People communicate on the ticket through{" "}
-                  <a href="https://clevertree.chat">Clevertree Chat</a>; the
-                  same SI batch organizes those threads into reusable knowledge.
-                  Investigation is still a compiled brief and a Project queue —
-                  not a rolling chatbot dump.
+                  Jobs run on interruptible Rackspace Spot GPUs (and similar
+                  temporary capacity). When the batch finishes — however long or
+                  detailed — the worker is decommissioned and scratch is
+                  destroyed, including inputs from apps, APIs, and other servers.
+                  Capacity exists only while the job runs, so thorough work stays
+                  cheap.
                 </p>
               </article>
               <article>
-                <h3>Queue + batch, not on-demand LLM</h3>
+                <h3>Reconstructed SI, rules as memory</h3>
                 <p>
-                  Smart capture → status queue → batch investigate ASAP
-                  (HF/Spot photo analysis + gen). Bedrock only for rare unique
-                  misses; priority shortens wait, not live Sonnet or image APIs.
+                  Each batch rebuilds the SI from programmed instructions: repo
+                  rule sets, and sometimes per-ticket rules. It has no durable
+                  private memory of prior runs beyond those instructions and what
+                  the standing store already publishes. When the batch ends, that
+                  instance is gone.
                 </p>
               </article>
               <article>
-                <h3>Knowledge for problem-solving</h3>
+                <h3>Retain only by decision</h3>
                 <p>
-                  Ticket-earned lessons for Georgia and Israel — local resource
-                  wisdom and DIY when place does not matter (including a
-                  nearly-free website path via free-tier hosting). Speculative
-                  (users + SI only); no boosting; never a cache of the public
-                  web. Re-test, refine, or ditch — don’t forget.
+                  Nothing submitted for a batch becomes permanent until the SI —
+                  under those rules — decides it should, and writes the allowed
+                  result into the standing store (tip, knowledge, or brief).
+                  Everything else dies with the job.
                 </p>
               </article>
-              <article>
-                <h3>Batched coding &amp; digital work — coming soon</h3>
-                <p>
-                  Not a realtime Cursor/Codex clone. Leave proper instructions;
-                  a batch worker pulls the repo or files, completes the ask,
-                  hardens and tests, deploys when needed, and notifies you —
-                  including websites on a free host like Vercel (domain as the
-                  main yearly cost), docs, spreadsheets, networking setup, and
-                  heavy render-style pipelines that purge scratch afterward.{" "}
-                  <strong className="emph">Check back soon.</strong>
-                </p>
-              </article>
-              <article>
-                <h3>Businesses free forever</h3>
-                <p>
-                  Default promise: no shop invoice and no obligation to answer.
-                  Ignore any request like a social feed. Charging businesses
-                  later is Plan B only — dangerous to the pitch if tips already
-                  keep the mesh alive.
-                </p>
-              </article>
-              <article>
-                <h3>Spot free / thorough wait</h3>
-                <p>
-                  Free Projects drain elastic Spot GPUs (cheap heavy hardware
-                  only when needed — same idea we teach for your own stacks via
-                  Spot + modern agents/MCP). A busy Spot is an honest queue —
-                  never a surprise bill to the shop, and never a required card
-                  for the person.
-                </p>
-              </article>
-              <article>
-                <h3>Narrow pilots first</h3>
-                <p>
-                  Home repair and simple glasses; careful clinic/vet-style
-                  triage with redirect as product. No doctor marketplace on day
-                  one. KB locked to the same two regions.
-                </p>
-              </article>
+            </div>
+            <div className="people-promise" style={{ marginTop: "1.5rem" }}>
+              <h3 id="si-hack-heading">
+                Why this is harder to hack than a policy-bound cloud SI
+              </h3>
+              <p
+                style={{
+                  margin: "0 0 0.75rem",
+                  color: "var(--muted)",
+                  lineHeight: 1.55,
+                }}
+              >
+                An always-on cloud stack can publish any retention policy and
+                still leave caches, temp disks, logs, and replicas that outlive
+                the promise — and those layers can be breached later. Here the
+                attack surface for raw batch inputs is mostly the live job. When
+                the Spot worker dies, the scratch dies with it; there is no
+                long-lived “AI server” holding last week’s uploads “just in
+                case.” Absence of durable scratch is the control — not a policy
+                you have to trust was never broken or bypassed. Low Spot cost is
+                why that design stays practical.
+              </p>
+              <p style={{ margin: 0, color: "var(--muted)", lineHeight: 1.55 }}>
+                On MyProblem that means ticket evidence and project scratch feed
+                a batch investigation; only what the rules allow lands in the tip
+                or knowledge base. Tips stay optional — never a required card.
+              </p>
             </div>
           </section>
 
@@ -642,10 +753,12 @@ export default function HomePage() {
                   lineHeight: 1.5,
                 }}
               >
-                Shops stay free forever. People should never expect to enter a
-                card. Optional tips after good help keep the mesh alive —
-                residual margin is not from invoicing businesses. Investors who
-                fit: builders of the shared network. Contact{" "}
+                Free forever for everyone.{" "}
+                <strong className="emph">Max and simple</strong> — anonymous
+                first, no paywall, no fee later. People and shops should never
+                expect to enter a card. Optional tips after good help keep the
+                mesh alive — not invoices or subscriptions. Investors who fit:
+                builders of the shared network. Contact{" "}
                 <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>.
               </p>
             </div>
@@ -726,6 +839,8 @@ export default function HomePage() {
           <span aria-hidden="true"> · </span>
           <a href="/submit">Try it now</a>
           <span aria-hidden="true"> · </span>
+          <a href="/extension">Extension</a>
+          <span aria-hidden="true"> · </span>
           <a href="/how-we-run">How we run</a>
           <span aria-hidden="true"> · </span>
           <a href="/dev">Dev</a>
@@ -752,10 +867,10 @@ export default function HomePage() {
           <a href="/sitemap.xml">Sitemap</a>
         </nav>
         <p>
-          Operated by Clevertree LLC (Georgia). Pilots in Georgia and Israel.
-          Work in progress — building as we go. Looking for help →{" "}
-          <a href="/dev">Dev</a>. You should never expect to enter a card. Built
-          on{" "}
+          <a href="/#si-different">{SI_FOOTER_GLOSS}</a> Operated by Clevertree
+          LLC (Georgia). Pilots in Georgia and Israel. Work in progress —
+          building as we go. Looking for help → <a href="/dev">Dev</a>. You
+          should never expect to enter a card. Built on{" "}
           <a href={RELAY_URL} rel="noopener noreferrer" target="_blank">
             Relay
           </a>

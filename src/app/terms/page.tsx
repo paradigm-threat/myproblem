@@ -6,6 +6,7 @@ import {
   RELAY_URL,
   SITE_URL,
   SI_FULL,
+  SI_FOOTER_GLOSS,
   TICKET_TRAINING_NOTICE,
 } from "@/lib/contact";
 
@@ -277,14 +278,12 @@ export default function TermsPage() {
         <section className="legal-section" aria-labelledby="biz-heading">
           <h2 id="biz-heading">8. Businesses and service providers</h2>
           <p>
-            Preferred stance: local businesses join at{" "}
-            <strong>$0</strong> with <strong>zero obligation</strong> to
-            respond. The service stays free for the shop and for the person
-            with the Problem. You should not expect to enter a credit card.
-            Any money is a voluntary tip, after a good experience, for a
-            person, the SI, or both. Incoming requests work like a social feed
-            — shops may engage or ignore entirely, with no SLA and no penalty
-            for silence.
+            Free forever for everyone — shops and people. Local businesses join
+            at <strong>$0</strong> with <strong>zero obligation</strong> to
+            respond. You should not expect to enter a credit card. Any money is
+            a voluntary tip, after a good experience, for a person, the SI, or
+            both. Incoming requests work like a social feed — shops may engage
+            or ignore entirely, with no SLA and no penalty for silence.
           </p>
           <p>
             We do not guarantee leads, bookings, or revenue. MyProblem does not
@@ -402,9 +401,10 @@ export default function TermsPage() {
         </section>
 
         <p className="legal-footer-note">
-          By using MyProblem, you acknowledge that you have read this page —
-          including the softer professional limits and the non-binding world-
-          network investor intent above.
+          <a href="/#si-different">{SI_FOOTER_GLOSS}</a> By using MyProblem, you
+          acknowledge that you have read this page — including the softer
+          professional limits and the non-binding world-network investor intent
+          above.
         </p>
       </main>
     </>

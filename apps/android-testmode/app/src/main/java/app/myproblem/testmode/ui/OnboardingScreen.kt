@@ -29,7 +29,7 @@ import app.myproblem.testmode.tickets.StartMode
 
 @Composable
 fun OnboardingScreen(onDone: (StartMode) -> Unit) {
-    var selected by remember { mutableStateOf(StartMode.AUDIO) }
+    var selected by remember { mutableStateOf(StartMode.VIDEO_MESSAGE) }
     Column(
         modifier =
             Modifier
@@ -55,22 +55,16 @@ fun OnboardingScreen(onDone: (StartMode) -> Unit) {
         )
         Spacer(Modifier.height(8.dp))
         ModeCard(
-            title = "Text only",
-            body = "Type a title first, then details. Camera and mic stay off until you add them.",
+            title = "Chat",
+            body = "Type a title first, then details. Camera and microphone stay off.",
             selected = selected == StartMode.TEXT,
             onClick = { selected = StartMode.TEXT },
         )
         ModeCard(
-            title = "Audio only",
-            body = "New ticket starts the mic. We’ll file from your voice; you can add text anytime.",
-            selected = selected == StartMode.AUDIO,
-            onClick = { selected = StartMode.AUDIO },
-        )
-        ModeCard(
-            title = "Audio + frames",
-            body = "Mic plus camera stills (no video file). Unique frames help us guess the Problem — e.g. a flat tire photo.",
-            selected = selected == StartMode.AUDIO_FRAMES,
-            onClick = { selected = StartMode.AUDIO_FRAMES },
+            title = "Record",
+            body = "One clip. Mic and camera toggles. The phone does not scrub it. The batch does, then deletes the file.",
+            selected = selected == StartMode.VIDEO_MESSAGE,
+            onClick = { selected = StartMode.VIDEO_MESSAGE },
         )
         Spacer(Modifier.height(16.dp))
         PrimaryButton("Continue", onClick = { onDone(selected) })

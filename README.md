@@ -1,6 +1,6 @@
 # MyProblem (`myproblem.app`)
 
-**MyProblem** (`myproblem.app`) — free SI front door for local businesses ($0 forever, **zero obligation**); **tickets** (audio + stills; web submit at `/submit`); Problems not chats; zero-salary Relay vision. **Work in progress — building as we go.** Status + how to help: [`docs/dev.md`](docs/dev.md) · https://myproblem.app/dev
+**MyProblem** (`myproblem.app`) — free forever for everyone ($0, **zero obligation** for shops to respond); **tickets** (audio + stills; web submit at `/submit`); **MyProblem X** session capture + reply-assist ([`/extension`](https://myproblem.app/extension), [`extensions/capture`](extensions/capture)); Problems not chats; zero-salary Relay vision. **Work in progress — building as we go.** Status + how to help: [`docs/dev.md`](docs/dev.md) · https://myproblem.app/dev
 
 **Investigation model:** no on-demand frontier LLM or premium vision. Smart-enough realtime **captures** (stills + audio; no server video) → queues a JIRA-like ticket → **batch Projects** investigate ASAP (**KB git first**; Bedrock = rare escalate after miss). See [`docs/projects.md`](docs/projects.md) · [`docs/backbone-escalate.md`](docs/backbone-escalate.md).
 
@@ -10,7 +10,8 @@
 
 ## Stack
 
-- Next.js (App Router) on Vercel — marketing, `/submit`, public `/t/`, API proxies
+- Next.js (App Router) on Vercel — marketing, `/submit`, `/extension`, public `/t/`, API proxies
+- MV3 **MyProblem X** — [`extensions/capture`](extensions/capture) (Nextdoor session harvest; not a bot scraper)
 - Ticket HTTP/SoT: Intake Spot (`relay-gateway` + commit worker)
 - Object store for audio/stills (Bunny prefer / ephemeral cache)
 - Build-time business PDF: `public/myproblem-for-businesses.pdf`
@@ -39,6 +40,8 @@ npm run dev
 | [`docs/projects.md`](docs/projects.md) | Deferred Projects — primary server investigation |
 | [`docs/dev.md`](docs/dev.md) | **Living status** — stack, phases, how to help (`/dev`) |
 | [`docs/web-submit.md`](docs/web-submit.md) | Browser ticket submit + opt-in public slug |
+| [`docs/capture-extension.md`](docs/capture-extension.md) | MyProblem X — load unpacked, reply paste policy |
+| [`docs/social-group-monitor.md`](docs/social-group-monitor.md) | Group capture, curator rubric, Georgia stray-cats |
 | [`docs/anonymous-tickets.md`](docs/anonymous-tickets.md) | Anon UUID tickets; free recover; Relay tip + object store |
 | [`docs/progressive-transcription.md`](docs/progressive-transcription.md) | Audio Evidence → first ASR; LLM retranscription; no video |
 | [`docs/backbone-escalate.md`](docs/backbone-escalate.md) | Rare Bedrock/frontier escalate in batch |

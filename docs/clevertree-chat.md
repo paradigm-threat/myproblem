@@ -10,7 +10,9 @@ Related: [`projects.md`](./projects.md) · [`knowledge-base.md`](./knowledge-bas
 
 ## One-sentence rule
 
-> **Every ticket is wired to Clevertree Chat. Comments live on the home topical ticket repo’s `comments` branch. The Batch worker drains comment jobs with the same AI batch posture as Projects, then organizes reusable knowledge into associated KBs.**
+> **Every ticket is wired to Clevertree Chat. The tip UUID is the room id when mounted — Clevertree does not need a new UUID (it may store the same id or a stable translation of an external id). Comments live on the home topical ticket repo’s `comments` branch (or the Clevertree comments SoT). Batch drains comment jobs with the same AI batch posture as Projects, then organizes reusable knowledge into associated KBs.**
+
+Phases / unified tip: [`batch-phases.md`](./batch-phases.md).
 
 ---
 
@@ -38,6 +40,12 @@ Related: [`projects.md`](./projects.md) · [`knowledge-base.md`](./knowledge-bas
 | **`myproblem.app/t/[slug]`** | Public help ticket page: Clevertree board + **solution-route** keys (hire-electrician, diy-with-caution, …) |
 
 Loading a page or tip does **not** invent a topic. A topic exists when a person submits the **first words** (Clevertree Chat rule).
+
+### Social capture → ticket topics
+
+MyProblem X treats each captured social **post as one ticket candidate** (never the whole group as a single tip). Only posts with `gate: "ticket"` mint a tip and get Clevertree-style topic/solution keys (`tnr`, `lost-found`, `rehome`, `useful-info`, …). Association uses `external_ref` (site + post id + URL) on the tip. Reply templates are drafted in batch for ticket-gate posts; humans paste/send on the origin network ([`capture-extension.md`](./capture-extension.md) · [`social-group-monitor.md`](./social-group-monitor.md)).
+
+**Outliers** (promo, off-topic cleaning asks, memorials, …) stay as channel stats + a link — no tip, no topic batch. Clevertree Chat may still open **on demand** on that Nextdoor URL without minting a MyProblem tip.
 
 **Repair / public help tickets:** use solution-finding rules — **one key per solution route**. Template: [`fixit/solution-route-rules.md`](./fixit/solution-route-rules.md). SI organizes; humans prefer.
 

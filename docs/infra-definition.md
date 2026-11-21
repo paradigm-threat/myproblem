@@ -5,7 +5,7 @@ Companion to the multi-platform product plan. **No Spot pools or GPUs are stood 
 ## Architecture stance (locked)
 
 1. **No on-demand frontier LLM or premium vision/gen as the product.**
-2. **Smart-enough capture** → fill questions / requirements / **stills** (no video files) → **queue JIRA-like ticket by status**.
+2. **Smart-enough capture** → fill questions / requirements / **stills** (no **realtime** video upload) → **queue JIRA-like ticket by status**. Deferred video is batch-only ([`ephemeral-media.md`](./ephemeral-media.md)).
 3. **Batch investigate** ASAP and completely — including **advanced photo analysis + generation** via HF/Spot — **region KB git + cache first**.
 4. **Bedrock / frontier** = rare backbone escalate **after KB miss**; useful outputs **must** land in the KB ([`backbone-escalate.md`](./backbone-escalate.md) · [`knowledge-base.md`](./knowledge-base.md)).
 5. **Anon tickets** by UUID capability; free recover email/register; **regional Relay git tip** SoT; **Bunny/S3-class** object store for audio+stills ([`anonymous-tickets.md`](./anonymous-tickets.md)).
@@ -26,7 +26,7 @@ Companion to the multi-platform product plan. **No Spot pools or GPUs are stood 
 | **Image / diagram generation** (Project) | per artifact | **HF / open gen on Spot** or cheap batch API; cache | Faster queue |
 | Audio object storage | $/GB-mo | **Bunny** (prefer) or S3-compatible — infra budget | — |
 | Rare backbone escalate (math / lang / hard VL) | varies | Inside Project; cache hits ≈ $0 | Priority may prefer Sonnet vs Haiku on escalate |
-| Server video ingest / analysis | — | **Not offered** — stills only | — |
+| Server video ingest / analysis | — | **Not on realtime API**; Batch `media_frame_select` for deferred/social inbox | Spot / larger HW later |
 
 Premium exists because **sustained realtime frame analysis** and **queue latency** are expensive — not because investigation should be a live frontier chat. Deep research defaults to **deferred Projects** ([`projects.md`](./projects.md)).
 
@@ -51,7 +51,7 @@ Premium exists because **sustained realtime frame analysis** and **queue latency
 
 ## Client gate (proven offline in Test Mode)
 
-See [`context-for-server.md`](context-for-server.md). Bad frames never leave the phone. No video file upload.
+See [`context-for-server.md`](context-for-server.md). Bad frames never leave the phone on the realtime path. No **realtime** video file upload; deferred video → Batch frames ([`ephemeral-media.md`](./ephemeral-media.md)).
 
 ## Next ops (out of band)
 

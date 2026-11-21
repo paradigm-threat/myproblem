@@ -67,7 +67,7 @@ Tip also stores `raiser_visitor_id` at create for rule-sheet weight — not a pu
 
 ```
 APK / web (anon or identified)
-   │  stills + audio Evidence (never video files); pick region
+   │  stills + audio on realtime path; deferred video → Batch frames; pick region
    ▼
 ticket_uuid ──► regional Relay git tip = Problem dossier SoT
    │              tickets/<uuid>/tip.json + jobs/*.json (commits)
@@ -111,7 +111,8 @@ Prefer **Bunny** (or peer CDN/object) for $/GB. See [`05-spend-and-use-of-funds.
 
 | Allowed on ticket | Forbidden server-side |
 |---|---|
-| Worthy/unique **stills** (APK gate + rate limit) | **Video files** / server-side video analysis |
+| Worthy/unique **stills** (APK gate + rate limit) on realtime path | **Realtime video upload**; live server-side video analysis |
+| Deferred video → Batch `media_frame_select` → choice stills | Public tip linking raw video/audio blobs |
 | **Audio** Evidence → batched ASR | Client `/api/transcribe` |
 | Local camera preview (never uploaded as video blob) | Pinning blobs inside the git tip |
 

@@ -2,7 +2,13 @@ import type { Metadata } from "next";
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { SiteHeader } from "@/components/SiteHeader";
-import { CONTACT_EMAIL, OG_IMAGE, SITE_URL, SI_FULL } from "@/lib/contact";
+import {
+  CONTACT_EMAIL,
+  OG_IMAGE,
+  SITE_URL,
+  SI_FULL,
+  SI_FOOTER_GLOSS,
+} from "@/lib/contact";
 
 const DESCRIPTION =
   "Try early MyProblem demos — Android Test Mode APK and browser tools. Check back as we ship more.";
@@ -150,6 +156,7 @@ export default async function DemoPage() {
 
       <footer className="site site-footer">
         <p>
+          <a href="/#si-different">{SI_FOOTER_GLOSS}</a>{" "}
           <a href="/">MyProblem</a> · demos are previews, not the full product.
         </p>
       </footer>

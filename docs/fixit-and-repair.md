@@ -41,7 +41,7 @@ Related: [`topical-repos.md`](./topical-repos.md) · [`clevertree-chat.md`](./cl
 
 ## Bunny + scrub
 
-Evidence POST is **cache only**. Batch alone links choice stills via `POST /api/tickets/:id/choice-media` (after scrub). Destination: tip-repo `media-upload.json` (shared zone + `path_prefix` for georgia / israel / fixit). **Expire** on solve, unpublish, or close. Scrub instructions: `stillScrub.mjs` + [`fixit/batch-prompt-pack.md`](./fixit/batch-prompt-pack.md).
+Evidence POST is **cache only** (realtime stills, or deferred video/audio/other inbox). Batch alone links **choice stills** via `POST /api/tickets/:id/choice-media` (after frame-select + scrub). Destination: tip-repo `media-upload.json` (shared zone + `path_prefix` for georgia / israel / fixit). Unused video/audio/raw deleted. **Expire** on solve, unpublish, or close. Scrub / frame instructions: `stillScrub.mjs` + [`fixit/batch-prompt-pack.md`](./fixit/batch-prompt-pack.md) · [`ephemeral-media.md`](./ephemeral-media.md).
 
 ---
 

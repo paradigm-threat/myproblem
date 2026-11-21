@@ -29,6 +29,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import app.myproblem.testmode.AppViewModel
+import app.myproblem.testmode.BuildFlags
 import app.myproblem.testmode.TestModeScreen
 import app.myproblem.testmode.TestModeViewModel
 import app.myproblem.testmode.tickets.CurrentAsk
@@ -44,11 +45,14 @@ object Routes {
     const val NEW_TEXT = "new/text"
     const val NEW_AUDIO = "new/audio/{ticketId}"
     const val NEW_AV = "new/av/{ticketId}"
+    const val NEW_VIDEO = "new/video/{ticketId}"
     const val TICKET = "ticket/{ticketId}"
 
     fun newAudio(id: String) = "new/audio/$id"
 
     fun newAv(id: String) = "new/av/$id"
+
+    fun newVideo(id: String) = "new/video/$id"
 
     fun ticket(id: String) = "ticket/$id"
 }
@@ -60,14 +64,22 @@ fun MyProblemApp(
     analysisExecutor: ExecutorService,
     onEnsureCameraForTest: () -> Unit,
     onToggleTestFeed: (Boolean) -> Unit,
+    openTicketId: String? = null,
 ) {
     val ui by appVm.uiState.collectAsState()
     val testState by testVm.state.collectAsState()
     val nav = rememberNavController()
 
     val backStackEntry by nav.currentBackStackEntryAsState()
+    LaunchedEffect(ui.ready, openTicketId) {
+        if (ui.ready && !openTicketId.isNullOrBlank()) {
+            nav.navigate(Routes.ticket(openTicketId)) {
+                launchSingleTop = true
+            }
+        }
+    }
     LaunchedEffect(backStackEntry, ui.ready) {
-        if (ui.ready && backStackEntry == null) {
+        if (ui.ready && backStackEntry == null && openTicketId.isNullOrBlank()) {
             nav.navigate(Routes.HOME) { launchSingleTop = true }
         }
     }
@@ -92,7 +104,8 @@ fun MyProblemApp(
 
             NavHost(
                 navController = nav,
-                startDestination = Routes.HOME,
+                startDestination =
+                    if (openTicketId.isNullOrBlank()) Routes.HOME else Routes.ticket(openTicketId),
                 modifier = Modifier.fillMaxSize().background(Bg),
             ) {
                 composable(Routes.HOME) {
@@ -102,9 +115,12 @@ fun MyProblemApp(
                         onNewTicket = { nav.navigate(Routes.NEW_MODE) },
                         onOpenTicket = { nav.navigate(Routes.ticket(it)) },
                         onSettings = { nav.navigate(Routes.SETTINGS) },
+                        showDevTools = BuildFlags.SHOW_DEV_TOOLS,
                         onTestMode = {
-                            onEnsureCameraForTest()
-                            nav.navigate(Routes.TEST)
+                            if (BuildFlags.SHOW_DEV_TOOLS) {
+                                onEnsureCameraForTest()
+                                nav.navigate(Routes.TEST)
+                            }
                         },
                         onRetrySync = { appVm.retrySync(it) },
                     )
@@ -127,6 +143,12 @@ fun MyProblemApp(
                                 StartMode.AUDIO_FRAMES -> {
                                     val t = appVm.beginAvTicket()
                                     nav.navigate(Routes.newAv(t.id)) {
+                                        popUpTo(Routes.NEW_MODE) { inclusive = true }
+                                    }
+                                }
+                                StartMode.VIDEO_MESSAGE -> {
+                                    val t = appVm.beginVideoMessage()
+                                    nav.navigate(Routes.newVideo(t.id)) {
                                         popUpTo(Routes.NEW_MODE) { inclusive = true }
                                     }
                                 }
@@ -226,6 +248,36 @@ fun MyProblemApp(
                             appVm.runIntakeAgain(id)
                             nav.navigate(Routes.ticket(id)) {
                                 popUpTo(Routes.HOME)
+                            }
+                        },
+                    )
+                }
+                composable(
+                    Routes.NEW_VIDEO,
+                    arguments = listOf(navArgument("ticketId") { type = NavType.StringType }),
+                ) { entry ->
+                    val id = entry.arguments?.getString("ticketId") ?: return@composable
+                    var sending by remember { mutableStateOf(false) }
+                    var sendError by remember { mutableStateOf<String?>(null) }
+                    VideoMessageScreen(
+                        fileFactory = { appVm.videoFileFor(id) },
+                        sending = sending,
+                        error = sendError,
+                        onCancel = {
+                            appVm.discardVideoMessage(id)
+                            nav.popBackStack()
+                        },
+                        onSend = { file ->
+                            sending = true
+                            sendError = null
+                            val sent = appVm.sendVideoMessage(id, file)
+                            sending = false
+                            if (sent == null) {
+                                sendError = "Couldn't send. The recording stays on this phone."
+                            } else {
+                                nav.navigate(Routes.ticket(id)) {
+                                    popUpTo(Routes.HOME)
+                                }
                             }
                         },
                     )

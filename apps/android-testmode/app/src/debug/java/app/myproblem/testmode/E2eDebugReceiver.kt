@@ -10,8 +10,10 @@ import app.myproblem.testmode.tickets.IntakeStatus
 import app.myproblem.testmode.tickets.LocalTicket
 import app.myproblem.testmode.tickets.LocalTicketStore
 import app.myproblem.testmode.tickets.SYNC_ERROR_AFTER_MS
+import app.myproblem.testmode.tickets.SiteLayout
 import app.myproblem.testmode.tickets.StartMode
 import app.myproblem.testmode.tickets.SyncHealth
+import app.myproblem.testmode.tickets.TicketPageStatus
 import app.myproblem.testmode.tickets.SyncPresence
 import app.myproblem.testmode.tickets.TicketSyncEngine
 import app.myproblem.testmode.tickets.TicketsApi
@@ -53,6 +55,7 @@ class E2eDebugReceiver : BroadcastReceiver() {
                         "capture" -> capture(store, intent)
                         "inject_reach" -> injectReach(store, intent)
                         "mark_slow" -> markSlow(store, intent)
+                        "page_status" -> pageStatus(store, intent)
                         else -> JSONObject().put("ok", false).put("error", "unknown_cmd").put("cmd", cmd)
                     }
                 Log.i(TAG, "E2E_RESULT $result")
@@ -273,6 +276,36 @@ class E2eDebugReceiver : BroadcastReceiver() {
         )
         val saved = store.load(localId) ?: return err("ticket_not_found")
         return captureState(saved, "mark_slow")
+    }
+
+    private fun pageStatus(store: LocalTicketStore, intent: Intent): JSONObject {
+        val title = intent.getStringExtra("title") ?: "Garage lights kill outdoor / Ring power"
+        val ticket =
+            store.create(
+                startMode = StartMode.TEXT,
+                title = title,
+                description = intent.getStringExtra("description") ?: "Submitted from the phone.",
+            )
+        val status = TicketPageStatus.of(solved = false)
+        val steps = JSONArray()
+        status.steps.forEach { step ->
+            steps.put(
+                JSONObject()
+                    .put("id", step.id)
+                    .put("label", step.label)
+                    .put("state", step.state.name.lowercase()),
+            )
+        }
+        return JSONObject()
+            .put("ok", true)
+            .put("cmd", "page_status")
+            .put("localId", ticket.id)
+            .put("pill", status.pill)
+            .put("summary", status.summary)
+            .put("steps", steps)
+            .put("layout412", SiteLayout.mode(412).name.lowercase())
+            .put("layout900", SiteLayout.mode(900).name.lowercase())
+            .put("layout1280", SiteLayout.mode(1280).name.lowercase())
     }
 
     private fun captureState(t: LocalTicket, cmd: String): JSONObject {

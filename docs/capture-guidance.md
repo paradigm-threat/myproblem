@@ -84,4 +84,4 @@ Debug Hint cycles: blue → NE → TEXT/OCR → off. Event log shows capability 
 ## Voice + camera (docs only — do not build yet)
 
 - Mic → post audio Evidence to ticket → first-pass batched ASR; LLM gate for retranscription on open tickets ([progressive-transcription.md](./progressive-transcription.md)).
-- Camera = unique/worthy **stills** only within rate limits. **No video Evidence** to the server (preview must not upload a video blob).
+- Camera = unique/worthy **stills** only within rate limits on the **realtime** path (preview must not upload a video blob). Deferred video for Batch frame-select is a separate lane ([`ephemeral-media.md`](./ephemeral-media.md)).

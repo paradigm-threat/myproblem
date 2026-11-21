@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
-  "name": "MyProblem X · v0.1.21",
-  "version": "0.1.21",
+  "name": "MyProblem X · v0.1.22",
+  "version": "0.1.22",
   "description": "MyProblem X captures session-locked social posts (platforms ban bots) and helps you paste research-backed reply drafts—you always edit and send. Shared knowledge for real local problems, including Savannah Cat Rescue. Not a bot scraper. Toolbar only on social sites.",
   "icons": {
     "16": "icons/icon16.png",
@@ -10,7 +10,7 @@
     "128": "icons/icon128.png"
   },
   "action": {
-    "default_title": "MyProblem X · v0.1.21 (social sites only)",
+    "default_title": "MyProblem X · v0.1.22 (social sites only)",
     "default_icon": {
       "16": "icons/icon16.png",
       "32": "icons/icon32.png",

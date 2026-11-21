@@ -45,7 +45,7 @@ import java.util.concurrent.atomic.AtomicBoolean
 
 data class AppUiState(
     val onboarded: Boolean = false,
-    val startMode: StartMode = StartMode.AUDIO,
+    val startMode: StartMode = StartMode.VIDEO_MESSAGE,
     val showArchived: Boolean = false,
     val onlineSyncEnabled: Boolean = true,
     val tickets: List<LocalTicket> = emptyList(),
@@ -278,6 +278,58 @@ class AppViewModel(app: Application) : AndroidViewModel(app) {
         notifySync(t.id)
         startLiveChunkLoop(t.id)
         return t
+    }
+
+    fun beginVideoMessage(): LocalTicket {
+        val t =
+            store.create(
+                startMode = StartMode.VIDEO_MESSAGE,
+                title = "Record",
+                intake = IntakeStatus.DRAFT,
+            ).copy(
+                titleField =
+                    TicketField(value = "Record", source = FieldSource.USER, locked = true),
+                coachLine =
+                    "The batch will watch this recording and remove private details. The video is not kept.",
+            )
+        store.save(t)
+        reload()
+        return t
+    }
+
+    fun videoFileFor(ticketId: String): File =
+        File(store.mediaDir(ticketId), "message_${System.currentTimeMillis()}.mp4")
+
+    fun discardVideoMessage(ticketId: String) {
+        val t = store.load(ticketId) ?: return
+        if (t.sync.serverTicketId != null) return
+        liveJobs.remove(ticketId)?.cancel()
+        store.forget(ticketId)
+        reload()
+    }
+
+    fun sendVideoMessage(ticketId: String, file: File): LocalTicket? {
+        if (!file.exists() || file.length() <= 0L) return null
+        val t = store.load(ticketId) ?: return null
+        var next =
+            t.copy(
+                recording = false,
+                intake = IntakeStatus.QUEUED,
+                coachLine =
+                    "The batch will watch this recording, remove private details, and only then decide whether to open a ticket. The video is not kept.",
+                updatedAtMs = System.currentTimeMillis(),
+            )
+        next =
+            appendTimeline(
+                next,
+                TimelineKind.USER_VIDEO,
+                "Record (${file.length() / 1024} KB). Not scrubbed on this phone.",
+                file.absolutePath,
+            )
+        store.save(next)
+        reload()
+        notifySync(ticketId)
+        return store.load(ticketId)
     }
 
     fun beginAvTicket(): LocalTicket {

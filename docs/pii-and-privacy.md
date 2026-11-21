@@ -2,7 +2,11 @@
 
 **Document now; implement over time.** Server tips are safe problem dossiers — not identity files.
 
-Related: [`anonymous-tickets.md`](./anonymous-tickets.md) · [`apk-ticket-ux.md`](./apk-ticket-ux.md) · [`intake-batch-infra.md`](./intake-batch-infra.md) · [`progressive-transcription.md`](./progressive-transcription.md).
+Related: [`anonymous-tickets.md`](./anonymous-tickets.md) · [`apk-ticket-ux.md`](./apk-ticket-ux.md) · [`intake-batch-infra.md`](./intake-batch-infra.md) · [`progressive-transcription.md`](./progressive-transcription.md) · [`capture-extension.md`](./capture-extension.md).
+
+### MyProblem X (social capture)
+
+Extension scrubs phones, emails, payment handles (Venmo/Zelle/CashApp), @handles, and street-like lines **before** local export and before any tip/reply template leaves the machine. Raw feed dumps (names, DMs, exact streets) must **never** enter tip git or KB. See [`social-group-monitor.md`](./social-group-monitor.md).
 
 ---
 
@@ -30,9 +34,12 @@ Before any commit to `tip.json` / `index.md`:
 | Precise GPS | Coarse geohash / city |
 | OCR of mail / ID / faces in stills | Drop or coarsen — never dump raw into tip text |
 | Faces / bodies / street numbers / plates in **public** stills | Batch scrub (blur/crop) + strip EXIF before Bunny or `myproblem.app/t/…` — fail closed ([`fixit/batch-prompt-pack.md`](./fixit/batch-prompt-pack.md)) |
+| Subject animals/objects in social/deferred media (e.g. rehome kitten) | May remain visible when Batch rules say they are not identity-bearing; people/addresses still fail closed |
+| Internet-sourced social media | **No local scrub** in MyProblem X (bandwidth); Batch scrub + frame-select only ([`ephemeral-media.md`](./ephemeral-media.md)) |
 
-- Prefer **client-side** redaction before upload when possible.
-- **Server-side conversion is mandatory** so accidental uploads still become safe before git commit.
+- Prefer **client-side** redaction before upload for **realtime device** capture when possible.
+- **Do not** locally scrub already-public internet media in the extension — Batch handles it.
+- **Server-side conversion is mandatory** so accidental uploads still become safe before git commit / public CDN.
 - Intake light LLM and Batch ASR post-process must never “helpfully” restore full PII onto the tip.
 
 ---

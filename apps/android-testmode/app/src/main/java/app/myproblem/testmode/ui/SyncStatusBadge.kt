@@ -38,6 +38,7 @@ import kotlinx.coroutines.delay
 fun SyncStatusBadge(
     sync: SyncState,
     compact: Boolean = true,
+    showTicketId: Boolean = false,
     modifier: Modifier = Modifier,
 ) {
     val dot =
@@ -66,7 +67,7 @@ fun SyncStatusBadge(
                 fontSize = if (compact) 12.sp else 13.sp,
                 fontWeight = FontWeight.Medium,
             )
-            if (!compact && sync.presence == SyncPresence.ONLINE && sync.serverTicketId != null) {
+            if (showTicketId && !compact && sync.presence == SyncPresence.ONLINE && sync.serverTicketId != null) {
                 Text("· ${sync.serverTicketId}", color = Muted, fontSize = 11.sp)
             }
         }
@@ -122,6 +123,7 @@ fun SyncStatusCard(
     sync: SyncState,
     onRetry: () -> Unit,
     onSimulateRemote: (() -> Unit)? = null,
+    showDiagnostics: Boolean = false,
 ) {
     Column(
         modifier =
@@ -138,12 +140,14 @@ fun SyncStatusCard(
             fontSize = 14.sp,
         )
         ServerProblemBanner(sync = sync)
-        SyncStatusBadge(sync = sync, compact = false)
-        Text(
-            "rev local ${sync.localRevision} · remote ${sync.remoteRevision}",
-            color = Muted,
-            fontSize = 11.sp,
-        )
+        SyncStatusBadge(sync = sync, compact = false, showTicketId = showDiagnostics)
+        if (showDiagnostics) {
+            Text(
+                "rev local ${sync.localRevision} · remote ${sync.remoteRevision}",
+                color = Muted,
+                fontSize = 11.sp,
+            )
+        }
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             SecondaryButton("Retry sync", modifier = Modifier.weight(1f), onClick = onRetry)
             if (onSimulateRemote != null && sync.presence == SyncPresence.ONLINE) {

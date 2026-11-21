@@ -49,19 +49,14 @@ fun NewTicketModeScreen(
         )
         Spacer(Modifier.height(4.dp))
         ModeOption(
-            title = "Text",
-            body = "Type a title and details first. Add mic or stills later on the ticket.",
+            title = "Chat",
+            body = "Type the problem. Camera and microphone stay off.",
             onClick = { onChoose(StartMode.TEXT) },
         )
         ModeOption(
-            title = "Audio",
-            body = "Record a voice note first. We’ll file from speech; you can add text anytime.",
-            onClick = { onChoose(StartMode.AUDIO) },
-        )
-        ModeOption(
-            title = "Audio + frame analysis",
-            body = "Mic plus camera stills (no video file). Unique frames help guess the Problem — e.g. a flat tire.",
-            onClick = { onChoose(StartMode.AUDIO_FRAMES) },
+            title = "Record",
+            body = "One clip. Turn the mic or camera on or off as you go. The batch watches it and does not keep the file.",
+            onClick = { onChoose(StartMode.VIDEO_MESSAGE) },
         )
     }
 }

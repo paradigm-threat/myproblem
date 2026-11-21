@@ -13,16 +13,37 @@
 
 ## Motivation
 
-Help **Savannah** neighbors with cat problems in one coordinated place: health, strays, colonies, TNR, lost/found, rehome, supplies. Localize services to the city so helpers and clinics match the place — not a statewide dump. As we find more Savannah cat forums (Nextdoor and later others), they join this **collection** so we can sync them all.
+Help **Savannah** neighbors with cat problems in one coordinated place. Localize services to the city so helpers and clinics match the place — not a statewide dump. As we find more Savannah cat forums, they join this **collection** so we can sync them all.
+
+## Primary use case (pilot)
+
+**Connect people who locate stray cats having kittens (or otherwise unfixed) to the local TNR / trap-and-release network.**
+
+Who we help match:
+
+- Neighbors who find a **litter**, a **pregnant** / **nursing** stray, or an **unfixed** community cat
+- Volunteers and feeders who need a **trapper** or trap night help
+- The existing **TNR network** (craft room + word-of-mouth capacity in KB) — not a second comment system on Nextdoor
+
+How MyProblem X supports that (both paths, side by side):
+
+1. **Capture** the post from a member group (deep capture / session).
+2. **Surface** it in the TNR matches queue when topics/body look like litter / unfixed / trap-needed.
+3. **Origin reply** — draft a useful, human-sent Nextdoor reply (process + how to get TNR help; no addresses/doxx).
+4. **Craft IRC** (`#ga-savannah-cat-rescue`) — ping the trapper network with a tagged ref (`[[nd:group/post]]`) so helpers can coordinate offline of the feed.
+5. Humans always **edit and send** on the origin network; MyProblem never auto-posts.
+
+Secondary use cases (same collection, lower priority in the pilot UI): cat health, lost/found, colony care, rehome/foster/supplies, general volunteer asks.
 
 ## Use cases
 
-- Cat **health** / medical / vet-path asks
-- Lost, found, sightings
-- TNR, colony care, feeding, relocate
-- Rehome, foster, supplies, fundraiser, volunteer
-- Helper debate on craft IRC (not a second Nextdoor comment system)
-- Reply-assist drafts humans paste on the origin network
+1. **TNR match (primary)** — litter / pregnant / unfixed → trapper network (origin reply + craft ping)
+2. Cat **health** / medical / vet-path asks
+3. Lost, found, sightings
+4. Colony care, feeding, relocate
+5. Rehome, foster, supplies, fundraiser, volunteer
+6. Helper debate on craft IRC (not a second Nextdoor comment system)
+7. Reply-assist drafts humans paste on the origin network
 
 ## Sync (all member groups)
 

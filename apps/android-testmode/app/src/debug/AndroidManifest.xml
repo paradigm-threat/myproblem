@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Phone E2E only. Release builds do not register this receiver. -->
+    <application>
+        <receiver
+            android:name=".E2eDebugReceiver"
+            android:exported="true"
+            android:enabled="true">
+            <intent-filter>
+                <action android:name="app.myproblem.testmode.E2E" />
+            </intent-filter>
+        </receiver>
+    </application>
+</manifest>

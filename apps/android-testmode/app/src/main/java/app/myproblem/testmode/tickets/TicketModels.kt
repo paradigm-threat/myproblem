@@ -2,8 +2,10 @@ package app.myproblem.testmode.tickets
 
 enum class StartMode {
     TEXT,
+    /** Older voice-only tickets. New ticket no longer offers this button. */
     AUDIO,
     AUDIO_FRAMES,
+    VIDEO_MESSAGE,
 }
 
 enum class TicketStatus {
@@ -33,6 +35,7 @@ enum class TimelineKind {
     USER_TEXT,
     USER_AUDIO,
     USER_STILL,
+    USER_VIDEO,
     STATUS,
     SERVER_TITLE,
     SERVER_QUESTION,

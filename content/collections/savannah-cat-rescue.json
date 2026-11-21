@@ -7,6 +7,8 @@
   "region_tip_home": "georgia",
   "irc_channel": "#ga-savannah-cat-rescue",
   "ws_topic": "ga-savannah-cat-rescue",
+  "primary_job": "First job: connect litters / unfixed moms to the TNR trap network.",
+  "description": "Savannah-local collection whose pilot priority is matching neighbors who find stray litters or unfixed cats with the TNR / trap-and-release network. Capture the need, draft a human-sent Nextdoor reply, and ping craft IRC (#ga-savannah-cat-rescue) so trappers can coordinate — both paths, side by side. Humans always send on the origin network.",
   "aliases": ["savannah-stray-cats"],
   "topics": [
     "cat-health",

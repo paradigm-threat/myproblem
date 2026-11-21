@@ -36,6 +36,7 @@ fun HomeScreen(
     onOpenTicket: (String) -> Unit,
     onSettings: () -> Unit,
     onTestMode: () -> Unit,
+    showDevTools: Boolean,
     onRetrySync: (String) -> Unit,
 ) {
     Column(
@@ -55,7 +56,9 @@ fun HomeScreen(
             Text("MyProblem", color = Accent, fontWeight = FontWeight.SemiBold, fontSize = 24.sp)
             Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                 Text("Settings", color = Muted, modifier = Modifier.clickable(onClick = onSettings))
-                Text("Test", color = Muted, modifier = Modifier.clickable(onClick = onTestMode))
+                if (showDevTools) {
+                    Text("Test", color = Muted, modifier = Modifier.clickable(onClick = onTestMode))
+                }
             }
         }
         Text(
@@ -73,7 +76,7 @@ fun HomeScreen(
         }
         if (tickets.isEmpty()) {
             Text(
-                "No open tickets yet. Tap New ticket and pick text, audio, or frames.",
+                "No open tickets yet. Tap New ticket and pick Chat or Record.",
                 color = Muted,
                 fontSize = 14.sp,
             )

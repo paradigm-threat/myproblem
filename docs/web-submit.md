@@ -6,7 +6,7 @@ Browser intake for MyProblem tickets. Same tip model as the APK; v1 is **simple*
 
 1. `POST /api/tickets` with `mint_slug: false` (private tip + claim).
 2. `PATCH /api/tickets/:id` — lock title/description (claim required).
-3. `POST /api/tickets/:id/evidence` — stills only (multipart → Intake JSON+base64).
+3. `POST /api/tickets/:id/evidence` — stills on the realtime web path (multipart → Intake JSON+base64). Deferred video uses Batch inbox ([`ephemeral-media.md`](./ephemeral-media.md)).
 4. Optional: `POST /api/tickets/:id/suggest-slug` with `apply: true` for a public `/t/<slug>`.
 5. Remember uuid + claim + slug in on-device vault.
 

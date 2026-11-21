@@ -79,6 +79,8 @@ object TicketsApi {
         isFinal: Boolean = true,
         rolling: Boolean = false,
         hotwords: List<String> = emptyList(),
+        lane: String? = null,
+        scrubbedLocally: Boolean? = null,
     ): EvidenceResult {
         // Intake commit worker expects JSON + base64 (no multipart).
         val bytes = file.readBytes()
@@ -94,6 +96,8 @@ object TicketsApi {
         if (hotwords.isNotEmpty()) {
             payload.put("hotwords", org.json.JSONArray(hotwords))
         }
+        if (lane != null) payload.put("lane", lane)
+        if (scrubbedLocally != null) payload.put("scrubbed_locally", scrubbedLocally)
         val conn = open("POST", "/api/tickets/$ticketUuid/evidence")
         if (!claim.isNullOrBlank()) conn.setRequestProperty("authorization", "Bearer $claim")
         conn.setRequestProperty("content-type", "application/json")
@@ -159,7 +163,7 @@ object TicketsApi {
         val conn = URL("$baseUrl$path").openConnection() as HttpURLConnection
         conn.requestMethod = method
         conn.connectTimeout = 15_000
-        conn.readTimeout = 60_000
+        conn.readTimeout = 120_000
         conn.instanceFollowRedirects = true
         return conn
     }

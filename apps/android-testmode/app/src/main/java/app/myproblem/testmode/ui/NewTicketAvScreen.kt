@@ -125,12 +125,6 @@ fun NewTicketAvScreen(
         }
     }
 
-    LaunchedEffect(Unit) {
-        if (!camOk || !micOk) {
-            permLauncher.launch(arrayOf(Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO))
-        }
-    }
-
     val rollingClip by rememberUpdatedState(onRollingClip)
     val refreshAsk by rememberUpdatedState(onRefreshAsk)
     val nextAudioFile by rememberUpdatedState(audioFileFactory)
@@ -181,7 +175,7 @@ fun NewTicketAvScreen(
     ) {
         Text("← Cancel", color = Muted, modifier = Modifier.clickable(onClick = onCancel))
         Spacer(Modifier.height(8.dp))
-        Text("Live ticket · audio + frames", color = Accent, fontWeight = FontWeight.SemiBold, fontSize = 20.sp)
+        Text("Live", color = Accent, fontWeight = FontWeight.SemiBold, fontSize = 20.sp)
         Text(
             "Talk while you show the problem. Clear, new angles are kept automatically (up to 3). No video file is uploaded.",
             color = Muted,
@@ -263,7 +257,17 @@ fun NewTicketAvScreen(
                     },
                 )
             } else {
-                Text("Camera permission needed", color = Danger)
+                Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.padding(16.dp)) {
+                    Text(
+                        "Camera stills and the microphone are only for showing this problem. They are sent to Intake when online sync is on.",
+                        color = Muted,
+                        fontSize = 13.sp,
+                    )
+                    Spacer(Modifier.height(8.dp))
+                    PrimaryButton("Allow camera and microphone") {
+                        permLauncher.launch(arrayOf(Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO))
+                    }
+                }
             }
         }
 
@@ -273,7 +277,7 @@ fun NewTicketAvScreen(
             color = Warm,
             fontSize = 14.sp,
         )
-        Text("Stills kept: $localStills · ticket $ticketId", color = Muted, fontSize = 12.sp)
+        Text("Stills kept: $localStills", color = Muted, fontSize = 12.sp)
         Spacer(Modifier.height(10.dp))
         PrimaryButton("Keep still") {
             val ic = imageCapture

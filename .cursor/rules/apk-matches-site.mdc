@@ -1,0 +1,16 @@
+---
+description: Keep the Android app on the same FixIt design as the site, without a WebView.
+globs: "{apps/android-testmode/**,src/components/ticket/**,src/styles/fixit-theme.css,src/lib/tickets/**,docs/apk-ticket-ux.md}"
+alwaysApply: false
+---
+
+# APK matches the site
+
+The Android app draws FixIt itself. Do not put myproblem.app in a WebView.
+
+- Colors and the 900px split live in `src/styles/fixit-theme.css`. The app copies are `AppColors.kt` and `SiteLayout.kt` (`DESKTOP_MIN_PX = 900`). Change both when the site tokens or breakpoint change.
+- Ticket status words live in `src/lib/tickets/ticketStatus.ts` and `TicketPageStatus.kt`. An open ticket is Awaiting review. Do not mark a fix plan current.
+- Phone width is one column. A window of 900px or wider uses the desktop arrangement (960 cap, two columns where the site does).
+- Camera, microphone, and the on-device ticket list stay native. The site has no live capture screen.
+- Marketing, privacy, and terms stay on the website. Link out. Do not rebuild those pages in Compose.
+- Debug-only tools (E2E receiver, Test screen, Server ahead) stay out of release.

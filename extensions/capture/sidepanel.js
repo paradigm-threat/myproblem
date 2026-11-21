@@ -180,9 +180,15 @@
   function paintCollectionHeader() {
     const title = $("collection-title");
     const tag = $("collection-tag");
+    const mission = $("collection-mission");
     const c = collectionMeta;
     if (title) {
       title.textContent = (c && c.name) || "Savannah Cat Rescue";
+    }
+    if (mission) {
+      mission.textContent =
+        (c && c.primary_job) ||
+        "First job: connect litters / unfixed moms to the TNR trap network.";
     }
     if (tag) {
       const place = (c && c.place) || "Savannah, GA";
@@ -200,6 +206,48 @@
         " to sync · " +
         ch;
     }
+  }
+
+  const TNR_TOPIC_KEYS = {
+    tnr: true,
+    relocate: true,
+    "colony-care": true,
+    foster: true,
+  };
+
+  function isTnrMatch(thread) {
+    if (!thread || thread.gate === "outlier" || thread.skip) return false;
+    const topics = thread.suggested_topics || [];
+    for (let i = 0; i < topics.length; i++) {
+      if (TNR_TOPIC_KEYS[topics[i]]) return true;
+    }
+    const body = String(thread.body_redacted || thread.body || "");
+    return /\b(kitten|kittens|litter|pregnant|unfixed|not fixed|trap|tnr|trap[\s/-]?neuter|need(s)? (a )?trapper|mama cat|mother cat)\b/i.test(
+      body
+    );
+  }
+
+  function tnrThreads() {
+    return ticketThreads().filter(isTnrMatch);
+  }
+
+  function paintTnrQueue() {
+    const list = $("tnr-list");
+    const empty = $("tnr-empty");
+    if (!list || !empty) return;
+    const rows = batch ? tnrThreads() : [];
+    if (!rows.length) {
+      empty.hidden = false;
+      list.hidden = true;
+      empty.textContent = batch
+        ? "No litter / unfixed / trap-needed posts in this session yet. Deep capture a member group."
+        : "Capture a member group feed. Posts about kittens, pregnant/unfixed strays, or trap help surface here first.";
+      list.innerHTML = "";
+      return;
+    }
+    empty.hidden = true;
+    list.hidden = false;
+    renderThreadList(list, rows, { outlier: false });
   }
 
   function paintRoster() {
@@ -843,9 +891,12 @@
 
   function render() {
     if (!batch) {
+      paintCollectionHeader();
+      paintRoster();
       paintPageContext();
       paintTopicChips();
       paintRefPreview();
+      paintTnrQueue();
       return;
     }
     const tickets = ticketThreads();
@@ -872,6 +923,7 @@
 
     if ($("ticket-count")) $("ticket-count").textContent = `(${tickets.length})`;
     if ($("outlier-count")) $("outlier-count").textContent = `(${outliers.length})`;
+    paintTnrQueue();
     if ($("ticket-list")) renderThreadList($("ticket-list"), tickets, { outlier: false });
     if ($("outlier-list")) renderThreadList($("outlier-list"), outliers, { outlier: true });
 

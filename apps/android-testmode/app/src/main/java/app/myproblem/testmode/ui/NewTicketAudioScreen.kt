@@ -197,6 +197,12 @@ fun NewTicketAudioScreen(
 
         Spacer(Modifier.height(24.dp))
         if (!hasPerm) {
+            Text(
+                "The microphone is only for describing this problem. Audio is sent to Intake when online sync is on, and it stays on this phone.",
+                color = Muted,
+                fontSize = 13.sp,
+            )
+            Spacer(Modifier.height(8.dp))
             PrimaryButton("Allow microphone") { permLauncher.launch(Manifest.permission.RECORD_AUDIO) }
         } else if (recording) {
             PrimaryButton("Stop recording") { finishStop() }

@@ -2,6 +2,8 @@
 
 Two-tier servers for MyProblem tickets. Naming and roles are locked here.
 
+**Product phases:** [`batch-phases.md`](./batch-phases.md) — Phase 1 uses **Cursor** as the batch SI (shared multi-site queue); Spot is Phase 2. **Same procedure** either way: drain jobs → per-repo **commit queue** → **merge phase** → remotes. Intake is **cache + enqueue** for repo-bound work; tip/KB/comments remotes update only after merge.
+
 ## Names
 
 | Name | What |
@@ -21,25 +23,26 @@ UI copy still uses **coachLine**; the **host** is Intake (do not name infra “c
 ## Split
 
 ```
-APK / ticket web
-   │  gated stills + audio (never video); region = georgia | israel
+APK / ticket web / capture / IRC
+   │  gated stills + audio (realtime never video); region = georgia | israel
    ▼
-Intake (IAD) ── relay-gateway + commit worker
-   │  exact-path render of tip.json / index.md
-   │  git commit tip + jobs into regional repo
-   │  wake Spot when queued job files exist
+Intake (IAD) ── always-on cache + enqueue (shared queue)
+   │  media inbox / job payloads / slug map / SSR of already-committed tips
+   │  NO tip/KB git mutations in Phase 1 until batch runs
    ▼
-Batch (SJC A30) ──► Groq Whisper + VL/Project
-   │  lease/done = git commits in same regional repo
-   └── empty bins → self-delete cloudspace
+Batch agent
+   │  Phase 1: Cursor (ask + cron) — all Relay sites
+   │  Phase 2: Spot SJC A30 ──► Whisper + VL/Project; then self-delete
+   └── SI drain → commit queue → merge phase → private tip remotes + public KB; Bunny; wipe scratch
 ```
 
 | | Intake | Batch |
 |--|--------|-------|
-| Hardware | `gp.vs1.large-iad` (~pennies–$0.08/hr) | `gpu.vs2.xlargeplusplus-sjc` (~$0.15/hr Spot) |
-| Role | Gateway SSR + git commits + light Groq | Whisper + deep VL/Project |
-| Images | Accept JPEG only (hash, enqueue `vision`) — **no VL/OCR** | OCR / VL / imggen |
-| ASR | Enqueue job file only | Groq `whisper-large-v3` |
+| Hardware | `gp.vs1.large-iad` (~pennies–$0.08/hr) | Phase 2: `gpu.vs2.xlargeplusplus-sjc` (~$0.15/hr Spot); Phase 1: operator Cursor |
+| Role | Gateway + **cache/enqueue** (+ SSR of committed tips) | Whisper + deep VL/Project + tip/KB commits |
+| Images | Accept JPEG (hash, enqueue `vision`) — **no VL/OCR** | OCR / VL / imggen / choice-media |
+| ASR | Enqueue job file only | Groq `whisper-large-v3` (or Cursor Phase 1 equivalent) |
+| Capacity | Always-on | **No paid lane** — Spot / gifted reliable only |
 
 ## Ticket SoT (git, dual-region)
 
@@ -61,9 +64,11 @@ Job bins are **files** under each tip (not Neon):
 | `intake` | Intake light LLM |
 | `project` | Batch deep investigate |
 
-**Wake Batch when** queued job-file depth ≥ N, or oldest age ≥ T, or daily window. Scan is **server-local** — never a public list API.
+**Wake Batch when** queued job depth ≥ N, or oldest age ≥ T, or daily window / Cursor cron. Scan is **server-local** — never a public list API. Phase 1: Cursor drains the shared queue ([`cursor-batch-playbook.md`](./cursor-batch-playbook.md)). Phase 2: Spot wake scripts.
 
-**Self-decommission:** Batch drains ready GPU jobs, then `deleteSpotNodePool` + `deleteCloudspace` for `myproblem-batch`.
+**Self-decommission (Phase 2):** Spot Batch drains ready GPU jobs, then `deleteSpotNodePool` + `deleteCloudspace` for `myproblem-batch`.
+
+**Process-jobs note:** Any Intake helper that still commits tips today is **transitional**; end state is enqueue-only + batch writer ([`batch-phases.md`](./batch-phases.md)).
 
 ## Live provision (Intake)
 
@@ -91,6 +96,8 @@ Details: [`myproblem-tickets/infra/INTAKE_HOST.md`](../../myproblem-tickets/infr
 
 ## Related
 
+- [`batch-phases.md`](./batch-phases.md)
+- [`cursor-batch-playbook.md`](./cursor-batch-playbook.md)
 - [`pii-and-privacy.md`](./pii-and-privacy.md)
 - [`anonymous-tickets.md`](./anonymous-tickets.md)
 - [`ephemeral-media.md`](./ephemeral-media.md)

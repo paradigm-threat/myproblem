@@ -27,7 +27,7 @@ Built from **MyProblem Test Mode** offline gate on device **CPH2419** (2026-11-0
 
 ## Split: realtime capture vs Project investigation
 
-**Realtime** (this doc’s SEND path) is only for **smart-enough ticket intake**: coach lines + `capture_request` so the user fills questions, requirements, and **stills**. It is **not** an on-demand frontier solve. **No video files** are uploaded — only unique/worthy stills within rate limits.
+**Realtime** (this doc’s SEND path) is only for **smart-enough ticket intake**: coach lines + `capture_request` so the user fills questions, requirements, and **stills**. It is **not** an on-demand frontier solve. **No video files on the realtime SEND path** — only unique/worthy stills within rate limits. Deferred video/audio (social capture, Bunny inbox) is **batch-only** — see [`ephemeral-media.md`](./ephemeral-media.md).
 
 **Projects** — deferred, batched server investigation — are the **primary** heavy path once a ticket is packaged and queued by status. The **region KB (git Markdown)** is checked first; Bedrock/frontier is a **rare escalate after KB miss**, then distilled back into the KB. See [`projects.md`](./projects.md) · [`backbone-escalate.md`](./backbone-escalate.md) · [`knowledge-base.md`](./knowledge-base.md). Tickets are anon by default ([`anonymous-tickets.md`](./anonymous-tickets.md)).
 
@@ -35,7 +35,7 @@ Built from **MyProblem Test Mode** offline gate on device **CPH2419** (2026-11-0
 
 | Mode | Server job |
 |---|---|
-| Realtime SEND | Light VL/OCR for coaching; stills only; update ticket fields; never pretend the Problem is fully solved |
+| Realtime SEND | Light VL/OCR for coaching; stills only (no live video upload); update ticket fields; never pretend the Problem is fully solved |
 | Voice Evidence | Accept audio; enqueue first `asr_job`; LLM-gated retranscription on open tickets |
 | Project batch | Deep research ASAP + complete; KB git + cache first; allowed browser research (honest limits); rare Bedrock escalate → KB write; DIY vs merchant; timeline updates |
 

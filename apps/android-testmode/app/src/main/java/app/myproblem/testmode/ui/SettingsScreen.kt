@@ -1,5 +1,7 @@
 package app.myproblem.testmode.ui
 
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -16,6 +18,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -40,8 +43,9 @@ fun SettingsScreen(
     ) {
         Text("← Back", color = Muted, modifier = Modifier.clickable(onClick = onBack))
         Text("Settings", color = Accent, fontWeight = FontWeight.SemiBold, fontSize = 22.sp)
+        val context = LocalContext.current
         Text(
-            "New ticket always asks for Text / Audio / Audio+frames — no default start mode.",
+            "New ticket asks for Chat or Record. Record is one feed — turn the mic or camera on or off as you go. Chat keeps them off.",
             color = Muted,
             fontSize = 13.sp,
         )
@@ -66,9 +70,9 @@ fun SettingsScreen(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Column(Modifier.weight(1f)) {
-                Text("Online sync (simulated)", color = Warm)
+                Text("Online sync", color = Warm)
                 Text(
-                    "On: auto-sync marks tickets Synced. Off: stay Local only and error if sync cannot finish.",
+                    "On: this phone sends the ticket, audio, and stills to Intake. Off: the ticket stays on this phone.",
                     color = Muted,
                     fontSize = 12.sp,
                 )
@@ -80,9 +84,27 @@ fun SettingsScreen(
             )
         }
         Text(
-            "Real ticket APIs not wired yet — sync UI is driven by a local simulator. Evidence files stay on device.",
+            "MyProblem is not a licensed electrician, doctor, or emergency service. If someone is in danger, use your local emergency number.",
             color = Muted,
             fontSize = 12.sp,
         )
+        Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+            Text(
+                "Privacy",
+                color = Accent,
+                modifier = Modifier.clickable { openPage(context, "https://myproblem.app/privacy") },
+            )
+            Text(
+                "Terms",
+                color = Accent,
+                modifier = Modifier.clickable { openPage(context, "https://myproblem.app/terms") },
+            )
+        }
+    }
+}
+
+private fun openPage(context: android.content.Context, url: String) {
+    runCatching {
+        context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
     }
 }
