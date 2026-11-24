@@ -27,8 +27,10 @@ import androidx.compose.ui.unit.sp
 fun SettingsScreen(
     showArchived: Boolean,
     onlineSyncEnabled: Boolean,
+    networkerEnabled: Boolean = false,
     onShowArchived: (Boolean) -> Unit,
     onOnlineSyncEnabled: (Boolean) -> Unit,
+    onNetworkerEnabled: (Boolean) -> Unit = {},
     onBack: () -> Unit,
 ) {
     Column(
@@ -80,6 +82,25 @@ fun SettingsScreen(
             Switch(
                 checked = onlineSyncEnabled,
                 onCheckedChange = onOnlineSyncEnabled,
+                colors = SwitchDefaults.colors(checkedTrackColor = Accent),
+            )
+        }
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Column(Modifier.weight(1f)) {
+                Text("Networker mode", color = Warm)
+                Text(
+                    "Keep existing tips moving — add photos or note actions. Social gather stays in the Relay Chrome extension.",
+                    color = Muted,
+                    fontSize = 12.sp,
+                )
+            }
+            Switch(
+                checked = networkerEnabled,
+                onCheckedChange = onNetworkerEnabled,
                 colors = SwitchDefaults.colors(checkedTrackColor = Accent),
             )
         }

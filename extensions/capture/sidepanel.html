@@ -3,21 +3,20 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>MyProblem X</title>
+  <title>Relay · MyProblem</title>
+  <link rel="stylesheet" href="tokens.css">
   <link rel="stylesheet" href="sidepanel.css">
 </head>
 <body>
+  <svg style="position:absolute;width:0;height:0;overflow:hidden" aria-hidden="true">
+    <use href="icons.svg#gather" />
+  </svg>
   <div class="mpx">
     <header class="mpx-head">
-      <p class="mpx-brand">MyProblem X</p>
+      <p class="mpx-brand">Relay</p>
       <h1 class="mpx-collection-title" id="collection-title">Savannah Cat Rescue</h1>
-      <p class="mpx-mission" id="collection-mission">
-        First job: connect litters / unfixed moms to the TNR trap network.
-      </p>
-      <p class="mpx-tag" id="collection-tag">Savannah, GA · sync member groups</p>
-      <p class="mpx-conn" id="conn-line" role="status">Checking Nextdoor connection…</p>
-      <p class="mpx-meta" id="status-line">Loading…</p>
-      <p class="mpx-stats" id="stats-line" hidden></p>
+      <p class="mpx-conn" id="conn-line" role="status">Checking connection…</p>
+      <p class="mpx-meta" id="status-line" hidden>Loading…</p>
     </header>
 
     <nav class="mpx-tabs" role="tablist" aria-label="Panel">
@@ -26,27 +25,89 @@
     </nav>
 
     <section id="panel-main" class="mpx-panel" role="tabpanel">
-      <section class="mpx-section mpx-section-priority" aria-labelledby="job-h">
-        <h2 id="job-h">TNR matches</h2>
-        <p class="mpx-hint" id="tnr-empty">
-          Capture a member group feed. Posts about kittens, pregnant/unfixed
-          strays, or trap help surface here first.
-        </p>
-        <ul id="tnr-list" class="mpx-list" hidden></ul>
-        <p class="mpx-hint mpx-hint-tight">
-          Next step: open the post → draft a useful reply → or send a craft note
-          so trappers can coordinate (human sends on Nextdoor).
-        </p>
-      </section>
+      <!-- Gather state machine: idle | needs | gathering | success | failed | lookback -->
+      <div id="gather-idle" class="mpx-gather-state" hidden>
+        <h2>Up to date</h2>
+        <p class="mpx-hint" id="last-refresh-idle">Last refreshed today</p>
+        <div class="mpx-actions">
+          <button type="button" id="btn-deep" class="secondary">
+            <span class="mpx-btn-label">Refresh</span>
+          </button>
+          <button type="button" id="btn-deep-stop" class="danger" hidden>Stop</button>
+        </div>
+      </div>
+
+      <div id="gather-needs" class="mpx-gather-state">
+        <div class="mpx-notice">
+          <b>Ready for a refresh</b>
+          <p id="lookback-plain">About 5 days to catch up</p>
+          <small id="last-refresh-needs">Last refreshed —</small>
+        </div>
+        <div class="mpx-actions">
+          <button type="button" id="btn-gather-primary" class="primary">Refresh / Gather</button>
+        </div>
+        <button type="button" class="mpx-footlink" id="btn-lookback-open">Change lookback · Since last refresh</button>
+      </div>
+
+      <div id="gather-gathering" class="mpx-gather-state" hidden>
+        <div class="mpx-notice">
+          <h3>Gathering posts…</h3>
+          <p>Please wait. Leave this group page open.</p>
+          <small>The website is temporarily busy.</small>
+        </div>
+        <div class="mpx-progress" aria-hidden="true"><span></span></div>
+        <small id="gather-progress-label">Reading group posts</small>
+      </div>
+
+      <div id="gather-success" class="mpx-gather-state" hidden>
+        <div class="mpx-notice good">
+          <h3>Gathering complete</h3>
+          <div class="mpx-stats-pair">
+            <div><strong id="stat-posts">0</strong><small>New posts gathered</small></div>
+            <div><strong id="stat-topics">0</strong><small>New topics published</small></div>
+          </div>
+        </div>
+      </div>
+
+      <div id="gather-failed" class="mpx-gather-state" hidden>
+        <div class="mpx-notice error">
+          <h3>Couldn’t finish gathering</h3>
+          <p>You can use the group page again.</p>
+        </div>
+        <div class="mpx-actions">
+          <button type="button" id="btn-report" class="primary">Report problem</button>
+        </div>
+        <small>One press sends relevant diagnostics.</small>
+        <button type="button" class="mpx-footlink" id="btn-try-again">Try again</button>
+      </div>
+
+      <div id="gather-lookback" class="mpx-gather-state" hidden>
+        <h2>Lookback</h2>
+        <p>How far back should this gather go?</p>
+        <label class="mpx-choice"><input type="radio" name="lookback" value="since" checked> Since last refresh</label>
+        <label class="mpx-choice"><input type="radio" name="lookback" value="7"> Last 7 days</label>
+        <label class="mpx-choice"><input type="radio" name="lookback" value="14"> Last 14 days</label>
+        <label class="mpx-choice"><input type="radio" name="lookback" value="30"> Last 30 days</label>
+        <small>Changes apply to the next gather only.</small>
+        <div class="mpx-actions">
+          <button type="button" id="btn-lookback-apply" class="primary">Use this lookback</button>
+        </div>
+      </div>
 
       <div class="mpx-actions mpx-actions-fix">
         <button type="button" id="btn-fix">Fix connection</button>
       </div>
-      <div class="mpx-actions">
-        <button type="button" id="btn-deep">Deep capture</button>
-        <button type="button" id="btn-deep-stop" class="danger" hidden>Stop deep</button>
-      </div>
-      <p class="mpx-hint">Walk the open group feed to find TNR needs and other tickets.</p>
+
+      <section class="mpx-section" aria-labelledby="topics-list-h">
+        <h2 id="topics-list-h">Topics &amp; threads</h2>
+        <p class="mpx-hint">Latest updates first</p>
+        <ul id="tnr-list" class="mpx-list" hidden></ul>
+        <p class="mpx-hint" id="tnr-empty">
+          Gather a member group feed. Topics from SI / the tip repo appear here.
+        </p>
+        <ul id="ticket-list" class="mpx-list"></ul>
+        <span id="ticket-count" hidden></span>
+      </section>
 
       <section class="mpx-section" aria-labelledby="page-h">
         <h2 id="page-h">This tab</h2>
@@ -62,13 +123,12 @@
       </section>
 
       <section class="mpx-section" aria-labelledby="irc-compose-h">
-        <h2 id="irc-compose-h">Coordinate trappers</h2>
+        <h2 id="irc-compose-h">Coordinate</h2>
         <p class="mpx-hint">
-          Craft room for the TNR network (Clevertree WS → IRC). Origin replies
-          stay on Nextdoor. Tag prepended; UI shows a link icon.
+          Craft room (Clevertree WS → IRC). Origin replies stay on the social network.
         </p>
         <p class="mpx-meta" id="ref-preview" aria-live="polite"></p>
-        <textarea id="irc-draft" class="mpx-draft" rows="3" placeholder="e.g. [tnr] litter on westside — need trapper Thu…"></textarea>
+        <textarea id="irc-draft" class="mpx-draft" rows="3" placeholder="Coordinate with the network…"></textarea>
         <div class="mpx-actions">
           <button type="button" id="btn-irc-send" class="secondary">Send to craft room</button>
         </div>
@@ -76,19 +136,14 @@
       </section>
 
       <section class="mpx-section" aria-labelledby="topics-h">
-        <h2 id="topics-h">Topics</h2>
+        <h2 id="topics-h">Topic filters</h2>
         <p class="mpx-hint" id="topics-empty">No collection topics yet.</p>
         <div id="topic-chips" class="mpx-chips" hidden></div>
       </section>
 
-      <section class="mpx-section" aria-labelledby="posts-h">
-        <h2 id="posts-h">All session tickets <span id="ticket-count"></span></h2>
-        <ul id="ticket-list" class="mpx-list"></ul>
-      </section>
-
       <section class="mpx-section" aria-labelledby="replies-h">
         <h2 id="replies-h">Replies ready</h2>
-        <p class="mpx-hint" id="replies-empty">No reply templates yet. Import a batch or run Cursor-as-batch.</p>
+        <p class="mpx-hint" id="replies-empty">No reply templates yet.</p>
         <ul id="replies-list" class="mpx-list"></ul>
       </section>
 
@@ -96,6 +151,13 @@
         <h2 id="outliers-h">Outliers <span id="outlier-count"></span></h2>
         <ul id="outlier-list" class="mpx-list"></ul>
       </section>
+
+      <p class="mpx-mission" id="collection-mission" hidden></p>
+      <p class="mpx-tag" id="collection-tag" hidden></p>
+      <p class="mpx-stats" id="stats-line" hidden></p>
+
+      <a class="mpx-footlink" href="https://myproblem.app/submit" target="_blank" rel="noopener">Submit a problem on the website</a>
+      <a class="mpx-footlink" href="https://clevertree.chat" target="_blank" rel="noopener">Coordinate in Clevertree Chat</a>
     </section>
 
     <section id="panel-lab" class="mpx-panel" role="tabpanel" hidden>
@@ -125,7 +187,7 @@
       <span id="ext-version-foot"></span>
       ·
       <a href="https://myproblem.app/extension" target="_blank" rel="noopener">myproblem.app/extension</a>
-      · Never auto-sends · Never auto-uploads · Scrubs PII before export
+      · Never auto-sends · Never auto-uploads
     </footer>
   </div>
   <script src="lib/scrub.js"></script>

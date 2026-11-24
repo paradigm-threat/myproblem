@@ -49,6 +49,7 @@ class E2eDebugReceiver : BroadcastReceiver() {
                         "create_text" -> createText(app, store, intent)
                         "upload_audio" -> uploadMedia(app, store, intent, kind = "audio")
                         "upload_still" -> uploadMedia(app, store, intent, kind = "still")
+                        "upload_video" -> uploadMedia(app, store, intent, kind = "video")
                         "reprocess" -> reprocess(store, intent)
                         "sync" -> sync(store, intent)
                         "status" -> status(store, intent)
@@ -146,8 +147,12 @@ class E2eDebugReceiver : BroadcastReceiver() {
         val file = resolveFile(context, path)
         if (!file.exists()) return err("file_missing:$path")
 
-        val ext = if (kind == "still") "jpg" else "wav"
-        val mime = if (kind == "still") "image/jpeg" else "audio/wav"
+        val (ext, mime, lane) =
+            when (kind) {
+                "still" -> Triple("jpg", "image/jpeg", null)
+                "video" -> Triple("mp4", "video/mp4", "batch")
+                else -> Triple("wav", "audio/wav", null)
+            }
         val dest = File(store.mediaDir(localId), "e2e_${System.currentTimeMillis()}.$ext")
         file.copyTo(dest, overwrite = true)
         val hash = TicketSyncEngine.sha256Hex(dest)
@@ -159,29 +164,47 @@ class E2eDebugReceiver : BroadcastReceiver() {
                 file = dest,
                 mime = mime,
                 isFinal = true,
+                lane = lane,
             )
         val next =
-            if (kind == "audio") {
-                t.copy(
-                    hasAudio = true,
-                    uploadedSha256 = (t.uploadedSha256 + hash).distinct(),
-                    intake = IntakeStatus.QUEUED,
-                    coachLine = CoachLines.QUEUED,
-                )
-            } else {
-                t.copy(
-                    stillCount = t.stillCount + 1,
-                    uploadedSha256 = (t.uploadedSha256 + hash).distinct(),
-                )
+            when (kind) {
+                "audio" ->
+                    t.copy(
+                        hasAudio = true,
+                        uploadedSha256 = (t.uploadedSha256 + hash).distinct(),
+                        intake = IntakeStatus.QUEUED,
+                        coachLine = CoachLines.QUEUED,
+                    )
+                "video" ->
+                    t.copy(
+                        hasAudio = true,
+                        uploadedSha256 = (t.uploadedSha256 + hash).distinct(),
+                        intake = IntakeStatus.QUEUED,
+                        coachLine = CoachLines.QUEUED,
+                        startMode = StartMode.VIDEO_MESSAGE,
+                    )
+                else ->
+                    t.copy(
+                        stillCount = t.stillCount + 1,
+                        uploadedSha256 = (t.uploadedSha256 + hash).distinct(),
+                    )
             }
         store.save(next)
         return JSONObject()
             .put("ok", res.ok)
-            .put("cmd", if (kind == "audio") "upload_audio" else "upload_still")
+            .put(
+                "cmd",
+                when (kind) {
+                    "audio" -> "upload_audio"
+                    "video" -> "upload_video"
+                    else -> "upload_still"
+                },
+            )
             .put("evidenceId", res.evidenceId)
             .put("error", res.error)
             .put("sha256", hash)
             .put("bytes", dest.length())
+            .put("lane", lane)
             .put("serverTicketId", serverId)
     }
 

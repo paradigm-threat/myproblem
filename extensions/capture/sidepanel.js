@@ -10,13 +10,102 @@
   let topicFilter = null;
   let selectedThreadId = null;
   let visitorId = null;
+  /** @type {"idle"|"needs"|"gathering"|"success"|"failed"|"lookback"} */
+  let gatherState = "needs";
+  let lookbackDays = null; // null = since last refresh
+  let lastGatherAt = null;
+  let lastGatherStats = { posts: 0, topics: 0 };
 
   const $ = (id) => document.getElementById(id);
   const EXT_VERSION = chrome.runtime.getManifest().version;
   const ExtId = () => globalThis.MyProblemExternalId;
+  const LOOKBACK_KEY = "mpx_lookback_days";
+  const LAST_GATHER_KEY = "mpx_last_gather_at";
 
   function setStatus(msg) {
-    $("status-line").textContent = msg;
+    const el = $("status-line");
+    if (el) {
+      el.hidden = false;
+      el.textContent = msg;
+    }
+  }
+
+  function daysSince(ms) {
+    if (!ms) return null;
+    return Math.max(1, Math.round((Date.now() - ms) / 86400000));
+  }
+
+  function plainLookback() {
+    if (lookbackDays != null) return "Last " + lookbackDays + " days";
+    const d = daysSince(lastGatherAt);
+    if (d == null) return "About a few days to catch up";
+    return "About " + d + " day" + (d === 1 ? "" : "s") + " to catch up";
+  }
+
+  function setGatherState(next) {
+    gatherState = next;
+    const ids = [
+      "gather-idle",
+      "gather-needs",
+      "gather-gathering",
+      "gather-success",
+      "gather-failed",
+      "gather-lookback",
+    ];
+    ids.forEach((id) => {
+      const el = $(id);
+      if (!el) return;
+      const key = id.replace("gather-", "");
+      el.hidden = key !== next;
+    });
+    const lb = $("lookback-plain");
+    if (lb) lb.textContent = plainLookback();
+    const needsLast = $("last-refresh-needs");
+    const idleLast = $("last-refresh-idle");
+    const lastTxt = lastGatherAt
+      ? "Last refreshed " +
+        (daysSince(lastGatherAt) === 1
+          ? "yesterday"
+          : daysSince(lastGatherAt) + " days ago")
+      : "Not refreshed yet on this device";
+    if (needsLast) needsLast.textContent = lastTxt;
+    if (idleLast) {
+      idleLast.textContent = lastGatherAt
+        ? daysSince(lastGatherAt) <= 1
+          ? "Last refreshed today"
+          : lastTxt
+        : "No gather yet";
+    }
+    const sp = $("stat-posts");
+    const st = $("stat-topics");
+    if (sp) sp.textContent = String(lastGatherStats.posts || 0);
+    if (st) st.textContent = String(lastGatherStats.topics || 0);
+  }
+
+  async function loadGatherPrefs() {
+    const data = await chrome.storage.local.get([LOOKBACK_KEY, LAST_GATHER_KEY]);
+    if (data[LOOKBACK_KEY] != null) lookbackDays = Number(data[LOOKBACK_KEY]) || null;
+    if (data[LAST_GATHER_KEY]) lastGatherAt = Number(data[LAST_GATHER_KEY]) || null;
+    const stale =
+      !lastGatherAt || (daysSince(lastGatherAt) != null && daysSince(lastGatherAt) >= 1);
+    setGatherState(stale ? "needs" : "idle");
+  }
+
+  function maxPostsForLookback() {
+    const d = lookbackDays != null ? lookbackDays : daysSince(lastGatherAt) || 5;
+    return Math.min(40, Math.max(8, Math.round(d * 3)));
+  }
+
+  async function showHostOverlay(show) {
+    try {
+      const tab = await findNextdoorTab();
+      if (!tab || !tab.id) return;
+      await chrome.tabs.sendMessage(tab.id, {
+        type: show ? "MPX_GATHER_OVERLAY_SHOW" : "MPX_GATHER_OVERLAY_HIDE",
+      });
+    } catch (_) {
+      /* content may be missing */
+    }
   }
 
   function setConn(state, msg) {
@@ -1101,14 +1190,21 @@
   function setDeepRunning(running) {
     const stop = $("btn-deep-stop");
     const deep = $("btn-deep");
+    const primary = $("btn-gather-primary");
     const capture = $("btn-capture");
     if (stop) stop.hidden = !running;
     if (deep) {
       deep.disabled = !!running;
-      if (running) deep.textContent = "Deep capture…";
-      else deep.textContent = deepHasRun ? "Recapture" : "Deep capture";
+      const label = deep.querySelector(".mpx-btn-label") || deep;
+      if (running) label.textContent = "Gathering…";
+      else label.textContent = deepHasRun ? "Refresh" : "Refresh";
     }
+    if (primary) primary.disabled = !!running;
     if (capture) capture.disabled = !!running;
+    if (running) {
+      setGatherState("gathering");
+      void showHostOverlay(true);
+    }
   }
 
   /** Clear stacked Nextdoor modals by leaving /p/ overlays — go to group feed or hard reload. */
@@ -1139,16 +1235,18 @@
     let tab = await findNextdoorTab();
     if (!tab || !tab.id || !tab.url || !/nextdoor\.com/i.test(tab.url)) {
       setStatus("Open a nextdoor.com group or post tab first");
+      setGatherState("failed");
       await checkConnection();
       return;
     }
     setDeepRunning(true);
-    setStatus("Deep capture running… keep the Nextdoor tab focused (button disabled)");
+    setStatus("Gathering… leave this group page open");
+    const maxPosts = maxPostsForLookback();
     let res;
     try {
       res = await chrome.tabs.sendMessage(tab.id, {
         type: "MPX_DEEP_CAPTURE",
-        maxPosts: 12,
+        maxPosts,
         delayMs: 1000,
       });
     } catch (e) {
@@ -1157,19 +1255,23 @@
         await new Promise((r) => setTimeout(r, 150));
         res = await chrome.tabs.sendMessage(tab.id, {
           type: "MPX_DEEP_CAPTURE",
-          maxPosts: 12,
+          maxPosts,
           delayMs: 1000,
         });
       } catch (e2) {
         setDeepRunning(false);
-        setStatus("Content script missing — click Fix connection, then Deep capture");
+        await showHostOverlay(false);
+        setGatherState("failed");
+        setStatus("Content script missing — Fix connection, then try again");
         await checkConnection({ tryAttach: true });
         return;
       }
     }
     if (!res || !res.ok) {
       setDeepRunning(false);
-      setStatus("Deep capture failed — Copy debug for Cursor");
+      await showHostOverlay(false);
+      setGatherState("failed");
+      setStatus("Gather failed — Report problem or try again");
       if (res && res.debug) {
         await chrome.runtime.sendMessage({
           type: "MPX_MERGE_HARVEST",
@@ -1190,17 +1292,26 @@
     });
     await refresh();
     const s = res.capture_summary || {};
-    const mediaBit =
-      s.media_stored != null ? ` · ${s.media_stored} media stored` : "";
-    // Always clear stacked modals from the side panel (content-script reload is unreliable on /p/)
+    lastGatherStats = {
+      posts: s.threads || (res.threads && res.threads.length) || 0,
+      topics: (batch && batch.threads
+        ? batch.threads.filter((t) => t.gate === "ticket").length
+        : 0) || 0,
+    };
+    lastGatherAt = Date.now();
+    await chrome.storage.local.set({ [LAST_GATHER_KEY]: lastGatherAt });
+    // one-shot lookback override consumed
+    lookbackDays = null;
+    await chrome.storage.local.remove(LOOKBACK_KEY);
     await cleanupNextdoorAfterDeep(tab, res.source || (batch && batch.source));
     deepHasRun = true;
     setDeepRunning(false);
+    await showHostOverlay(false);
+    setGatherState("success");
     setStatus(
-      `Deep capture OK · mode=${s.mode || "?"} · ${s.threads || 0} threads` +
-        mediaBit +
-        (s.aborted ? " · stopped early" : "") +
-        " · page refreshed — use Recapture to run again, or Mark ready"
+      "Gathering complete · " +
+        lastGatherStats.posts +
+        " posts · leave Lab for packaging when ready"
     );
     await checkConnection({ tryAttach: true });
   }
@@ -1558,6 +1669,25 @@
   on("btn-irc-send", "click", sendCraftMessage);
   on("btn-capture", "click", capturePage);
   on("btn-deep", "click", deepCapture);
+  on("btn-gather-primary", "click", deepCapture);
+  on("btn-try-again", "click", deepCapture);
+  on("btn-lookback-open", "click", () => setGatherState("lookback"));
+  on("btn-lookback-apply", "click", async () => {
+    const picked = document.querySelector('input[name="lookback"]:checked');
+    const v = picked && picked.value;
+    if (!v || v === "since") {
+      lookbackDays = null;
+      await chrome.storage.local.remove(LOOKBACK_KEY);
+    } else {
+      lookbackDays = Number(v);
+      await chrome.storage.local.set({ [LOOKBACK_KEY]: lookbackDays });
+    }
+    setGatherState("needs");
+  });
+  on("btn-report", "click", async () => {
+    await copyDebug();
+    setStatus("Diagnostics copied — paste into an email or Cursor report");
+  });
   on("btn-deep-stop", "click", stopDeep);
   on("btn-ready", "click", markReady);
   on("btn-validate", "click", validateResubmit);
@@ -1610,11 +1740,12 @@
     if (msg.type === "MPX_DEEP_PROGRESS") {
       const cur = msg.current || 0;
       const total = msg.total || 0;
-      setStatus(
-        `Deep capture ${cur}/${total}` +
-          (msg.notes ? ` · ${msg.notes}` : "") +
-          " — keep Nextdoor focused"
-      );
+      const label = $("gather-progress-label");
+      const line =
+        `Reading posts ${cur}/${total}` +
+        (msg.notes ? ` · ${msg.notes}` : "");
+      if (label) label.textContent = line;
+      setStatus(line + " — leave the page open");
       return;
     }
     if (msg.type === "MPX_AUTO_HARVEST_HINT") {
@@ -1624,10 +1755,10 @@
 
   paintVersion();
   switchTab("main");
-  refresh()
+  loadGatherPrefs()
+    .then(() => refresh())
     .then(() => refreshPageContext())
     .then(() => resumeFixIfPending())
-    // Auto-attach once on open so a red "missing" box is not the default state
     .then(() => checkConnection({ tryAttach: true }));
 
   chrome.tabs.onActivated.addListener(() => {

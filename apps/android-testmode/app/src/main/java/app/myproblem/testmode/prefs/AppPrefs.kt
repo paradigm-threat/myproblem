@@ -16,6 +16,7 @@ class AppPrefs(private val context: Context) {
     private val startModeKey = stringPreferencesKey("start_mode")
     private val showArchivedKey = booleanPreferencesKey("show_archived")
     private val onlineSyncKey = booleanPreferencesKey("online_sync_enabled")
+    private val networkerKey = booleanPreferencesKey("networker_enabled")
 
     val onboarded: Flow<Boolean> =
         context.dataStore.data.map { it[onboardedKey] ?: false }
@@ -33,11 +34,20 @@ class AppPrefs(private val context: Context) {
     val onlineSyncEnabled: Flow<Boolean> =
         context.dataStore.data.map { it[onlineSyncKey] ?: true }
 
-    suspend fun completeOnboarding(mode: StartMode) {
+    /** Opt-in Networker home — keep tips moving (evidence/actions). Social gather is browser-only. */
+    val networkerEnabled: Flow<Boolean> =
+        context.dataStore.data.map { it[networkerKey] ?: false }
+
+    suspend fun completeOnboarding(mode: StartMode, networkerEnabled: Boolean = false) {
         context.dataStore.edit {
             it[onboardedKey] = true
             it[startModeKey] = mode.name
+            it[networkerKey] = networkerEnabled
         }
+    }
+
+    suspend fun setNetworkerEnabled(enabled: Boolean) {
+        context.dataStore.edit { it[networkerKey] = enabled }
     }
 
     suspend fun setStartMode(mode: StartMode) {

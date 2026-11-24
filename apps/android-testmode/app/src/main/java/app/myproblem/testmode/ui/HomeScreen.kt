@@ -32,12 +32,16 @@ import java.util.Date
 fun HomeScreen(
     tickets: List<LocalTicket>,
     showArchived: Boolean,
+    networkerEnabled: Boolean,
     onNewTicket: () -> Unit,
     onOpenTicket: (String) -> Unit,
     onSettings: () -> Unit,
     onTestMode: () -> Unit,
     showDevTools: Boolean,
     onRetrySync: (String) -> Unit,
+    onNetworkerHome: (() -> Unit)? = null,
+    onChat: (() -> Unit)? = null,
+    onRecord: (() -> Unit)? = null,
 ) {
     Column(
         modifier =
@@ -53,7 +57,10 @@ fun HomeScreen(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Text("MyProblem", color = Accent, fontWeight = FontWeight.SemiBold, fontSize = 24.sp)
+            Column {
+                Text("MyProblem", color = Accent, fontWeight = FontWeight.SemiBold, fontSize = 24.sp)
+                Text("Asker", color = Mint, fontSize = 13.sp)
+            }
             Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                 Text("Settings", color = Muted, modifier = Modifier.clickable(onClick = onSettings))
                 if (showDevTools) {
@@ -61,14 +68,24 @@ fun HomeScreen(
                 }
             }
         }
+        Spacer(Modifier.height(12.dp))
+        Text("What’s your problem?", color = Warm, fontWeight = FontWeight.SemiBold, fontSize = 22.sp)
+        Spacer(Modifier.height(8.dp))
+        if (onChat != null && onRecord != null) {
+            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                PrimaryButton("Chat", onClick = onChat)
+                SecondaryButton("Record", onClick = onRecord)
+            }
+        } else {
+            PrimaryButton("New ticket", onClick = onNewTicket)
+        }
+        Spacer(Modifier.height(16.dp))
         Text(
             if (showArchived) "Open + archived" else "Open tickets",
             color = Muted,
             fontSize = 13.sp,
         )
-        Spacer(Modifier.height(12.dp))
-        PrimaryButton("New ticket", onClick = onNewTicket)
-        Spacer(Modifier.height(16.dp))
+        Spacer(Modifier.height(8.dp))
         val trouble = pickHomeTrouble(tickets)
         if (trouble != null) {
             ServerProblemBanner(sync = trouble.sync, onRetry = { onRetrySync(trouble.id) })
@@ -76,15 +93,32 @@ fun HomeScreen(
         }
         if (tickets.isEmpty()) {
             Text(
-                "No open tickets yet. Tap New ticket and pick Chat or Record.",
+                "No open tickets yet. Tap Chat or Record.",
                 color = Muted,
                 fontSize = 14.sp,
             )
         } else {
-            LazyColumn(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+            LazyColumn(
+                modifier = Modifier.weight(1f, fill = false),
+                verticalArrangement = Arrangement.spacedBy(10.dp),
+            ) {
                 items(tickets, key = { it.id }) { t ->
                     TicketRow(t, onClick = { onOpenTicket(t.id) })
                 }
+            }
+        }
+        if (networkerEnabled && onNetworkerHome != null) {
+            Spacer(Modifier.height(16.dp))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceEvenly,
+            ) {
+                Text("Asker", color = Accent, fontWeight = FontWeight.SemiBold)
+                Text(
+                    "Networker",
+                    color = Muted,
+                    modifier = Modifier.clickable(onClick = onNetworkerHome),
+                )
             }
         }
     }

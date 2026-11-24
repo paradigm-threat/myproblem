@@ -57,7 +57,7 @@ export default function DevPage() {
               Try it now
             </Link>
             <Link className="btn-secondary" href="/extension">
-              MyProblem X
+              Relay for Networkers
             </Link>
             <Link className="btn-secondary" href="/how-we-run">
               How we run
@@ -155,7 +155,8 @@ export default function DevPage() {
               <span className="phase is-wip">Now</span>
               <div>
                 Tickets + Clevertree on the same tip UUID;{" "}
-                <Link href="/extension">MyProblem X</Link> + local ZIP; confidence
+                <Link href="/extension">Relay for Networkers</Link> + local ZIP;
+                confidence
                 gauges; KB cite-don’t-cache + private tip remotes; Phase 1
                 Cursor-as-batch / Intake cache+enqueue; ephemeral Spot thesis (
                 <Link href="/#si-different">SI different</Link>).

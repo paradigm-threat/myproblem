@@ -56,29 +56,30 @@ export default function HomePage() {
                 <a href="/dev">Dev</a>.
               </p>
               <h1 id="hero-heading" className="hero-title">
-                Free forever for everyone. Thorough help for people.
+                Every problem deserves a way forward.
               </h1>
               <p className="hero-lead">
+                Write it down or record what happened. Stay connected as people
+                and SI help move it forward.{" "}
                 <strong className="emph">Max and simple</strong> — full help
                 behind few modes. Free for everyone, anonymous first, no
-                paywall. Free forever, no fee later. A shop sends unsure people
-                into a ticket instead of a phone loop. While they talk and show
-                the problem, one question stays on screen until the requirements
-                are specific. The person gets a real investigation before anyone
-                has to meet. You should never expect to enter a card. If the
-                help was good, tip the person, the {SI_FULL}, or both.
+                paywall. Free forever. You should never expect to enter a card.
+                If the help was good, tip the person, the {SI_FULL}, or both.
               </p>
               <p className="powered-by">
                 Powered by{" "}
                 <a href={RELAY_URL} rel="noopener noreferrer" target="_blank">
                   Relay
                 </a>
-                . No card required.{" "}
+                . Anonymous by default.{" "}
                 <a href="/how-we-run">How we run</a>.
               </p>
               <div className="cta-row">
                 <a className="btn-primary" href="/submit">
                   Try it now
+                </a>
+                <a className="btn-secondary" href="/extension">
+                  Be a Networker — Relay extension
                 </a>
                 <a
                   className="btn-secondary"
@@ -114,6 +115,23 @@ export default function HomePage() {
         </section>
 
         <div className="site">
+          <section className="relay-promo" aria-labelledby="networker-heading">
+            <h2 id="networker-heading">Be a Networker</h2>
+            <p>
+              A Networker keeps help moving — photos, action notes, and gather
+              from groups you already visit. The{" "}
+              <strong className="emph">primary way to network</strong> is the{" "}
+              <a href="/extension">Relay browser extension</a> (Chrome side
+              panel). The phone app can add evidence to tips; it cannot read
+              other apps&apos; feeds. No automatic posting.
+            </p>
+            <div className="cta-row">
+              <a className="btn-primary" href="/extension">
+                Get Relay for Networkers
+              </a>
+            </div>
+          </section>
+
           <section id="businesses" aria-labelledby="businesses-heading">
             <h2 id="businesses-heading">How it works for businesses</h2>
             <p className="section-lead">
@@ -499,11 +517,12 @@ export default function HomePage() {
                 </p>
               </article>
               <article>
-                <h3>MyProblem X</h3>
+                <h3>Relay for Networkers</h3>
                 <p>
-                  Session capture + reply assist while you browse (
-                  <a href="/extension">extension</a>). Local ZIP export of JSON
-                  + media. Not a bot scraper.
+                  Primary Networker path: the{" "}
+                  <a href="/extension">Relay extension</a> gathers read-only
+                  updates from social groups you already visit. SI files topics;
+                  humans still send origin replies. Not a bot scraper.
                 </p>
               </article>
               <article>
@@ -851,7 +870,7 @@ export default function HomePage() {
           <span aria-hidden="true"> · </span>
           <a href="/submit">Try it now</a>
           <span aria-hidden="true"> · </span>
-          <a href="/extension">Extension</a>
+          <a href="/extension">Relay for Networkers</a>
           <span aria-hidden="true"> · </span>
           <a href="/how-we-run">How we run</a>
           <span aria-hidden="true"> · </span>

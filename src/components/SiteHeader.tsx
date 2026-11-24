@@ -14,7 +14,7 @@ const HOME_LINKS: NavItem[] = [
   { href: "/#knowledge", label: "Knowledge" },
   { href: "/#investors", label: "Investors" },
   { href: "/#regions", label: "Regions" },
-  { href: "/extension", label: "Extension" },
+  { href: "/extension", label: "Networkers" },
   { href: "/how-we-run", label: "How we run" },
   { href: "/dev", label: "Dev" },
 ];
@@ -22,7 +22,7 @@ const HOME_LINKS: NavItem[] = [
 const DEMO_LINKS: NavItem[] = [
   { href: "/", label: "Home" },
   { href: "/submit", label: "Try it now" },
-  { href: "/extension", label: "Extension" },
+  { href: "/extension", label: "Networkers" },
   { href: "/how-we-run", label: "How we run" },
   { href: "/dev", label: "Dev" },
   { href: "/terms", label: "Terms" },

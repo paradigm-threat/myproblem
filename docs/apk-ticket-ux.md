@@ -6,6 +6,8 @@ Related: [`anonymous-tickets.md`](./anonymous-tickets.md) · [`pii-and-privacy.m
 
 **Status:** UX contract + APK shell. TicketsApi → **`https://intake.myproblem.app`** (regional git SoT; UUID = access; region georgia|israel). Vercel is marketing/APK only. Media is device-local + ephemeral server cache ([`ephemeral-media.md`](./ephemeral-media.md)). Capture surface: **Chat + Record** (Max and simple). Live realtime coaching is deferred.
 
+**Design SoT:** [`design/ui-kit/`](../design/ui-kit/) (Asker / Networker screens 04–12). Site tokens also in `src/styles/ui-kit-tokens.css` / FixIt.
+
 ### Phone E2E
 
 CameraX keeps UIAutomator from reaching idle, so automated phone↔server checks use the debug broadcast receiver + script:
@@ -35,11 +37,22 @@ Shared screens use the tokens in `src/styles/fixit-theme.css`: navy `#070d18`, g
 
 Camera, microphone, and the on-device ticket list stay native. Marketing, privacy, and terms stay on the website and open in the browser.
 
+## Roles: Asker (default) vs Networker (opt-in)
+
+| Role | Default? | Job |
+|---|---|---|
+| **Asker** | Yes | Person with a problem — Chat / Record → tip → batch SI |
+| **Networker** | Opt-in at onboarding (or Settings) | Keeps the **process moving**: add photos/evidence to an existing tip, note an action (“set a trap”), optionally solve. Continuity over hero solving |
+
+Same core capabilities; **different home UI** when Networker is enabled. **Garden-wall social gather cannot run in the APK** (apps cannot read each other’s feeds). Networker home deep-links **Use Relay in Chrome** → [`/extension`](https://myproblem.app/extension).
+
 ## Information architecture
 
 | Screen | Purpose |
 |---|---|
-| **Home** | **Open** tickets only (title, status chip, last update). Closed/archived hidden (Settings → Show archived). Big **New ticket**. Menu: Settings, Test Mode (debug). |
+| **Onboarding** | Asker ready + optional **Also enable Networker mode**. |
+| **Asker home** | Chat / Record + open tickets. Switch to Networker when enabled. |
+| **Networker home** | Tips that need a photo/action; Add evidence / I took an action; Relay Chrome link. Wide ≥900px = list + detail. |
 | **New ticket** | Chooser: **Chat** / **Record** — then opens that mode. |
 | **Ticket detail** | Timeline of Evidence + server cards; compose to add text. |
 | **Manual fill** | When intake returns `needs_user_text` — title + description; re-queue intake. |

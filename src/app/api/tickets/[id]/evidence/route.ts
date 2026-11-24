@@ -36,10 +36,6 @@ export async function POST(req: Request, ctx: Ctx) {
   if (!(file instanceof File)) {
     return NextResponse.json({ error: "missing_file" }, { status: 400 });
   }
-  if (kind === "video" || file.type.startsWith("video/")) {
-    return NextResponse.json({ error: "video_rejected" }, { status: 400 });
-  }
-
   const buf = Buffer.from(await file.arrayBuffer());
   const chunkIndex = form.get("chunkIndex") != null ? Number(form.get("chunkIndex")) : null;
   const isFinal = String(form.get("isFinal") || "") === "true";
@@ -48,6 +44,24 @@ export async function POST(req: Request, ctx: Ctx) {
     typeof hotwordsRaw === "string" && hotwordsRaw
       ? hotwordsRaw.split(",").map((s) => s.trim()).filter(Boolean)
       : undefined;
+  const laneRaw = form.get("lane");
+  const lane = typeof laneRaw === "string" && laneRaw ? laneRaw : undefined;
+  const scrubbedRaw = form.get("scrubbed_locally");
+  const scrubbedLocally =
+    scrubbedRaw == null || scrubbedRaw === ""
+      ? undefined
+      : String(scrubbedRaw) === "true";
+
+  let evidenceKind: string;
+  if (kind === "still" || file.type.startsWith("image/")) {
+    evidenceKind = "still";
+  } else if (kind === "video" || file.type.startsWith("video/")) {
+    evidenceKind = "video";
+  } else if (kind === "audio" || file.type.startsWith("audio/")) {
+    evidenceKind = "audio";
+  } else {
+    evidenceKind = kind || "other";
+  }
 
   const headers = new Headers();
   const secret = req.headers.get("x-tickets-secret");
@@ -58,17 +72,29 @@ export async function POST(req: Request, ctx: Ctx) {
   if (claim) headers.set("x-ticket-claim", claim);
   headers.set("content-type", "application/json");
 
+  const payload: Record<string, unknown> = {
+    kind: evidenceKind,
+    base64: buf.toString("base64"),
+    chunkIndex,
+    isFinal,
+    hotwords,
+    filename: file.name,
+    mime: file.type || undefined,
+  };
+  if (evidenceKind === "video") {
+    payload.lane = lane || "batch";
+    payload.scrubbed_locally = scrubbedLocally ?? false;
+  } else if (lane) {
+    payload.lane = lane;
+  }
+  if (scrubbedLocally != null && evidenceKind !== "video") {
+    payload.scrubbed_locally = scrubbedLocally;
+  }
+
   const forwarded = await fetch(`${base}/api/tickets/${id}/evidence`, {
     method: "POST",
     headers,
-    body: JSON.stringify({
-      kind: kind === "still" || file.type.startsWith("image/") ? "still" : "audio",
-      base64: buf.toString("base64"),
-      chunkIndex,
-      isFinal,
-      hotwords,
-      filename: file.name,
-    }),
+    body: JSON.stringify(payload),
   });
   const text = await forwarded.text();
   return new NextResponse(text, {

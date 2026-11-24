@@ -7,12 +7,12 @@ import { OG_IMAGE, SITE_URL, TICKET_TRAINING_NOTICE } from "@/lib/contact";
 export const metadata: Metadata = {
   title: "Submit a problem",
   description:
-    "Create an anonymous MyProblem ticket from the web — photos optional, public slug opt-in.",
+    "Try it now — write or record your problem. Anonymous by default. Media is temporary; batch SI keeps only reduced stills.",
   alternates: { canonical: `${SITE_URL}/submit` },
   openGraph: {
     title: "Submit a problem · MyProblem",
     description:
-      "Create an anonymous ticket. Optional public share link for advice.",
+      "Chat or Record. Anonymous by default. Intake → Bunny temporary media; batch SI processes then deletes.",
     url: `${SITE_URL}/submit`,
     images: [OG_IMAGE],
   },
@@ -28,13 +28,13 @@ export default function SubmitPage() {
       <main id="main" className="site ticket-page">
         <header className="submit-header">
           <p className="eyebrow">Try it now</p>
-          <h1 className="hero-title" style={{ fontSize: "clamp(1.8rem, 4vw, 2.4rem)" }}>
-            Submit a problem
-          </h1>
           <p className="section-lead">
-            Simple web intake for now — title, details, photos. Same ticket
-            model as the app. Public sharing is opt-in.{" "}
-            <Link href="/dev">See what&apos;s next on Dev</Link>.
+            Max and simple — describe the problem in text, or Record one clip.
+            Optional upload of up to five audio or video files. Want to keep
+            others&apos; tips moving across social groups? That&apos;s a{" "}
+            <strong>Networker</strong> job — start with the{" "}
+            <Link href="/extension">Relay extension</Link> (primary Networker
+            path).
           </p>
         </header>
         <SubmitTicketForm />

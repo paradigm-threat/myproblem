@@ -1,0 +1,53 @@
+:root {
+  color-scheme: dark;
+  --canvas: #070d18;
+  --surface: #0f1a2c;
+  --surface-raised: #17263a;
+  --surface-inset: #0b1422;
+  --text: #f3f7fc;
+  --text-secondary: #b6c5d7;
+  --text-muted: #91a5bc;
+  --border: #34465e;
+  --border-control: #72859d;
+  --mint: #5fd4a4;
+  --ticket: #4eb8ff;
+  --gold: #f0c14b;
+  --danger: #ff9696;
+  --ink-on-accent: #070d18;
+  --focus: #f0c14b;
+  --scrim: #070d18ed;
+  --font: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-small: 0.9375rem;
+  --font-body: 1.125rem;
+  --font-label: 1.125rem;
+  --font-section: 1.375rem;
+  --font-title: 1.75rem;
+  --font-display: clamp(2rem, 4vw, 3rem);
+  --leading-body: 1.5;
+  --leading-heading: 1.2;
+  --weight-normal: 400;
+  --weight-medium: 500;
+  --weight-semibold: 600;
+  --weight-bold: 700;
+  --s1: 4px; --s2: 8px; --s3: 12px; --s4: 16px;
+  --s5: 24px; --s6: 32px; --s7: 48px; --s8: 64px;
+  --radius-control: 12px;
+  --radius-card: 16px;
+  --radius-pill: 999px;
+  --stroke: 1px;
+  --focus-width: 3px;
+  --focus-offset: 3px;
+  --target-min: 48px;
+  --button-primary-height: 56px;
+  --content-max: 960px;
+  --wide-breakpoint: 900px; /* reference; use literal in media queries */
+  --panel-padding: 16px;
+  --shadow-raised: 0 8px 24px #00000040;
+  --shadow-overlay: 0 16px 48px #00000066;
+  --motion-fast: 180ms;
+  --motion-pulse: 2400ms;
+  --ease: cubic-bezier(.2,.7,.2,1);
+}
+@media (prefers-reduced-motion: reduce) {
+  :root { --motion-fast: 0ms; --motion-pulse: 0ms; }
+}

@@ -1453,6 +1453,32 @@
   }
 
 
+  const OVERLAY_ID = "__mpx_gather_overlay__";
+
+  function showGatherOverlay() {
+    if (document.getElementById(OVERLAY_ID)) return;
+    const el = document.createElement("div");
+    el.id = OVERLAY_ID;
+    el.setAttribute("role", "alertdialog");
+    el.setAttribute("aria-live", "assertive");
+    el.style.cssText =
+      "position:fixed;inset:0;z-index:2147483647;background:#070d18ed;" +
+      "display:grid;place-items:center;padding:24px;font-family:system-ui,sans-serif;";
+    el.innerHTML =
+      '<div style="max-width:460px;text-align:center;background:#0f1a2c;border:1px solid #72859d;' +
+      'padding:28px;border-radius:16px;color:#f3f7fc;">' +
+      "<h1 style=\"margin:0 0 12px;font-size:1.75rem;\">Please wait</h1>" +
+      "<p style=\"margin:8px 0;line-height:1.5;\">Relay is gathering posts from this group.</p>" +
+      "<p style=\"margin:8px 0;line-height:1.5;\">Leave this page open. You can use it again when gathering finishes.</p>" +
+      '<small style="color:#b6c5d7;">Progress is shown in the Relay side panel.</small></div>';
+    document.documentElement.appendChild(el);
+  }
+
+  function hideGatherOverlay() {
+    const el = document.getElementById(OVERLAY_ID);
+    if (el) el.remove();
+  }
+
   chrome.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
     if (!msg || !msg.type) return;
 
@@ -1462,16 +1488,34 @@
       return true;
     }
 
+    if (msg.type === "MPX_GATHER_OVERLAY_SHOW") {
+      showGatherOverlay();
+      sendResponse({ ok: true });
+      return true;
+    }
+
+    if (msg.type === "MPX_GATHER_OVERLAY_HIDE") {
+      hideGatherOverlay();
+      sendResponse({ ok: true });
+      return true;
+    }
+
     if (msg.type === "MPX_DEEP_STOP") {
       deepAbort = true;
+      hideGatherOverlay();
       sendResponse({ ok: true, stopping: true });
       return true;
     }
 
     if (msg.type === "MPX_DEEP_CAPTURE") {
+      showGatherOverlay();
       deepCapture(msg)
-        .then((res) => sendResponse({ ok: true, ...res }))
-        .catch((e) =>
+        .then((res) => {
+          hideGatherOverlay();
+          sendResponse({ ok: true, ...res });
+        })
+        .catch((e) => {
+          hideGatherOverlay();
           sendResponse({
             ok: false,
             debug: [
@@ -1481,8 +1525,8 @@
                 url: location.href,
               },
             ],
-          })
-        );
+          });
+        });
       return true;
     }
 

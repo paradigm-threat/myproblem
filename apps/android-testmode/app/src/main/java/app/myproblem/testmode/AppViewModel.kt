@@ -48,6 +48,8 @@ data class AppUiState(
     val startMode: StartMode = StartMode.VIDEO_MESSAGE,
     val showArchived: Boolean = false,
     val onlineSyncEnabled: Boolean = true,
+    val networkerEnabled: Boolean = false,
+    val homeMode: String = "asker", // asker | networker
     val tickets: List<LocalTicket> = emptyList(),
     val ready: Boolean = false,
 )
@@ -71,24 +73,42 @@ class AppViewModel(app: Application) : AndroidViewModel(app) {
         reload()
     }
 
+    private val homeModeFlow = MutableStateFlow("asker")
+
     val uiState: StateFlow<AppUiState> =
         combine(
-            prefs.onboarded,
-            prefs.startMode,
-            prefs.showArchived,
-            prefs.onlineSyncEnabled,
+            combine(
+                prefs.onboarded,
+                prefs.startMode,
+                prefs.showArchived,
+                prefs.onlineSyncEnabled,
+                prefs.networkerEnabled,
+            ) { onboarded, mode, archived, online, networker ->
+                Quint(onboarded, mode, archived, online, networker)
+            },
             ticketsFlow,
-        ) { onboarded, mode, archived, online, tickets ->
-            onlineFlag.set(online)
+            homeModeFlow,
+        ) { quint, tickets, homeMode ->
+            onlineFlag.set(quint.online)
             AppUiState(
-                onboarded = onboarded,
-                startMode = mode,
-                showArchived = archived,
-                onlineSyncEnabled = online,
+                onboarded = quint.onboarded,
+                startMode = quint.mode,
+                showArchived = quint.archived,
+                onlineSyncEnabled = quint.online,
+                networkerEnabled = quint.networker,
+                homeMode = if (quint.networker) homeMode else "asker",
                 tickets = tickets,
                 ready = true,
             )
         }.stateIn(viewModelScope, SharingStarted.Eagerly, AppUiState())
+
+    private data class Quint(
+        val onboarded: Boolean,
+        val mode: StartMode,
+        val archived: Boolean,
+        val online: Boolean,
+        val networker: Boolean,
+    )
 
     fun visibleTickets(): List<LocalTicket> {
         val s = uiState.value
@@ -99,8 +119,26 @@ class AppViewModel(app: Application) : AndroidViewModel(app) {
         }
     }
 
-    fun completeOnboarding(mode: StartMode) {
-        viewModelScope.launch { prefs.completeOnboarding(mode) }
+    /** Open tips a Networker can advance with evidence or an action note. */
+    fun networkerNeedsHelp(): List<LocalTicket> = visibleTickets()
+
+    fun completeOnboarding(mode: StartMode, networkerEnabled: Boolean = false) {
+        viewModelScope.launch {
+            prefs.completeOnboarding(mode, networkerEnabled)
+            if (networkerEnabled) homeModeFlow.value = "networker"
+        }
+    }
+
+    fun setNetworkerEnabled(enabled: Boolean) {
+        viewModelScope.launch {
+            prefs.setNetworkerEnabled(enabled)
+            if (!enabled) homeModeFlow.value = "asker"
+        }
+    }
+
+    fun setHomeMode(mode: String) {
+        if (mode == "networker" && !uiState.value.networkerEnabled) return
+        homeModeFlow.value = mode
     }
 
     fun setStartMode(mode: StartMode) {
@@ -554,6 +592,22 @@ class AppViewModel(app: Application) : AndroidViewModel(app) {
                 "Q: $question\nA: $answer",
             )
         return applyIntake(next)
+    }
+
+    /** Networker: note an action taken on an existing tip (trap set, checked location, etc.). */
+    fun appendNetworkerAction(ticketId: String, note: String): LocalTicket? {
+        val t = store.load(ticketId) ?: return null
+        val body = note.trim().ifBlank { return null }
+        val next =
+            appendTimeline(
+                t.copy(updatedAtMs = System.currentTimeMillis()),
+                TimelineKind.USER_TEXT,
+                "Networker action: $body",
+            )
+        store.save(next)
+        reload()
+        notifySync(ticketId)
+        return store.load(ticketId)
     }
 
     fun closeTicket(ticketId: String) {

@@ -4,10 +4,15 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.runtime.Composable
@@ -19,6 +24,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -33,12 +39,16 @@ import app.myproblem.testmode.BuildFlags
 import app.myproblem.testmode.TestModeScreen
 import app.myproblem.testmode.TestModeViewModel
 import app.myproblem.testmode.tickets.CurrentAsk
+import app.myproblem.testmode.tickets.SiteLayout
 import app.myproblem.testmode.tickets.StartMode
 import app.myproblem.testmode.tickets.SyncState
 import java.util.concurrent.ExecutorService
 
 object Routes {
+    const val ONBOARDING = "onboarding"
     const val HOME = "home"
+    const val NETWORKER = "networker"
+    const val NETWORKER_ACTION = "networker/action/{ticketId}"
     const val SETTINGS = "settings"
     const val TEST = "test"
     const val NEW_MODE = "new/mode"
@@ -55,6 +65,8 @@ object Routes {
     fun newVideo(id: String) = "new/video/$id"
 
     fun ticket(id: String) = "ticket/$id"
+
+    fun networkerAction(id: String) = "networker/action/$id"
 }
 
 @Composable
@@ -105,13 +117,29 @@ fun MyProblemApp(
             NavHost(
                 navController = nav,
                 startDestination =
-                    if (openTicketId.isNullOrBlank()) Routes.HOME else Routes.ticket(openTicketId),
+                    when {
+                        !openTicketId.isNullOrBlank() -> Routes.ticket(openTicketId)
+                        !ui.onboarded -> Routes.ONBOARDING
+                        ui.homeMode == "networker" -> Routes.NETWORKER
+                        else -> Routes.HOME
+                    },
                 modifier = Modifier.fillMaxSize().background(Bg),
             ) {
+                composable(Routes.ONBOARDING) {
+                    OnboardingScreen(
+                        onDone = { mode, networker ->
+                            appVm.completeOnboarding(mode, networker)
+                            nav.navigate(if (networker) Routes.NETWORKER else Routes.HOME) {
+                                popUpTo(Routes.ONBOARDING) { inclusive = true }
+                            }
+                        },
+                    )
+                }
                 composable(Routes.HOME) {
                     HomeScreen(
                         tickets = appVm.visibleTickets(),
                         showArchived = ui.showArchived,
+                        networkerEnabled = ui.networkerEnabled,
                         onNewTicket = { nav.navigate(Routes.NEW_MODE) },
                         onOpenTicket = { nav.navigate(Routes.ticket(it)) },
                         onSettings = { nav.navigate(Routes.SETTINGS) },
@@ -123,7 +151,88 @@ fun MyProblemApp(
                             }
                         },
                         onRetrySync = { appVm.retrySync(it) },
+                        onNetworkerHome = {
+                            appVm.setHomeMode("networker")
+                            nav.navigate(Routes.NETWORKER) {
+                                popUpTo(Routes.HOME) { inclusive = true }
+                            }
+                        },
+                        onChat = {
+                            nav.navigate(Routes.NEW_TEXT)
+                        },
+                        onRecord = {
+                            val t = appVm.beginVideoMessage()
+                            nav.navigate(Routes.newVideo(t.id))
+                        },
                     )
+                }
+                composable(Routes.NETWORKER) {
+                    val widthDp = LocalConfiguration.current.screenWidthDp
+                    var selected by remember { mutableStateOf<String?>(null) }
+                    NetworkerHomeScreen(
+                        tips = appVm.networkerNeedsHelp(),
+                        selectedId = selected,
+                        wide = widthDp >= SiteLayout.DESKTOP_MIN_PX,
+                        onSelect = { selected = it },
+                        onAddEvidence = { id ->
+                            nav.navigate(Routes.ticket(id))
+                        },
+                        onAddAction = { id ->
+                            nav.navigate(Routes.networkerAction(id))
+                        },
+                        onAskerHome = {
+                            appVm.setHomeMode("asker")
+                            nav.navigate(Routes.HOME) {
+                                popUpTo(Routes.NETWORKER) { inclusive = true }
+                            }
+                        },
+                        onSettings = { nav.navigate(Routes.SETTINGS) },
+                    )
+                }
+                composable(
+                    Routes.NETWORKER_ACTION,
+                    arguments = listOf(navArgument("ticketId") { type = NavType.StringType }),
+                ) { entry ->
+                    val id = entry.arguments?.getString("ticketId") ?: return@composable
+                    var note by remember { mutableStateOf("") }
+                    Column(
+                        Modifier
+                            .fillMaxSize()
+                            .background(Bg)
+                            .statusBarsPadding()
+                            .padding(16.dp),
+                    ) {
+                        Text(
+                            "← Back",
+                            color = Muted,
+                            modifier = Modifier.clickable { nav.popBackStack() },
+                        )
+                        Text(
+                            "I took an action",
+                            color = Warm,
+                            fontWeight = androidx.compose.ui.text.font.FontWeight.SemiBold,
+                            fontSize = 22.sp,
+                            modifier = Modifier.padding(vertical = 12.dp),
+                        )
+                        OutlinedTextField(
+                            value = note,
+                            onValueChange = { note = it },
+                            modifier = Modifier.fillMaxWidth().height(140.dp),
+                            placeholder = { Text("I set a trap near the fence…", color = Muted) },
+                            colors =
+                                OutlinedTextFieldDefaults.colors(
+                                    focusedTextColor = Warm,
+                                    unfocusedTextColor = Warm,
+                                    focusedBorderColor = Accent,
+                                    unfocusedBorderColor = Muted,
+                                ),
+                        )
+                        Spacer(Modifier.height(12.dp))
+                        PrimaryButton("Add to tip", onClick = {
+                            appVm.appendNetworkerAction(id, note)
+                            nav.popBackStack()
+                        })
+                    }
                 }
                 composable(Routes.NEW_MODE) {
                     NewTicketModeScreen(
@@ -160,8 +269,10 @@ fun MyProblemApp(
                     SettingsScreen(
                         showArchived = ui.showArchived,
                         onlineSyncEnabled = ui.onlineSyncEnabled,
+                        networkerEnabled = ui.networkerEnabled,
                         onShowArchived = appVm::setShowArchived,
                         onOnlineSyncEnabled = appVm::setOnlineSyncEnabled,
+                        onNetworkerEnabled = appVm::setNetworkerEnabled,
                         onBack = { nav.popBackStack() },
                     )
                 }
