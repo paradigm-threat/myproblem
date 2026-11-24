@@ -18,7 +18,7 @@ This page entices them to join for free and start helping immediately, organizin
 > Every problem deserves a way forward.
 
 ### Proposed hero title
-> You already care. Now every link you have pulls weight.
+> You're already part of the answer. Here's the rest of it.
 
 ### Current hero lead
 > Write it down or record what happened. Stay connected as people and SI help move it forward. **Max and simple** — full help behind few modes. Free for everyone, anonymous first, no paywall. Free forever. You should never expect to enter a card. If the help was good, tip the person, the SI, or both.
