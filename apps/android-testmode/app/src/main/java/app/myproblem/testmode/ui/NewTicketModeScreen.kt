@@ -55,7 +55,7 @@ fun NewTicketModeScreen(
         )
         ModeOption(
             title = "Record",
-            body = "One clip. Turn the mic or camera on or off as you go. The batch watches it and does not keep the file.",
+            body = "Mic, camera, or both — one clip. Stop, then Send. The batch watches it and does not keep the file.",
             onClick = { onChoose(StartMode.VIDEO_MESSAGE) },
         )
     }

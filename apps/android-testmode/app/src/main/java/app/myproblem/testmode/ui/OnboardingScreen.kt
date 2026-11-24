@@ -62,7 +62,7 @@ fun OnboardingScreen(onDone: (StartMode) -> Unit) {
         )
         ModeCard(
             title = "Record",
-            body = "One clip. Mic and camera toggles. The phone does not scrub it. The batch does, then deletes the file.",
+            body = "Mic, camera, or both — one clip. Stop, then Send. The batch scrub deletes the file.",
             selected = selected == StartMode.VIDEO_MESSAGE,
             onClick = { selected = StartMode.VIDEO_MESSAGE },
         )

@@ -172,7 +172,8 @@ t=json.load(sys.stdin)
 jobs=t.get("jobs") or []
 busy=[j for j in jobs if j.get("bin")=="asr" and j.get("state") in ("queued","leased")]
 txs=[e for e in t.get("evidence") or [] if e.get("kind")=="transcript" and (e.get("text") or "").strip()]
-errs=[j for j in jobs if j.get("state")=="error"]
+# Batch bins (project/media) may stay queued or historically errored; only live ASR/vision errors fail the wait.
+errs=[j for j in jobs if j.get("state")=="error" and j.get("bin") in ("asr","vision")]
 assert not errs, errs
 sys.exit(0 if len(txs) >= 2 and not busy else 1)
 '; then

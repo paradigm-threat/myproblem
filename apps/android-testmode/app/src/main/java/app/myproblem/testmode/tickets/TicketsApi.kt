@@ -62,6 +62,25 @@ object TicketsApi {
         )
     }
 
+    fun patchTicket(
+        ticketUuid: String,
+        claim: String? = null,
+        title: String? = null,
+        description: String? = null,
+    ): JSONObject {
+        val payload = JSONObject()
+        if (!title.isNullOrBlank()) payload.put("title", title)
+        if (description != null) payload.put("description", description)
+        val conn = open("PATCH", "/api/tickets/$ticketUuid")
+        if (!claim.isNullOrBlank()) conn.setRequestProperty("authorization", "Bearer $claim")
+        conn.setRequestProperty("content-type", "application/json")
+        conn.doOutput = true
+        conn.outputStream.use { it.write(payload.toString().toByteArray(Charsets.UTF_8)) }
+        val body = readBody(conn)
+        if (conn.responseCode !in 200..299) error("patchTicket HTTP ${conn.responseCode}: $body")
+        return JSONObject(body)
+    }
+
     fun getTicket(ticketUuid: String, claim: String? = null): JSONObject {
         val conn = open("GET", "/api/tickets/$ticketUuid")
         if (!claim.isNullOrBlank()) conn.setRequestProperty("authorization", "Bearer $claim")

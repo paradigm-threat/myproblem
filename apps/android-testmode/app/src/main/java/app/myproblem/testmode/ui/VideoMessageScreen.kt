@@ -33,9 +33,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -51,6 +49,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
@@ -64,7 +63,7 @@ private const val MAX_RECORD_MS = 180_000L
 
 /**
  * Record: one deferred clip. Mic and camera are toggles on the same feed.
- * No unique-frame gate and no live question.
+ * Preview first, short copy — Max and simple.
  */
 @Composable
 fun VideoMessageScreen(
@@ -102,6 +101,7 @@ fun VideoMessageScreen(
     var readyToSend by remember { mutableStateOf(false) }
     var micOn by remember { mutableStateOf(true) }
     var cameraOn by remember { mutableStateOf(true) }
+    val permsOk = camOk && micOk
 
     BackHandler(enabled = !sending) { onCancel() }
     DisposableEffect(Unit) {
@@ -131,108 +131,30 @@ fun VideoMessageScreen(
                 .background(Bg)
                 .statusBarsPadding()
                 .navigationBarsPadding()
-                .padding(16.dp)
-                .verticalScroll(rememberScrollState()),
+                .padding(horizontal = 16.dp, vertical = 12.dp),
     ) {
         Text("← Cancel", color = Muted, modifier = Modifier.clickable(enabled = !sending, onClick = onCancel))
-        Spacer(Modifier.height(8.dp))
+        Spacer(Modifier.height(6.dp))
         Text("Record", color = Accent, fontWeight = FontWeight.SemiBold, fontSize = 22.sp)
-        Spacer(Modifier.height(8.dp))
         Text(
-            "One recording. Turn the mic or camera on or off as you go. The phone does not trim it or hide faces.",
+            "Mic, camera, or both. One clip. Stop, then Send.",
             color = Warm,
             fontSize = 15.sp,
-        )
-        Spacer(Modifier.height(6.dp))
-        Text(
-            "The file is uploaded for the batch to watch. It is not published, and it is not kept. The batch removes faces, license plates, street signs, house numbers, and anything that shows where someone lives.",
-            color = Muted,
-            fontSize = 14.sp,
-        )
-        Spacer(Modifier.height(6.dp))
-        Text(
-            "If it can do that, it may open a ticket and keep only the safe stills. If it cannot, it deletes the video and does not open a ticket.",
-            color = Muted,
-            fontSize = 14.sp,
+            fontWeight = FontWeight.Medium,
         )
         Spacer(Modifier.height(10.dp))
-        if (!camOk || !micOk) {
-            PrimaryButton("Allow camera and microphone") {
-                permLauncher.launch(arrayOf(Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO))
-            }
-        } else {
-            if (error != null) {
-                Text(error, color = Danger, fontSize = 14.sp)
-                Spacer(Modifier.height(8.dp))
-            }
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-            ) {
-                ToggleChip(
-                    label = if (micOn) "Mic on" else "Mic off",
-                    on = micOn,
-                    enabled = !sending,
-                    modifier = Modifier.weight(1f),
-                    onClick = { micOn = !micOn },
-                )
-                ToggleChip(
-                    label = if (cameraOn) "Camera on" else "Camera off",
-                    on = cameraOn,
-                    enabled = !sending,
-                    modifier = Modifier.weight(1f),
-                    onClick = { cameraOn = !cameraOn },
-                )
-            }
-            Spacer(Modifier.height(10.dp))
-            when {
-                sending -> Text("Sending…", color = Warm, fontSize = 15.sp)
-                recording != null ->
-                    PrimaryButton("Stop") {
-                        recording?.stop()
-                    }
-                readyToSend && file != null -> {
-                    PrimaryButton("Send") { onSend(file!!) }
-                    Spacer(Modifier.height(8.dp))
-                    SecondaryButton("Record again") {
-                        file?.delete()
-                        file = null
-                        readyToSend = false
-                        elapsed = 0L
-                    }
-                }
-                else ->
-                    PrimaryButton("Record") {
-                        if (!micOn && !cameraOn) {
-                            Toast.makeText(context, "Turn on the mic or the camera", Toast.LENGTH_SHORT).show()
-                            return@PrimaryButton
-                        }
-                        val video = capture
-                        if (video == null) {
-                            Toast.makeText(context, "Camera not ready", Toast.LENGTH_SHORT).show()
-                            return@PrimaryButton
-                        }
-                        val out = fileFactory()
-                        file = out
-                        readyToSend = false
-                        startedAt = System.currentTimeMillis()
-                        elapsed = 0L
-                        recording =
-                            startClip(context, video, out, mainExecutor, startMuted = !micOn) { ok ->
-                                recording = null
-                                readyToSend = ok
-                            }
-                    }
-            }
-            Spacer(Modifier.height(10.dp))
-            Box(
-                modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .height(220.dp)
-                        .clip(RoundedCornerShape(12.dp))
-                        .background(Card),
-            ) {
+
+        Box(
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .weight(1f)
+                    .clip(RoundedCornerShape(14.dp))
+                    .background(Card)
+                    .border(1.dp, Hairline, RoundedCornerShape(14.dp)),
+            contentAlignment = Alignment.Center,
+        ) {
+            if (permsOk) {
                 AndroidView(
                     modifier = Modifier.fillMaxSize(),
                     factory = { ctx ->
@@ -274,48 +196,152 @@ fun VideoMessageScreen(
                         modifier =
                             Modifier
                                 .fillMaxSize()
-                                .background(Color.Black),
+                                .background(Color.Black.copy(alpha = 0.92f)),
                         contentAlignment = Alignment.Center,
                     ) {
-                        Text("Camera off", color = Muted, fontSize = 14.sp)
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            Text("Camera off", color = Warm, fontWeight = FontWeight.SemiBold, fontSize = 18.sp)
+                            Text("Audio-only for this clip", color = Muted, fontSize = 13.sp)
+                        }
                     }
                 }
                 if (recording != null) {
                     Text(
-                        formatElapsed(elapsed),
-                        color = Warm,
-                        fontWeight = FontWeight.SemiBold,
+                        "● ${formatElapsed(elapsed)}",
+                        color = Danger,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 16.sp,
                         modifier =
                             Modifier
                                 .align(Alignment.TopStart)
-                                .padding(10.dp),
+                                .padding(12.dp)
+                                .background(Color.Black.copy(alpha = 0.55f), RoundedCornerShape(8.dp))
+                                .padding(horizontal = 10.dp, vertical = 6.dp),
                     )
+                }
+                Row(
+                    modifier =
+                        Modifier
+                            .align(Alignment.BottomCenter)
+                            .fillMaxWidth()
+                            .padding(10.dp),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                ) {
+                    FeedToggle(
+                        label = "Mic",
+                        on = micOn,
+                        enabled = !sending,
+                        modifier = Modifier.weight(1f),
+                        onClick = { micOn = !micOn },
+                    )
+                    FeedToggle(
+                        label = "Camera",
+                        on = cameraOn,
+                        enabled = !sending,
+                        modifier = Modifier.weight(1f),
+                        onClick = { cameraOn = !cameraOn },
+                    )
+                }
+            } else {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier.padding(20.dp),
+                ) {
+                    Text(
+                        "Camera and microphone stay on this phone until you Send. The batch watches the clip, then deletes it.",
+                        color = Muted,
+                        fontSize = 14.sp,
+                        textAlign = TextAlign.Center,
+                    )
+                    Spacer(Modifier.height(14.dp))
+                    PrimaryButton("Allow camera and microphone") {
+                        permLauncher.launch(
+                            arrayOf(Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO),
+                        )
+                    }
                 }
             }
         }
+
+        Spacer(Modifier.height(10.dp))
+        if (error != null) {
+            Text(error, color = Danger, fontSize = 14.sp)
+            Spacer(Modifier.height(6.dp))
+        }
+        if (permsOk) {
+            when {
+                sending -> Text("Sending…", color = Warm, fontSize = 15.sp)
+                recording != null ->
+                    PrimaryButton("Stop") { recording?.stop() }
+                readyToSend && file != null -> {
+                    PrimaryButton("Send") { onSend(file!!) }
+                    Spacer(Modifier.height(8.dp))
+                    SecondaryButton("Record again") {
+                        file?.delete()
+                        file = null
+                        readyToSend = false
+                        elapsed = 0L
+                    }
+                }
+                else ->
+                    PrimaryButton("Record") {
+                        if (!micOn && !cameraOn) {
+                            Toast.makeText(context, "Turn on the mic or the camera", Toast.LENGTH_SHORT).show()
+                            return@PrimaryButton
+                        }
+                        val video = capture
+                        if (video == null) {
+                            Toast.makeText(context, "Camera not ready", Toast.LENGTH_SHORT).show()
+                            return@PrimaryButton
+                        }
+                        val out = fileFactory()
+                        file = out
+                        readyToSend = false
+                        startedAt = System.currentTimeMillis()
+                        elapsed = 0L
+                        recording =
+                            startClip(context, video, out, mainExecutor, startMuted = !micOn) { ok ->
+                                recording = null
+                                readyToSend = ok
+                            }
+                    }
+            }
+        }
+        Spacer(Modifier.height(8.dp))
+        Text(
+            "Not published. Not kept. The batch removes faces, plates, and places — or deletes the file.",
+            color = Muted,
+            fontSize = 12.sp,
+        )
     }
 }
 
 @Composable
-private fun ToggleChip(
+private fun FeedToggle(
     label: String,
     on: Boolean,
     enabled: Boolean,
     modifier: Modifier = Modifier,
     onClick: () -> Unit,
 ) {
-    Text(
-        label,
-        color = if (on) Accent else Muted,
-        fontWeight = FontWeight.SemiBold,
-        fontSize = 14.sp,
+    val shape = RoundedCornerShape(12.dp)
+    Box(
         modifier =
             modifier
-                .border(1.dp, if (on) Accent else Muted.copy(alpha = 0.4f), RoundedCornerShape(10.dp))
-                .background(Card, RoundedCornerShape(10.dp))
-                .clickable(enabled = enabled, onClick = onClick)
-                .padding(horizontal = 12.dp, vertical = 10.dp),
-    )
+                .height(48.dp)
+                .clip(shape)
+                .background(if (on) Accent else Chip)
+                .border(1.dp, if (on) Accent else Hairline, shape)
+                .clickable(enabled = enabled, onClick = onClick),
+        contentAlignment = Alignment.Center,
+    ) {
+        Text(
+            if (on) "$label on" else "$label off",
+            color = if (on) Bg else Warm,
+            fontWeight = FontWeight.SemiBold,
+            fontSize = 15.sp,
+        )
+    }
 }
 
 private fun formatElapsed(ms: Long): String {

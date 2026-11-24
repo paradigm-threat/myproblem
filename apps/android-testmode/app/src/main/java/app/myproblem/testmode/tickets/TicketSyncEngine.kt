@@ -130,6 +130,21 @@ class TicketSyncEngine(
                     onUpdated()
                 }
 
+                // Push Chat / Record text onto the tip so Batch sees it in the queue.
+                val pushTitle =
+                    cur.titleField.value.ifBlank { cur.title }.trim().takeIf {
+                        it.isNotEmpty() && it != "Listening…"
+                    }
+                val pushDesc = cur.descriptionField.value.ifBlank { cur.description }
+                if (pushTitle != null || pushDesc.isNotBlank()) {
+                    TicketsApi.patchTicket(
+                        ticketUuid = serverId!!,
+                        claim = claim,
+                        title = pushTitle,
+                        description = pushDesc,
+                    )
+                }
+
                 suspend fun maybeUpload(
                     kind: String,
                     file: File,
