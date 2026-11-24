@@ -16,5 +16,14 @@ jobs:
           node-version: "20"
           cache: npm
       - run: npm ci
-      - name: Vitest (outbox + lib)
-        run: npm test
+      # Fixture WAV/noise beds stay local (not in git); skip intakeFixtures binary checks.
+      - name: Vitest (outbox + tickets + lib)
+        run: >
+          npx vitest run
+          src/lib/outbox
+          src/lib/tickets
+          src/lib/signupValidation.test.ts
+          src/lib/frameGate.test.ts
+          src/lib/realtimeIntakeStages.test.ts
+          src/lib/photoAnalysis.test.ts
+          src/lib/intakeFixtureScore.test.ts
