@@ -1690,3 +1690,101 @@ section h2 {
   color: var(--muted);
   margin: 0 0 1rem;
 }
+
+.outbox-queue {
+  margin: 0 0 1.25rem;
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--border, var(--line));
+  border-radius: 12px;
+  background: var(--surface, var(--bg-elevated));
+}
+
+.outbox-queue-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 0.35rem;
+}
+
+.outbox-queue-note {
+  margin: 0 0 0.65rem;
+  font-size: 0.9rem;
+}
+
+.outbox-queue-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.outbox-queue-list li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.5rem 0.75rem;
+  padding: 0.55rem 0;
+  border-top: 1px solid var(--border, var(--line));
+  font-size: 0.95rem;
+}
+
+.outbox-queue-item-main {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  flex: 1 1 12rem;
+}
+
+.outbox-queue-title {
+  font-weight: 600;
+}
+
+.outbox-queue-status {
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.outbox-queue-meta {
+  font-size: 0.8rem;
+}
+
+.outbox-queue-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.outbox-queue-status--syncing {
+  color: var(--ticket, #007f86);
+}
+
+.outbox-queue-status--failed {
+  color: #b42318;
+}
+
+.outbox-queue-submitted {
+  margin: 0 0 0.5rem;
+  font-size: 0.92rem;
+  color: var(--ticket, #007f86);
+  font-weight: 600;
+}
+
+.install-app-hint {
+  margin: 0 0 1.25rem;
+  padding: 0.85rem 1rem;
+  border-radius: 12px;
+  border: 1px dashed var(--border, var(--line));
+  max-width: 620px;
+}
+
+.install-app-hint p {
+  margin: 0 0 0.65rem;
+}
+
+.install-app-hint-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}

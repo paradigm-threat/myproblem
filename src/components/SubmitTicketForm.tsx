@@ -2,28 +2,23 @@
 
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { OutboxQueue } from "@/components/OutboxQueue";
 import { TICKET_TRAINING_NOTICE } from "@/lib/contact";
-import {
-  getOrCreateVisitorId,
-  rememberTicket,
-  shareUrlForSlug,
-} from "@/lib/tickets/vault";
+import { enqueueSubmission } from "@/lib/outbox";
+import { getOrCreateVisitorId } from "@/lib/tickets/vault";
 
 type Region = "georgia" | "israel";
 
-type Success = {
-  ticket_uuid: string;
-  claim: string;
-  slug: string | null;
-  region: Region;
+type QueuedNotice = {
   title: string;
+  mediaCount: number;
 };
 
 const MAX_MEDIA = 5;
 const MEDIA_ACCEPT = "audio/*,video/*";
 
 const EPHEMERAL_COPY =
-  "Anonymous by default. Media goes through Intake to Bunny temporary storage. Batch SI processes and deletes media; only selected, reduced still images may remain.";
+  "Anonymous by default. Until sync, media stays only on this device. After upload, Intake may use Bunny temporary storage; batch SI processes and deletes media — only selected, reduced stills may remain.";
 
 function Icon({ name }: { name: string }) {
   return (
@@ -41,8 +36,7 @@ export function SubmitTicketForm() {
   const [publicSlug, setPublicSlug] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState<Success | null>(null);
-  const [copied, setCopied] = useState<"uuid" | "slug" | null>(null);
+  const [queued, setQueued] = useState<QueuedNotice | null>(null);
 
   const [recording, setRecording] = useState(false);
   const [reviewBlob, setReviewBlob] = useState<Blob | null>(null);
@@ -224,41 +218,6 @@ export function SubmitTicketForm() {
     setMediaFiles((prev) => prev.filter((_, idx) => idx !== i));
   }
 
-  async function uploadEvidence(
-    ticket_uuid: string,
-    claim: string,
-    visitor: string,
-    file: File,
-  ) {
-    const form = new FormData();
-    if (file.type.startsWith("video/")) {
-      form.set("kind", "video");
-      form.set("lane", "batch");
-      form.set("scrubbed_locally", "false");
-    } else if (file.type.startsWith("audio/")) {
-      form.set("kind", "audio");
-      form.set("isFinal", "true");
-    } else {
-      form.set("kind", "still");
-    }
-    form.set("file", file);
-    const evRes = await fetch(
-      `/api/tickets/${encodeURIComponent(ticket_uuid)}/evidence`,
-      {
-        method: "POST",
-        headers: {
-          "x-ticket-claim": claim,
-          "x-visitor-id": visitor,
-        },
-        body: form,
-      },
-    );
-    if (!evRes.ok) {
-      const err = (await evRes.json().catch(() => ({}))) as { error?: string };
-      throw new Error(err.error || `Upload failed (${file.name})`);
-    }
-  }
-
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
@@ -270,180 +229,54 @@ export function SubmitTicketForm() {
     setBusy(true);
     try {
       const visitor = getOrCreateVisitorId();
-      const createRes = await fetch("/api/tickets", {
-        method: "POST",
-        headers: {
-          "content-type": "application/json",
-          "x-visitor-id": visitor,
-        },
-        body: JSON.stringify({
-          region,
-          raiser_visitor_id: visitor,
-          mint_slug: false,
-        }),
-      });
-      const createData = (await createRes.json()) as {
-        ticket_uuid?: string;
-        claim?: string;
-        error?: string;
-        message?: string;
-      };
-      if (!createRes.ok || !createData.ticket_uuid || !createData.claim) {
-        throw new Error(
-          createData.message || createData.error || "Could not create ticket",
-        );
-      }
-      const { ticket_uuid, claim } = createData;
-      const headers: HeadersInit = {
-        "content-type": "application/json",
-        "x-ticket-claim": claim,
-        "x-visitor-id": visitor,
-      };
-
-      const title =
-        text.split(/\n/).map((l) => l.trim()).find(Boolean)?.slice(0, 160) ||
-        "Untitled problem";
-
-      const patchRes = await fetch(
-        `/api/tickets/${encodeURIComponent(ticket_uuid)}`,
-        {
-          method: "PATCH",
-          headers,
-          body: JSON.stringify({
-            title,
-            description: text,
-          }),
-        },
-      );
-      if (!patchRes.ok) {
-        const err = (await patchRes.json().catch(() => ({}))) as {
-          error?: string;
-        };
-        throw new Error(err.error || "Could not save ticket details");
-      }
-
-      for (const file of mediaFiles) {
-        await uploadEvidence(ticket_uuid, claim, visitor, file);
-      }
-
-      let slug: string | null = null;
-      if (wantPublic) {
-        const slugRes = await fetch(
-          `/api/tickets/${encodeURIComponent(ticket_uuid)}/suggest-slug`,
-          {
-            method: "POST",
-            headers,
-            body: JSON.stringify({
-              apply: true,
-              title,
-              description: text,
-              slug: publicSlug.trim() || undefined,
-            }),
-          },
-        );
-        const slugData = (await slugRes.json()) as {
-          slug?: string;
-          error?: string;
-        };
-        if (!slugRes.ok) {
-          throw new Error(slugData.error || "Could not create public slug");
-        }
-        slug = slugData.slug || null;
-      }
-
-      rememberTicket({
-        ticket_uuid,
-        claim,
-        slug,
-        title,
-        resolution: "unsolved",
-      });
-      setSuccess({
-        ticket_uuid,
-        claim,
-        slug,
+      const sub = await enqueueSubmission({
+        visitorId: visitor,
         region,
-        title,
+        description: text,
+        files: mediaFiles,
+        wantPublic,
+        publicSlug,
       });
+      setDescription("");
+      setMediaFiles([]);
+      setWantPublic(false);
+      setPublicSlug("");
+      setQueued({ title: sub.title, mediaCount: sub.media.length });
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Submit failed");
+      setError(err instanceof Error ? err.message : "Could not save on device");
     } finally {
       setBusy(false);
-    }
-  }
-
-  async function copyText(kind: "uuid" | "slug", text: string) {
-    try {
-      await navigator.clipboard.writeText(text);
-      setCopied(kind);
-      setTimeout(() => setCopied(null), 2000);
-    } catch {
-      /* ignore */
     }
   }
 
   const fmtTime = (s: number) =>
     `${String(Math.floor(s / 60)).padStart(2, "0")}:${String(s % 60).padStart(2, "0")}`;
 
-  if (success) {
-    const share = success.slug ? shareUrlForSlug(success.slug) : null;
+  if (queued) {
     return (
       <div className="submit-success" role="status">
-        <h2 className="ticket-section-title">Ticket created</h2>
+        <OutboxQueue />
+        <h2 className="ticket-section-title">Saved on this device</h2>
         <p>
-          <strong>{success.title}</strong> is saved on this device (
-          {success.region}). Keep the private ticket id — it is your capability
-          key if you clear site data without a recover email.
+          <strong>{queued.title}</strong>
+          {queued.mediaCount > 0
+            ? ` · ${queued.mediaCount} media file${queued.mediaCount === 1 ? "" : "s"}`
+            : ""}{" "}
+          is queued. It uploads automatically when the network is available —
+          keep submitting more batches offline if you need to.
         </p>
-        <p className="submit-mono">
-          <span className="muted">Ticket id</span>
-          <br />
-          <code>{success.ticket_uuid}</code>{" "}
-          <button
-            type="button"
-            className="btn-secondary"
-            onClick={() => copyText("uuid", success.ticket_uuid)}
-          >
-            {copied === "uuid" ? "Copied" : "Copy id"}
-          </button>
-        </p>
-        {share ? (
-          <p>
-            Public link: <a href={share}>{share}</a>{" "}
-            <button
-              type="button"
-              className="btn-secondary"
-              onClick={() => copyText("slug", share)}
-            >
-              {copied === "slug" ? "Copied" : "Copy link"}
-            </button>
-          </p>
-        ) : (
-          <p className="muted">This ticket is private — no public slug.</p>
-        )}
         <p className="signup-disclaimer">{TICKET_TRAINING_NOTICE}</p>
         <p className="cta-row">
-          {share ? (
-            <a className="btn-primary" href={share}>
-              Open public page
-            </a>
-          ) : null}
-          <Link className="btn-secondary" href="/">
-            Home
-          </Link>
           <button
             type="button"
-            className="btn-secondary"
-            onClick={() => {
-              setSuccess(null);
-              setDescription("");
-              setMediaFiles([]);
-              setWantPublic(false);
-              setPublicSlug("");
-            }}
+            className="btn-primary"
+            onClick={() => setQueued(null)}
           >
             Submit another
           </button>
+          <Link className="btn-secondary" href="/">
+            Home
+          </Link>
         </p>
       </div>
     );
@@ -570,6 +403,7 @@ export function SubmitTicketForm() {
 
   return (
     <form className="signup-form submit-form submit-max" onSubmit={onSubmit}>
+      <OutboxQueue />
       <h1 className="submit-form-title">What&apos;s your problem?</h1>
       <label className="submit-desc-label">
         <span className="visually-hidden">Describe what happened</span>

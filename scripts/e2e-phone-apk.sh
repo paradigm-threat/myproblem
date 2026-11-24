@@ -101,6 +101,25 @@ echo "== upload_still via APK TicketsApi =="
 broadcast --es cmd upload_still --es localId "$LOCAL" --es path e2e/still.jpg
 echo "$(last_e2e)"
 
+echo "== upload_video via APK TicketsApi (lane=batch → Bunny inbox) =="
+VID="$ROOT/fixtures/intakes/smoke/e2e_probe.mp4"
+if [[ ! -f "$VID" ]]; then
+  mkdir -p "$(dirname "$VID")"
+  ffmpeg -y -f lavfi -i color=c=black:s=320x240:r=10 -f lavfi -i anullsrc=r=16000:cl=mono \
+    -t 1 -c:v libx264 -preset ultrafast -pix_fmt yuv420p -c:a aac -b:a 32k -shortest \
+    "$VID" >/dev/null 2>&1
+fi
+adb push "$VID" /data/local/tmp/mp_e2e_video.mp4 >/dev/null
+adb shell run-as "$PKG" cp /data/local/tmp/mp_e2e_video.mp4 files/e2e/video.mp4
+broadcast --es cmd upload_video --es localId "$LOCAL" --es path e2e/video.mp4
+echo "$(last_e2e)" | python3 -c '
+import json,sys
+j=json.load(sys.stdin)
+assert j.get("ok") is True, j
+assert j.get("lane") == "batch", j
+print("upload_video ok evidenceId", j.get("evidenceId"), "bytes", j.get("bytes"))
+'
+
 echo "== server tip before process =="
 AUTH=()
 if [[ -n "$CLAIM" ]]; then AUTH=(-H "Authorization: Bearer $CLAIM"); fi
@@ -109,8 +128,18 @@ import sys,json
 t=json.load(sys.stdin)
 print("intake", t.get("intake"))
 print("title", (t.get("fields") or {}).get("title",{}).get("value","")[:60])
-print("evidence", [(e["kind"], bool(e.get("uri")), e.get("processed")) for e in t.get("evidence",[])])
+print("evidence", [(e["kind"], bool(e.get("uri")), e.get("processed"), (e.get("inbox_uri") or "")[:48] or None) for e in t.get("evidence",[])])
 print("jobs", [(j.get("bin"), j.get("state")) for j in t.get("jobs",[])])
+bq=t.get("batch_queue") or {}
+vids=[e for e in t.get("evidence") or [] if e.get("kind")=="video"]
+assert vids, "missing video evidence"
+v=vids[-1]
+assert v.get("lane")=="batch", v
+assert v.get("inbox_uri") and "/inbox/" in v["inbox_uri"], ("no inbox_uri", v)
+assert v.get("bunnyPath") and "/inbox/" in v["bunnyPath"], ("no bunnyPath", v)
+assets=bq.get("assets") or []
+assert any(a.get("inbox_uri")==v.get("inbox_uri") for a in assets), ("batch_queue missing inbox asset", assets)
+print("batch_queue title", (bq.get("text") or {}).get("title"), "asset_kinds", [a.get("kind") for a in assets])
 assert t.get("intake") in ("queued","listening","figuring_out","named_and_questions","investigating","queue_project"), t.get("intake")
 # Honesty: must not claim transcribing while jobs only queued
 jobs=t.get("jobs") or []
@@ -207,7 +236,7 @@ if [[ -n "$CLAIM" ]]; then
 fi
 
 echo "== cleanup phone media =="
-adb shell rm -f /data/local/tmp/mp_e2e_audio.wav /data/local/tmp/mp_e2e_still.jpg >/dev/null || true
+adb shell rm -f /data/local/tmp/mp_e2e_audio.wav /data/local/tmp/mp_e2e_still.jpg /data/local/tmp/mp_e2e_video.mp4 >/dev/null || true
 adb shell run-as "$PKG" rm -rf files/e2e >/dev/null || true
 
 echo "E2E phone APK done. server=$SERVER base=$BASE"

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { InstallAppHint } from "@/components/InstallAppHint";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SubmitTicketForm } from "@/components/SubmitTicketForm";
 import { OG_IMAGE, SITE_URL, TICKET_TRAINING_NOTICE } from "@/lib/contact";
@@ -7,12 +8,12 @@ import { OG_IMAGE, SITE_URL, TICKET_TRAINING_NOTICE } from "@/lib/contact";
 export const metadata: Metadata = {
   title: "Submit a problem",
   description:
-    "Try it now — write or record your problem. Anonymous by default. Media is temporary; batch SI keeps only reduced stills.",
+    "Try it now — write or record offline. Batches queue on device and sync when Wi‑Fi returns. Anonymous by default.",
   alternates: { canonical: `${SITE_URL}/submit` },
   openGraph: {
     title: "Submit a problem · MyProblem",
     description:
-      "Chat or Record. Anonymous by default. Intake → Bunny temporary media; batch SI processes then deletes.",
+      "Chat or Record offline. Queued batches sync when you reconnect. Intake → temporary media; batch SI processes then deletes.",
     url: `${SITE_URL}/submit`,
     images: [OG_IMAGE],
   },
@@ -29,14 +30,18 @@ export default function SubmitPage() {
         <header className="submit-header">
           <p className="eyebrow">Try it now</p>
           <p className="section-lead">
-            Max and simple — describe the problem in text, or Record one clip.
-            Optional upload of up to five audio or video files. Want to keep
-            others&apos; tips moving across social groups? That&apos;s a{" "}
+            Max and simple — describe the problem in text, or Record one clip
+            (camera and mic are requested only when you Record). Works offline:
+            batches are <strong>saved on this device</strong> until upload
+            succeeds — clearing site data drops the queue. Optional upload of
+            up to five audio or video files per batch. Want to keep others&apos;
+            tips moving across social groups? That&apos;s a{" "}
             <strong>Networker</strong> job — start with the{" "}
             <Link href="/extension">Relay extension</Link> (primary Networker
             path).
           </p>
         </header>
+        <InstallAppHint />
         <SubmitTicketForm />
         <p className="ticket-footer-note">
           {TICKET_TRAINING_NOTICE}{" "}
