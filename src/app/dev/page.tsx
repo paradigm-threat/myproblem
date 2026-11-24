@@ -80,6 +80,13 @@ export default function DevPage() {
             <Link href="/t/garage-ring-power">/t/garage-ring-power</Link>. Web
             submit is live at <Link href="/submit">/submit</Link>.
           </p>
+          <p>
+            Ops cadence: daily anonymous tip/batch review, then next-day
+            patches—A-team + LLM at corp speed. Goal: detailed user reports
+            drive automated triage without a developer in the middle. Public
+            narrative:{" "}
+            <Link href="/how-we-run#daily-ops">how we run · daily ops</Link>.
+          </p>
         </section>
 
         <section className="dev-card" aria-labelledby="stack-heading">

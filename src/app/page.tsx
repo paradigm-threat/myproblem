@@ -651,6 +651,18 @@ export default function HomePage() {
                 a batch investigation; only what the rules allow lands in the tip
                 or knowledge base. Tips stay optional — never a required card.
               </p>
+              <p
+                style={{
+                  margin: "1rem 0 0",
+                  color: "var(--muted)",
+                  lineHeight: 1.55,
+                }}
+              >
+                Daily anonymous review → next-day product patches:{" "}
+                <a href="/how-we-run#daily-ops">how we run · daily ops</a>. Same
+                Clevertree loop as{" "}
+                <a href="https://quizgate.app/#daily-loop">QuizGate</a>.
+              </p>
             </div>
           </section>
 

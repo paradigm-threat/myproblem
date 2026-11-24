@@ -148,6 +148,29 @@ export default function HowWeRunPage() {
           </ul>
         </section>
 
+        <section id="daily-ops" aria-labelledby="daily-ops-heading">
+          <h2 id="daily-ops-heading">Daily ops</h2>
+          <p>
+            Thorough does not mean slow to notice. Each day we review anonymous
+            tip and batch signals, assess what the product needs, and ship
+            updates—often the next day. A small A-team plus LLM agents works at
+            the development cadence of a major organization. The edge is
+            visibility: private, accurate, anonymous stats and ticket aggregates
+            (not identity dossiers) so we can respond in near–real time when
+            larger orgs cannot see or act that fast on privacy-preserving
+            signals. Same loop as{" "}
+            <a href="https://quizgate.app/#daily-loop">QuizGate</a>,{" "}
+            <a href="https://clevertree.chat/">Clevertree Chat</a>, and{" "}
+            <a href="https://clevertree.net/">Clevertree</a>.
+          </p>
+          <p>
+            North star: much of this becomes automated so a detailed user report
+            can drive triage and a patch without a developer in the middle. We
+            are not claiming that automation is finished—only that it is the
+            goal. Tips still measure good help; they never buy ranking.
+          </p>
+        </section>
+
         <section aria-labelledby="faq-heading">
           <h2 id="faq-heading">Questions</h2>
           <div className="faq-list">
