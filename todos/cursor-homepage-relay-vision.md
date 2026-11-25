@@ -71,10 +71,21 @@ Tech stack: Next.js App Router, TypeScript, CSS modules via `globals.css` (exist
 
 ---
 
+## 8. Extension breakage-monitoring pipeline (added 2026-11-25)
+
+- [ ] **Daily health checks:** Automated pings to each supported social network's DOM selectors (Nextdoor, Facebook, X, Instagram, Reddit, etc.) — flag when a harvest returns zero results, meaning a platform rewrote its markup and the extension's selectors broke silently.
+- [ ] **Hot-patch mechanism:** When breakage is detected, generate a patched selector set plus any additional harvest metadata needed, without allowing arbitrary scripts. Patches are stored in the repo alongside the group-tracking data for those same networks.
+- [ ] **Delivery path:** Devices do **not** pull from the git repo directly. They poll the **API**, which reads the repo locally, verifies the signed manifest (server holds the signing key; devices ship with the public half), and serves only pre-vetted artifacts. A bad or unsigned patch is rejected before it reaches any client.
+- [ ] **Rollback:** Patches roll back the same way a bad ticket gets discarded — versioned manifests, atomic apply, prior version retained.
+- [ ] **Alerting:** Networker team gets notified on zero-result detection so a human can confirm the patch before or alongside automated apply, depending on severity.
+- [ ] **Repo access posture:** Repos are public for read transparency but AI-only for write; the API + signing key is the real perimeter, not repo visibility settings.
+
+---
+
 ## Out of scope
 
 - Changing the businesses / people / projects sections (separate pass).
-- Modifying the extension itself or any service worker behavior.
+- Modifying the extension itself or any service worker behavior (breakage monitoring is a *new* extension-adjacent system, not a change to existing SW code).
 - GitLab-side deploy automation changes.
 - Updating `docs/simple-max.md` (already merged; this to-do only covers the *public site* presentation of it).
 - Building actual Wear OS or watchOS apps in this pass (section 7 is roadmap context only).
