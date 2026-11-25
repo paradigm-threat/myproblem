@@ -58,6 +58,16 @@ Tech stack: Next.js App Router, TypeScript, CSS modules via `globals.css` (exist
 - [ ] This GitHub mirror does **not** auto-deploy. Production ships from GitLab `clevertree/myproblem` → Vercel. After the changes land on GitHub main, mirror them to the GitLab origin (same commit message is fine) so Vercel picks them up.
 - [ ] Optional: push to a `gh-pages`-style preview branch first if you want to eyeball the copy at `paradigm-threat.github.io/myproblem` before touching production.
 
+### 7. Wear OS + iOS expansion (roadmap addition, 2026-11-25)
+- [ ] **Do not build native apps in this pass** — this section is planning context for a future to-do. Homepage copy should mention wearables only as a teaser ("coming to Wear OS and Apple Watch") with a waitlist signup or "in development" label. No promised dates.
+- [ ] **Wear OS path:** Voice-first capture app on Wear OS (Kotlin + Jetpack Compose for Wear OS). Mic records a short problem description; local outbox via Room/DataStore; Data Layer API syncs queued items to the paired phone, which hands them to the existing MyProblem intake pipeline. Recommended dev device: **Pixel Watch 5** (~$300, Wear OS 7, Gemini built-in, reference device for Google's samples). Battery-focused alternative: **OnePlus Watch 3** (Wear OS 5, multi-day battery, ~$340 US / cheaper in EU — European units work in the US with a USB-C plug adapter; warranty/returns are the catch). **Samsung Galaxy Watch 9** (~$269) is the third option for Samsung-phone users.
+- [ ] **Watch constraints to respect in any future spec:** no camera on any watch (voice + text only), no cellular on the OnePlus Watch 3 (phone or Wi-Fi required for upload; local queue survives offline), Gemini is the only polished built-in AI on Wear OS — Grok has no official Wear OS client (unofficial sideloaded clients exist but are incomplete).
+- [ ] **iOS path:** Apple Watch cannot run standalone — every watchOS app needs a companion iPhone app, so an **iOS release of MyProblem is the gate** for Apple Watch support. Once iOS exists: SwiftUI watch app with mic capture, SwiftData/Core Data local storage, background sync when the phone is nearby. More locked down than Wear OS on background tasks, but fine for short voice notes and a queued outbox. Maintaining two native codebases (Kotlin + Swift) is the cost.
+- [ ] **Positioning for the site:** the watch is not a replacement for phone/web — it's the fastest "I'm here, here's the update" surface. Networkers could log or check a group's status from the wrist. The smartwatch AI-chat space is thin (Gemini is a voice-command layer, not persistent multi-turn chat tied to local data), so a MyProblem-style offline-capable watch client has a real opening.
+- [ ] **Watch MVP loop (confirmed 2026-11-25):** The watch receives **audio** (video not yet — photo maybe later, TBD). It batches locally. As soon as the phone is available, it uploads via Wi-Fi or cellular and the item is added to the queue immediately by the API server. The batch API server then processes it, and because it knows the capture came from a watch, it produces a **watch-specific response** that lands in the repo as an update (exact delivery mechanism TBD — repo file, API endpoint, or push). The watch surfaces a **notification sound** when an update arrives. Latency is irrelevant — the notification is the only instant thing. Whatever the round-trip time, the user just gets pinged when it's done.
+- [ ] **Fast path vs slow path (brainstormed 2026-11-25):** Slow path = anything touching raw user input (capture, sanitization, PII removal, review) — must batch. Fast path only fires *after* the slow path has produced a clean, trusted artifact (e.g. a finished lamp repair guide). At that point the data is safe to query instantly. Watch sends a short intent over Bluetooth ("next step", "list steps", "summarize") to the phone; the phone resolves it against the local artifact and pings the answer back — sub-second round trip, watch stays a thin client. No full on-device model needed for template-style queries. Edge case: phone not nearby → tiny on-device keyword matcher over a cached summary, or a message to reconnect. Boundary question: simple retrieval over trusted data = fast path; anything implying new information (e.g. "is this fixture safe to touch with power on?") may warrant a quick server check even on the fast path, since it's no longer just reading what was already reviewed.
+- [ ] **When ready:** open a separate to-do file (e.g. `todos/cursor-wearos-ios-expansion.md`) with full native-app task breakdown, or have Cursor scaffold from this section.
+
 ---
 
 ## Out of scope
@@ -66,9 +76,10 @@ Tech stack: Next.js App Router, TypeScript, CSS modules via `globals.css` (exist
 - Modifying the extension itself or any service worker behavior.
 - GitLab-side deploy automation changes.
 - Updating `docs/simple-max.md` (already merged; this to-do only covers the *public site* presentation of it).
+- Building actual Wear OS or watchOS apps in this pass (section 7 is roadmap context only).
 
 ---
 
 ## Done when
 
-Homepage hero and Be a Networker section match the draft, diagram is live on the page, optional `/networkers` page exists, build is clean, and the GitLab mirror has the same changes ready for Vercel.
+Homepage hero and Be a Networker section match the draft, diagram is live on the page, optional `/networkers` page exists, build is clean, the GitLab mirror has the same changes ready for Vercel, and the wearable/iOS roadmap is documented for the next to-do.
