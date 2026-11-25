@@ -65,14 +65,51 @@ Tech stack: Next.js App Router, TypeScript, CSS modules via `globals.css` (exist
 - [ ] **iOS path:** Apple Watch cannot run standalone — every watchOS app needs a companion iPhone app, so an **iOS release of MyProblem is the gate** for Apple Watch support. Once iOS exists: SwiftUI watch app with mic capture, SwiftData/Core Data local storage, background sync when the phone is nearby. More locked down than Wear OS on background tasks, but fine for short voice notes and a queued outbox. Maintaining two native codebases (Kotlin + Swift) is the cost.
 - [ ] **Positioning for the site:** the watch is not a replacement for phone/web — it's the fastest "I'm here, here's the update" surface. Networkers could log or check a group's status from the wrist. The smartwatch AI-chat space is thin (Gemini is a voice-command layer, not persistent multi-turn chat tied to local data), so a MyProblem-style offline-capable watch client has a real opening.
 - [ ] **Watch MVP loop (confirmed 2026-11-25):** The watch receives **audio** (video not yet — photo maybe later, TBD). It batches locally. As soon as the phone is available, it uploads via Wi-Fi or cellular and the item is added to the queue immediately by the API server. The batch API server then processes it, and because it knows the capture came from a watch, it produces a **watch-specific response** that lands in the repo as an update (exact delivery mechanism TBD — repo file, API endpoint, or push). The watch surfaces a **notification sound** when an update arrives. Latency is irrelevant — the notification is the only instant thing. Whatever the round-trip time, the user just gets pinged when it's done.
+- [ ] **Phone-free default (promotional emphasis, 2026-11-25):** The default MVP assumption is that the watch works **without the phone entirely** for capture. Mic, storage, and the local outbox all live on the watch, so a user can record a series of batched problems throughout the day — at work, on a walk, wherever — with zero phone involvement. The phone (or any Wi-Fi) is only needed later as an optional flush step to push the queue upstream. This is a headline selling point for the promotional page: *capture all day, sync when you can.* Do **not** frame the phone as required for the core experience; frame it as the optional uplink. Homepage/wear copy should say something like: the watch holds everything locally until a connection appears, then uploads the whole batch at once.
+- [ ] **Fast path vs slow path (brainstormed 2026-11-25):** Slow path = anything touching raw user input (capture, sanitization, PII removal, review) — must batch. Fast path only fires *after* the slow path has produced a clean, trusted artifact (e.g. a finished lamp repair guide). At that point the data is safe to query instantly. Watch sends a short intent over Bluetooth ("next step", "list steps", "summarize") to the phone; the phone resolves it against the local artifact and pings the answer back — sub-second round trip, watch stays a thin client. No full on-device model needed for template-style queries. Edge case: phone not nearby → tiny on-device keyword matcher over a cached summary, or a message to reconnect. Boundary question: simple retrieval over trusted data = fast path; anything implying new information (e.g. "is this fixture safe to touch with power on?") may warrant a quick server check even on the fast path, since it's no longer just reading what was already reviewed.
 - [ ] **When ready:** open a separate to-do file (e.g. `todos/cursor-wearos-ios-expansion.md`) with full native-app task breakdown, or have Cursor scaffold from this section.
+
+---
+
+## 8. Extension breakage-monitoring pipeline (added 2026-11-25)
+
+- [ ] **Daily health checks:** Automated pings to each supported social network's DOM selectors (Nextdoor, Facebook, X, Instagram, Reddit, etc.) — flag when a harvest returns zero results, meaning a platform rewrote its markup and the extension's selectors broke silently.
+- [ ] **Hot-patch mechanism:** When breakage is detected, generate a patched selector set plus any additional harvest metadata needed, without allowing arbitrary scripts. Patches are stored in the repo alongside the group-tracking data for those same networks.
+- [ ] **Delivery path:** Devices do **not** pull from the git repo directly. They poll the **API**, which reads the repo locally, verifies the signed manifest (server holds the signing key; devices ship with the public half), and serves only pre-vetted artifacts. A bad or unsigned patch is rejected before it reaches any client.
+- [ ] **Rollback:** Patches roll back the same way a bad ticket gets discarded — versioned manifests, atomic apply, prior version retained.
+- [ ] **Alerting:** Networker team gets notified on zero-result detection so a human can confirm the patch before or alongside automated apply, depending on severity.
+- [ ] **Repo access posture:** Repos are public for read transparency but AI-only for write; the API + signing key is the real perimeter, not repo visibility settings.
+
+---
+
+## 9. Networker local group registry + refresh pipeline + batch dedup (added 2026-11-25)
+
+### 9.1 Local group registry (extension UI)
+- [ ] **Track button rule:** If the extension does not recognize the current page in local storage (API recognition is fine either way), show a **"Track this page"** button. Hitting it stores the group (URL-based identity, e.g. Facebook group URL) in **local storage only** — nothing server-side. The button flips to **"Untrack"** on repeat hit.
+- [ ] **Refresh button stays separate:** Refresh is always available (threads change at any time) and is its own control. It must **not** be conflated with tracking.
+- [ ] **Tracked-pages list UI:** The extension UI shows all locally tracked pages; Networker clicks one to jump back, or hits one **"Automate all"** button that visits each tracked page in turn and runs the gather automation on each.
+- [ ] **Full-screen gather overlay:** During automated gathering of all threads and sub-threads, show an overlay at the highest z-index covering the page — blocks interaction so nothing gets half-captured, shows progress (how far along, estimated time remaining), and signals when the run is complete. Doubles as a trust signal that the extension is working, not frozen.
+
+### 9.2 Refresh = full pipeline (no confirm screen)
+- [ ] Refresh automatically runs the complete gather automation and, **only after it finishes**, matches/sends the batch to the API server. No intermediate "batch it, send to server" confirm UI — the overlay's status is the review surface.
+- [ ] The old batch-and-send UI is retired for the refresh path (it existed for manual review-before-commit; refresh skips that).
+
+### 9.3 Server-side batch dedup (latest-wins)
+- [ ] **Dedup key:** group + Networker (same group, same person). No timestamps in the batch content itself — a later scan of unchanged content must **not** become unique just because of a newer timestamp. Content must be actually unique to pass.
+- [ ] **Latest-wins:** If two non-duplicate batches arrive for the same group by the same Networker, keep only the latest and drop the older one entirely (not merged — swapped).
+- [ ] **Exact duplicates:** Rejected cleanly so the extension knows not to retry. Additionally, batches land in a **private queue repo** where Git itself won't create a commit for byte-identical payloads — so the rejection path mainly fires on near-duplicates.
+- [ ] **Timestamp separation:** Timestamps are stored in the git commit metadata (commit message / commit reasoning), never in the content payload. Same post shows the same timestamp across scans; if a refresh produces diffs on unchanged content, that flags an unstable field (relative timestamp, live view count, typing indicator) to strip from the canonical hash. Diffs become a self-improving accuracy diagnostic for the extension.
+
+### 9.4 Asset dedup via IPFS hashes + Bunny
+- [ ] Assets (images, reduced video stills) are gathered and uploaded to Bunny through the API server, but the server determines true uniqueness using **IPFS content-addressed hashes** (same bytes → same hash regardless of when/where uploaded).
+- [ ] On ingest the API computes the hash, checks against what's already in Bunny, and only pushes new blobs. Two Networkers harvesting the same photo from different groups share one hash and one stored copy, referenced by both.
 
 ---
 
 ## Out of scope
 
 - Changing the businesses / people / projects sections (separate pass).
-- Modifying the extension itself or any service worker behavior.
+- Modifying the extension itself or any service worker behavior (breakage monitoring is a *new* extension-adjacent system, not a change to existing SW code).
 - GitLab-side deploy automation changes.
 - Updating `docs/simple-max.md` (already merged; this to-do only covers the *public site* presentation of it).
 - Building actual Wear OS or watchOS apps in this pass (section 7 is roadmap context only).
@@ -81,4 +118,4 @@ Tech stack: Next.js App Router, TypeScript, CSS modules via `globals.css` (exist
 
 ## Done when
 
-Homepage hero and Be a Networker section match the draft, diagram is live on the page, optional `/networkers` page exists, build is clean, the GitLab mirror has the same changes ready for Vercel, and the wearable/iOS roadmap is documented for the next to-do.
+Homepage hero and Be a Networker section match the draft, diagram is live on the page, optional `/networkers` page exists, build is clean, the GitLab mirror has the same changes ready for Vercel, the wearable/iOS roadmap is documented for the next to-do, the extension breakage-monitoring pipeline is specified, and the Networker local registry + refresh pipeline + batch dedup + IPFS asset dedup rules are documented.
