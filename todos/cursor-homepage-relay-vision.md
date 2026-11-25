@@ -82,6 +82,30 @@ Tech stack: Next.js App Router, TypeScript, CSS modules via `globals.css` (exist
 
 ---
 
+## 9. Networker local group registry + refresh pipeline + batch dedup (added 2026-11-25)
+
+### 9.1 Local group registry (extension UI)
+- [ ] **Track button rule:** If the extension does not recognize the current page in local storage (API recognition is fine either way), show a **"Track this page"** button. Hitting it stores the group (URL-based identity, e.g. Facebook group URL) in **local storage only** — nothing server-side. The button flips to **"Untrack"** on repeat hit.
+- [ ] **Refresh button stays separate:** Refresh is always available (threads change at any time) and is its own control. It must **not** be conflated with tracking.
+- [ ] **Tracked-pages list UI:** The extension UI shows all locally tracked pages; Networker clicks one to jump back, or hits one **"Automate all"** button that visits each tracked page in turn and runs the gather automation on each.
+- [ ] **Full-screen gather overlay:** During automated gathering of all threads and sub-threads, show an overlay at the highest z-index covering the page — blocks interaction so nothing gets half-captured, shows progress (how far along, estimated time remaining), and signals when the run is complete. Doubles as a trust signal that the extension is working, not frozen.
+
+### 9.2 Refresh = full pipeline (no confirm screen)
+- [ ] Refresh automatically runs the complete gather automation and, **only after it finishes**, matches/sends the batch to the API server. No intermediate "batch it, send to server" confirm UI — the overlay's status is the review surface.
+- [ ] The old batch-and-send UI is retired for the refresh path (it existed for manual review-before-commit; refresh skips that).
+
+### 9.3 Server-side batch dedup (latest-wins)
+- [ ] **Dedup key:** group + Networker (same group, same person). No timestamps in the batch content itself — a later scan of unchanged content must **not** become unique just because of a newer timestamp. Content must be actually unique to pass.
+- [ ] **Latest-wins:** If two non-duplicate batches arrive for the same group by the same Networker, keep only the latest and drop the older one entirely (not merged — swapped).
+- [ ] **Exact duplicates:** Rejected cleanly so the extension knows not to retry. Additionally, batches land in a **private queue repo** where Git itself won't create a commit for byte-identical payloads — so the rejection path mainly fires on near-duplicates.
+- [ ] **Timestamp separation:** Timestamps are stored in the git commit metadata (commit message / commit reasoning), never in the content payload. Same post shows the same timestamp across scans; if a refresh produces diffs on unchanged content, that flags an unstable field (relative timestamp, live view count, typing indicator) to strip from the canonical hash. Diffs become a self-improving accuracy diagnostic for the extension.
+
+### 9.4 Asset dedup via IPFS hashes + Bunny
+- [ ] Assets (images, reduced video stills) are gathered and uploaded to Bunny through the API server, but the server determines true uniqueness using **IPFS content-addressed hashes** (same bytes → same hash regardless of when/where uploaded).
+- [ ] On ingest the API computes the hash, checks against what's already in Bunny, and only pushes new blobs. Two Networkers harvesting the same photo from different groups share one hash and one stored copy, referenced by both.
+
+---
+
 ## Out of scope
 
 - Changing the businesses / people / projects sections (separate pass).
