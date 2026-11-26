@@ -1,5 +1,5 @@
 /* MyProblem outbox PWA service worker */
-const SHELL_CACHE = "myproblem-shell-v2";
+const SHELL_CACHE = "myproblem-shell-v3";
 const SHELL_URLS = [
   "/",
   "/offline.html",
@@ -11,6 +11,7 @@ const SHELL_URLS = [
   "/design/ui-kit/icons.svg",
   "/chat-room/clevertree-room.js",
   "/chat-room/clevertree-room.css",
+  "/chat-room/tokens.css",
 ];
 
 self.addEventListener("install", (event) => {
