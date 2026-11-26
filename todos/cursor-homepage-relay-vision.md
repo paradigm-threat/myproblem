@@ -106,6 +106,28 @@ Tech stack: Next.js App Router, TypeScript, CSS modules via `globals.css` (exist
 
 ---
 
+## 10. Infrastructure migration: Rackspace Spot shutdown (investigation 2026-11-25)
+
+**Critical:** Rackspace Spot is shutting down. Wind-down date: **Tuesday, December 8, 2026 at 5 PM Central**. After that, workloads terminate and data becomes inaccessible. Caused by a security incident on Nov 17 (unauthorized pods, secrets read, tokens potentially exposed). Customers must rotate all credentials immediately.
+
+### Current usage (from Gmail receipts)
+- General Virtual Server Large instances across Hong Kong, Chicago, Washington DC + persistent volumes.
+- Recent bills: ~$6–10 per 15-day cycle.
+- Relay stack (Rust binaries, IPFS, voice/TTS) runs on these.
+
+### Migration plan
+- **CPU / general-purpose VMs:** Hetzner (best price/performance, EU + US), Linode (best regional spread: Tokyo, Singapore, etc. — good for Japan), DigitalOcean (simplest). All take plain Docker or native Rust binaries. No China needed (traffic is mostly bots); Japan is desired via Linode Tokyo.
+- **GPU batch server (sanitization, TTS, video):** 
+  - RunPod serverless L4 (scales to zero, good for bursty low-volume) or community L4.
+  - AWS g6.xlarge L4 spot as fallback (cheaper in some zones, but interruptible and zone-tied pricing).
+  - Estimated cost for ~0.5 hour GPU/day: **$3–12/month** depending on provider/spot vs serverless.
+- **Pattern:** Lightweight CPU nodes enqueue TTS/video jobs; GPU batch processes asynchronously; API caches results (content-addressed) so repeats never re-hit GPU.
+- **MLT video:** Mostly CPU-bound (design debt); GPU helps encode/scale only. Not a blocker for migration.
+- **Abstraction:** Extract credential/deploy layer from `deploy-to-rackspace.sh` so next provider swap is config, not rewrite.
+- **Action items:** Rotate all Spot tokens/kubeconfigs now; pull data before Dec 8; stand up equivalent on Linode + RunPod/AWS; update private queue repo automation.
+
+---
+
 ## Out of scope
 
 - Changing the businesses / people / projects sections (separate pass).
@@ -118,4 +140,4 @@ Tech stack: Next.js App Router, TypeScript, CSS modules via `globals.css` (exist
 
 ## Done when
 
-Homepage hero and Be a Networker section match the draft, diagram is live on the page, optional `/networkers` page exists, build is clean, the GitLab mirror has the same changes ready for Vercel, the wearable/iOS roadmap is documented for the next to-do, the extension breakage-monitoring pipeline is specified, and the Networker local registry + refresh pipeline + batch dedup + IPFS asset dedup rules are documented.
+Homepage hero and Be a Networker section match the draft, diagram is live on the page, optional `/networkers` page exists, build is clean, the GitLab mirror has the same changes ready for Vercel, the wearable/iOS roadmap is documented for the next to-do, the extension breakage-monitoring pipeline is specified, the Networker local registry + refresh pipeline + batch dedup + IPFS asset dedup rules are documented, and the Rackspace Spot migration investigation is captured for action before Dec 8.
