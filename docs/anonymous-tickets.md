@@ -21,13 +21,13 @@ Related: [`projects.md`](./projects.md) · [`apk-ticket-ux.md`](./apk-ticket-ux.
 | **Map SoT** | Private Relay file `live-slugs.json` per region (repo **not** world-readable) | Tip path key |
 | **Kill switch** | Drop row on solved / closed / TTL / revoke → public link **404** | May still reach preserved tip with uuid+claim privately |
 
-- APK may mint a live slug on create (`mint_slug` default true). **Web `/submit` sends `mint_slug: false`** and only mints if the user opts into a public slug (`suggest-slug` apply).
+- **Public website ask does not mint tips.** Homepage / `/submit` → public room; batch SI may mint a tip later if channel traffic needs tracking ([`web-submit.md`](./web-submit.md)).
+- APK (or other non-homepage clients) may mint a live slug on create (`mint_slug` default true) when they intentionally create a tip.
 - Return `ticket_uuid` + `claim` (+ `slug` when minted) to the creator client only. UUID may display on the owner success screen; **never** in public nav, share CTAs, OG, or the address bar.
-- Web vault (`localStorage`) stores private uuid + claim + current slug on-device. No server ticket directory.
 - Unpublish: `POST /api/tickets/:id/unpublish-slug` drops the live slug (public `/t/` → 404); tip remains.
 - **Delete or mark resolved deletes uploaded assets (photos) unless instructions say otherwise** (close purges evidence URIs + Bunny; solved/unpublish expire Bunny). Evidence POST never hits Bunny — Batch `choice-media` links only final choice stills.
 - **SEO / share:** Live Intake `/t/<slug>` pages are `noindex` (ephemeral anon). Curated pilot seeds (e.g. `garage-ring-power`) may be indexed and listed in the sitemap. Titles, Open Graph, and JSON-LD always brand the URL as a **problem ticket on MyProblem.app** (uuid never in OG/URL). See [`ticket-public-seo.md`](./ticket-public-seo.md).
-- Web submit details: [`web-submit.md`](./web-submit.md) · status: [`dev.md`](./dev.md).
+- Channel-first submit: [`web-submit.md`](./web-submit.md) · status: [`dev.md`](./dev.md).
 
 ## Resolution (problem solved?)
 

@@ -1,6 +1,16 @@
 # Progressive / contextual transcription
 
-Voice starts a **Problem ticket** by posting **audio as Evidence** (blob in cheap object store; tip holds URI). The client **never** calls an ASR / Whisper API. Transcription is a **queued, batched** server job that writes transcript Evidence back onto the ticket asynchronously.
+The client **never** calls an ASR / Whisper API. Transcription is always a **queued, batched** server job.
+
+## Public room (homepage path)
+
+Speak / video on the website uploads to Bunny (`chat-public/…`) and posts a CDN URL plus `[[mp:media kind=… url=… channel=…]]` into the active IRC channel ([`web-submit.md`](./web-submit.md)). **No tip UUID is minted on post.** Batch SI drains IRC / Clevertree queue, detects those markers (or Bunny `chat-public/` URLs), runs provider ASR/VL when useful, and **may** mint a tip only if channel traffic needs durable tracking.
+
+**Status (channel media):** live upload + in-channel URL works; Intake ASR enqueue from IRC markers is the remaining batch hook (Phase 1 Cursor / Phase 2 providers).
+
+## Tip Evidence path (APK / when a tip already exists)
+
+Voice on an existing **Problem ticket** posts **audio as Evidence** (blob in cheap object store; tip holds URI). Transcription writes transcript Evidence back onto the ticket asynchronously.
 
 **First audio** always enqueues cheap ASR (or a silence/duration skip). **Later context changes** on **open** tickets may trigger an **LLM gate** that decides whether to **re-transcribe** with richer hotwords / prompt context — not whether the ticket “deserves” a first transcript.
 
@@ -8,15 +18,15 @@ Tickets are keyed by server **`ticket_uuid`** (anonymous by default). See [`anon
 
 PII in transcripts is auto-converted before tip commit — see [`pii-and-privacy.md`](./pii-and-privacy.md).
 
-Related: [`projects.md`](./projects.md) · [`apk-ticket-ux.md`](./apk-ticket-ux.md) · [`intake-fixtures.md`](./intake-fixtures.md) · [`intake-batch-infra.md`](./intake-batch-infra.md) · [`spot-ai-mvp.md`](./spot-ai-mvp.md) · [`context-for-server.md`](./context-for-server.md) · [`capture-guidance.md`](./capture-guidance.md).
+Related: [`web-submit.md`](./web-submit.md) · [`projects.md`](./projects.md) · [`apk-ticket-ux.md`](./apk-ticket-ux.md) · [`intake-fixtures.md`](./intake-fixtures.md) · [`intake-batch-infra.md`](./intake-batch-infra.md) · [`providers-ai.md`](./providers-ai.md) · [`context-for-server.md`](./context-for-server.md) · [`capture-guidance.md`](./capture-guidance.md).
 
-**Status:** edge + Intake APIs live; APK uploads via `TicketsApi`; media is **ephemeral** ([`ephemeral-media.md`](./ephemeral-media.md)).
+**Status (tip Evidence):** edge + Intake APIs live; APK uploads via `TicketsApi`; media is **ephemeral** ([`ephemeral-media.md`](./ephemeral-media.md)).
 
 ---
 
 ## One-sentence rule
 
-> **Post audio to the ticket; always batch-transcribe the first clip; reprocess only when new context would change the outcome (user or APK LLM may ask; server gate decides). Never upload video; never keep audio on the server after processing.**
+> **Channel path: post media URL in IRC for batch ASR; tip path: post audio Evidence, always batch-transcribe the first clip; reprocess only when new context would change the outcome. Never expose client `/api/transcribe`; never keep temp audio after processing.**
 
 ---
 
@@ -42,7 +52,7 @@ flowchart TD
   mic[Mic stop] --> postAudio[POST ticket Evidence audio]
   postAudio --> cache[Temp cache on Intake]
   cache --> enqueue[Enqueue asr bin]
-  enqueue --> batch[Batch ASR worker]
+  enqueue --> batch[Batch provider ASR]
   batch --> writeTx[Append transcript text Evidence]
   writeTx --> purge[Delete temp audio + clear uri]
   purge --> clientSync[Client GET ticket sync]
@@ -206,8 +216,8 @@ Client may keep a **local cache** of the audio file for Play / offline review. S
 
 ---
 
-## Cache + Relay / Spot
+## Cache + Relay / providers
 
 - Tip Evidence rows may briefly point at a **temp cache** path/URL; after Batch success the URI is cleared ([`ephemeral-media.md`](./ephemeral-media.md)).
 - Optional future: short-lived S3/IPFS links with the same purge contract — repos still never store bytes.
-- `relay.ai.asr` ([`spot-ai-mvp.md`](./spot-ai-mvp.md)): batch agent reads from cache → Whisper → transcript Evidence → **purge**. Phase 1: Cursor (or hosted Whisper invoked from the **batch** path, never the APK). Phase 2: Spot Batch. See [`batch-phases.md`](./batch-phases.md).
+- `relay.ai.asr` ([`providers-ai.md`](./providers-ai.md)): batch agent reads from cache → provider ASR (e.g. Groq Whisper) → transcript Evidence → **purge**; log $/request. Phase 1: Cursor. Phase 2: automated CPU + providers. See [`batch-phases.md`](./batch-phases.md).

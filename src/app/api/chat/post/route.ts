@@ -9,6 +9,10 @@ const UUID_RE =
 /**
  * Proxy a public problem post into Clevertree chat host (→ IRC bridge).
  * Demo channels resolve via allowlist; unknown → #mp-general.
+ *
+ * Does **not** mint tip UUIDs or write tip-repo queues. Channel talk *is*
+ * submit; batch SI may create tickets later only if tracking is needed.
+ * Media captions may include `[[mp:media …]]` for ASR/VL drain hooks.
  */
 export async function POST(req: Request) {
   let body: {

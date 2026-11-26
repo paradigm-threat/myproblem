@@ -10,8 +10,10 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 ## Public room (homepage SoT)
 
-- Homepage and `/submit` embed Clevertree room → default IRC `#mp-general` (`src/lib/chat/channels.ts`).
+- Homepage embeds Clevertree room → default IRC `#mp-general` (`src/lib/chat/channels.ts`). `/submit` client-redirects to `/#room`.
 - `/c/[channel]` allowlist: `mp-general`, `ga-savannah-cat-rescue`; unknown → general. Hidden room menu only.
-- Submit overlay: type / speak / video → Bunny (`/api/chat-media/upload`) → `/api/chat/post` into active channel. No tip-repo queue as public submit SoT.
-- Narrative: public chat + AI free forever; private chat = paid lane; donations for public utility — no tip-push.
+- Submit overlay: type / speak / video → Bunny (`/api/chat-media/upload`) → `/api/chat/post` into active channel with `[[mp:media …]]` markers. No tip-repo queue as public submit SoT.
+- Tickets mint **only** when batch SI decides channel traffic needs tracking — never on every public post.
+- Narrative: public chat + AI free forever; private chat = paid lane (infra + provider time); donations for public utility — no tip-push.
 - Room assets: `public/chat-room/` (from clevertree-chat `fronts/room/`).
+- Docs SoT: [`docs/web-submit.md`](docs/web-submit.md) · [`docs/simple-max.md`](docs/simple-max.md).

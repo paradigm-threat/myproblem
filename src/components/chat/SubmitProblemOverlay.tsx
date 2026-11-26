@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { ChatChannel } from "@/lib/chat/channels";
+import { formatChannelMediaPost } from "@/lib/chat/channelMedia";
 
 type Mode = "pick" | "type" | "speak" | "video" | null;
 
@@ -116,11 +117,13 @@ export function SubmitProblemOverlay({
       if (!up.ok || !data.url) {
         throw new Error(data.error || `upload_${up.status}`);
       }
-      const caption =
-        kind === "video"
-          ? `Public video note: ${data.url}`
-          : `Public voice note: ${data.url}`;
-      await postToChannel(caption);
+      await postToChannel(
+        formatChannelMediaPost({
+          kind,
+          url: data.url,
+          channelIrc: channel.ircChannel,
+        }),
+      );
     } catch (e) {
       setStatus(
         e instanceof Error ? e.message : "Upload failed — try again.",

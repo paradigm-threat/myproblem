@@ -75,11 +75,12 @@ export default function DevPage() {
           <h2 id="where-heading">Where we are</h2>
           <p>
             Free SI (Super Intelligence, i.e. AI) front door for local problems.
-            People file tickets; investigation is batched (Projects + KB), not a
-            realtime frontier chatbot. Public help pages:{" "}
-            <Link href="/t/garage-ring-power">/t/garage-ring-power</Link>. Web
-            ask in the public room on the{" "}
-            <Link href="/#room">homepage</Link>.
+            Web ask = talk in the public room on the{" "}
+            <Link href="/#room">homepage</Link> (type / speak / video). Tips
+            mint only when batch SI needs tracking. Investigation is batched
+            (Projects + KB), not a realtime frontier chatbot. Example public
+            tip:{" "}
+            <Link href="/t/garage-ring-power">/t/garage-ring-power</Link>.
           </p>
           <p>
             Ops cadence: daily anonymous tip/batch review, then next-day
@@ -94,16 +95,16 @@ export default function DevPage() {
           <h2 id="stack-heading">Current stack</h2>
           <ul>
             <li>
-              <strong>myproblem.app</strong> — Next.js on Vercel (site, submit,
-              public tickets)
+              <strong>myproblem.app</strong> — Next.js on Vercel (site, public
+              room, public tickets when minted)
             </li>
             <li>
               <strong>intake.myproblem.app</strong> — cache + enqueue (media,
               jobs, slugs); tip/KB commits only from batch
             </li>
             <li>
-              <strong>Clevertree Chat</strong> — discussion on tip UUID rooms;
-              SI organizes after batch
+              <strong>Clevertree Chat</strong> — public IRC rooms + optional tip
+              UUID rooms; SI organizes after batch
             </li>
             <li>
               <strong>KB + Bunny/cache</strong> — cite-don’t-cache KB; per-repo
@@ -148,18 +149,18 @@ export default function DevPage() {
             <li>
               <span className="phase">Done</span>
               <div>
-                Public `/t/` + FixIt theme; SI rename; garage pilot; homepage room
-                with opt-in public slug; unpublish-slug; this Dev page.
+                Public `/t/` + FixIt theme; SI rename; garage pilot; homepage
+                Clevertree room; `/submit` → `/#room`; unpublish-slug; this Dev
+                page.
               </div>
             </li>
             <li>
               <span className="phase is-wip">Now</span>
               <div>
-                Tickets + Clevertree on the same tip UUID;{" "}
+                Channel-first intake (room = submit); tip mint via batch only;{" "}
                 <Link href="/extension">Relay for Networkers</Link> + local ZIP;
-                confidence
-                gauges; KB cite-don’t-cache + private tip remotes; Phase 1
-                Cursor-as-batch / Intake cache+enqueue; ephemeral Spot thesis (
+                confidence gauges; KB cite-don’t-cache + private tip remotes;
+                Phase 1 Cursor-as-batch / Intake cache+enqueue (
                 <Link href="/#si-different">SI different</Link>).
               </div>
             </li>

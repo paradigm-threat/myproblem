@@ -32,4 +32,11 @@ describe("PWA static contracts", () => {
     expect(submit).toMatch(/\/#room/);
     expect(submit).not.toMatch(/SubmitTicketForm/);
   });
+
+  it("offline page points at public room not ticket form", () => {
+    const offline = readFileSync(join(root, "public/offline.html"), "utf8");
+    expect(offline).toMatch(/\/#room/);
+    expect(offline).not.toMatch(/SubmitTicketForm/);
+    expect(offline).not.toMatch(/queued batches/);
+  });
 });

@@ -1,32 +1,45 @@
-# Web ticket submit (`/submit`)
+# Public-room submit (channel-first)
 
-Browser intake for MyProblem tickets. **Max and simple** — same tip model as the APK.
+**Homepage SoT is the public Clevertree / IRC room** — not a tip-mint form.
 
-**Design SoT:** [`design/ui-kit/`](../design/ui-kit/) (tokens, icons, `screen-board.html` screens 02–03).
+Design tokens still live under [`design/ui-kit/`](../design/ui-kit/). Product path: ask in-channel.
 
-## Flow
+## Flow (live)
 
-1. `POST /api/tickets` with `mint_slug: false` (private tip + claim).
-2. `PATCH /api/tickets/:id` — description (title = first non-empty line, or “Untitled problem”).
-3. Optional media (≤ **5** audio/video files total):
-   - **Record** — one continuous clip; mic/camera toggles mid-session; Teams-like.
-   - **Upload** — audio and/or video files.
-   - `POST /api/tickets/:id/evidence` — multipart → Intake JSON+base64. Video uses `kind: video`, `lane: batch`, `scrubbed_locally: false`.
-4. Optional: `POST /api/tickets/:id/suggest-slug` with `apply: true` for a public `/t/<slug>`.
-5. Remember uuid + claim + slug in on-device vault.
+1. Open [`/`](https://myproblem.app/) → `#room` (or `/c/mp-general`, `/c/ga-savannah-cat-rescue`).
+2. **Talk** in the room composer — that *is* submit.
+3. Or use **Type / speak / video**:
+   - Text → `POST /api/chat/post` → Clevertree host → IRC (`#mp-general` by default).
+   - Speak / video / file → `POST /api/chat-media/upload` (Bunny `chat-public/…`) → post CDN URL + `[[mp:media …]]` marker into the same channel.
+4. `/submit` **client-redirects** to `/#room` (no `SubmitTicketForm`, no tip UUID).
 
-## Copy (honest media)
+Allowlist: [`src/lib/chat/channels.ts`](../src/lib/chat/channels.ts). Unknown `/c/…` → `#mp-general`.
 
-Anonymous by default. Media goes through Intake → **Bunny** temporary storage. Batch SI processes then **deletes**; lasting keep = reduced choice stills only.
+## Tickets (batch only)
 
-## Public slug (opt-in)
+Public room posts **do not** mint tip UUIDs and **do not** write tip-repo queues.
 
-- Checkbox warns: others with the link can view/comment while the slug exists.
-- Owner may **unpublish** — public link 404s; tip remains.
-- **Never** put `ticket_uuid` in public nav, share CTAs, OG, or the address bar.
+Batch SI (Phase 1 Cursor / Phase 2 providers) may create or update a tip **only when** channel traffic needs durable tracking — same posture as Networker gather candidates. Live path never auto-mints.
+
+## Media → ASR / VL
+
+- Client never calls `/api/transcribe`.
+- Voice/video land as **public media URLs in IRC**.
+- Batch drains IRC / Clevertree queue, detects Bunny `chat-public/` URLs or `[[mp:media kind=… url=…]]`, then runs provider ASR/VL when useful.
+- Until that drain hook is fully wired on Intake, media is still visible in-channel for humans + AI; transcription is **batch-only**, not realtime.
+
+See [`progressive-transcription.md`](./progressive-transcription.md) (channel section) · [`providers-ai.md`](./providers-ai.md).
+
+## Copy
+
+Anonymous by default. Public channel = public. Free forever for public chat + channel AI. Private chat is the paid lane later. Donations fund the public utility — no tip-push on the homepage.
 
 ## Networkers
 
-Casual Askers use `/submit`. **The primary way to be a Networker** is the **Relay** browser extension ([`/extension`](https://myproblem.app/extension)) — garden-wall gather cannot run in the APK. Site nav labels that path “Networkers.”
+Casual askers use the **public room**. Networkers use the **Relay** extension ([`/extension`](https://myproblem.app/extension)) for garden-wall gather — not the retired ticket form.
 
-Related: [`anonymous-tickets.md`](./anonymous-tickets.md) · [`ephemeral-media.md`](./ephemeral-media.md) · [`apk-ticket-ux.md`](./apk-ticket-ux.md) · [`capture-extension.md`](./capture-extension.md).
+Related: [`simple-max.md`](./simple-max.md) · [`anonymous-tickets.md`](./anonymous-tickets.md) · [`clevertree-chat.md`](./clevertree-chat.md) · [`dev.md`](./dev.md).
+
+## Legacy
+
+`SubmitTicketForm` + IndexedDB outbox → `/api/tickets` remain in-repo for APK / historical flush tests. They are **not** mounted on `/`, `/submit`, or `/c/…`. Mounting the form component only redirects to `/#room`.

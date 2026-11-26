@@ -17,7 +17,7 @@
 
 ## Why
 
-Social feeds keep posts behind login and shut down bot scrapers. Important posts also get buried. Relay automates gather **inside a real session**. Recording stays on the website `/submit` or APK — not in the extension.
+Social feeds keep posts behind login and shut down bot scrapers. Important posts also get buried. Relay automates gather **inside a real session**. Casual ask / record stays on the website **public room** (`/#room`) or APK — not in the extension.
 
 ---
 
