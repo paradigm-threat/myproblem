@@ -43,9 +43,59 @@
   };
 
   var BOT_NICKS = ["clevertree", "clevertree-si", "clevertree-ai", "relay-bot"];
+  /** Separate from MyProblem site theme (`myproblem.theme`). */
+  var THEME_KEY = "clevertree.room.theme";
+  var THEME_SUN =
+    '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="1.75"/><path d="M12 2v2.2M12 19.8V22M4.2 12H2M22 12h-2.2M5.05 5.05l1.56 1.56M17.39 17.39l1.56 1.56M5.05 18.95l1.56-1.56M17.39 6.61l1.56-1.56" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"/></svg>';
+  var THEME_MOON =
+    '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M20.5 14.2A8.2 8.2 0 0 1 9.8 3.5 7.4 7.4 0 1 0 20.5 14.2Z" stroke="currentColor" stroke-width="1.75" stroke-linejoin="round"/></svg>';
 
   function $(root, sel) {
     return root.querySelector(sel);
+  }
+
+  function readThemePref() {
+    try {
+      var raw = localStorage.getItem(THEME_KEY);
+      if (raw === "light" || raw === "dark" || raw === "system") return raw;
+    } catch (e) {}
+    return "system";
+  }
+
+  function systemTheme() {
+    try {
+      return matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+    } catch (e) {
+      return "light";
+    }
+  }
+
+  function resolveRoomTheme(pref) {
+    pref = pref || readThemePref();
+    return pref === "light" || pref === "dark" ? pref : systemTheme();
+  }
+
+  function applyRoomTheme(el, mode) {
+    if (!el) return;
+    el.setAttribute("data-theme", mode);
+    el.style.colorScheme = mode;
+    var btns = el.querySelectorAll('[data-role="theme-toggle"]');
+    for (var i = 0; i < btns.length; i++) {
+      var btn = btns[i];
+      var next = mode === "dark" ? "light" : "dark";
+      btn.setAttribute(
+        "aria-label",
+        next === "light" ? "Switch room to light theme" : "Switch room to dark theme"
+      );
+      btn.title = btn.getAttribute("aria-label");
+      btn.innerHTML = mode === "dark" ? THEME_SUN : THEME_MOON;
+    }
+  }
+
+  function persistRoomTheme(mode) {
+    try {
+      localStorage.setItem(THEME_KEY, mode);
+    } catch (e) {}
   }
 
   function esc(s) {
@@ -86,7 +136,9 @@
       '<header class="top">' +
       '<div class="brand"><span>CleverTree <small>Chat</small></span></div>' +
       '<div class="sep"></div><div class="crumb">Public help network</div>' +
-      '<div class="status" data-role="status"><span class="dot"></span><strong data-role="conn">Connecting…</strong>' +
+      '<div class="status" data-role="status">' +
+      '<button type="button" class="theme-toggle" data-role="theme-toggle" aria-label="Toggle room theme"></button>' +
+      '<span class="dot"></span><strong data-role="conn">Connecting…</strong>' +
       '<span class="mirror" data-role="mirror"></span></div></header>' +
       '<section class="head"><div class="roomname">' +
       '<div class="eyebrow">Public room</div>' +
@@ -97,6 +149,7 @@
       ch +
       "</div></div>" +
       '<div class="actions">' +
+      '<button type="button" class="theme-toggle" data-role="theme-toggle" aria-label="Toggle room theme"></button>' +
       '<button type="button" class="track" data-role="track" aria-pressed="false">Track this group</button>' +
       '<button type="button" class="ai-toggle" data-role="ai-toggle" aria-expanded="false">AI findings</button>' +
       "</div></section>" +
@@ -161,11 +214,10 @@
 
     el.classList.add("room", "ct-room");
     if (mode === "sidepanel") el.classList.add("sidepanel");
-    if (mode === "embed" || mode === "sidepanel") {
-      document.body.classList.add("embedded");
-    }
+    // Scope embed/sidepanel on the host only — never decorate document.body
+    // (host pages like myproblem.app own body tokens/layout).
     if (mode === "page") document.body.classList.add("ct-room-page");
-    else el.classList.add("ct-room-host");
+    else el.classList.add("ct-room-host", "embedded");
 
     el.innerHTML = shellHtml(opts);
 
@@ -181,7 +233,9 @@
       view: null,
       opts: opts,
       destroyed: false,
+      theme: resolveRoomTheme(),
     };
+    applyRoomTheme(el, state.theme);
 
     var trackBtn = $(el, '[data-role="track"]');
     var aiBtn = $(el, '[data-role="ai-toggle"]');
@@ -379,6 +433,27 @@
       }
     }
 
+    function onThemeClick() {
+      state.theme = state.theme === "dark" ? "light" : "dark";
+      persistRoomTheme(state.theme);
+      applyRoomTheme(el, state.theme);
+    }
+    var themeBtns = el.querySelectorAll('[data-role="theme-toggle"]');
+    for (var ti = 0; ti < themeBtns.length; ti++) {
+      themeBtns[ti].onclick = onThemeClick;
+    }
+    var mq =
+      typeof matchMedia === "function"
+        ? matchMedia("(prefers-color-scheme: dark)")
+        : null;
+    function onSchemeChange() {
+      if (state.destroyed) return;
+      if (readThemePref() !== "system") return;
+      state.theme = resolveRoomTheme("system");
+      applyRoomTheme(el, state.theme);
+    }
+    if (mq && mq.addEventListener) mq.addEventListener("change", onSchemeChange);
+
     trackBtn.onclick = function () {
       state.tracked = !state.tracked;
       setTrackUi();
@@ -497,7 +572,14 @@
           connected: state.connected,
           mode: mode,
           channel: opts.channel,
+          theme: state.theme,
         };
+      },
+      setTheme: function (mode) {
+        if (mode !== "light" && mode !== "dark") return;
+        state.theme = mode;
+        persistRoomTheme(mode);
+        applyRoomTheme(el, mode);
       },
       setTracked: function (v) {
         state.tracked = !!v;
@@ -516,11 +598,26 @@
       },
       destroy: function () {
         state.destroyed = true;
+        if (mq && mq.removeEventListener) {
+          mq.removeEventListener("change", onSchemeChange);
+        }
         if (state.ws) {
           try {
             state.ws.close();
           } catch (e) {}
         }
+        if (mode === "page") {
+          document.body.classList.remove("ct-room-page");
+        }
+        el.classList.remove(
+          "room",
+          "ct-room",
+          "ct-room-host",
+          "embedded",
+          "sidepanel",
+        );
+        el.removeAttribute("data-theme");
+        el.style.colorScheme = "";
         el.innerHTML = "";
       },
       BOT_NICKS: BOT_NICKS,
@@ -532,5 +629,7 @@
     isBotNick: isBot,
     BOT_NICKS: BOT_NICKS,
     pickMirror: pickMirror,
+    THEME_KEY: THEME_KEY,
+    resolveTheme: resolveRoomTheme,
   };
 });

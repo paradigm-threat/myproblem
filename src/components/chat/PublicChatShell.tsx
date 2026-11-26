@@ -10,9 +10,18 @@ type Props = {
   channel: ChatChannel;
   /** Open media/type overlay on mount */
   openSubmit?: boolean;
+  /**
+   * Homepage embed: slim strip (channel + media CTA only).
+   * Channel pages keep the fuller toolbar.
+   */
+  compact?: boolean;
 };
 
-export function PublicChatShell({ channel, openSubmit = false }: Props) {
+export function PublicChatShell({
+  channel,
+  openSubmit = false,
+  compact = false,
+}: Props) {
   const [submitOpen, setSubmitOpen] = useState(openSubmit);
 
   const focusComposer = useCallback(() => {
@@ -39,30 +48,38 @@ export function PublicChatShell({ channel, openSubmit = false }: Props) {
   }, [focusComposer]);
 
   return (
-    <div className="public-chat-shell">
+    <div
+      className={
+        compact ? "public-chat-shell is-compact" : "public-chat-shell"
+      }
+    >
       <div className="public-chat-toolbar">
         <div className="public-chat-toolbar-copy">
           <p className="public-chat-channel">
             <code>{channel.ircChannel}</code>
-            <span>{channel.title}</span>
+            {!compact ? <span>{channel.title}</span> : null}
           </p>
-          <p className="public-chat-hint">
-            Public help room — history loads from IRC when connected. AI and
-            people can see what you post. Free forever.
-          </p>
+          {!compact ? (
+            <p className="public-chat-hint">
+              Public help room — history loads from IRC when connected. AI and
+              people can see what you post. Free forever.
+            </p>
+          ) : null}
         </div>
         <div className="public-chat-toolbar-actions">
+          {!compact ? (
+            <button
+              type="button"
+              className="btn-primary"
+              id="ask-in-room-cta"
+              onClick={focusComposer}
+            >
+              Ask in this room
+            </button>
+          ) : null}
           <button
             type="button"
-            className="btn-primary"
-            id="ask-in-room-cta"
-            onClick={focusComposer}
-          >
-            Ask in this room
-          </button>
-          <button
-            type="button"
-            className="btn-secondary"
+            className={compact ? "btn-primary" : "btn-secondary"}
             id="submit-problem-cta"
             onClick={() => setSubmitOpen(true)}
           >

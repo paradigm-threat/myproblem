@@ -61,13 +61,9 @@ export default function HomePage() {
                 MyProblem
               </h1>
               <p className="hero-lead">
-                Ask in the <strong className="emph">public room</strong>. History
-                is visible; AI and people help in-channel. Public chat + AI stay{" "}
-                <strong className="emph">free forever</strong>. Powered by{" "}
-                <a href={RELAY_URL} rel="noopener noreferrer" target="_blank">
-                  Relay
-                </a>
-                . <a href="/how-we-run">How we run</a>.
+                Ask in the <strong className="emph">public room</strong> below.
+                History is visible; AI and people help in-channel. Public chat +
+                AI stay <strong className="emph">free forever</strong>.
               </p>
               <div className="cta-row">
                 <a className="btn-primary" href="#room">
@@ -76,20 +72,11 @@ export default function HomePage() {
                 <a className="btn-secondary" href="/extension">
                   Be a Networker
                 </a>
-                <a
-                  className="btn-secondary"
-                  href={BUSINESS_PDF_PATH}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label="Open business one-pager PDF in a new tab"
-                >
-                  Business one-pager (PDF)
-                </a>
               </div>
             </div>
           </div>
           <div className="hero-chat-room site" id="room">
-            <PublicChatShell channel={general} />
+            <PublicChatShell channel={general} compact />
           </div>
         </section>
 

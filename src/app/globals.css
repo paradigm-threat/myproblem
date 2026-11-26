@@ -40,7 +40,8 @@ article[id] {
 body {
   margin: 0;
   min-height: 100%;
-  color: var(--ink);
+  /* Prefer kit --text so a third-party sheet cannot blank the page */
+  color: var(--text, var(--ink));
   font-family: var(--font-sans);
   background:
     radial-gradient(1100px 700px at 12% -10%, rgba(78, 184, 255, 0.18), transparent 55%),
@@ -444,7 +445,8 @@ textarea:focus-visible,
 .hero-lead {
   font-size: 1.05rem;
   line-height: 1.55;
-  color: var(--muted);
+  /* Prefer --text-secondary so embed CSS cannot wash out hero copy */
+  color: var(--text-secondary, var(--muted));
   max-width: 38rem;
   margin: 0;
   animation: rise 1s 0.12s ease both;
@@ -1790,30 +1792,98 @@ section h2 {
 }
 
 /* —— Public IRC room (homepage /c /submit) —— */
-.hero-chat {
-  padding-bottom: 1.5rem;
+.hero.hero-chat {
+  /* Room mount must not clip under the navy band */
+  overflow: visible;
+  padding-bottom: 2rem;
+  background: transparent;
+}
+
+.hero-chat .hero-bar {
+  padding: 1.35rem 0 0.35rem;
+  border-bottom: none;
+  background: linear-gradient(
+    180deg,
+    var(--hero-blue) 0%,
+    rgba(7, 13, 24, 0.92) 70%,
+    transparent 100%
+  );
+}
+
+.hero-chat .hero-bar-inner {
+  gap: 0.75rem;
+}
+
+.hero-chat .hero-lead {
+  max-width: 34rem;
+  color: #e4ebf5;
+}
+
+.hero-chat .cta-row {
+  margin-top: 0.15rem;
+  margin-bottom: 1.35rem;
 }
 
 .hero-chat-room {
   position: relative;
   z-index: 1;
-  margin-top: 0.5rem;
-  margin-bottom: 1rem;
+  margin-top: 0.15rem;
+  margin-bottom: 1.75rem;
+  scroll-margin-top: 5.5rem;
 }
 
 .public-chat-shell {
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
-  min-height: min(70vh, 720px);
+  gap: 0.65rem;
+  min-height: 0;
 }
 
 .public-chat-toolbar {
   display: flex;
   flex-wrap: wrap;
-  align-items: flex-start;
+  align-items: center;
   justify-content: space-between;
-  gap: 0.75rem 1.25rem;
+  gap: 0.65rem 1rem;
+}
+
+.public-chat-shell.is-compact .public-chat-toolbar {
+  position: absolute;
+  top: 0.7rem;
+  right: 0.7rem;
+  z-index: 5;
+  width: auto;
+  max-width: calc(100% - 1.4rem);
+  padding: 0;
+  gap: 0.45rem;
+  justify-content: flex-end;
+  pointer-events: none;
+}
+
+.public-chat-shell.is-compact .public-chat-toolbar-copy {
+  display: none;
+}
+
+.public-chat-shell.is-compact .public-chat-toolbar-actions {
+  pointer-events: auto;
+  gap: 0.4rem;
+}
+
+.public-chat-shell.is-compact .public-chat-toolbar-actions .btn-primary {
+  padding: 0.55rem 0.95rem;
+  font-size: 0.88rem;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.28);
+}
+
+.public-chat-shell.is-compact .channel-menu-trigger {
+  background: rgba(255, 254, 250, 0.92);
+  border-color: color-mix(in srgb, #202d29 18%, transparent);
+  color: #52645c;
+}
+
+.public-chat-shell.is-compact {
+  position: relative;
+  gap: 0;
 }
 
 .public-chat-channel {
@@ -1831,7 +1901,7 @@ section h2 {
 
 .public-chat-hint {
   margin: 0;
-  color: var(--muted);
+  color: var(--text-secondary, var(--muted));
   font-size: 0.9rem;
   max-width: 36rem;
   line-height: 1.45;
@@ -1845,18 +1915,48 @@ section h2 {
 }
 
 .public-room-mount {
-  flex: 1;
+  position: relative;
+  z-index: 2;
+  height: min(68vh, 640px);
   min-height: 420px;
   border-radius: 12px;
   overflow: hidden;
-  border: 1px solid color-mix(in srgb, var(--fg, #e8f0f2) 12%, transparent);
-  background: color-mix(in srgb, #051420 88%, #0a2a36);
+  isolation: isolate;
+  border: 1px solid var(--line);
+  /* Site chrome frame only — room theme paints .room independently */
+  background: var(--surface-inset);
+  box-shadow: var(--shadow-raised);
 }
 
+.public-room-mount .room,
 .public-room-mount .ct-room,
+.public-room-mount .ct-room-host,
 .public-room-mount [data-ct-room] {
-  min-height: 420px;
-  height: 100%;
+  height: 100% !important;
+  min-height: 100% !important;
+  max-height: 100%;
+}
+
+/*
+ * Site header already brands the page — drop Clevertree top chrome in embed.
+ * Room sheet loads after globals and ties on .room .top, so win with !important.
+ */
+.public-room-mount .room .top,
+.public-room-mount .top {
+  display: none !important;
+}
+
+.public-room-mount .room .head,
+.public-room-mount .head {
+  padding: 14px 18px 12px;
+  /* Leave room for the floating Type / speak / video control on compact shell */
+  padding-right: 12.5rem;
+}
+
+.public-room-mount .room .roomname h1,
+.public-room-mount .roomname h1 {
+  font-size: 1.35rem;
+  margin: 2px 0 4px;
 }
 
 .channel-menu {
@@ -2018,7 +2118,12 @@ section h2 {
 }
 
 @media (max-width: 767px) {
+  .hero-chat .hero-bar {
+    padding: 1rem 0 0.75rem;
+  }
+
   .public-room-mount {
+    height: min(62vh, 560px);
     min-height: 360px;
   }
 
@@ -2028,5 +2133,35 @@ section h2 {
 
   .public-chat-toolbar-actions .btn-primary {
     flex: 1;
+  }
+
+  .public-chat-shell.is-compact .public-chat-toolbar {
+    position: static;
+    width: 100%;
+    max-width: none;
+    margin-bottom: 0.55rem;
+    justify-content: flex-start;
+    pointer-events: auto;
+  }
+
+  .public-chat-shell.is-compact .public-chat-toolbar-copy {
+    display: block;
+  }
+
+  .public-chat-shell.is-compact .public-chat-channel {
+    margin: 0;
+    font-size: 0.85rem;
+    color: var(--text-secondary, var(--muted));
+  }
+
+  .public-room-mount .room .head,
+  .public-room-mount .head {
+    padding: 10px 12px 9px;
+    padding-right: 12px;
+  }
+
+  .public-room-mount .room .roomname h1,
+  .public-room-mount .roomname h1 {
+    font-size: 1.15rem;
   }
 }

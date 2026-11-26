@@ -1,5 +1,10 @@
-/* CleverTree Chat design tokens; pixel lengths are CSS px. */
-:root {
+/* Clevertree Chat room design tokens (independent of host site theme).
+ * Preference: localStorage `clevertree.room.theme` = light | dark | (absent = system).
+ * Applied on `.room` / `.ct-room` via data-theme — never on host <html>.
+ */
+:root,
+.room,
+.ct-room {
   --ct-brand: #225744;
   --ct-paper: #faf9f5;
   --ct-canvas: #fffefa;
@@ -13,6 +18,17 @@
   --ct-focus: #a57026;
   --ct-ai-surface: #f1f3ed;
   --ct-control-border: #9eafa3;
+  --ct-host-bg: #e8ebe5;
+  --ct-av-bg: #e2e9dc;
+  --ct-av-ink: #365744;
+  --ct-tag-bg: #e2ede3;
+  --ct-media-border: #bdc9bd;
+  --ct-shield-bg: #f3f5ef;
+  --ct-wave: #b9c8b9;
+  --ct-side-label: #e3e8e0;
+  --ct-overlay: #162a2380;
+  --ct-toast-bg: #202d29;
+  --ct-toast-ink: #fffefa;
   --ct-sans: Lato, Aptos, 'Trebuchet MS', sans-serif;
   --ct-mono: 'IBM Plex Mono', 'DejaVu Sans Mono', monospace;
   --ct-title: 25px;
@@ -31,10 +47,92 @@
   --ct-motion-panel: 200ms;
   --ct-motion-dialog: 170ms;
   --ct-motion-control: 160ms;
+
+  /* Room working aliases used by clevertree-room.css */
+  --paper: var(--ct-paper);
+  --white: var(--ct-canvas);
+  --ink: var(--ct-ink);
+  --muted: var(--ct-muted);
+  --line: var(--ct-line);
+  --green: var(--ct-brand);
+  --green2: var(--ct-sage);
+  --amber: var(--ct-warning-ink);
+  --amberbg: var(--ct-warning-surface);
+  --mono: var(--ct-mono);
+  --sans: var(--ct-sans);
 }
+
+.room[data-theme="dark"],
+.ct-room[data-theme="dark"],
+.ct-room-host[data-theme="dark"] {
+  color-scheme: dark;
+  --ct-brand: #6ecf9a;
+  --ct-paper: #121a17;
+  --ct-canvas: #1a2420;
+  --ct-ink: #e8f0eb;
+  --ct-muted: #9bb0a4;
+  --ct-sage: #24352c;
+  --ct-line: #2c3c34;
+  --ct-warning-ink: #f0c98a;
+  --ct-warning-surface: #3a2e18;
+  --ct-online: #5fd4a4;
+  --ct-focus: #e0b15a;
+  --ct-ai-surface: #18221e;
+  --ct-control-border: #5a7366;
+  --ct-host-bg: #0e1412;
+  --ct-av-bg: #24352c;
+  --ct-av-ink: #a8d4b8;
+  --ct-tag-bg: #24352c;
+  --ct-media-border: #3a4f44;
+  --ct-shield-bg: #1e2a24;
+  --ct-wave: #4a6356;
+  --ct-side-label: #1a2420;
+  --ct-overlay: #050a0880;
+  --ct-toast-bg: #e8f0eb;
+  --ct-toast-ink: #121a17;
+}
+
+.room[data-theme="light"],
+.ct-room[data-theme="light"],
+.ct-room-host[data-theme="light"] {
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  .room:not([data-theme="light"]),
+  .ct-room:not([data-theme="light"]),
+  .ct-room-host:not([data-theme="light"]) {
+    color-scheme: dark;
+    --ct-brand: #6ecf9a;
+    --ct-paper: #121a17;
+    --ct-canvas: #1a2420;
+    --ct-ink: #e8f0eb;
+    --ct-muted: #9bb0a4;
+    --ct-sage: #24352c;
+    --ct-line: #2c3c34;
+    --ct-warning-ink: #f0c98a;
+    --ct-warning-surface: #3a2e18;
+    --ct-online: #5fd4a4;
+    --ct-focus: #e0b15a;
+    --ct-ai-surface: #18221e;
+    --ct-control-border: #5a7366;
+    --ct-host-bg: #0e1412;
+    --ct-av-bg: #24352c;
+    --ct-av-ink: #a8d4b8;
+    --ct-tag-bg: #24352c;
+    --ct-media-border: #3a4f44;
+    --ct-shield-bg: #1e2a24;
+    --ct-wave: #4a6356;
+    --ct-side-label: #1a2420;
+    --ct-overlay: #050a0880;
+    --ct-toast-bg: #e8f0eb;
+    --ct-toast-ink: #121a17;
+  }
+}
+
 @media (max-width:700px) {
-  :root { --ct-title:20px; --ct-body:14px; --ct-nick:12px; --ct-time:10px; }
+  :root, .room, .ct-room { --ct-title:20px; --ct-body:14px; --ct-nick:12px; --ct-time:10px; }
 }
 @media (prefers-reduced-motion:reduce) {
-  :root { --ct-motion-panel:0ms; --ct-motion-dialog:0ms; --ct-motion-control:0ms; }
+  :root, .room, .ct-room { --ct-motion-panel:0ms; --ct-motion-dialog:0ms; --ct-motion-control:0ms; }
 }
