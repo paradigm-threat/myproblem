@@ -3,7 +3,7 @@
   "name": "MyProblem",
   "short_name": "MyProblem",
   "description": "Free forever for everyone. SI (Super Intelligence, i.e. AI) for local problems — not chats. Works offline; batches sync when you reconnect.",
-  "start_url": "/submit",
+  "start_url": "/",
   "scope": "/",
   "display": "standalone",
   "lang": "en-US",

@@ -29,7 +29,13 @@ The AI server receives everything in batches. It does not dump raw captures into
 
 ### End-user experience
 
-End users never have to use Relay software. They reply on the network they already use. The Networker gatherer picks up anything new automatically and batches it. Clevertree Chat can mount on outlier URLs on demand without minting a tip. Origin replies stay on the origin network; helper debate happens on Clevertree's WS/IRC side.
+**Homepage SoT is the public IRC room** (`#mp-general` by default; collection rooms like `#ga-savannah-cat-rescue` via `/c/…`). Ask there so publicity is obvious — type, speak, or video (Bunny → media URL in-channel). Tip-repo submission queues are **not** the foundation submit path.
+
+People being helped on social networks never have to use Relay software. They reply where they already are. The Networker gatherer picks up anything new automatically and batches it. Origin replies stay on the origin network; helper debate happens on Clevertree's WS/IRC side.
+
+### Revenue narrative
+
+Public chat + channel AI stay **free forever**. **Private chat** is the paid lane that funds the public utility. Seek tax-deductible donations (educational public-utility / 501(c)(3) framing — do not claim status until the entity exists). Do not tip-push on the homepage.
 
 ## Safety posture
 
@@ -37,12 +43,12 @@ End users never have to use Relay software. They reply on the network they alrea
 - No bot scrape. Headless login harvest is out of policy.
 - Per-post tickets, never one ticket per group session.
 - PII scrub before export or tips. Public tip links are stills only.
-- Never auto-sends, never auto-uploads. Humans always edit and send.
+- Never auto-posts or auto-sends on the origin social network. Refresh may upload to the private server queue only; humans still edit origin replies.
 - Soft-stop on harassment and poison vigilantism.
 
 ## Pilot
 
-Savannah Cat Rescue is the pilot collection: Nextdoor Stray Cats group, IRC `#ga-savannah-cat-rescue`, Clevertree WS topic, regional tip home under `myproblem-tickets/regions/georgia`. Curator rubric gates ticket vs. outlier (promo, memorials, off-topic stay as channel stats only).
+Demo allowlist (always a room): `#mp-general` (homepage / unknown `/c/` slugs) and `#ga-savannah-cat-rescue` (Savannah Cat Rescue collection). Hidden channel menu links only those two. Savannah pilot still ties Nextdoor Stray Cats → IRC → Clevertree WS; regional tip remotes may remain for Networker gather — out of the homepage submit path.
 
 ## Status
 

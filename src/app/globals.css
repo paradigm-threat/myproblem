@@ -1788,3 +1788,245 @@ section h2 {
   flex-wrap: wrap;
   gap: 0.5rem;
 }
+
+/* —— Public IRC room (homepage /c /submit) —— */
+.hero-chat {
+  padding-bottom: 1.5rem;
+}
+
+.hero-chat-room {
+  position: relative;
+  z-index: 1;
+  margin-top: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.public-chat-shell {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  min-height: min(70vh, 720px);
+}
+
+.public-chat-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem 1.25rem;
+}
+
+.public-chat-channel {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.5rem;
+  margin: 0 0 0.25rem;
+  font-size: 0.95rem;
+}
+
+.public-chat-channel code {
+  font-size: 0.9em;
+}
+
+.public-chat-hint {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.9rem;
+  max-width: 36rem;
+  line-height: 1.45;
+}
+
+.public-chat-toolbar-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.public-room-mount {
+  flex: 1;
+  min-height: 420px;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--fg, #e8f0f2) 12%, transparent);
+  background: color-mix(in srgb, #051420 88%, #0a2a36);
+}
+
+.public-room-mount .ct-room,
+.public-room-mount [data-ct-room] {
+  min-height: 420px;
+  height: 100%;
+}
+
+.channel-menu {
+  position: relative;
+}
+
+.channel-menu-trigger {
+  appearance: none;
+  border: 1px solid color-mix(in srgb, var(--fg, #e8f0f2) 18%, transparent);
+  background: transparent;
+  color: var(--muted);
+  border-radius: 999px;
+  width: 2.25rem;
+  height: 2.25rem;
+  cursor: pointer;
+  letter-spacing: 0.08em;
+  font-size: 1rem;
+  line-height: 1;
+}
+
+.channel-menu-trigger:hover,
+.channel-menu-trigger[aria-expanded="true"] {
+  color: var(--fg, #e8f0f2);
+  border-color: color-mix(in srgb, var(--fg, #e8f0f2) 35%, transparent);
+}
+
+.channel-menu-panel {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 0.35rem);
+  z-index: 40;
+  min-width: 14rem;
+  padding: 0.65rem;
+  border-radius: 10px;
+  background: #0b1c26;
+  border: 1px solid color-mix(in srgb, #e8f0f2 16%, transparent);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45);
+}
+
+.channel-menu-label {
+  margin: 0 0 0.4rem;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+}
+
+.channel-menu-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  padding: 0.55rem 0.6rem;
+  border-radius: 8px;
+  text-decoration: none;
+  color: inherit;
+}
+
+.channel-menu-item:hover,
+.channel-menu-item.is-current {
+  background: color-mix(in srgb, #007f86 28%, transparent);
+}
+
+.channel-menu-item code {
+  font-size: 0.78rem;
+  color: var(--muted);
+}
+
+.submit-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+  background: rgba(2, 10, 16, 0.72);
+  backdrop-filter: blur(4px);
+}
+
+.submit-overlay-card {
+  position: relative;
+  width: min(28rem, 100%);
+  padding: 1.35rem 1.35rem 1.15rem;
+  border-radius: 14px;
+  background: #0d212c;
+  border: 1px solid color-mix(in srgb, #e8f0f2 14%, transparent);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+}
+
+.submit-overlay-close {
+  position: absolute;
+  top: 0.55rem;
+  right: 0.65rem;
+  appearance: none;
+  border: none;
+  background: transparent;
+  color: var(--muted);
+  font-size: 1.5rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.submit-overlay-eyebrow {
+  margin: 0 0 0.35rem;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--muted);
+}
+
+.submit-overlay-card h2 {
+  margin: 0 0 0.5rem;
+  font-family: var(--font-display);
+  font-size: 1.45rem;
+}
+
+.submit-overlay-lead {
+  margin: 0 0 1rem;
+  color: var(--muted);
+  line-height: 1.5;
+  font-size: 0.95rem;
+}
+
+.submit-overlay-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+
+.submit-overlay-actions.row {
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+
+.submit-overlay-type textarea {
+  width: 100%;
+  margin-bottom: 0.75rem;
+  padding: 0.75rem;
+  border-radius: 10px;
+  border: 1px solid color-mix(in srgb, #e8f0f2 18%, transparent);
+  background: #07151c;
+  color: inherit;
+  font: inherit;
+  resize: vertical;
+}
+
+.submit-overlay-status {
+  margin: 0.85rem 0 0;
+  font-size: 0.9rem;
+  color: var(--muted);
+  line-height: 1.45;
+}
+
+.channel-page {
+  padding-bottom: 2rem;
+}
+
+.channel-page-intro {
+  padding-top: 1.25rem;
+}
+
+@media (max-width: 767px) {
+  .public-room-mount {
+    min-height: 360px;
+  }
+
+  .public-chat-toolbar-actions {
+    width: 100%;
+  }
+
+  .public-chat-toolbar-actions .btn-primary {
+    flex: 1;
+  }
+}

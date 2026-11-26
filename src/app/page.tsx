@@ -1,5 +1,7 @@
 import Image from "next/image";
 import { SiteHeader } from "@/components/SiteHeader";
+import { PublicChatShell } from "@/components/chat/PublicChatShell";
+import { resolveChannel } from "@/lib/chat/channels";
 import {
   BUSINESS_PDF_PATH,
   CONTACT_EMAIL,
@@ -7,13 +9,12 @@ import {
   SITE_URL,
   SI_FULL,
   SI_FOOTER_GLOSS,
-  TICKET_TRAINING_NOTICE,
 } from "@/lib/contact";
 
 const VIRTUES = [
   {
     title: "Max and simple",
-    body: "Full help behind few modes. Free for everyone — anonymous first, no paywall. Free forever — no fee later.",
+    body: "Full help behind few modes. Public chat and AI are free forever — anonymous first, no paywall.",
   },
   {
     title: "Thorough over instant",
@@ -29,15 +30,17 @@ const VIRTUES = [
   },
   {
     title: "No card expected",
-    body: "A busy queue is an honest wait. Using the service never becomes a bill.",
+    body: "Using public help never becomes a bill. Private chat is the paid lane later — not this room.",
   },
   {
     title: "Anonymous by default",
-    body: "Core help does not require an account. Private ticket data stays private.",
+    body: "Core help does not require an account. Ask in the public room so publicity is obvious.",
   },
 ] as const;
 
 export default function HomePage() {
+  const general = resolveChannel("mp-general");
+
   return (
     <>
       <a className="skip-link" href="#main">
@@ -47,39 +50,31 @@ export default function HomePage() {
       <SiteHeader variant="home" />
 
       <main id="main">
-        <section className="hero" aria-labelledby="hero-heading">
+        <section className="hero hero-chat" aria-labelledby="hero-heading">
           <div className="hero-bar">
             <div className="site hero-bar-inner">
               <p className="eyebrow">
-                Pilots in Georgia and Israel. Work in progress — building as we
-                go. Looking for help where appropriate →{" "}
-                <a href="/dev">Dev</a>.
+                Public utility · Georgia &amp; Israel pilots · Work in progress →{" "}
+                <a href="/dev">Dev</a>
               </p>
               <h1 id="hero-heading" className="hero-title">
-                Every problem deserves a way forward.
+                MyProblem
               </h1>
               <p className="hero-lead">
-                Write it down or record what happened. Stay connected as people
-                and SI help move it forward.{" "}
-                <strong className="emph">Max and simple</strong> — full help
-                behind few modes. Free for everyone, anonymous first, no
-                paywall. Free forever. You should never expect to enter a card.
-                If the help was good, tip the person, the {SI_FULL}, or both.
-              </p>
-              <p className="powered-by">
-                Powered by{" "}
+                Ask in the <strong className="emph">public room</strong>. History
+                is visible; AI and people help in-channel. Public chat + AI stay{" "}
+                <strong className="emph">free forever</strong>. Powered by{" "}
                 <a href={RELAY_URL} rel="noopener noreferrer" target="_blank">
                   Relay
                 </a>
-                . Anonymous by default.{" "}
-                <a href="/how-we-run">How we run</a>.
+                . <a href="/how-we-run">How we run</a>.
               </p>
               <div className="cta-row">
-                <a className="btn-primary" href="/submit">
-                  Try it now
+                <a className="btn-primary" href="#room">
+                  Ask in the public room
                 </a>
                 <a className="btn-secondary" href="/extension">
-                  Be a Networker — Relay extension
+                  Be a Networker
                 </a>
                 <a
                   className="btn-secondary"
@@ -93,24 +88,8 @@ export default function HomePage() {
               </div>
             </div>
           </div>
-          <div className="hero-media">
-            <div className="hero-wings" aria-hidden="true" />
-            <picture>
-              <source
-                media="(max-width: 767px)"
-                srcSet="/hero-portrait.jpg"
-                width={576}
-                height={1024}
-              />
-              <img
-                src="/hero.jpg"
-                alt="Night illustration of a phone showing a backyard-gate problem in progress, linked by glowing lines to a house, a local shop, and a laptop."
-                width={1024}
-                height={576}
-                className="hero-photo"
-                decoding="async"
-              />
-            </picture>
+          <div className="hero-chat-room site" id="room">
+            <PublicChatShell channel={general} />
           </div>
         </section>
 
@@ -118,13 +97,54 @@ export default function HomePage() {
           <section className="relay-promo" aria-labelledby="networker-heading">
             <h2 id="networker-heading">Be a Networker</h2>
             <p>
-              A Networker keeps help moving — photos, action notes, and gather
-              from groups you already visit. The{" "}
-              <strong className="emph">primary way to network</strong> is the{" "}
-              <a href="/extension">Relay browser extension</a> (Chrome side
-              panel). The phone app can add evidence to tips; it cannot read
-              other apps&apos; feeds. No automatic posting.
+              A Networker is anyone who already belongs to the communities they
+              want to help — and is willing to sign into a few familiar pages a
+              day. That&apos;s it. No new app to learn, no audience to build, no
+              schedule to keep.
             </p>
+            <p>
+              Using the{" "}
+              <a href="/extension">Relay browser extension</a>, a Networker
+              does{" "}
+              <strong className="emph">shallow, session-bound gathering</strong>
+              : reading what&apos;s already visible in their logged-in feeds on
+              Nextdoor, Facebook, X, Instagram, Reddit, and similar platforms,
+              and turning relevant posts into structured tickets. One Networker
+              can cover an entire collection of related groups — say, every
+              Savannah cat rescue page across five networks — or even several
+              collections, as long as the scope stays human-sized.
+            </p>
+            <p>
+              What makes it safe: captures arrive at the AI server in{" "}
+              <strong className="emph">batches</strong>, not a live firehose.
+              The server scrubs PII, sanitizes photos, reduces video to choice
+              stills, and prepares incidents for human or AI review before
+              anything posts back as a trim status update on the origin
+              networks. Detail overflows into the repo; social feeds only ever
+              see the clean version.
+            </p>
+            <p>
+              The people being helped never touch MyProblem. They keep
+              scrolling the groups they already scroll. The meta-layer — the
+              syncing, the deduping, the cross-network linking — happens
+              underneath, in semi-real-time, at whatever cadence the Networkers
+              choose.{" "}
+              <a href="/networkers">More on the Networker role</a>.
+            </p>
+            <figure className="section-graphic">
+              <img
+                src="/networkers-unify.png"
+                alt="Networkers unify related community groups across social networks. Social network icons on the left feed into a central Networker, who links related groups into one Collection hub on the right. Bottom callout: scalable but focused — one Networker manages a few collections, not unlimited."
+                width={1024}
+                height={682}
+                className="section-graphic-img"
+                decoding="async"
+              />
+              <figcaption className="sr-only">
+                Infographic: Networkers unify related community groups across
+                social networks into focused collections.
+              </figcaption>
+            </figure>
             <div className="cta-row">
               <a className="btn-primary" href="/extension">
                 Get Relay for Networkers
@@ -142,9 +162,7 @@ export default function HomePage() {
               <strong className="emph">ignore entirely</strong> when you have
               no time or it is not for you. No SLA, no “must respond,” no
               penalty, no per-lead bill. You should never expect to enter a
-              card. If the help was good, a tip is welcome — never required.
-              Unsure people get a thorough deferred Project first so when you{" "}
-              <em>do</em> engage, the dossier is real.
+              card for public help.
             </p>
             <figure className="section-graphic">
               <picture>
@@ -181,11 +199,9 @@ export default function HomePage() {
                 <strong>Unsure customers create tickets — not phone calls</strong>
                 <p>
                   MyProblem does <strong className="emph">not</strong> answer
-                  your shop’s phone (yet). Link your site (or share a QR) to
-                  ticket creation: people record audio, add stills, and get a
-                  thorough deferred Project. Same outcome as “call first” —
-                  without ringing the front desk. VoIP automation is a planned
-                  later investment.
+                  your shop’s phone (yet). Link your site (or share a QR) so
+                  people can ask in the public room or record evidence for a
+                  thorough deferred Project — without ringing the front desk.
                 </p>
               </li>
               <li>
@@ -221,14 +237,11 @@ export default function HomePage() {
           <section id="people" aria-labelledby="people-heading">
             <h2 id="people-heading">How it works for people</h2>
             <p className="section-lead">
-              Get thorough help — anonymously or with an account. Core SI help
-              is <strong className="emph">free, private, and forever</strong>.
-              Personal identifiers stay on{" "}
-              <strong className="emph">your device</strong> by default; the
-              network ticket is auto-scrubbed to safe context. Deep
-              investigation runs as a Project when capacity allows — thorough,
-              not rushed. You should never expect to enter a card. If the help
-              was good, tip the person, the SI, or both.
+              Ask in the public room first — so publicity is obvious. Core SI
+              help in public channels is{" "}
+              <strong className="emph">free forever</strong>. Deep investigation
+              runs as a Project when capacity allows — thorough, not rushed. You
+              should never expect to enter a card for public help.
             </p>
             <figure className="section-graphic">
               <picture>
@@ -240,7 +253,7 @@ export default function HomePage() {
                 />
                 <img
                   src="/people.jpg"
-                  alt="MyProblem for people: investigate a problem with SI, solve it yourself or get a recommendation, then connect with local help — free core help, anonymous mode, optional tip"
+                  alt="MyProblem for people: ask in the public room, investigate with SI, connect with local help — free core public help"
                   width={1024}
                   height={512}
                   className="section-graphic-img"
@@ -248,36 +261,32 @@ export default function HomePage() {
                 />
               </picture>
               <figcaption className="sr-only">
-                Infographic: anonymous or account mode, three steps from ticket
-                to local help, free forever with optional tip.
+                Infographic: public room ask, investigation, local help — free
+                forever for public chat and AI.
               </figcaption>
             </figure>
             <ol className="steps">
               <li>
-                <strong>Capture a new Problem (ticket)</strong>
+                <strong>Submit in the public room</strong>
                 <p>
-                  Real-time SI helps only while you gather evidence — camera
-                  coaching and clarifying questions — so the ticket is complete.
-                  Deep answers are not expected in that live session.
+                  Type, speak, or record video. Media uploads via Bunny; the URL
+                  lands in the active IRC channel (default{" "}
+                  <code>#mp-general</code>). People and AI see it there.
                 </p>
               </li>
               <li>
-                <strong>Start a Project — queued batch investigation</strong>
+                <strong>Start a Project when needed</strong>
                 <p>
-                  When there is no ready solution yet, the ticket joins a
-                  status queue. Workers investigate ASAP and completely —
-                  local knowledge base first (problem-solving lessons, not a
-                  copy of Google), then tools; Bedrock only if truly stuck.
-                  Useful lessons go back into the KB so we don’t forget.
-                  Timeline updates land in the app (and email if you want).
+                  When there is no ready solution yet, workers investigate ASAP
+                  and completely — local knowledge base first, then Groq /
+                  Bedrock / peer APIs. Useful lessons go back into the KB.
                 </p>
               </li>
               <li>
-                <strong>Submit to local merchants anytime (test areas)</strong>
+                <strong>Local merchants in pilot areas</strong>
                 <p>
-                  Merchant handoff is always an option — before, during, or after
-                  a Project. In pilot regions, send the ticket so nearby shops
-                  can review the dossier and respond on the same timeline.
+                  Merchant handoff stays an option in test regions — shops can
+                  review a dossier and respond with zero obligation.
                 </p>
               </li>
             </ol>
@@ -285,35 +294,27 @@ export default function HomePage() {
               <h3 id="people-promise-heading">What to expect on cost &amp; privacy</h3>
               <ul aria-labelledby="people-promise-heading">
                 <li>
-                  <strong>PII stays on your device</strong> — phones, browsers,
-                  and local backups. Exact addresses, phone numbers, and other
-                  personal identifiers are{" "}
-                  <strong className="emph">not</strong> stored or cached on our
-                  servers or the shared ticket network unless a service provider
-                  has a real need and you release them.
+                  <strong>Public room is public</strong> — anything you post in{" "}
+                  <code>#mp-general</code> (or another public channel) may be
+                  seen or saved by anyone. There is no private mode on this path.
                 </li>
                 <li>
-                  <strong>Automatic PII conversion</strong> — when the SI packs
-                  a ticket, spoken or typed personal detail becomes safe
-                  context (e.g. city or a coarse location band) so helpers can
-                  work without your street address living on the mesh.
+                  <strong>PII stays careful</strong> — prefer city-level context
+                  over street addresses in public posts. Secure DM is for later
+                  private lanes.
                 </li>
                 <li>
-                  <strong>Only on request, via secure DM</strong> — if a pro
-                  needs something personal, it moves in a two-way secure direct
-                  channel — not into the public ticket dossier or network cache.
-                </li>
-                <li>
-                  <strong>Free forever for everyone</strong> — people and shops.
-                  No login required for the basics. No card expected.
+                  <strong>Free forever for public chat + AI</strong> — no login
+                  required for the basics. No card expected.
                 </li>
                 <li>
                   <strong>Thorough over instant</strong> — deferred Projects
                   wait for capacity so investigations stay complete.
                 </li>
                 <li>
-                  <strong>Optional tip</strong> — if the help was good, tip the
-                  person, the SI, or both. Never required. See{" "}
+                  <strong>Donations welcome</strong> — we seek tax-deductible
+                  donations to support this as an educational public utility
+                  (501(c)(3) framing we are pursuing). See{" "}
                   <a href="/how-we-run">how we run</a>.
                 </li>
               </ul>
@@ -325,172 +326,26 @@ export default function HomePage() {
               Projects — capture, queue, batch (not on-demand LLM)
             </h2>
             <p className="section-lead">
-              We don’t need live frontier chatbots or on-demand premium vision.
-              We need a <strong className="emph">smart-enough</strong> intake
-              model, a <strong className="emph">JIRA-style ticket queue</strong>,
-              and batch workers that investigate{" "}
-              <strong className="emph">ASAP and completely</strong> — including
-              advanced photo analysis and generation at minimal cost (Hugging
-              Face / Spot first). Bedrock is a{" "}
-              <strong className="emph">rare backbone escalate</strong> when the
-              cheap path truly cannot.
+              We don’t need live frontier chatbots as the product. We need a{" "}
+              <strong className="emph">smart-enough</strong> intake model, a
+              public IRC bus for live problems, and batch workers that
+              investigate{" "}
+              <strong className="emph">ASAP and completely</strong> via{" "}
+              <strong className="emph">Groq, Bedrock, and peer providers</strong>
+              . Stronger models escalate when the cheap path truly cannot.
             </p>
-            <div className="project-flow" role="list">
-              <article className="project-flow-card" role="listitem">
-                <p className="project-flow-label">1 · Live</p>
-                <h3>Capture requirements</h3>
-                <p>
-                  Camera coaching and clarifying questions gather photos,
-                  constraints, and what’s been tried. Smart enough to fill the
-                  ticket — not to burn Sonnet on every frame.
-                </p>
-              </article>
-              <article className="project-flow-card" role="listitem">
-                <p className="project-flow-label">2 · Queue</p>
-                <h3>Ticket by status</h3>
-                <p>
-                  Packaged Problems join a status queue like JIRA —
-                  uninvestigated, in progress, blocked, done. Merchant submit
-                  stays available anytime beside the Project.
-                </p>
-              </article>
-              <article className="project-flow-card" role="listitem">
-                <p className="project-flow-label">3 · Batch</p>
-                <h3>Investigate ASAP + completely</h3>
-                <p>
-                  Workers drain the queue when Spot frees: local KB and cache
-                  first (how to solve it here — not a freeze-frame of the
-                  internet), then Hugging Face / open VL, optional diagrams,
-                  and mid LLMs. Dig until DIY, need-more-evidence,
-                  merchant-ready, or closed — no redundant repeats.
-                </p>
-              </article>
-              <article className="project-flow-card" role="listitem">
-                <p className="project-flow-label">4 · Escalate</p>
-                <h3>Bedrock only when stuck</h3>
-                <p>
-                  Advanced math, rare language, or photo understanding/gen that
-                  open models can’t handle → one frontier call, then write the
-                  useful residue into the KB and cache. Priority shortens the
-                  queue; it does not invent live on-demand LLM or image APIs.
-                </p>
-              </article>
-            </div>
-            <div className="people-promise" style={{ marginTop: "1.75rem" }}>
-              <h3 id="projects-why-heading">Why this beats on-demand deep LLM</h3>
-              <ul aria-labelledby="projects-why-heading">
-                <li>
-                  <strong>Lower cost</strong> — batching + Spot + cache beats
-                  reserved GPUs and per-turn Sonnet.
-                </li>
-                <li>
-                  <strong>No corner-cutting</strong> — free tier waits for
-                  capacity instead of a silently weaker instant model.
-                </li>
-                <li>
-                  <strong>Non-redundant</strong> — same normalized question
-                  hits cache / local KB; frontier is for unique misses.
-                </li>
-                <li>
-                  <strong>Honest timing</strong> — ETA + timeline updates, not
-                  a fake instant answer.
-                </li>
-              </ul>
-            </div>
-          </section>
-
-          <section id="knowledge" aria-labelledby="knowledge-heading">
-            <h2 id="knowledge-heading">
-              Knowledge for solving problems — not for search ads
-            </h2>
-            <p className="section-lead">
-              A core job of MyProblem is knowing the{" "}
-              <strong className="emph">
-                best way to solve a problem with local resources
-              </strong>{" "}
-              — the layer competitive search rankings and ads fight over. Our
-              shared knowledge base (Georgia &amp; Israel) stores that kind of
-              lesson, plus DIY advice when location does not matter. It is{" "}
-              <strong className="emph">speculative</strong>: built from{" "}
-              <strong className="emph">user contributions</strong> and{" "}
-              <strong className="emph">SI investigations</strong> only.{" "}
-              <strong className="emph">No boosting</strong>, no paid ranking,
-              no freeze-frame of the greater internet. {TICKET_TRAINING_NOTICE}
-            </p>
-            <div className="project-flow" role="list">
-              <article className="project-flow-card" role="listitem">
-                <p className="project-flow-label">Purpose</p>
-                <h3>Problem-solving only</h3>
-                <p>
-                  We write what helps the app solve tickets: local resource
-                  paths, ticket-driven assessments, and general advice when
-                  place does not matter — including how to stand up a modern
-                  website nearly for free. We do not copy hours, phones, or
-                  pages you can already find online — those keep changing; we
-                  cite them live instead.
-                </p>
-              </article>
-              <article className="project-flow-card" role="listitem">
-                <p className="project-flow-label">Honesty</p>
-                <h3>Speculative · no boost</h3>
-                <p>
-                  Everything in the KB is provisional investigation assistance
-                  from users and SI — never algorithmically boosted for money
-                  or engagement. Business pages appear only when a Project
-                  thoroughly investigated that shop for a real ticket.
-                </p>
-              </article>
-              <article className="project-flow-card" role="listitem">
-                <p className="project-flow-label">Learn</p>
-                <h3>Re-test · refine · don’t forget</h3>
-                <p>
-                  Useful advice is proven over time on new tickets. When it
-                  stops helping, we refine or ditch it — and keep history so we
-                  never throw away what we learned.
-                </p>
-              </article>
-              <article className="project-flow-card" role="listitem">
-                <p className="project-flow-label">Channels</p>
-                <h3>Anything with a unique id</h3>
-                <p>
-                  Associate tickets with a public channel id — house, street,
-                  town, Wi-Fi, Bluetooth beacon — so subscribers see place
-                  grain without passwords. PII stays client-side unless you
-                  release it by secure DM.
-                </p>
-              </article>
-            </div>
-            <div className="people-promise" style={{ marginTop: "1.75rem" }}>
-              <h3 id="knowledge-why-heading">Why this beats directory scrapes</h3>
-              <ul aria-labelledby="knowledge-why-heading">
-                <li>
-                  <strong>Anti-ad ranking</strong> — we refuse boosting; search
-                  wars stay outside the product.
-                </li>
-                <li>
-                  <strong>No internet cache</strong> — searchable facts stay on
-                  the live web; the KB holds problem-solving residue.
-                </li>
-                <li>
-                  <strong>Continuous learning</strong> — re-test advice; refine
-                  or retire; keep the trail.
-                </li>
-                <li>
-                  <strong>Pilots stay dense</strong> — Georgia and Israel only
-                  for now; depth over world sprawl.
-                </li>
-              </ul>
-            </div>
           </section>
 
           <section id="plan" aria-labelledby="plan-heading">
             <h2 id="plan-heading">The plan</h2>
             <p className="section-lead">
               Relay-native investigation service. Problems first — not a frontier
-              chatbot. One tip UUID is the unit: a problem, a chat room, and
-              (on sibling products) a user or topic. Clevertree Chat mounts on
-              that same id. Free forever for everyone. Tips optional — never a
-              required card. Why the SI stays ephemeral →{" "}
+              chatbot. The live bus is{" "}
+              <strong className="emph">public IRC</strong> (
+              <code>#mp-general</code>
+              ). Clevertree Chat mounts that room on the homepage. Free forever
+              for public chat + AI. Private chat is the paid lane that funds the
+              public utility. Why the SI stays ephemeral →{" "}
               <a href="#si-different">Why is this SI different?</a>
             </p>
 
@@ -499,21 +354,19 @@ export default function HomePage() {
             </h3>
             <div className="plan-grid">
               <article>
-                <h3>Tickets + public pilots</h3>
+                <h3>Public room first</h3>
                 <p>
-                  Web <a href="/submit">submit</a>, public{" "}
-                  <a href="/t/garage-ring-power">/t/</a> help pages, and
-                  private tip remotes (Georgia / Israel). FixIt craft remote
-                  waits until a real repair tip needs it.
+                  Homepage embeds <code>#mp-general</code>. Ask in the room
+                  (type / speak / video). Unknown <code>/c/…</code> slugs fall
+                  back to general — always a room.
                 </p>
               </article>
               <article>
-                <h3>Clevertree Chat on the tip</h3>
+                <h3>Clevertree on IRC</h3>
                 <p>
-                  People talk on the problem through{" "}
-                  <a href="https://clevertree.chat">Clevertree Chat</a> using
-                  the <strong className="emph">same tip UUID</strong> as the
-                  room — no forced second id. SI organizes; it does not vote.
+                  People talk through{" "}
+                  <a href="https://clevertree.chat">Clevertree Chat</a> on the
+                  channel — AI processes in-room. SI organizes; it does not vote.
                 </p>
               </article>
               <article>
@@ -521,30 +374,32 @@ export default function HomePage() {
                 <p>
                   Primary Networker path: the{" "}
                   <a href="/extension">Relay extension</a> gathers read-only
-                  updates from social groups you already visit. SI files topics;
-                  humans still send origin replies. Not a bot scraper.
+                  updates from social groups you already visit. Humans still send
+                  origin replies.
                 </p>
               </article>
               <article>
-                <h3>Confidence gauges</h3>
+                <h3>Collection channels</h3>
                 <p>
-                  Understanding + Solution scores on the capture path — show how
-                  ready the ask is before advising.
+                  Pilot: Savannah Cat Rescue →{" "}
+                  <a href="/c/ga-savannah-cat-rescue">
+                    #ga-savannah-cat-rescue
+                  </a>
+                  . Hidden room menu for demo allowlist only.
                 </p>
               </article>
               <article>
-                <h3>KB + private tips</h3>
+                <h3>KB + batch SI</h3>
                 <p>
-                  Public knowledge base cites the live web (no scrape mirror).
-                  Tips stay on private remotes. Speculative; no boosting.
+                  Public knowledge base cites the live web. Batch SI writes
+                  standing lessons — not tip-repo intake as the homepage SoT.
                 </p>
               </article>
               <article>
                 <h3>Phase 1 batch (Cursor)</h3>
                 <p>
-                  Always-on Intake <strong className="emph">caches and
-                  enqueues</strong> only. Cursor invents tip/KB commits on a
-                  shared multi-site queue (ask + cron) until Spot Phase 2.
+                  Intake caches and enqueues. Cursor drains a shared multi-site
+                  queue until Phase 2 automation.
                 </p>
               </article>
             </div>
@@ -554,47 +409,31 @@ export default function HomePage() {
             </h3>
             <div className="plan-grid">
               <article>
-                <h3>Phase 2 Spot automation</h3>
+                <h3>Private chat (paid lane)</h3>
                 <p>
-                  Same queue contract on ephemeral Rackspace Spot GPUs —
-                  reconstruct, work, retain by rule, wipe. Go-live after
-                  parity, tests, fine-tune, and operator confidence.
+                  Metered private rooms fund the public utility. Not shipping
+                  billing this pass — document only.
                 </p>
               </article>
               <article>
-                <h3>Deferred video → choice stills</h3>
+                <h3>Phase 2 provider automation</h3>
                 <p>
-                  Batch inbox video/audio → frame-select → Bunny choice stills
-                  (per-repo upload source); purge unused.
+                  Same queue contract on CPU + Groq / Bedrock / peers. Publicize
+                  AI $/request.
                 </p>
               </article>
               <article>
-                <h3>Batched coding &amp; digital work</h3>
+                <h3>Relay operator earnings</h3>
                 <p>
-                  Not a realtime Cursor clone. Leave instructions; a batch
-                  worker finishes implement/test/deploy and notifies you —
-                  sites, docs, networking, heavy pipelines with scratch purge.
+                  Compliant node operators may later earn on private usage —
+                  future, not a live product this pass.
                 </p>
               </article>
               <article>
                 <h3>Shared queue for all Relay sites</h3>
                 <p>
-                  Production drain for QuizGate (tip = user) and Clevertree
-                  (tip = topic) on the same Phase 1→2 path as MyProblem.
-                </p>
-              </article>
-              <article>
-                <h3>Recover email / register</h3>
-                <p>
-                  Free durable reclaim so a lost phone does not lose anon
-                  tickets.
-                </p>
-              </article>
-              <article>
-                <h3>Broader regions + FixIt remote</h3>
-                <p>
-                  Expand beyond Georgia / Israel by request. Mint FixIt
-                  tip+KB pair when DIY/repair needs its own home.
+                  Production drain for QuizGate and Clevertree on the same
+                  Phase 1→2 path as MyProblem.
                 </p>
               </article>
             </div>
@@ -606,32 +445,29 @@ export default function HomePage() {
             </h2>
             <p className="section-lead">
               MyProblem runs on the same Relay pattern as QuizGate and Clevertree
-              Chat: batch {SI_FULL} on temporary hardware — not a permanent cloud
-              brain you only audit through a retention policy. Typical cloud AIs
-              stay attached to always-on services; leftover retention is what you
-              hope a vendor honored. Here leftover retention is the exception the
-              rules chose to keep.
+              Chat: batch {SI_FULL} driven by posted rules and knowledge — on
+              metered providers (Groq / Bedrock / peers), not a permanent cloud
+              brain you only audit through a retention policy. Public AI stays
+              free; donations and (later) private-chat revenue cover servers and
+              per-request AI. We aim to show what successful requests cost.
             </p>
             <div className="plan-grid">
               <article>
-                <h3>Ephemeral batch hardware</h3>
+                <h3>Providers, not our GPU farm</h3>
                 <p>
-                  Jobs run on interruptible Rackspace Spot GPUs (and similar
-                  temporary capacity). When the batch finishes — however long or
-                  detailed — the worker is decommissioned and scratch is
-                  destroyed, including inputs from apps, APIs, and other servers.
-                  Capacity exists only while the job runs, so thorough work stays
-                  cheap.
+                  Text, audio, stills, and video go through Groq, Bedrock, and
+                  other APIs. Intake stays on cheap CPU. Thorough batch work
+                  stays affordable because we pay per request — and we want that
+                  cost visible.
                 </p>
               </article>
               <article>
                 <h3>Reconstructed SI, rules as memory</h3>
                 <p>
                   Each batch rebuilds the SI from programmed instructions: repo
-                  rule sets, and sometimes per-ticket rules. It has no durable
-                  private memory of prior runs beyond those instructions and what
-                  the standing store already publishes. When the batch ends, that
-                  instance is gone.
+                  rule sets, KB context, and sometimes per-ticket rules. It has
+                  no durable private memory of prior runs beyond those
+                  instructions and what the standing store already publishes.
                 </p>
               </article>
               <article>
@@ -639,8 +475,7 @@ export default function HomePage() {
                 <p>
                   Nothing submitted for a batch becomes permanent until the SI —
                   under those rules — decides it should, and writes the allowed
-                  result into the standing store (tip, knowledge, or brief).
-                  Everything else dies with the job.
+                  result into the standing store. Scratch dies with the job.
                 </p>
               </article>
             </div>
@@ -657,18 +492,15 @@ export default function HomePage() {
               >
                 An always-on cloud stack can publish any retention policy and
                 still leave caches, temp disks, logs, and replicas that outlive
-                the promise — and those layers can be breached later. Here the
-                attack surface for raw batch inputs is mostly the live job. When
-                the Spot worker dies, the scratch dies with it; there is no
-                long-lived “AI server” holding last week’s uploads “just in
-                case.” Absence of durable scratch is the control — not a policy
-                you have to trust was never broken or bypassed. Low Spot cost is
-                why that design stays practical.
+                the promise. Here raw batch inputs live on short-lived Intake
+                cache and provider calls; standing memory is only what rules
+                write. We do not run a long-lived GPU “AI server” holding last
+                week’s uploads.
               </p>
               <p style={{ margin: 0, color: "var(--muted)", lineHeight: 1.55 }}>
-                On MyProblem that means ticket evidence and project scratch feed
-                a batch investigation; only what the rules allow lands in the tip
-                or knowledge base. Tips stay optional — never a required card.
+                On MyProblem the live bus is public IRC; batch investigation
+                only keeps what the rules allow. Public help never requires a
+                card.
               </p>
               <p
                 style={{
@@ -699,17 +531,18 @@ export default function HomePage() {
 
           <section id="investors" aria-labelledby="investors-heading">
             <h2 id="investors-heading">
-              Investors — one world network, not splinter IP
+              Funding the public utility
             </h2>
             <p className="section-lead">
-              We want partners who help{" "}
-              <strong className="emph">grow a compatible world network</strong>{" "}
-              — local hardware and ops that stay interoperable with the shared
-              ticket system — not clones that fragment the mesh into private
-              islands. This page states{" "}
-              <strong className="emph">intent only</strong>; it is not an offer
-              or a signed deal. Early adopters may later need a separate
-              contract. See also{" "}
+              <strong className="emph">Public chat + AI are free forever.</strong>{" "}
+              The paid lane is <strong className="emph">private chat</strong> —
+              that revenue funds the public room. We also seek{" "}
+              <strong className="emph">tax-deductible donations</strong> under an
+              educational public-utility framing (pursuing 501(c)(3)-compatible
+              structure; this page is intent, not a legal claim that status
+              already exists). Compatible Relay node operators may later earn on
+              private usage if compliant — future, not a live billing product
+              this pass. See{" "}
               <a href="/how-we-run">How we run</a>,{" "}
               <a href="/privacy">Privacy</a>, and <a href="/terms">Terms</a>.
             </p>
@@ -723,7 +556,7 @@ export default function HomePage() {
                 />
                 <img
                   src="/investors.jpg"
-                  alt="For investors: fund compatible local hardware in the world network; economics favor local handlers; tickets shared under one interoperable system — not a splintered clone"
+                  alt="Fund a compatible public utility network: free public chat, private chat as paid lane, donations for educational public utility"
                   width={1024}
                   height={576}
                   className="section-graphic-img"
@@ -731,8 +564,8 @@ export default function HomePage() {
                 />
               </picture>
               <figcaption className="sr-only">
-                Infographic: regional investment that stays compatible with the
-                shared ticket network; economics favor local hardware handlers.
+                Infographic: public free forever; private paid; donations for
+                public utility.
               </figcaption>
             </figure>
             <div className="investor">
@@ -745,36 +578,34 @@ export default function HomePage() {
               <p style={{ margin: 0, color: "var(--muted)", lineHeight: 1.55 }}>
                 If you stand up hardware or a region, it must remain{" "}
                 <strong className="emph">
-                  compatible with the world network and the existing ticket
-                  system
+                  compatible with the world network
                 </strong>{" "}
-                so Problems can be found and shared under the same conditions
-                everywhere. Splintering — forking a private incompatible stack,
-                walling tickets, or treating the mesh as disposable IP to
-                rebrand alone — defeats the Relay / MyProblem vision. We are{" "}
-                <strong className="emph">not</strong> looking for investors
-                whose plan is to clone and go their own way.
+                so problems stay findable under the same conditions. Splintering
+                defeats the Relay / MyProblem vision. We are{" "}
+                <strong className="emph">not</strong> looking for partners whose
+                plan is to clone and go their own way.
               </p>
               <ul aria-labelledby="investors-compat-heading">
                 <li>
-                  <strong>One ticket fabric</strong> — same Problem / tip
-                  conditions; discoverable across compatible nodes
+                  <strong>Public free forever</strong> — rooms like{" "}
+                  <code>#mp-general</code> and channel AI stay free
                 </li>
                 <li>
-                  <strong>Economics favor local hardware handlers</strong> —
-                  people running compatible gear in place, not a payroll machine
-                  at the center
+                  <strong>Private chat funds the mesh</strong> — paid lane, not
+                  tip-push on the homepage
+                </li>
+                <li>
+                  <strong>Donations for public utility</strong> — seeking
+                  tax-deductible support; careful nonprofit language until
+                  entity status is clear
                 </li>
                 <li>
                   <strong>Zero-payroll LLC posture</strong> — Clevertree LLC
-                  (Georgia) / MyProblem product; capital for infra and growth,
-                  not headcount theater. Tips fund the mesh — see{" "}
-                  <a href="/how-we-run">how we run</a>
+                  (Georgia) / MyProblem product; capital for infra and growth
                 </li>
                 <li>
-                  <strong>Intent ≠ agreement</strong> — we may require contracts
-                  with early hardware / region adopters; nothing here binds
-                  either side until that paperwork exists
+                  <strong>Intent ≠ agreement</strong> — nothing here binds
+                  either side until separate paperwork exists
                 </li>
               </ul>
               <p
@@ -784,12 +615,10 @@ export default function HomePage() {
                   lineHeight: 1.5,
                 }}
               >
-                Free forever for everyone.{" "}
+                Free forever for public help.{" "}
                 <strong className="emph">Max and simple</strong> — anonymous
-                first, no paywall, no fee later. People and shops should never
-                expect to enter a card. Optional tips after good help keep the
-                mesh alive — not invoices or subscriptions. Investors who fit:
-                builders of the shared network. Contact{" "}
+                first, no paywall. Partners who fit: builders of the shared
+                network. Contact{" "}
                 <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>.
               </p>
             </div>
@@ -801,9 +630,7 @@ export default function HomePage() {
               We are starting where we can operate tightly — product, merchants,{" "}
               <em>and</em> the problem-solving knowledge base are scoped to
               these places only. Expand by request, as new region partitions —
-              not one global brain. Both markets already use ChatGPT/Gemini; we
-              win on thorough deferred Projects and local resource wisdom search
-              ads bury — not another chatbot or hire-first lead app.
+              not one global brain.
             </p>
             <ul className="regions">
               <li className="chip">
@@ -815,32 +642,6 @@ export default function HomePage() {
                 Israel
               </li>
             </ul>
-            <div className="people-promise" style={{ marginTop: "1.5rem" }}>
-              <h3 id="regions-why-heading">Why these two first</h3>
-              <ul aria-labelledby="regions-why-heading">
-                <li>
-                  <strong>Georgia</strong> — LLC home, English product, US
-                  rails; DIY baseline is ChatGPT then Thumbtack-class
-                  marketplaces.
-                </li>
-                <li>
-                  <strong>Israel</strong> — on-ground ops, Hebrew/bilingual UX;
-                  denser SI→local-pro apps plus the same global LLMs — we still
-                  differentiate on tickets, batch investigation, and a local KB.
-                </li>
-              </ul>
-            </div>
-            <p
-              style={{
-                color: "var(--muted)",
-                maxWidth: "36rem",
-                lineHeight: 1.55,
-                marginTop: "1.25rem",
-              }}
-            >
-              Want MyProblem in your city or country? Tell us — we track region
-              interest and prioritize where businesses and people both show up.
-            </p>
             <p style={{ marginTop: "1.25rem" }}>
               <a className="btn-primary" href={`mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent("MyProblem region interest")}`}>
                 Email region interest
@@ -868,7 +669,7 @@ export default function HomePage() {
         <nav className="footer-nav" aria-label="Footer">
           <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>
           <span aria-hidden="true"> · </span>
-          <a href="/submit">Try it now</a>
+          <a href="/#room">Public room</a>
           <span aria-hidden="true"> · </span>
           <a href="/extension">Relay for Networkers</a>
           <span aria-hidden="true"> · </span>
@@ -899,13 +700,12 @@ export default function HomePage() {
         </nav>
         <p>
           <a href="/#si-different">{SI_FOOTER_GLOSS}</a> Operated by Clevertree
-          LLC (Georgia). Pilots in Georgia and Israel. Work in progress —
-          building as we go. Looking for help → <a href="/dev">Dev</a>. You
-          should never expect to enter a card. Built on{" "}
+          LLC (Georgia). Pilots in Georgia and Israel. Public chat + AI free
+          forever. Built on{" "}
           <a href={RELAY_URL} rel="noopener noreferrer" target="_blank">
             Relay
           </a>
-          . See <a href="/privacy">Privacy</a> and <a href="/terms">Terms</a>.
+          .
         </p>
       </footer>
     </>

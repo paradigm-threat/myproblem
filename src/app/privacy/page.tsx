@@ -79,8 +79,8 @@ export default function PrivacyPage() {
             <li>
               <strong>Contact email</strong> — if you email us, we see what you
               send in that message. Region interest and contributor outreach use
-              mailto; ticket submit uses Intake (see{" "}
-              <a href="/submit">/submit</a>).
+              mailto; public asks use the homepage room (see{" "}
+              <a href="/#room">/#room</a>).
             </li>
           </ul>
         </section>

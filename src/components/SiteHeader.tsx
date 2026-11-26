@@ -7,12 +7,10 @@ import { useEffect, useId, useState } from "react";
 type NavItem = { href: string; label: string };
 
 const HOME_LINKS: NavItem[] = [
-  { href: "/submit", label: "Try it now" },
+  { href: "/#room", label: "Public room" },
   { href: "/#businesses", label: "For businesses" },
   { href: "/#people", label: "For people" },
-  { href: "/#projects", label: "Projects" },
-  { href: "/#knowledge", label: "Knowledge" },
-  { href: "/#investors", label: "Investors" },
+  { href: "/#investors", label: "Funding" },
   { href: "/#regions", label: "Regions" },
   { href: "/extension", label: "Networkers" },
   { href: "/how-we-run", label: "How we run" },
@@ -21,7 +19,7 @@ const HOME_LINKS: NavItem[] = [
 
 const DEMO_LINKS: NavItem[] = [
   { href: "/", label: "Home" },
-  { href: "/submit", label: "Try it now" },
+  { href: "/#room", label: "Public room" },
   { href: "/extension", label: "Networkers" },
   { href: "/how-we-run", label: "How we run" },
   { href: "/dev", label: "Dev" },

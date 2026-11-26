@@ -20,7 +20,7 @@ const REPOS = [
   {
     name: "myproblem",
     href: "https://gitlab.com/clevertree/myproblem",
-    role: "Site (Vercel) — marketing, /submit, /t/",
+    role: "Site (Vercel) — marketing, homepage room, /t/",
   },
   {
     name: "myproblem-tickets",
@@ -53,8 +53,8 @@ export default function DevPage() {
             page is the public summary.
           </p>
           <div className="cta-row">
-            <Link className="btn-primary" href="/submit">
-              Try it now
+            <Link className="btn-primary" href="/#room">
+              Open the public room
             </Link>
             <Link className="btn-secondary" href="/extension">
               Relay for Networkers
@@ -78,7 +78,8 @@ export default function DevPage() {
             People file tickets; investigation is batched (Projects + KB), not a
             realtime frontier chatbot. Public help pages:{" "}
             <Link href="/t/garage-ring-power">/t/garage-ring-power</Link>. Web
-            submit is live at <Link href="/submit">/submit</Link>.
+            ask in the public room on the{" "}
+            <Link href="/#room">homepage</Link>.
           </p>
           <p>
             Ops cadence: daily anonymous tip/batch review, then next-day
@@ -147,7 +148,7 @@ export default function DevPage() {
             <li>
               <span className="phase">Done</span>
               <div>
-                Public `/t/` + FixIt theme; SI rename; garage pilot; web `/submit`
+                Public `/t/` + FixIt theme; SI rename; garage pilot; homepage room
                 with opt-in public slug; unpublish-slug; this Dev page.
               </div>
             </li>
@@ -165,7 +166,7 @@ export default function DevPage() {
             <li>
               <span className="phase is-next">Next</span>
               <div>
-                Phase 2 Spot automation; deferred video → choice stills + Bunny;
+                Phase 2 provider automation; deferred video → choice stills + Bunny;
                 batched coding/docs/networking Projects; shared QuizGate +
                 Clevertree queue drain; recover email / register; FixIt remote
                 when minted; broader regions.
@@ -183,7 +184,7 @@ export default function DevPage() {
             </li>
             <li>
               QA on web (<Link href="/">home</Link>,{" "}
-              <Link href="/submit">submit</Link>,{" "}
+              <Link href="/#room">public room</Link>,{" "}
               <Link href="/t/garage-ring-power">pilot ticket</Link>) and on
               phones.
             </li>

@@ -47,8 +47,8 @@ export default function ExtensionPage() {
           <a className="btn-primary" href="#install">
             Get Relay for Networkers
           </a>
-          <Link className="btn-secondary" href="/submit">
-            Just asking for help? Try it now
+          <Link className="btn-secondary" href="/#room">
+            Just asking for help? Open the public room
           </Link>
           <a
             className="btn-secondary"

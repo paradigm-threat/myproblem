@@ -1,0 +1,36 @@
+{
+  "schema": "clevertree.channel-policy.v1",
+  "notes": "Per-repo channel topology. One IRC channel can host many topics via context tags.",
+  "repos": {
+    "paradigm-threat": {
+      "default_channel": "#pt",
+      "channels": ["#pt"],
+      "topic_via": "context_tags",
+      "consolidate_from_prefix": "#pt-"
+    },
+    "myproblem": {
+      "default_channel": "#mp-general",
+      "demo_allowlist": ["mp-general", "ga-savannah-cat-rescue"],
+      "channels": {
+        "mp-general": {
+          "irc_channel": "#mp-general",
+          "title": "MyProblem general",
+          "path": "/c/mp-general"
+        },
+        "ga-savannah-cat-rescue": {
+          "irc_channel": "#ga-savannah-cat-rescue",
+          "title": "Savannah Cat Rescue",
+          "collection_id": "savannah-cat-rescue",
+          "path": "/c/ga-savannah-cat-rescue"
+        }
+      }
+    }
+  },
+  "mirrors": [
+    "pub1.relaygateway.net",
+    "mesh1.relaygateway.net",
+    "mesh2.relaygateway.net"
+  ],
+  "anonymous_default": true,
+  "visitor_uuid_for_chat": false
+}

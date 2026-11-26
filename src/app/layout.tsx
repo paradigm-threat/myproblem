@@ -2,7 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Fraunces, Manrope } from "next/font/google";
 import { JsonLd } from "@/components/JsonLd";
 import { ServiceWorkerRegister } from "@/components/ServiceWorkerRegister";
-import { CONTACT_EMAIL, OG_IMAGE, SITE_URL, SI_FULL } from "@/lib/contact";
+import { CONTACT_EMAIL, OG_IMAGE, SITE_URL } from "@/lib/contact";
 import "./globals.css";
 
 const fraunces = Fraunces({
@@ -33,7 +33,7 @@ export const metadata: Metadata = {
     default: "MyProblem — Free forever for everyone",
     template: "%s · MyProblem",
   },
-  description: `Free forever for everyone. Never enter a card. Tip the person, the ${SI_FULL}, or both when help was good. Local problems in Georgia and Israel pilots.`,
+  description: `Public chat + AI free forever. Ask in #mp-general — people and SI help in-channel. Private chat is the paid lane. Seeking donations for an educational public utility. Georgia and Israel pilots.`,
   applicationName: "MyProblem",
   category: "technology",
   manifest: "/manifest.webmanifest",
@@ -65,8 +65,9 @@ export const metadata: Metadata = {
     shortcut: ["/favicon.ico"],
   },
   openGraph: {
-    title: "MyProblem — Free forever for everyone",
-    description: `Free forever for everyone. Never enter a card. Tip the person, the ${SI_FULL}, or both when help was good.`,
+    title: "MyProblem — Public chat free forever",
+    description:
+      "Ask in #mp-general. Public chat + AI free forever. Private chat is the paid lane. Seeking donations for an educational public utility.",
     url: SITE_URL,
     siteName: "MyProblem",
     locale: "en_US",
@@ -75,8 +76,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "MyProblem — Free forever for everyone",
-    description: `Free forever for everyone. Never enter a card. Tip the person, the ${SI_FULL}, or both when help was good.`,
+    title: "MyProblem — Public chat free forever",
+    description:
+      "Ask in #mp-general. Public chat + AI free forever. Private chat is the paid lane.",
     images: [OG_IMAGE.url],
   },
   appleWebApp: {

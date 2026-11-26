@@ -1,0 +1,81 @@
+# Providers-only AI (canonical)
+
+**Locked:** MyProblem / Relay SI does **not** run a batch GPU fleet (no Spot A30 / Florence / self-hosted Whisper workers). All AI — text decisions, ASR, stills, and video understanding — goes through **metered API providers** (Groq, Bedrock, and peers). Switch models when cost or quality underperforms. **No custom model training for MVP** — quality comes from **context** (rules, KB, tip/thread retrieval, structured schemas).
+
+Replaces the abandoned Spot GPU MVP: [`abandoned/spot-ai-mvp.md`](./abandoned/spot-ai-mvp.md).
+
+Related: [`backbone-escalate.md`](./backbone-escalate.md) · [`batch-phases.md`](./batch-phases.md) · [`projects.md`](./projects.md) · [`progressive-transcription.md`](./progressive-transcription.md) · [`knowledge-base.md`](./knowledge-base.md).
+
+---
+
+## Architecture
+
+```mermaid
+flowchart LR
+  Capture[Capture_AV_text]
+  Intake[CPU_Intake_queue]
+  Providers[Groq_Bedrock_other_APIs]
+  Merge[SI_commit_merge]
+
+  Capture --> Intake
+  Intake -->|text_and_media| Providers
+  Providers -->|transcript_summary_verdict| Merge
+```
+
+| Layer | Role |
+|---|---|
+| **CPU Intake** | Always-on cache + enqueue; hard policy gates; no frontier in the live capture loop |
+| **Batch SI** | Phase 1 Cursor / Phase 2 automated drain on CPU — same procedure ([`batch-phases.md`](./batch-phases.md)) |
+| **Providers** | Groq / Bedrock / peers for ASR, VL, video, Project reasoning, Clevertree curation |
+| **KB + tip context** | Assembled into each call; check KB before expensive escalate |
+
+---
+
+## Provider / model switching
+
+- Prefer **cheap** models (e.g. Groq Scout / 8B class, Bedrock Haiku) for gray-zone spam, short verdicts, first-pass summaries.
+- Escalate or **switch** when confidence is low or eval shows underperformance (Sonnet / stronger VL / native video APIs).
+- Track **$/request** (tokens × list price or provider invoice fields). Surface after successful work. Public AI stays free; cost is covered by donations and (later) private-chat revenue ([`../src/app/how-we-run/page.tsx`](../src/app/how-we-run/page.tsx) intent — no tip-push on the homepage).
+- Recipes and preferred models live in public KB escalate docs — not in model weights.
+
+---
+
+## Context, not training (MVP)
+
+| Do | Don’t |
+|---|---|
+| Rules + few-shot + JSON schema | LoRA / SFT as a Phase 2 gate |
+| Region KB + tip retrieval before the call | Treat server weights as the knowledge store |
+| Hard policy before/after LLM | Let the model be the only spam gate |
+| Eval + switch provider/model | Fine-tune before automation |
+
+Optional later: distill a cheap specialist for one high-volume narrow job if API $ justifies it. Default remains providers + context.
+
+---
+
+## Media (audio / video / stills)
+
+| Job | Path |
+|---|---|
+| ASR | Provider API (e.g. Groq Whisper) from the **batch** worker only — never a client `/api/transcribe` |
+| Stills / OCR / VL | Provider vision APIs |
+| Deferred video | Provider video understanding (or frame package → VL); no local GPU preprocess fleet |
+| Choice stills | Batch may still select/publish Bunny stills after provider analysis |
+
+Realtime path stays stills (+ audio on APK); no live server video analysis.
+
+---
+
+## Cost publicity + donations
+
+Relay Network is SI-driven and free to use. Donations / voluntary tips keep **servers** and **metered AI** running. We **publish what requests cost**. Tips are voluntary. A future educational 501(c)(3) may fund free public AI separately from Clevertree LLC products ([QuizGate 501C3 plan](../../tablet/quizgate/docs/501C3_PLAN.md)).
+
+---
+
+## Ordered next steps
+
+1. Wire Intake → shared queue → batch SI calling Groq/Bedrock (ASR + text decide first).
+2. Log `$/request` on each provider call; show after successful ticket/Project steps (UX).
+3. Add model-switch eval sheet (correct / accurate / fast / $).
+4. Video/still provider path for deferred inbox jobs.
+5. KB recipes for escalate + preferred model ids.

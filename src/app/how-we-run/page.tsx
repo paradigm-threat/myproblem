@@ -10,7 +10,8 @@ import {
 } from "@/lib/contact";
 
 const TITLE = "How we run";
-const DESCRIPTION = `No salaries or subscriptions. Never enter a card. Tip the person, the ${SI_FULL}, or both when help was good. Intent, not a contract.`;
+const DESCRIPTION =
+  "Public chat + AI free forever. Private chat is the paid lane. Seeking tax-deductible donations for an educational public utility. Intent, not a contract.";
 
 export const metadata: Metadata = {
   title: TITLE,
@@ -32,24 +33,23 @@ export const metadata: Metadata = {
 
 const FAQ = [
   {
-    question: "Does anyone pay?",
+    question: "Does anyone pay for public help?",
     answer:
-      "No. Free forever for everyone — people and shops. Nobody pays to join, to file a ticket, to see a request, or to answer. There is no membership, no lead invoice, and no subscription. Anyone can leave a tip after a good experience. It is never required.",
+      "No. Public chat rooms and channel AI are free forever for everyone. Nobody pays to join, to ask in #mp-general, or to get help there. There is no membership, no lead invoice, and no subscription for the public path.",
   },
   {
-    question: "When does anyone tip?",
+    question: "What is paid?",
     answer:
-      `Only when they want to. You should never expect to enter a card. If the help was good, tip the person who helped, the ${SI_FULL} that helped, or both. A gift to the SI keeps the machines running. $1, $5, and $10 are examples, not prices.`,
+      "Private chat is the paid lane — that revenue is meant to fund the public utility. Metered billing is not shipping on this pass; this page states intent only.",
   },
   {
-    question: "What about people who cannot tip?",
-    answer:
-      "They get the same help. A tip measures a good experience. It is not a ticket to use the service.",
+    question: "How do donations work?",
+    answer: `We seek tax-deductible donations to support MyProblem as an educational public utility (pursuing 501(c)(3)-compatible structure). We do not claim that nonprofit status already exists unless and until the entity is established. Donations help cover servers and metered ${SI_FULL} (Groq / Bedrock / peers).`,
   },
   {
-    question: "What replaces a salary?",
+    question: "What about people who cannot donate?",
     answer:
-      "A tip after the work actually helped. It is the old way of paying for good work. It is not a paycheck for showing up, and it is not a subscription.",
+      "They get the same public help. A donation is never a ticket to use the service.",
   },
   {
     question: "Is this a job?",
@@ -86,29 +86,29 @@ export default function HowWeRunPage() {
         <p className="eyebrow">Clevertree LLC · Georgia</p>
         <h1 className="legal-title">How we run</h1>
         <p className="section-lead">
-          Relay already left salaries behind. The next break is the tip, the
-          old way of paying for good work. You should never expect to enter a
-          card. If the help was good, tip the person, the {SI_FULL}, or both. This
-          page is intent. It is not a contract and not an offer.
+          Public chat + AI stay free forever. Private chat is the paid lane that
+          funds the public room. We seek tax-deductible donations under an
+          educational public-utility framing. You should never expect to enter a
+          card for public help. This page is intent — not a contract and not an
+          offer.
         </p>
 
         <section aria-labelledby="principles-heading">
           <h2 id="principles-heading">Principles</h2>
           <ul>
-            <li>No salaries, and no subscription.</li>
+            <li>No salaries, and no subscription for public help.</li>
             <li>
-              Free forever for everyone.{" "}
-              <strong>Max and simple</strong> — anonymous first, no paywall, no
-              fee later. You should never expect to enter a card.
+              Free forever for public chat + AI.{" "}
+              <strong>Max and simple</strong> — anonymous first, no paywall.
+              You should never expect to enter a card on that path.
             </li>
             <li>
-              If the help was good, tip the person who helped, the SI that
-              helped, or both. A gift to the SI keeps the machines running.
-              Part of a tip to a person, or a second tip, can do the same.
+              Private chat (when shipped) funds the mesh. Relay node operators
+              may later earn on private usage if compliant — future work.
             </li>
             <li>
-              People who cannot tip get the same help. A tip follows a success.
-              It is not a bill.
+              Donations welcome for the public utility. People who cannot donate
+              get the same public help.
             </li>
           </ul>
         </section>
@@ -116,16 +116,23 @@ export default function HowWeRunPage() {
         <section aria-labelledby="words-heading">
           <h2 id="words-heading">Words we use</h2>
           <dl className="glossary">
-            <dt>Salary</dt>
-            <dd>A paycheck for showing up, whether or not work settled.</dd>
-            <dt>Subscription</dt>
-            <dd>A bill that arrives whether or not the help was any good.</dd>
-            <dt>Tip</dt>
+            <dt>Public room</dt>
             <dd>
-              A voluntary thank-you after a good experience, for a person, for
-              the SI and its hosting, or both. Any time, any amount. $1, $5,
-              and $10 are examples.
+              IRC channels such as #mp-general. Posts are visible; there is no
+              private mode on the foundation product submit path.
             </dd>
+            <dt>Private chat</dt>
+            <dd>
+              The paid lane (planned). Revenue funds free public AI and rooms.
+            </dd>
+            <dt>Donation</dt>
+            <dd>
+              Voluntary support for the educational public utility. We are
+              pursuing tax-deductible / 501(c)(3)-compatible structure; do not
+              read this as a claim that status already exists.
+            </dd>
+            <dt>Subscription</dt>
+            <dd>A bill that arrives whether or not the help was any good — not how public help works.</dd>
           </dl>
         </section>
 
@@ -134,8 +141,7 @@ export default function HowWeRunPage() {
           <ul>
             <li>
               <strong>Max and simple</strong> — full help behind few modes. Free
-              for everyone (anonymous first, no paywall). Free forever (no fee
-              later).
+              for everyone on the public path.
             </li>
             <li>Thorough over instant.</li>
             <li>A shop may stay silent. Silence is a valid outcome.</li>
@@ -152,13 +158,8 @@ export default function HowWeRunPage() {
           <h2 id="daily-ops-heading">Daily ops</h2>
           <p>
             Thorough does not mean slow to notice. Each day we review anonymous
-            tip and batch signals, assess what the product needs, and ship
-            updates—often the next day. A small A-team plus LLM agents works at
-            the development cadence of a major organization. The edge is
-            visibility: private, accurate, anonymous stats and ticket aggregates
-            (not identity dossiers) so we can respond in near–real time when
-            larger orgs cannot see or act that fast on privacy-preserving
-            signals. Same loop as{" "}
+            batch signals, assess what the product needs, and ship updates—often
+            the next day. Same loop as{" "}
             <a href="https://quizgate.app/#daily-loop">QuizGate</a>,{" "}
             <a href="https://clevertree.chat/">Clevertree Chat</a>, and{" "}
             <a href="https://clevertree.net/">Clevertree</a>.
@@ -167,7 +168,7 @@ export default function HowWeRunPage() {
             North star: much of this becomes automated so a detailed user report
             can drive triage and a patch without a developer in the middle. We
             are not claiming that automation is finished—only that it is the
-            goal. Tips still measure good help; they never buy ranking.
+            goal.
           </p>
         </section>
 
@@ -197,50 +198,23 @@ export default function HowWeRunPage() {
               src="/investors.jpg?v=2"
               width={1024}
               height={576}
-              alt="MyProblem for investors. No promised return. Using the service never requires a payment. A tip can go to the person, the SI, or both. A five or ten dollar tip from a delighted person beats one dollar. Most people will not tip."
+              alt="MyProblem funding: public chat free forever; private chat as paid lane; donations for educational public utility. No promised return."
             />
           </picture>
           <p>
-            This is the Relay compensation we want. It helps the most people,
-            because a missing card never blocks the help. Money shows up only
-            when the SI or another person actually came through. A happy person
-            might leave $1, $5, or $10, for the person who helped, the SI that
-            helped, or both. That feeling is the signal a subscription cannot
-            make. We still want a compatible world network: the same tickets,
-            findable across places, with gifts able to reach the people running
-            local hardware. There is no promised return. This is intent, not an
-            offer. Nothing here binds anyone until a separate written agreement
-            says so.
+            We want a compatible world network: the same public rooms and
+            problems, findable across places. Money for the public path comes
+            from donations and, later, private-chat revenue — not from blocking
+            people who cannot pay. There is no promised return. This is intent,
+            not an offer. Nothing here binds anyone until a separate written
+            agreement says so.
           </p>
           <h3 id="illustration-heading">An illustration, not a forecast</h3>
           <p>
             A Relay node can start small. The SI bill cannot. One region of
             vision is on the order of a few hundred dollars a month, and a
-            two-region pilot is about $700 to $2,000. A modest computer does
-            not pay that bill.
-          </p>
-          <p>
-            Imagine a $1 subscription collected from every person who uses the
-            product at least once a month. That raises $1 per person.
-            Infrastructure tips raise the share who tip the machines, times the
-            average gift to the machines. Those match when that product is $1.
-          </p>
-          <ul>
-            <li>
-              If 20% tip $5 to the machines, or 10% tip $10, that is about $1.
-              A tie with charging everyone $1.
-            </li>
-            <li>If 10% tip $5, that is about $0.50. The subscription raises more.</li>
-            <li>If 30% tip $5, that is about $1.50. Tips raise more.</li>
-          </ul>
-          <p>
-            A delighted $5 or $10 beats a $1 subscription from that one person.
-            The average does not, unless many people do it. Tipping a person is
-            an old habit. Tipping the machines that ran the SI is the hard
-            part, and it is the gift that keeps the project running. We have no
-            users yet, so these rates are arithmetic, not a measurement. Gifts
-            might later cover a busy region. They do not guarantee that a
-            hardware check comes back.
+            two-region pilot is about $700 to $2,000. Private chat metering and
+            donations are meant to cover that — not tip-push on every screen.
           </p>
           <p>
             Write{" "}

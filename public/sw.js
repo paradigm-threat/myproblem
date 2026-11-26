@@ -1,7 +1,7 @@
 /* MyProblem outbox PWA service worker */
-const SHELL_CACHE = "myproblem-shell-v1";
+const SHELL_CACHE = "myproblem-shell-v2";
 const SHELL_URLS = [
-  "/submit",
+  "/",
   "/offline.html",
   "/manifest.webmanifest",
   "/icons/icon-192.png",
@@ -9,6 +9,8 @@ const SHELL_URLS = [
   "/icons/android-chrome-192.png",
   "/icons/android-chrome-512.png",
   "/design/ui-kit/icons.svg",
+  "/chat-room/clevertree-room.js",
+  "/chat-room/clevertree-room.css",
 ];
 
 self.addEventListener("install", (event) => {
@@ -59,7 +61,7 @@ self.addEventListener("fetch", (event) => {
         .catch(async () => {
           const cached =
             (await caches.match(req)) ||
-            (await caches.match("/submit")) ||
+            (await caches.match("/")) ||
             (await caches.match("/offline.html"));
           return cached || Response.error();
         }),

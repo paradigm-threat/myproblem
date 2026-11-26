@@ -1,0 +1,40 @@
+/* CleverTree Chat design tokens; pixel lengths are CSS px. */
+:root {
+  --ct-brand: #225744;
+  --ct-paper: #faf9f5;
+  --ct-canvas: #fffefa;
+  --ct-ink: #202d29;
+  --ct-muted: #52645c;
+  --ct-sage: #e8f0e9;
+  --ct-line: #d9ded6;
+  --ct-warning-ink: #79501d;
+  --ct-warning-surface: #f8edd6;
+  --ct-online: #39855e;
+  --ct-focus: #a57026;
+  --ct-ai-surface: #f1f3ed;
+  --ct-control-border: #9eafa3;
+  --ct-sans: Lato, Aptos, 'Trebuchet MS', sans-serif;
+  --ct-mono: 'IBM Plex Mono', 'DejaVu Sans Mono', monospace;
+  --ct-title: 25px;
+  --ct-body: 15px;
+  --ct-nick: 13px;
+  --ct-time: 11px;
+  --ct-space-1: 4px; --ct-space-2: 8px; --ct-space-3: 12px;
+  --ct-space-4: 16px; --ct-space-6: 24px; --ct-space-8: 32px;
+  --ct-control-radius: 6px;
+  --ct-media-radius: 7px;
+  --ct-composer-radius: 8px;
+  --ct-dialog-radius: 12px;
+  --ct-message-max: 850px;
+  --ct-panel-width: 320px;
+  --ct-touch-target: 44px;
+  --ct-motion-panel: 200ms;
+  --ct-motion-dialog: 170ms;
+  --ct-motion-control: 160ms;
+}
+@media (max-width:700px) {
+  :root { --ct-title:20px; --ct-body:14px; --ct-nick:12px; --ct-time:10px; }
+}
+@media (prefers-reduced-motion:reduce) {
+  :root { --ct-motion-panel:0ms; --ct-motion-dialog:0ms; --ct-motion-control:0ms; }
+}

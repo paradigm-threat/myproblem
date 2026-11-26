@@ -120,7 +120,7 @@ export function ticketJsonLd(problem: PublicProblemView) {
             "@type": "ListItem",
             position: 2,
             name: "Problem tickets",
-            item: `${SITE_URL}/submit`,
+            item: `${SITE_URL}/`,
           },
           {
             "@type": "ListItem",

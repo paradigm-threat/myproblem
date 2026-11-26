@@ -2,7 +2,7 @@ import type { MetadataRoute } from "next";
 import { SITE_URL } from "@/lib/contact";
 
 /** Change this when a public page's content changes. Do not use new Date(). */
-const CONTENT_UPDATED = new Date("2026-11-19");
+const CONTENT_UPDATED = new Date("2026-11-26");
 
 export default function sitemap(): MetadataRoute.Sitemap {
   return [
@@ -13,16 +13,28 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 1,
     },
     {
-      url: `${SITE_URL}/submit`,
+      url: `${SITE_URL}/c/mp-general`,
       lastModified: CONTENT_UPDATED,
       changeFrequency: "weekly",
-      priority: 0.95,
+      priority: 0.94,
+    },
+    {
+      url: `${SITE_URL}/c/ga-savannah-cat-rescue`,
+      lastModified: CONTENT_UPDATED,
+      changeFrequency: "weekly",
+      priority: 0.9,
     },
     {
       url: `${SITE_URL}/extension`,
       lastModified: CONTENT_UPDATED,
       changeFrequency: "weekly",
       priority: 0.9,
+    },
+    {
+      url: `${SITE_URL}/networkers`,
+      lastModified: CONTENT_UPDATED,
+      changeFrequency: "weekly",
+      priority: 0.88,
     },
     {
       url: `${SITE_URL}/dev`,
