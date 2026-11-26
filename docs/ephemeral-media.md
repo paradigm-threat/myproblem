@@ -9,7 +9,7 @@
 | **Realtime intake** (APK / web coach SEND) | **Stills only** (+ audio for ASR). **No video upload** on the live path. | On-device gate (unique/worthy frames) + **Batch scrub** before public | Choice stills only |
 | **Deferred / social / Bunny inbox** | **Any file type** (video, audio, still, other) into Intake cache or private Bunny inbox | **Batch only** — no client scrub for internet-sourced media (bandwidth) | Choice stills only; unused video/audio/raw deleted |
 
-Realtime avoids video because live hardware is small. Batch (Phase 1 Cursor / Phase 2 Spot — [`batch-phases.md`](./batch-phases.md)) may take its time: extract frames, pick unique ones, scrub, then publish stills via the repo’s **Bunny upload source**.
+Realtime avoids video because live hardware is small. Batch (Phase 1 Cursor / Phase 2 CPU + providers — [`batch-phases.md`](./batch-phases.md) · [`providers-ai.md`](./providers-ai.md)) may take its time: provider video/VL, pick unique frames, scrub, then publish stills via the repo’s **Bunny upload source**.
 
 ## Hard rules
 

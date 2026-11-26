@@ -114,6 +114,19 @@
         <p class="mpx-meta" id="page-line">Detecting…</p>
         <p class="mpx-meta" id="entry-line">Collection: …</p>
         <p class="mpx-meta" id="irc-line">Craft IRC: …</p>
+        <div class="mpx-actions">
+          <button type="button" id="btn-track-page" class="secondary">Track this page</button>
+        </div>
+      </section>
+
+      <section class="mpx-section" aria-labelledby="tracked-h">
+        <h2 id="tracked-h">Tracked pages</h2>
+        <p class="mpx-hint" id="tracked-empty">No locally tracked pages yet.</p>
+        <ul id="tracked-list" class="mpx-roster" hidden></ul>
+        <div class="mpx-actions">
+          <button type="button" id="btn-automate-all" class="secondary">Automate all</button>
+        </div>
+        <small class="mpx-hint">Local only — Track does not upload. Automate all gathers each tracked page in turn.</small>
       </section>
 
       <section class="mpx-section" aria-labelledby="roster-h">
@@ -156,7 +169,7 @@
       <p class="mpx-tag" id="collection-tag" hidden></p>
       <p class="mpx-stats" id="stats-line" hidden></p>
 
-      <a class="mpx-footlink" href="https://myproblem.app/submit" target="_blank" rel="noopener">Submit a problem on the website</a>
+      <a class="mpx-footlink" href="https://myproblem.app/#room" target="_blank" rel="noopener">Ask in the public room</a>
       <a class="mpx-footlink" href="https://clevertree.chat" target="_blank" rel="noopener">Coordinate in Clevertree Chat</a>
     </section>
 
@@ -187,7 +200,7 @@
       <span id="ext-version-foot"></span>
       ·
       <a href="https://myproblem.app/extension" target="_blank" rel="noopener">myproblem.app/extension</a>
-      · Never auto-sends · Never auto-uploads
+      · Never auto-posts to social · Refresh queues private upload
     </footer>
   </div>
   <script src="lib/scrub.js"></script>

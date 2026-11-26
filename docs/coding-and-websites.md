@@ -40,4 +40,4 @@ Website copy should highlight this as a **major thing we are providing soon** �
 
 Solving problems includes **digital** problems: “I need a real website” or “finish this coding task thoroughly overnight” is as valid as “my sink is clogged.” Competitive search pushes expensive builders and realtime IDE hype; our KB stores the **operational** free path, and Projects store the **thorough batch** path.
 
-Related: [`projects.md`](./projects.md) · [`batched-agent-work.md`](./batched-agent-work.md) · [`spot-ai-mvp.md`](./spot-ai-mvp.md) · Relay plan `02-vision-product.md` · `10-batched-agent-work.md`.
+Related: [`projects.md`](./projects.md) · [`batched-agent-work.md`](./batched-agent-work.md) · [`providers-ai.md`](./providers-ai.md) · Relay plan `02-vision-product.md` · `10-batched-agent-work.md`.

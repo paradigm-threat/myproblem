@@ -5,7 +5,7 @@ The live assistant gathers the problem and stops when it should not keep advisin
 **Two layers** ([`batch-phases.md`](./batch-phases.md)):
 
 1. **User-facing (this doc):** Understanding + Solution on tips/replies — show whenever possible.
-2. **Operator:** per batch-run correct / accurate / fast — Phase 2 Spot go-live gate (logged by Cursor Phase 1).
+2. **Operator:** per batch-run correct / accurate / fast / $ — Phase 2 automation go-live gate (logged by Cursor Phase 1).
 
 Related: [`projects.md`](./projects.md) · [`backbone-escalate.md`](./backbone-escalate.md) · [`pii-and-privacy.md`](./pii-and-privacy.md) · [`anonymous-tickets.md`](./anonymous-tickets.md) · [`apk-ticket-ux.md`](./apk-ticket-ux.md) · [`cursor-batch-playbook.md`](./cursor-batch-playbook.md).
 

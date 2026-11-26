@@ -631,7 +631,7 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
       return;
     }
 
-    if (msg.type === "MPX_UPLOAD_STUB") {
+    if (msg.type === "MPX_UPLOAD_STUB" || msg.type === "MPX_UPLOAD") {
       const cur = await loadBatch();
       if (!uploadEnabled(cur)) {
         sendResponse({
@@ -646,32 +646,103 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
         });
         return;
       }
-      let mediaCount = 0;
+      let mediaBlobs = [];
       try {
-        const all = await self.MyProblemMediaIdb.listBlobs();
-        mediaCount = all.length;
-      } catch (_) {}
-      // Intake not configured — honest stub + contract for later wiring
-      sendResponse({
-        ok: false,
-        error: "intake_not_configured",
-        batch: cur,
-        upload_enabled: true,
-        media_files: mediaCount,
-        contract: {
+        mediaBlobs = await self.MyProblemMediaIdb.listBlobs();
+      } catch (_) {
+        mediaBlobs = [];
+      }
+      const stored = await chrome.storage.local.get([
+        "mpx_networker_id",
+        "mpx_upload_base",
+      ]);
+      let networkerId = stored.mpx_networker_id;
+      if (!networkerId) {
+        networkerId =
+          "nw_" +
+          Math.random().toString(36).slice(2) +
+          Date.now().toString(36);
+        await chrome.storage.local.set({ mpx_networker_id: networkerId });
+      }
+      const base =
+        (stored.mpx_upload_base || "https://myproblem.app").replace(/\/$/, "");
+      const form = new FormData();
+      form.append("batch", JSON.stringify(cur));
+      form.append("networker_id", networkerId);
+      const groupKey =
+        (cur.source &&
+          (cur.source.group_url ||
+            cur.source.group_secure_id ||
+            cur.source.url)) ||
+        "unknown";
+      form.append("group_key", String(groupKey));
+      for (let i = 0; i < mediaBlobs.length; i++) {
+        const m = mediaBlobs[i];
+        if (!m) continue;
+        const name = m.local_name || m.id || `media_${i}.bin`;
+        let fileBlob = m.blob || null;
+        if (!fileBlob && m.buffer) {
+          fileBlob = new Blob([m.buffer], {
+            type: m.contentType || "application/octet-stream",
+          });
+        }
+        if (!fileBlob) continue;
+        form.append(name, fileBlob, name);
+      }
+      try {
+        const res = await fetch(`${base}/api/social-capture/upload`, {
           method: "POST",
-          path: "/api/social-capture/upload",
-          content_type: "multipart/form-data",
-          fields: {
-            batch: "myproblem.capture_batch.v1 JSON",
-            file: "repeated parts named by media local_name",
-          },
-          notes:
-            "Server stores Intake cache / private Bunny inbox; Batch media_frame_select → choice stills; unused video purged. Extension never holds BUNNY_STORAGE_API_KEY.",
-        },
-        message:
-          `Intake upload not configured yet (${mediaCount} local media file(s) ready). Use Export batch + media, or wait for server upload.`,
-      });
+          body: form,
+        });
+        const text = await res.text();
+        let body = null;
+        try {
+          body = JSON.parse(text);
+        } catch (_) {
+          body = { raw: text };
+        }
+        if (!res.ok) {
+          sendResponse({
+            ok: false,
+            error: (body && body.error) || `http_${res.status}`,
+            batch: cur,
+            upload_enabled: true,
+            media_files: mediaBlobs.length,
+            response: body,
+            message:
+              (body && body.message) ||
+              `Upload failed (${res.status}). Export JSON as fallback.`,
+          });
+          return;
+        }
+        if (body && body.status !== "already_synced") {
+          cur.upload = {
+            state: "synced",
+            last_uploaded_at: new Date().toISOString(),
+            last_content_hash: cur.content_hash,
+          };
+          await saveBatch(cur);
+        }
+        sendResponse({
+          ok: true,
+          batch: cur,
+          upload_enabled: uploadEnabled(cur),
+          media_files: mediaBlobs.length,
+          response: body,
+          message:
+            (body && body.message) ||
+            `Uploaded to private queue (${body && body.status})`,
+        });
+      } catch (e) {
+        sendResponse({
+          ok: false,
+          error: "upload_network",
+          batch: cur,
+          upload_enabled: true,
+          media_files: mediaBlobs.length,
+          message: String(e && e.message ? e.message : e),
+        });
+      }
       return;
     }
 

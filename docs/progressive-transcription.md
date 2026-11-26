@@ -108,7 +108,7 @@ Each ASR pass appends a new `transcript` Evidence row (do not overwrite):
   "version": 2,
   "text": "…",
   "language": "en",
-  "model": "whisper-large-v3",
+  "model": "whisper-large-v3-turbo",
   "contextSnapshot": {
     "knownNames": ["Ari"],
     "ocrSnippets": ["SERIAL 4X9"],

@@ -10,7 +10,7 @@ Related: [`knowledge-base.md`](./knowledge-base.md) · [`fixit-and-repair.md`](.
 
 ## One-sentence rule
 
-> **Score only repos that already exist; multi-associate; one home tip; if nothing fits or a new topic is proposed, cache on the server and wait for a human during batch — humans mint private ticket + public KB remotes manually; batch (Cursor Phase 1 / Spot Phase 2) writes tips/KB after remotes exist; public reads KB, tips stay capability-private.**
+> **Score only repos that already exist; multi-associate; one home tip; if nothing fits or a new topic is proposed, cache on the server and wait for a human during batch — humans mint private ticket + public KB remotes manually; batch (Cursor Phase 1 / automated Phase 2) writes tips/KB after remotes exist; public reads KB, tips stay capability-private.**
 
 ---
 

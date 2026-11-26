@@ -17,13 +17,14 @@
   /**
    * Nextdoor group feed (2026): real card root is feed-item-card.
    * Broad *[data-testid*="post"] matches buttons/timestamps — do NOT use as card root.
+   * Defaults match data/selectors-nextdoor.v1.json; remote pack may override.
    */
-  const CARD_SELECTORS = [
+  let CARD_SELECTORS = [
     '[data-testid="feed-item-card"]',
     '[data-testid="feed-item-visibility-tracker"]',
   ];
 
-  const PROBE_SELECTORS = [
+  let PROBE_SELECTORS = [
     '[data-testid="feed-item-card"]',
     '[data-testid="feed-item-visibility-tracker"]',
     '[data-testid="post-body"]',
@@ -33,6 +34,32 @@
     '[data-testid*="post"]',
     '[data-testid*="feed-item"]',
   ];
+
+  async function loadSelectorPack() {
+    try {
+      const bundled = await fetch(
+        chrome.runtime.getURL("data/selectors-nextdoor.v1.json")
+      ).then((r) => (r.ok ? r.json() : null));
+      let pack = bundled;
+      try {
+        const remote = await fetch(
+          "https://myproblem.app/api/social-capture/selectors/nextdoor",
+          { cache: "no-store" }
+        ).then((r) => (r.ok ? r.json() : null));
+        // Prefer remote only when server marks it signed (TLS + HMAC present).
+        if (remote && remote.ok && remote.signed && remote.pack) {
+          pack = remote.pack;
+        }
+      } catch (_) {}
+      if (pack && Array.isArray(pack.card_selectors) && pack.card_selectors.length) {
+        CARD_SELECTORS = pack.card_selectors;
+      }
+      if (pack && Array.isArray(pack.probe_selectors) && pack.probe_selectors.length) {
+        PROBE_SELECTORS = pack.probe_selectors;
+      }
+    } catch (_) {}
+  }
+  void loadSelectorPack();
 
   function scrubMaybe(s) {
     if (globalThis.MyProblemScrub && globalThis.MyProblemScrub.scrubText) {
@@ -1252,6 +1279,11 @@
   }
 
   function emitDeepProgress(payload) {
+    updateGatherOverlay(
+      payload && payload.current,
+      payload && payload.total,
+      payload && (payload.notes || payload.phase)
+    );
     chrome.runtime
       .sendMessage({ type: "MPX_DEEP_PROGRESS", ...payload })
       .catch(() => {});
@@ -1456,22 +1488,50 @@
   const OVERLAY_ID = "__mpx_gather_overlay__";
 
   function showGatherOverlay() {
-    if (document.getElementById(OVERLAY_ID)) return;
-    const el = document.createElement("div");
+    let el = document.getElementById(OVERLAY_ID);
+    if (el) return el;
+    el = document.createElement("div");
     el.id = OVERLAY_ID;
     el.setAttribute("role", "alertdialog");
     el.setAttribute("aria-live", "assertive");
     el.style.cssText =
       "position:fixed;inset:0;z-index:2147483647;background:#070d18ed;" +
-      "display:grid;place-items:center;padding:24px;font-family:system-ui,sans-serif;";
+      "display:grid;place-items:center;padding:24px;font-family:system-ui,sans-serif;" +
+      "pointer-events:all;";
     el.innerHTML =
       '<div style="max-width:460px;text-align:center;background:#0f1a2c;border:1px solid #72859d;' +
       'padding:28px;border-radius:16px;color:#f3f7fc;">' +
       "<h1 style=\"margin:0 0 12px;font-size:1.75rem;\">Please wait</h1>" +
-      "<p style=\"margin:8px 0;line-height:1.5;\">Relay is gathering posts from this group.</p>" +
+      '<p id="__mpx_overlay_progress__" style="margin:8px 0;line-height:1.5;">Relay is gathering posts from this group.</p>' +
       "<p style=\"margin:8px 0;line-height:1.5;\">Leave this page open. You can use it again when gathering finishes.</p>" +
-      '<small style="color:#b6c5d7;">Progress is shown in the Relay side panel.</small></div>';
+      '<small id="__mpx_overlay_eta__" style="color:#b6c5d7;">Starting…</small></div>';
     document.documentElement.appendChild(el);
+    return el;
+  }
+
+  function updateGatherOverlay(current, total, notes) {
+    showGatherOverlay();
+    const p = document.getElementById("__mpx_overlay_progress__");
+    const e = document.getElementById("__mpx_overlay_eta__");
+    const cur = Number(current) || 0;
+    const tot = Number(total) || 0;
+    if (p) {
+      p.textContent =
+        tot > 0
+          ? `Gathering posts ${cur} / ${tot}` + (notes ? ` · ${notes}` : "")
+          : "Relay is gathering posts from this group.";
+    }
+    if (e) {
+      if (tot > 0 && cur > 0) {
+        const remaining = Math.max(0, tot - cur);
+        e.textContent =
+          remaining === 0
+            ? "Finishing…"
+            : `About ${remaining} post${remaining === 1 ? "" : "s"} left`;
+      } else {
+        e.textContent = "Leave this tab open";
+      }
+    }
   }
 
   function hideGatherOverlay() {

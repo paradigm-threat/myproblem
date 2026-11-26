@@ -42,7 +42,7 @@ Batch agent
 | Hardware | Linode Shared 8 GB `pub1` (`us-iad`) | Phase 1: operator Cursor; Phase 2: CPU worker (no GPU fleet) |
 | Role | Gateway + **cache/enqueue** (+ SSR of committed tips) | Provider ASR/VL/Project + tip/KB commits |
 | Images | Accept JPEG (hash, enqueue `vision`) — **no VL/OCR on Intake** | Provider VL / choice-media |
-| ASR | Enqueue job file only | Groq `whisper-large-v3` (or peer) from batch |
+| ASR | Enqueue job file only | Groq `whisper-large-v3-turbo` (or peer) from batch; channel ASR soft-capped on pub1 |
 | Video | Enqueue deferred inbox only | Provider video understanding |
 | Capacity | Always-on | **No paid lane** — shared provider budget; busy = honest wait |
 

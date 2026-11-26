@@ -62,7 +62,9 @@ Text SI does **not** run on every message. CPU heuristics file claims; Groq text
 
 Ops: `action=drain_investigate`, `action=quota_status`. Deny replies: `SI: investigate cooling down…`.
 
-**ASR caveat:** channel / tip **Whisper ASR stays on Groq** (or `CLEVERTREE_ASR_DRY_RUN` / pending), automatic on media, soft-capped (`CLEVERTREE_ASR_SOFT_RPD=1500`, `CLEVERTREE_ASR_SOFT_RPM=15`), default model `whisper-large-v3-turbo`. There is **no Bedrock drop-in** for Whisper. On Groq 429 or soft cap, ASR jobs return to `pending`.
+**Reply handling (today):** `SI investigate:` lines are **in-channel chat only** (WS + IRC log). They are **not** auto-parsed into debate keys, counters, or tickets — humans (or a later batch/Cursor pass) act on them. Prefer `max_tokens` ≥ ~400–600 with `openai/gpt-oss-20b` (reasoning tokens can leave `content` empty at low caps). HTTP clients must send a `User-Agent` (pub1 Groq calls use `clevertree-chat/1.0`) or Cloudflare may return **403/1010**.
+
+**ASR caveat:** channel / tip **Whisper ASR stays on Groq** (or `CLEVERTREE_ASR_DRY_RUN` / pending), automatic on media, soft-capped (`CLEVERTREE_ASR_SOFT_RPD=1500`, `CLEVERTREE_ASR_SOFT_RPM=15`), default model `whisper-large-v3-turbo`. Audio **and** video markers are ASR-eligible (speech track); there is **no** live VL / “watch the video” path yet. There is **no Bedrock drop-in** for Whisper. On Groq 429 or soft cap, ASR jobs return to `pending`.
 
 ---
 

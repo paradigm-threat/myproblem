@@ -6,7 +6,7 @@ MyProblem’s **primary means of knowledge and research** is a **public region-s
 
 **Disclaimer (locked):** KB content is **completely speculative** in the product sense — derived from **user contributions** and **AI investigations** only. It is **never** ranked by algorithm for pay, SEO games, or **boosting**. **Boosting is forbidden.** Readers and tickets must see that honesty.
 
-We learn by **writing, re-testing, refining, or ditching** KB advice — and by **not forgetting** what we learned (git history). Bedrock / research tools exist to **mint or update** those files. The server LLM is only adjusted so it can **perform our vision better** — not so it can “know more” by itself.
+We learn by **writing, re-testing, refining, or ditching** KB advice — and by **not forgetting** what we learned (git history). Provider APIs (Groq / Bedrock / peers) + research tools exist to **mint or update** those files. MVP quality is **context + KB**, not custom training ([`providers-ai.md`](./providers-ai.md)).
 
 Related: [`projects.md`](./projects.md) · [`backbone-escalate.md`](./backbone-escalate.md) · [`infra-definition.md`](./infra-definition.md) · Relay vision in `clevertree-llc-plan/02-vision-product.md` · KB [`STORE_POLICY.md`](../../myproblem-kb/docs/STORE_POLICY.md) · Paradigm Threat patterns in `paradigm-threat-files`.
 
@@ -23,21 +23,21 @@ Paid search and directories fight over **advertisement rankings**. MyProblem sta
 | Weights as “memory” | Continuously **re-tested** git Markdown; retire dead advice |
 | Escalate first, forget later | **KB first**; never forget lessons without trail |
 
-**Growth rule:** store only what serves **problem-solving for the app** — local resource wisdom, general repair/DIY when grounded, **best sources**, **batch prompts**, and **escalate recipes** (Bedrock, Grok, …) the SI uses when confidence is low. Do not absorb world trivia or treat model weights as the knowledge store.
+**Growth rule:** store only what serves **problem-solving for the app** — local resource wisdom, general repair/DIY when grounded, **best sources**, **batch prompts**, and **escalate recipes** (Groq, Bedrock, preferred model ids, …) the SI uses when confidence is low. Do not absorb world trivia or treat model weights as the knowledge store.
 
 **Searchable ≠ store (locked):** Hours, phone, menus, Wikipedia, directory scrapes stay on the live web — **cite, don’t cache**. Store **ticket-driven assessments**, DIY lessons, automation Limits, investigation prompts, and other **useful, provable-enough** advice. Full policy: [`STORE_POLICY.md`](../../myproblem-kb/docs/STORE_POLICY.md).
 
-**Who writes:** Batch only (Phase 1 Cursor / Phase 2 Spot). Intake does not commit KB files.
+**Who writes:** Batch only (Phase 1 Cursor / Phase 2 CPU + providers). Intake does not commit KB files.
 
 **Ticket-driven business pages only:** An assessment of a company exists **only** because a Project thoroughly investigated that company **for someone’s ticket** — never a crawl of every shop.
 
 **Learning rule (locked):**
 
-1. **Check the KB** before expensive research or Bedrock escalate.  
+1. **Check the KB** before expensive research or provider escalate.  
 2. When research or escalate runs, write **useful non-searchable** residue into the KB (redacted).  
 3. **Re-test** advice on later tickets; **refine or ditch** what stops helping; keep history so we **do not forget**.  
-4. Next similar ask hits **git**, not another frontier call.  
-5. Server LLM tweaks are for **function/vision** only.
+4. Next similar ask hits **git**, not another paid call.  
+5. Switch provider/model on underperformance — **no fine-tune gate** for MVP.
 
 ---
 
@@ -62,7 +62,7 @@ Do **not** invent a parallel Neon/`KbDocument` schema as the SoT. Attachments th
 
 ## What gets written (and when)
 
-### After Bedrock / frontier escalate
+### After provider / frontier escalate
 
 Any time a Project requires **Bedrock or another external deep service**, the batch worker **must** (when the outcome is useful and shareable):
 
@@ -90,7 +90,7 @@ Research that only re-states Google/Yelp fields does not belong in the KB. Resea
 
 **Repo:** [`myproblem-kb`](../../myproblem-kb) (`MYPROBLEM_KB_ROOT`). E2E: `npm run test:kb` in `myproblem-tickets`.
 
-**Seeded general how-to:** [Set up a website nearly for free](../../myproblem-kb/general/web/set-up-website-nearly-free.md) (Vercel free + domain DNS; LLM build/deploy; Spot/MCP for burst compute). Product follow-on: [`batched-agent-work.md`](./batched-agent-work.md) — **major coming soon:** batched coding/docs/media (not realtime IDE); [`coding-and-websites.md`](./coding-and-websites.md).
+**Seeded general how-to:** [Set up a website nearly for free](../../myproblem-kb/general/web/set-up-website-nearly-free.md) (Vercel free + domain DNS; LLM build/deploy; metered providers for AI). Product follow-on: [`batched-agent-work.md`](./batched-agent-work.md) — **major coming soon:** batched coding/docs/media (not realtime IDE); [`coding-and-websites.md`](./coding-and-websites.md).
 
 ### Before another escalate
 
@@ -98,9 +98,9 @@ Research that only re-states Google/Yelp fields does not belong in the KB. Resea
 Project step
   1. Query region KB (category + place + question hash) + media/Q cache
   2. If KB answers with enough confidence → write InvestigationUpdate; stop
-  3. Else cheap Spot / HF / mid LLM + allowed browser research
+  3. Else cheap provider LLM/VL + allowed browser research
   4. Merge new public lessons → KB (git commit)
-  5. Only if still stuck → Bedrock / frontier escalate
+  5. Only if still stuck → stronger Bedrock / peer escalate
   6. Distill escalate output → KB + cache
   7. Never escalate again for the same miss without a KB miss check
 ```
@@ -119,7 +119,7 @@ Project step
 | `bot_research` | Browser/automation scrape of public pages | Cite URL + retrieval time; note robots/ToS posture |
 | `rumor_attributed` | Community claim with named/reliable source | Allowed **only** with attribution + reliability flag |
 | `anonymous_local` | Place-channel post without identity | Allowed on channel; weaker trust |
-| `frontier_distill` | Redacted Bedrock/escalate residue | Cite as distilled; prefer confirm with cheaper path later |
+| `frontier_distill` | Redacted provider escalate residue | Cite as distilled; prefer confirm with cheaper path later |
 
 Unattributed gossip from nowhere does **not** enter the public KB.
 
@@ -170,7 +170,7 @@ Ticket capture (realtime, private by default)
    → Research / VL / tools as needed (honest limits)
    → Outcomes on ticket timeline
    → Required when useful: region KB git create/update (redacted, categorized)
-   → Rare: Bedrock escalate → then KB write
+   → Rare: stronger provider escalate → then KB write
    → Optional post / link to channel_id(s)
 ```
 
@@ -180,7 +180,7 @@ Ticket capture (realtime, private by default)
 | **Ticket tip git** | Private dossier for one problem |
 | **Batch / mid LLM** | Orchestrate tools, summarize, decide escalate vs stop |
 | **Browser automation** | Fetch public facts where bots are allowed |
-| **Bedrock / frontier** | Rare unique miss → distill into KB |
+| **Stronger provider / frontier** | Rare unique miss → distill into KB |
 | **Server LLM weights** | Tweaked only for **vision/function** (capture quality, tool honesty, routing) — not for stuffing facts |
 
 Realtime capture does not publish to the KB.
@@ -220,7 +220,7 @@ New regions later = **new KB partitions** (or repos), not one world graph.
 - Shared knowledge = **git Markdown** for that purpose (+ DIY when place doesn’t matter).  
 - **Disclaimer:** speculative; **user + AI investigations only**; **no boosting / paid ranking**.  
 - **Do not cache the internet** — cite live pages; store useful, re-tested advice only.  
-- **KB is how we learn** — check before escalate; write after research/Bedrock; refine or ditch; **don’t forget**.  
+- **KB is how we learn** — check before escalate; write after research/provider escalate; refine or ditch; **don’t forget**.  
 - Browser research only where bots are allowed; **honest** about forms and walls.  
 - Private by default; redacted extracts in **reasonable categories**.  
 - Channels = **unique ids**; subscribers see associated tickets.
@@ -230,7 +230,7 @@ New regions later = **new KB partitions** (or repos), not one world graph.
 ## Implementation checklist (docs → code)
 
 1. Stand up region KB git repo(s) with category tree + root `page.md` discovery (PT-style).  
-2. Project worker: **KB search before** tools / Bedrock; **KB commit after** useful research or escalate.  
+2. Project worker: **KB search before** tools / provider escalate; **KB commit after** useful research or escalate.  
 3. Browser tool: allowlist posture, robots/ToS awareness, honest `InvestigationUpdate` on blocks.  
 4. Redaction pipeline before any Project → KB publish ([`pii-and-privacy.md`](./pii-and-privacy.md)).  
 5. Region partition: `georgia` | `israel` (+ place geo in path or front matter in body).  

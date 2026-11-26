@@ -1,0 +1,21 @@
+{
+  "schema": "myproblem.selectors.v1",
+  "network": "nextdoor",
+  "version": 1,
+  "updated_at": "2026-11-26",
+  "card_selectors": [
+    "[data-testid=\"feed-item-card\"]",
+    "[data-testid=\"feed-item-visibility-tracker\"]"
+  ],
+  "probe_selectors": [
+    "[data-testid=\"feed-item-card\"]",
+    "[data-testid=\"feed-item-visibility-tracker\"]",
+    "[data-testid=\"post-body\"]",
+    "[data-testid=\"post-timestamp\"]",
+    "[data-testid=\"author-test\"]",
+    "[data-testid=\"feed-container\"]",
+    "[data-testid*=\"post\"]",
+    "[data-testid*=\"feed-item\"]"
+  ],
+  "notes": "Extracted from content.js constants. Remote signed packs may replace this via /api/social-capture/selectors/nextdoor."
+}

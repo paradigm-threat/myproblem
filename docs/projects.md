@@ -2,9 +2,9 @@
 
 **Projects** are MyProblem’s primary heavy investigation mode: **deferred, batched, server-side research** on a ticket after the client has captured enough context—not a real-time “solve it while you wait” LLM session.
 
-**We do not need an on-demand frontier LLM or on-demand premium vision.** We need a **smart-enough** model to capture the question, requirements, and photos; **queue a JIRA-like ticket by status**; then **batch-investigate ASAP and as completely as possible** — **region KB first**, then Hugging Face / Spot / allowed browser research — without waste or redundant calls. Bedrock / other frontier APIs are a **rare backbone escalate after KB miss**, and useful results **write back into the KB** — see [`backbone-escalate.md`](./backbone-escalate.md) · [`knowledge-base.md`](./knowledge-base.md).
+**We do not need on-demand frontier chat as the product.** We need a **smart-enough** model to capture the question, requirements, and photos; **queue a JIRA-like ticket by status**; then **batch-investigate ASAP** — **region KB + tip context first**, then **Groq / Bedrock / peer providers** (text, ASR, stills, video) and allowed browser research — without waste or redundant calls. Stronger models escalate after KB miss; useful results **write back into the KB**. **No batch GPU fleet.** See [`providers-ai.md`](./providers-ai.md) · [`backbone-escalate.md`](./backbone-escalate.md) · [`knowledge-base.md`](./knowledge-base.md).
 
-Realtime AI in the app exists only to **build the ticket** (capture → Intake cache/queue). Full investigation quality runs in **batch** — Phase 1 **Cursor**, Phase 2 Spot ([`batch-phases.md`](./batch-phases.md)) — when capacity (and optional internet / multi-LLM queries) are cheap and available.
+Realtime AI in the app exists only to **build the ticket** (capture → Intake cache/queue). Full investigation quality runs in **batch** — Phase 1 **Cursor**, Phase 2 CPU + providers ([`batch-phases.md`](./batch-phases.md)).
 
 **Product promise:** the AI **does not cut corners** to look instant. It takes the time resources allow to investigate thoroughly. Waiting for capacity is an honest UX; silently downgrading free-tier depth is not.
 
@@ -12,13 +12,13 @@ Realtime AI in the app exists only to **build the ticket** (capture → Intake c
 
 Public product terms / softer professional disclaimers: [https://myproblem.app/terms](https://myproblem.app/terms) (Clevertree LLC).
 
-Related: [`batch-phases.md`](./batch-phases.md) · [`anonymous-tickets.md`](./anonymous-tickets.md) · [`apk-ticket-ux.md`](./apk-ticket-ux.md) · [`backbone-escalate.md`](./backbone-escalate.md) · [`context-for-server.md`](./context-for-server.md) · [`spot-ai-mvp.md`](./spot-ai-mvp.md) · [`progressive-transcription.md`](./progressive-transcription.md) · [`infra-definition.md`](./infra-definition.md) · [`knowledge-base.md`](./knowledge-base.md).
+Related: [`batch-phases.md`](./batch-phases.md) · [`anonymous-tickets.md`](./anonymous-tickets.md) · [`apk-ticket-ux.md`](./apk-ticket-ux.md) · [`backbone-escalate.md`](./backbone-escalate.md) · [`context-for-server.md`](./context-for-server.md) · [`providers-ai.md`](./providers-ai.md) · [`progressive-transcription.md`](./progressive-transcription.md) · [`infra-definition.md`](./infra-definition.md) · [`knowledge-base.md`](./knowledge-base.md).
 
 ---
 
 ## One-sentence rule
 
-> **Capture smart in real time; queue the ticket; check the KB; batch-investigate thoroughly — escalate to Bedrock only when the KB and cheap path truly cannot; then write what we learned back into the KB.**
+> **Capture smart in real time; queue the ticket; check the KB; batch-investigate via providers thoroughly — escalate to a stronger model only when the KB and cheap path truly cannot; publish $/request; then write what we learned back into the KB.**
 
 Service-provider handoff remains **always available**. Deferred investigation is the default *quality* path when the client and server agree: *we do not have a solution yet, but more AI research could help—and we are not ready (or not required) to submit to a merchant.*
 
@@ -44,7 +44,7 @@ Client + capture coach reach a natural fork:
 2. **No confident self-serve solution yet**, **and**
 3. User chooses (or defaults to) **“keep investigating”** rather than immediate merchant submit.
 
-Then the app **packages the ticket** and enqueues a Project instead of burning premium GPU/LLM for an instant deep answer.
+Then the app **packages the ticket** and enqueues a Project instead of burning premium APIs for an instant deep answer.
 
 The live gauge decides that fork with two numbers. **Understanding** stays in questions until the problem is specific. **Solution** is shown only after that, and a next step is attached only at 65 or above. Under 65 the coach stops advising and offers the batch pass. If the batch pass is also under 65, a person continues and a PII-free post is published. Contract: [`confidence-gauge.md`](./confidence-gauge.md).
 
@@ -63,7 +63,7 @@ User can still:
 |---|---|---|---|
 | **On-device gate** | Frame-time | Drop shake/blur/dupe; never upload junk | Free / local |
 | **Realtime capture coach** | Seconds | “Turn left,” “read the label,” “what have you tried?” — **ticket intake only** | Cheap / free pool; capped |
-| **Project investigation (primary)** | Minutes → hours (honest ETA) | Deep VL (HF/Spot), optional image gen, multi-step LLM, web tools, dossier compile, rare Bedrock escalate | **Batch / Spot / off-peak** — much cheaper than on-demand premium |
+| **Project investigation (primary)** | Minutes → hours (honest ETA) | Provider VL/video/ASR, multi-step LLM, web tools, dossier compile, stronger-model escalate | **Batch + metered APIs** — log and publicize $/request |
 | **Merchant / human update** | Async | Accept, decline, ask for more info, schedule — **or ignore entirely** (no SLA; social-feed freedom) | Free forever for everyone + zero obligation for shops; silence is valid; timeline still on ticket |
 
 **Do not** design the product around realtime “frontier investigation while the user stares at a spinner.” That path is optional premium later if ever; it is **not** the default.
@@ -82,7 +82,7 @@ Not in the live session (default):
 - Long multi-hop research across the public web
 - Multi-model consensus / expensive frontier calls
 - Exhaustive parts lookup, manual-style repair trees, legal/medical rabbit holes
-- “Fully solved” dossiers that require batch GPU
+- “Fully solved” dossiers that require long provider research
 
 Those belong on the **Project worker**.
 
@@ -103,10 +103,9 @@ Project queue  (by status / priority — drain ASAP)
 Batch workers (complete + non-redundant)
    · Region KB git + cache first (skip duplicate work / block needless escalate)
    · Allowed browser / maps / public research — honest about bans & forms
-   · Spot + HF: OCR, advanced photo analysis, optional diagram/gen
-   · Mid LLM + tools as needed → commit useful public lessons to KB
-   · Rare: Bedrock / frontier escalate → **required** KB distill + cache gold
-   · Write InvestigationUpdate + media Evidence on the ticket
+   · Providers (Groq/Bedrock/peers): ASR, VL, video, mid LLM, optional diagram/gen
+   · Stronger-model escalate when stuck → **required** KB distill + cache gold
+   · Write InvestigationUpdate + media Evidence + **$/request** on the ticket
    ▼
 Outcomes
    · Solved / DIY steps → user notified
@@ -117,14 +116,14 @@ Outcomes
 
 **Primary means of investigation on the server = this queue + batch path**, not on-demand chat completion for every ticket.
 
-**Primary means of knowledge = the region knowledge base (git Markdown)** — check it before escalate; grow it after research and Bedrock ([`knowledge-base.md`](./knowledge-base.md)). Server LLM changes are for **vision/function**, not for stocking facts.
+**Primary means of knowledge = the region knowledge base (git Markdown)** — check it before escalate; grow it after research and provider escalate ([`knowledge-base.md`](./knowledge-base.md)). MVP quality is **context assembly**, not custom training ([`providers-ai.md`](./providers-ai.md)).
 
-Spot / Relay flags ([`spot-ai-mvp.md`](./spot-ai-mvp.md)):
+Relay flags ([`providers-ai.md`](./providers-ai.md)):
 
-- `relay.ai.vision` light → **realtime capture** only; deep VL → **Project batch**  
-- `relay.ai.imggen` → **batch** photo/diagram generation (HF/Spot)  
-- ASR + multi-step research → **Project / ticket batch** (`free_pool`; busy → wait) — see voice subsection below  
-- `relay.ai.frontier` → **rare escalate inside Project** ([`backbone-escalate.md`](./backbone-escalate.md)) — never live session
+- `relay.ai.vision` light → **realtime capture** only; deep VL → **Project batch** via providers  
+- `relay.ai.imggen` → **batch** photo/diagram generation (API)  
+- ASR + multi-step research → **Project / ticket batch** (busy → wait) — see voice subsection below  
+- `relay.ai.frontier` → **stronger escalate inside Project** ([`backbone-escalate.md`](./backbone-escalate.md)) — never live session
 
 ---
 
@@ -135,7 +134,7 @@ Voice intake uses the **same queue → batch → write back** posture as Project
 | Step | Behavior |
 |---|---|
 | Client | Creates/opens a ticket; posts **audio as Evidence**. Optional local cache for playback. **Never** calls a client ASR / `/api/transcribe` endpoint. |
-| Server | Audio attach enqueues `asr_job`; batch worker runs Whisper and appends versioned **transcript** Evidence on the ticket. |
+| Server | Audio attach enqueues `asr_job`; batch worker calls provider ASR (e.g. Groq Whisper) and appends versioned **transcript** Evidence on the ticket. |
 | Context later | OCR, names, title, facts via ticket patch. If the ticket is still **open**, enqueue `retranscribe_gate_job`. |
 | LLM gate | Decides whether a new ASR pass would correct errors (names, misheard model strings). Yes → new `asr_job` with hotwords/context; no → keep current transcript. **Closed** tickets do not re-batch. |
 
@@ -169,7 +168,7 @@ UX promise: **one place** for investigative progress and handoff status—not a 
 | Approach | Quality | Cost |
 |---|---|---|
 | On-demand frontier for every hard Q | Looks “smart” | Wasteful; redundant; fights free forever |
-| **Deferred batch Project + rare Bedrock** | Thorough ASAP; cache/KB dedupe | Spot + pennies per unique escalate |
+| **Deferred batch Project + provider escalate** | Thorough ASAP; cache/KB dedupe | Metered APIs; pennies–cents per unique escalate; **publish $/request** |
 | Immediate merchant submit | No AI depth | Always allowed; everyone stays $0; shops may ignore |
 
 Free-tier honesty: “We’re researching this; you’ll get updates when capacity runs” beats silent downgrade or surprise bills. Priority shortens the **queue**, it does not buy live Sonnet.
@@ -202,7 +201,7 @@ Each job run emits `InvestigationUpdate { at, actor, kind, summary, evidence_ref
 - Merchants = optional anytime; Project can recommend submit when ready.  
 - Updates = app timeline (+ email if enabled).  
 - Public lessons → **region knowledge base** for **problem-solving** (git Markdown; no boosting; no internet freeze-frame); optional **channels** ([`knowledge-base.md`](./knowledge-base.md)).  
-- Research and Bedrock escalate **feed the KB**; the KB is checked **before** the next escalate; advice is **re-tested** over time.  
+- Research and provider escalate **feed the KB**; the KB is checked **before** the next escalate; advice is **re-tested** over time. We **publicize AI costs**.  
 - Digital DIY is in scope (e.g. nearly-free website path in KB); **batched agent work** (coding, networking, docs, heavy media jobs — thorough finish + notify, not realtime Cursor) is a **major coming soon** ([`batched-agent-work.md`](./batched-agent-work.md) · [`coding-and-websites.md`](./coding-and-websites.md)).
 - **MyProblem X** — session capture + human reply-assist for locked social groups ([`capture-extension.md`](./capture-extension.md) · [myproblem.app/extension](https://myproblem.app/extension)); Georgia stray-cats channel pilot.
 
@@ -231,7 +230,7 @@ Landing / PDF should not promise “instant deep AI answers.” Prefer: *capture
 4. Realtime stays coach-only; enqueue Project via tip job file.
 5. Notify: anon poll; email when recover/account attached.
 6. Always expose **Submit to provider** beside **Start Project** (PII on request only).
-7. After Project research / Bedrock: **required** redacted publish to region KB (category + hub discovery) + optional channel tags ([`knowledge-base.md`](./knowledge-base.md)).
+7. After Project research / provider escalate: **required** redacted publish to region KB (category + hub discovery) + optional channel tags ([`knowledge-base.md`](./knowledge-base.md)).
 8. Backbone escalate path gated by **KB miss** + answer cache ([`backbone-escalate.md`](./backbone-escalate.md)).
 9. Batch browser automation with allowlist + honest “couldn’t see form” updates.
 10. Bench: $/ticket deferred vs fake-realtime; escalate rate + **KB hit rate** + cache hit rate + storage $/GB.

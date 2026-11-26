@@ -21,6 +21,9 @@
   const ExtId = () => globalThis.MyProblemExternalId;
   const LOOKBACK_KEY = "mpx_lookback_days";
   const LAST_GATHER_KEY = "mpx_last_gather_at";
+  const TRACKED_KEY = "mpx_tracked_pages";
+  /** @type {{ url: string, title?: string, tracked_at?: string }[]} */
+  let trackedPages = [];
 
   function setStatus(msg) {
     const el = $("status-line");
@@ -86,6 +89,8 @@
     const data = await chrome.storage.local.get([LOOKBACK_KEY, LAST_GATHER_KEY]);
     if (data[LOOKBACK_KEY] != null) lookbackDays = Number(data[LOOKBACK_KEY]) || null;
     if (data[LAST_GATHER_KEY]) lastGatherAt = Number(data[LAST_GATHER_KEY]) || null;
+    await loadTrackedPages();
+    paintTracked();
     const stale =
       !lastGatherAt || (daysSince(lastGatherAt) != null && daysSince(lastGatherAt) >= 1);
     setGatherState(stale ? "needs" : "idle");
@@ -261,6 +266,9 @@
     }
     paintCollectionHeader();
     paintRoster();
+    paintTracked();
+    const tab = await activeTab();
+    paintTrackButton(tab && tab.url);
     paintPageContext();
     paintTopicChips();
     paintRefPreview();
@@ -337,6 +345,109 @@
     empty.hidden = true;
     list.hidden = false;
     renderThreadList(list, rows, { outlier: false });
+  }
+
+  function normalizeTrackUrl(url) {
+    try {
+      const u = new URL(url);
+      u.hash = "";
+      // Drop common tracking params
+      ["utm_source", "utm_medium", "utm_campaign", "fbclid"].forEach((k) =>
+        u.searchParams.delete(k)
+      );
+      return u.toString().replace(/\/$/, "");
+    } catch (_) {
+      return String(url || "").replace(/\/$/, "");
+    }
+  }
+
+  async function loadTrackedPages() {
+    const data = await chrome.storage.local.get(TRACKED_KEY);
+    trackedPages = Array.isArray(data[TRACKED_KEY]) ? data[TRACKED_KEY] : [];
+    return trackedPages;
+  }
+
+  async function saveTrackedPages() {
+    await chrome.storage.local.set({ [TRACKED_KEY]: trackedPages });
+  }
+
+  function isTracked(url) {
+    const n = normalizeTrackUrl(url);
+    return trackedPages.some((p) => normalizeTrackUrl(p.url) === n);
+  }
+
+  async function toggleTrackCurrent() {
+    const tab = await activeTab();
+    if (!tab || !tab.url || tab.url.startsWith("chrome")) {
+      setStatus("Open a social group page to track");
+      return;
+    }
+    const n = normalizeTrackUrl(tab.url);
+    if (isTracked(n)) {
+      trackedPages = trackedPages.filter((p) => normalizeTrackUrl(p.url) !== n);
+      await saveTrackedPages();
+      paintTracked();
+      paintTrackButton(tab.url);
+      setStatus("Untracked page (local only)");
+      return;
+    }
+    trackedPages.push({
+      url: n,
+      title: tab.title || n,
+      tracked_at: new Date().toISOString(),
+    });
+    await saveTrackedPages();
+    paintTracked();
+    paintTrackButton(tab.url);
+    setStatus("Tracked locally — Refresh still uploads to the private queue only");
+  }
+
+  function paintTrackButton(url) {
+    const btn = $("btn-track-page");
+    if (!btn) return;
+    if (!url || String(url).startsWith("chrome")) {
+      btn.disabled = true;
+      btn.textContent = "Track this page";
+      return;
+    }
+    btn.disabled = false;
+    btn.textContent = isTracked(url) ? "Untrack" : "Track this page";
+  }
+
+  function paintTracked() {
+    const list = $("tracked-list");
+    const empty = $("tracked-empty");
+    if (!list || !empty) return;
+    list.innerHTML = "";
+    if (!trackedPages.length) {
+      empty.hidden = false;
+      list.hidden = true;
+      return;
+    }
+    empty.hidden = true;
+    list.hidden = false;
+    for (let i = 0; i < trackedPages.length; i++) {
+      const p = trackedPages[i];
+      const li = document.createElement("li");
+      li.className = "mpx-roster-item";
+      const a = document.createElement("a");
+      a.href = p.url;
+      a.textContent = p.title || p.url;
+      a.target = "_blank";
+      a.rel = "noopener";
+      a.addEventListener("click", async (ev) => {
+        ev.preventDefault();
+        const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
+        const t = tabs[0];
+        if (t && t.id) await chrome.tabs.update(t.id, { url: p.url });
+      });
+      const meta = document.createElement("span");
+      meta.className = "mpx-roster-meta";
+      meta.textContent = p.url;
+      li.appendChild(a);
+      li.appendChild(meta);
+      list.appendChild(li);
+    }
   }
 
   function paintRoster() {
@@ -1308,12 +1419,64 @@
     setDeepRunning(false);
     await showHostOverlay(false);
     setGatherState("success");
-    setStatus(
-      "Gathering complete · " +
-        lastGatherStats.posts +
-        " posts · leave Lab for packaging when ready"
-    );
+    // Refresh path: mark ready + private queue upload (never posts to origin social).
+    const cards =
+      (res.dom_probe && res.dom_probe.candidate_card_count) ||
+      (res.capture_summary && res.capture_summary.cards) ||
+      0;
+    if (
+      lastGatherStats.posts === 0 &&
+      Number(cards) === 0 &&
+      /nextdoor\.com/i.test(tab.url || "")
+    ) {
+      setStatus(
+        "Gathering complete · 0 posts / 0 cards — possible selector breakage. Use Report problem / Copy debug."
+      );
+    } else {
+      setStatus(
+        "Gathering complete · " +
+          lastGatherStats.posts +
+          " posts · packaging for private queue…"
+      );
+      await markReady();
+      await uploadBatch();
+    }
     await checkConnection({ tryAttach: true });
+  }
+
+  async function automateAllTracked() {
+    await loadTrackedPages();
+    if (!trackedPages.length) {
+      setStatus("No tracked pages — Track this page first");
+      return;
+    }
+    const tab = await activeTab();
+    if (!tab || !tab.id) {
+      setStatus("No active tab for Automate all");
+      return;
+    }
+    for (let i = 0; i < trackedPages.length; i++) {
+      const p = trackedPages[i];
+      setStatus(
+        "Automate all " + (i + 1) + "/" + trackedPages.length + " · " + (p.title || p.url)
+      );
+      try {
+        await chrome.tabs.update(tab.id, { url: p.url });
+        await waitTabComplete(tab.id, 30000);
+        await new Promise((r) => setTimeout(r, 1200));
+        await deepCapture();
+      } catch (e) {
+        setStatus(
+          "Automate all failed on " +
+            (p.url || "?") +
+            ": " +
+            (e && e.message ? e.message : e)
+        );
+        setGatherState("failed");
+        return;
+      }
+    }
+    setStatus("Automate all finished · " + trackedPages.length + " page(s)");
   }
 
   async function stopDeep() {
@@ -1393,14 +1556,19 @@
     );
   }
 
-  async function uploadStub() {
-    const res = await chrome.runtime.sendMessage({ type: "MPX_UPLOAD_STUB" });
+  async function uploadBatch() {
+    const res = await chrome.runtime.sendMessage({ type: "MPX_UPLOAD" });
     await refresh();
     if (res && res.message) {
       setStatus(res.message);
-      return;
+      return res;
     }
     setStatus("Upload unavailable");
+    return res;
+  }
+
+  async function uploadStub() {
+    return uploadBatch();
   }
 
   async function pasteToActiveTab(body) {
@@ -1691,7 +1859,9 @@
   on("btn-deep-stop", "click", stopDeep);
   on("btn-ready", "click", markReady);
   on("btn-validate", "click", validateResubmit);
-  on("btn-upload", "click", uploadStub);
+  on("btn-upload", "click", uploadBatch);
+  on("btn-track-page", "click", toggleTrackCurrent);
+  on("btn-automate-all", "click", automateAllTracked);
   on("btn-fix", "click", fixConnection);
   on("btn-probe", "click", probeDom);
   on("btn-export", "click", exportBatch);
