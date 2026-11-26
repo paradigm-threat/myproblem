@@ -110,6 +110,7 @@ export async function completeGroq(
     headers: {
       Authorization: `Bearer ${key}`,
       "Content-Type": "application/json",
+      "User-Agent": "clevertree-chat/1.0",
     },
     body: JSON.stringify(body),
   });
