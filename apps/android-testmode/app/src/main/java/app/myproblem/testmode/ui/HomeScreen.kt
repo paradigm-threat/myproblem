@@ -28,20 +28,18 @@ import app.myproblem.testmode.tickets.pickHomeTrouble
 import java.text.DateFormat
 import java.util.Date
 
+/**
+ * Secondary list of tickets the batch already opened (or legacy local drafts).
+ * Primary ask path is [RoomScreen] — do not mint tips from here.
+ */
 @Composable
 fun HomeScreen(
     tickets: List<LocalTicket>,
     showArchived: Boolean,
-    networkerEnabled: Boolean,
-    onNewTicket: () -> Unit,
     onOpenTicket: (String) -> Unit,
+    onBackToRoom: () -> Unit,
     onSettings: () -> Unit,
-    onTestMode: () -> Unit,
-    showDevTools: Boolean,
     onRetrySync: (String) -> Unit,
-    onNetworkerHome: (() -> Unit)? = null,
-    onChat: (() -> Unit)? = null,
-    onRecord: (() -> Unit)? = null,
 ) {
     Column(
         modifier =
@@ -57,28 +55,20 @@ fun HomeScreen(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Column {
-                Text("MyProblem", color = Accent, fontWeight = FontWeight.SemiBold, fontSize = 24.sp)
-                Text("Asker", color = Mint, fontSize = 13.sp)
-            }
-            Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                Text("Settings", color = Muted, modifier = Modifier.clickable(onClick = onSettings))
-                if (showDevTools) {
-                    Text("Test", color = Muted, modifier = Modifier.clickable(onClick = onTestMode))
-                }
-            }
+            Text(
+                "← Room",
+                color = Muted,
+                modifier = Modifier.clickable(onClick = onBackToRoom),
+            )
+            Text("Settings", color = Muted, modifier = Modifier.clickable(onClick = onSettings))
         }
         Spacer(Modifier.height(12.dp))
-        Text("What’s your problem?", color = Warm, fontWeight = FontWeight.SemiBold, fontSize = 22.sp)
-        Spacer(Modifier.height(8.dp))
-        if (onChat != null && onRecord != null) {
-            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                PrimaryButton("Chat", onClick = onChat)
-                SecondaryButton("Record", onClick = onRecord)
-            }
-        } else {
-            PrimaryButton("New ticket", onClick = onNewTicket)
-        }
+        Text("Tickets", color = Accent, fontWeight = FontWeight.SemiBold, fontSize = 24.sp)
+        Text(
+            "Opened only when AI/batch needs a tip. Ask in the public room first.",
+            color = Muted,
+            fontSize = 13.sp,
+        )
         Spacer(Modifier.height(16.dp))
         Text(
             if (showArchived) "Open + archived" else "Open tickets",
@@ -93,10 +83,12 @@ fun HomeScreen(
         }
         if (tickets.isEmpty()) {
             Text(
-                "No open tickets yet. Tap Chat or Record.",
+                "No tickets yet. Go back to the room and ask — type, speak, or video.",
                 color = Muted,
                 fontSize = 14.sp,
             )
+            Spacer(Modifier.height(16.dp))
+            PrimaryButton("Back to room", onClick = onBackToRoom)
         } else {
             LazyColumn(
                 modifier = Modifier.weight(1f, fill = false),
@@ -107,20 +99,6 @@ fun HomeScreen(
                 }
             }
         }
-        if (networkerEnabled && onNetworkerHome != null) {
-            Spacer(Modifier.height(16.dp))
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceEvenly,
-            ) {
-                Text("Asker", color = Accent, fontWeight = FontWeight.SemiBold)
-                Text(
-                    "Networker",
-                    color = Muted,
-                    modifier = Modifier.clickable(onClick = onNetworkerHome),
-                )
-            }
-        }
     }
 }
 
@@ -129,7 +107,8 @@ private fun TicketRow(
     ticket: LocalTicket,
     onClick: () -> Unit,
 ) {
-    val whenStr = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT).format(Date(ticket.updatedAtMs))
+    val whenStr =
+        DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT).format(Date(ticket.updatedAtMs))
     Column(
         modifier =
             Modifier

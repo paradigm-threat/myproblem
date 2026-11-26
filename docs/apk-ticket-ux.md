@@ -1,12 +1,12 @@
-# APK ticket-first UX
+# APK channel-first UX
 
-Product home for the Android app **beyond Test Mode**: open-ticket list, big **New ticket**, onboarding-chosen start mode, multimodal Evidence, and a ticket **timeline** that feels competitive with modern LLM apps — without pretending frontier answers are instantaneous.
+Product home for the Android app: the **public Clevertree/IRC room** (default `#mp-general`), matching the website. Asking = talking in the room (type / speak / video → Bunny → channel post). Tips/tickets are created **only when AI/batch decides** they are needed — not on every ask.
 
-Related: [`anonymous-tickets.md`](./anonymous-tickets.md) · [`pii-and-privacy.md`](./pii-and-privacy.md) · [`progressive-transcription.md`](./progressive-transcription.md) · [`intake-fixtures.md`](./intake-fixtures.md) · [`intake-batch-infra.md`](./intake-batch-infra.md) · [`projects.md`](./projects.md) · [`capture-guidance.md`](./capture-guidance.md) · [`capture-follow-up.md`](./capture-follow-up.md) · [`context-for-server.md`](./context-for-server.md).
+Related: [`simple-max.md`](./simple-max.md) · [`anonymous-tickets.md`](./anonymous-tickets.md) · [`clevertree-chat.md`](./clevertree-chat.md) · web room mount `src/components/chat/PublicRoomMount.tsx`.
 
-**Status:** UX contract + APK shell. TicketsApi → **`https://intake.myproblem.app`** (regional git SoT; UUID = access; region georgia|israel). Vercel is marketing/APK only. Media is device-local + ephemeral server cache ([`ephemeral-media.md`](./ephemeral-media.md)). Capture surface: **Chat + Record** (Max and simple). Live realtime coaching is deferred.
+**Status:** APK shell in [`apps/android-testmode`](../apps/android-testmode). Room WebView → `https://myproblem.app/c/mp-general` (same as `/#room`). Chat API base `https://intake.myproblem.app`. Constants: `ChatEndpoints.kt` (aligned with `src/lib/contact.ts` + `src/lib/chat/channels.ts`).
 
-**Design SoT:** [`design/ui-kit/`](../design/ui-kit/) (Asker / Networker screens 04–12). Site tokens also in `src/styles/ui-kit-tokens.css` / FixIt.
+**Design SoT:** [`design/ui-kit/`](../design/ui-kit/). Site tokens also in `src/styles/ui-kit-tokens.css` / FixIt.
 
 ### Phone E2E
 
@@ -17,103 +17,60 @@ CameraX keeps UIAutomator from reaching idle, so automated phone↔server checks
 bash scripts/e2e-phone-apk.sh
 ```
 
-Flow covered: APK create → upload audio/still → wake → process/purge → reprocess gate (empty fail / context reupload) → sync pull.
+Legacy tip create → upload → sync remains available for debug receivers; it is **not** the product submit path.
 
 ---
 
 ## One-sentence rule
 
-> **Ticket-first home; New ticket is Chat or Record; Record is one deferred clip (mic and camera toggles); the batch investigates thoroughly; deep work is a batched Project.**
-
-**Max and simple:** two starts only. Live rolling stills / chunked realtime coaching is shelved ([`capture-follow-up.md`](./capture-follow-up.md)). The ticket screen shows **Understanding N%** and **Solution N%** once the server has scored the problem ([`confidence-gauge.md`](./confidence-gauge.md)). Solution stays “still learning the problem” while questions are open. Under the solution threshold the line says we are not confident enough to advise further. After the batch pass gives up, the line says a person should continue.
+> **Room-first home; ask in `#mp-general` (type / speak / video); tickets only when the batch needs one; public chat + AI free forever.**
 
 ---
 
-## Same design as the site
+## Same product as the site
 
-The app draws the FixIt screens itself. It does not load myproblem.app in a WebView.
+| Surface | Implementation |
+|---|---|
+| **Public room** | WebView of `/c/mp-general` (web CTA is `/#room`) — Clevertree room assets + Intake chat WS |
+| **Submit** | In-room overlay → `/api/chat-media/upload` (Bunny) → `/api/chat/post` into active channel |
+| **Tickets list** | Native secondary screen — batch-opened or legacy local drafts only |
+| **Ticket detail / Networker** | Native FixIt Compose (tokens in `AppColors.kt` / `SiteLayout.kt`) |
+| **Marketing / privacy / terms** | Browser link-out |
 
-Shared screens use the tokens in `src/styles/fixit-theme.css`: navy `#070d18`, glass `#0f1a2c`, mint `#5fd4a4`, ticket blue `#4eb8ff`, gold `#f0c14b`. A window under 900px is the phone layout. At 900px or wider, a ticket uses the desktop arrangement (content capped at 960, questions in two columns). The status card uses the same words as `src/lib/tickets/ticketStatus.ts`.
+Do **not** restore tip-repo queue or “New ticket” as the foundation Asker path.
 
-Camera, microphone, and the on-device ticket list stay native. Marketing, privacy, and terms stay on the website and open in the browser.
+Shared FixIt tokens: navy `#070d18`, glass `#0f1a2c`, mint `#5fd4a4`, ticket blue `#4eb8ff`, gold `#f0c14b`. Phone &lt; 900px; ≥900px desktop arrangement for ticket detail.
 
 ## Roles: Asker (default) vs Networker (opt-in)
 
 | Role | Default? | Job |
 |---|---|---|
-| **Asker** | Yes | Person with a problem — Chat / Record → tip → batch SI |
-| **Networker** | Opt-in at onboarding (or Settings) | Keeps the **process moving**: add photos/evidence to an existing tip, note an action (“set a trap”), optionally solve. Continuity over hero solving |
-
-Same core capabilities; **different home UI** when Networker is enabled. **Garden-wall social gather cannot run in the APK** (apps cannot read each other’s feeds). Networker home deep-links **Use Relay in Chrome** → [`/extension`](https://myproblem.app/extension).
+| **Asker** | Yes | Ask in the public room. Tickets appear later if batch opens one. |
+| **Networker** | Opt-in | Keep **existing** tips moving: photos, action notes. Social gather → Relay Chrome [`/extension`](https://myproblem.app/extension). |
 
 ## Information architecture
 
 | Screen | Purpose |
 |---|---|
-| **Onboarding** | Asker ready + optional **Also enable Networker mode**. |
-| **Asker home** | Chat / Record + open tickets. Switch to Networker when enabled. |
-| **Networker home** | Tips that need a photo/action; Add evidence / I took an action; Relay Chrome link. Wide ≥900px = list + detail. |
-| **New ticket** | Chooser: **Chat** / **Record** — then opens that mode. |
-| **Ticket detail** | Timeline of Evidence + server cards; compose to add text. |
-| **Manual fill** | When intake returns `needs_user_text` — title + description; re-queue intake. |
+| **Onboarding** | Public room ready + optional Networker. |
+| **Room (home)** | WebView of `#mp-general`. Primary ask path. |
+| **Tickets** | Secondary list of open/archived tips — no mint CTA. |
+| **Networker home** | Tips that need a photo/action; Relay Chrome link. |
+| **Ticket detail** | Timeline for a tip the batch (or legacy path) already opened. |
+| **Legacy new-\*** | Debug / E2E tip-mint only — not linked from product chrome. |
 | **Test Mode** | Debug frame gate lab — not product home. |
 
 ---
 
-## Two start modes (Max and simple)
+## Narrative (copy if shown)
 
-### Chat
-- Form: **title first**, then description / what you tried.
-- Local draft until Send → create ticket + text fields.
-- Camera and microphone stay off.
-
-### Record
-- One feed. **Mic** and **Camera** toggles; the person can turn video on mid-recording.
-- Always one deferred **mp4** (`lane: batch`, `scrubbed_locally: false`). Camera off → black/covered preview feel; mic off → muted audio. Not a second start mode.
-- Local ticket on Record start; **no** sync until Send. No rolling clips, no unique-frame gate, no live question band.
-- Stop → Send uploads the file to the private batch inbox. Phone may keep the clip until Send finishes. Server copy is temporary; batch scrubs or deletes ([`ephemeral-media.md`](./ephemeral-media.md)).
-- Follow-up capture instructions after batch: later ([`capture-follow-up.md`](./capture-follow-up.md)).
-
-**Legacy:** old tickets may still be `AUDIO` or `AUDIO_FRAMES` (Live). Those modes are not on the chooser.
+- Public chat + channel AI: **free forever**
+- Private chat: paid lane later (funds infra + provider time) — do not tip-push on room home
+- Donations for public utility — no tip-push CTAs
 
 ---
 
-## Upload and intake
-
-**Chat:** create on Send. **Record:** create server ticket on sync after Send, then upload `kind: video` with `lane: batch`.
-
-Cheap **intake** outcomes after batch / ASR (not full Project):
-
-| Outcome | Client |
-|---|---|
-| `named_and_questions` | Title + summary + 1–3 question chips |
-| `advice_ready` | Actionable advice card; Project optional |
-| `queue_project` | Honest ETA; large LLM batch ([`projects.md`](./projects.md)) |
-| `needs_user_text` | Manual fill / clarify coach |
-
-### Proposed vs locked fields
-
-```json
-{
-  "title": { "value": "...", "source": "intake|user", "locked": false },
-  "description": { "value": "...", "source": "intake|user", "locked": false },
-  "coachLine": "Please state your problem."
-}
-```
-
-Until `locked`, server/intake may revise. After user save, source=`user`, locked=true — never auto-overwrite (optional non-destructive “Suggested rename” later).
-
----
-
-## UX principles
-
-- One thumb: Home → New ticket → capture/type → timeline.
-- Optimistic local feedback while ASR/intake pending.
-- Honest chips: `Listening` / `Transcribing` / `Figuring out…` / `Investigating`.
-- Questions as chips until `needs_user_text`.
-- Open list = unfinished work; Close archives the ticket.
-
-## Sync status (local vs online)
+## Sync status (when a ticket exists)
 
 Every ticket shows replication state separately from intake:
 
@@ -125,15 +82,15 @@ Every ticket shows replication state separately from intake:
 | Health | UI |
 |---|---|
 | **Synced** | Green — local rev == remote rev |
-| **Local ahead** / **Uploading…** | Local mutations not yet acked; auto-sync on every change |
+| **Local ahead** / **Uploading…** | Local mutations not yet acked |
 | **Server ahead** / **Updating…** | Remote newer; auto-pull |
-| **Syncing…** | Progress bar; should settle quickly |
+| **Syncing…** | Progress bar |
 | **Sync error** | Did not finish within ~8s — message + Retry |
 
-Auto-sync runs on any ticket mutation. Behind badges are transient when online; offline / API-down → error without pretending the ticket is synced.
+TicketsApi → `https://intake.myproblem.app` remains for syncing tips the batch opened. Do not call `createTicket` from Asker home.
 
 ---
 
 ## APK implementation notes
 
-Module: [`apps/android-testmode`](../apps/android-testmode) (shell + local store). Navigation: Onboarding → Home → Ticket detail / New-* / Settings / Test Mode. Local JSON ticket backup under app files; anon claim material TBD when API lands.
+Module: [`apps/android-testmode`](../apps/android-testmode). Navigation: Onboarding → **Room** → Tickets / Ticket detail / Networker / Settings / Test Mode. Unit tests: `npm run test:android` (`:app:testDebugUnitTest`).

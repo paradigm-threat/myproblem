@@ -23,6 +23,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import app.myproblem.testmode.tickets.StartMode
 
+/**
+ * Legacy tip-mint chooser — not the product submit path.
+ * Kept for debug / E2E deep links only; product home is the public room.
+ */
 @Composable
 fun NewTicketModeScreen(
     onCancel: () -> Unit,
@@ -40,22 +44,22 @@ fun NewTicketModeScreen(
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         Text("← Cancel", color = Muted, modifier = Modifier.clickable(onClick = onCancel))
-        Text("New ticket", color = Accent, fontWeight = FontWeight.SemiBold, fontSize = 24.sp)
+        Text("Legacy tip capture", color = Accent, fontWeight = FontWeight.SemiBold, fontSize = 24.sp)
         Text(
-            "How do you want to start this Problem?",
+            "Debug only. Public asks go in the room (#mp-general) — type, speak, or video. Do not mint a tip on every ask.",
             color = Warm,
             fontWeight = FontWeight.Medium,
             fontSize = 16.sp,
         )
         Spacer(Modifier.height(4.dp))
         ModeOption(
-            title = "Chat",
-            body = "Type the problem. Camera and microphone stay off.",
+            title = "Chat (legacy)",
+            body = "Type into a local tip draft. Prefer the public room instead.",
             onClick = { onChoose(StartMode.TEXT) },
         )
         ModeOption(
-            title = "Record",
-            body = "Mic, camera, or both — one clip. Stop, then Send. The batch watches it and does not keep the file.",
+            title = "Record (legacy)",
+            body = "Mic/camera clip into a local tip. Prefer speak/video in the room.",
             onClick = { onChoose(StartMode.VIDEO_MESSAGE) },
         )
     }

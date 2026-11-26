@@ -22,6 +22,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import app.myproblem.testmode.chat.ChatEndpoints
 
 @Composable
 fun SettingsScreen(
@@ -47,7 +48,7 @@ fun SettingsScreen(
         Text("Settings", color = Accent, fontWeight = FontWeight.SemiBold, fontSize = 22.sp)
         val context = LocalContext.current
         Text(
-            "New ticket asks for Chat or Record. Record is one feed — turn the mic or camera on or off as you go. Chat keeps them off.",
+            "Ask in ${ChatEndpoints.DEFAULT_IRC_CHANNEL} (type / speak / video). Public chat + AI stay free. Private chat fees later fund infra — not shown as a tip-push here.",
             color = Muted,
             fontSize = 13.sp,
         )
@@ -74,7 +75,7 @@ fun SettingsScreen(
             Column(Modifier.weight(1f)) {
                 Text("Online sync", color = Warm)
                 Text(
-                    "On: this phone sends the ticket, audio, and stills to Intake. Off: the ticket stays on this phone.",
+                    "On: sync tickets the batch already opened with Intake. Off: keep local copies only. Asking in the room does not mint a tip.",
                     color = Muted,
                     fontSize = 12.sp,
                 )
@@ -113,12 +114,17 @@ fun SettingsScreen(
             Text(
                 "Privacy",
                 color = Accent,
-                modifier = Modifier.clickable { openPage(context, "https://myproblem.app/privacy") },
+                modifier = Modifier.clickable { openPage(context, "${ChatEndpoints.SITE_URL}/privacy") },
             )
             Text(
                 "Terms",
                 color = Accent,
-                modifier = Modifier.clickable { openPage(context, "https://myproblem.app/terms") },
+                modifier = Modifier.clickable { openPage(context, "${ChatEndpoints.SITE_URL}/terms") },
+            )
+            Text(
+                "Public room",
+                color = Accent,
+                modifier = Modifier.clickable { openPage(context, ChatEndpoints.WEB_ROOM_HASH) },
             )
         }
     }

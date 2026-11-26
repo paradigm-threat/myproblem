@@ -46,11 +46,15 @@ import java.util.concurrent.ExecutorService
 
 object Routes {
     const val ONBOARDING = "onboarding"
+    /** Primary Asker surface: public Clevertree/IRC room WebView. */
     const val HOME = "home"
+    /** Secondary list of batch-opened (or legacy) tickets — not the submit SoT. */
+    const val TICKETS = "tickets"
     const val NETWORKER = "networker"
     const val NETWORKER_ACTION = "networker/action/{ticketId}"
     const val SETTINGS = "settings"
     const val TEST = "test"
+    /** Legacy tip-mint capture — kept for debug/E2E only; not linked from product home. */
     const val NEW_MODE = "new/mode"
     const val NEW_TEXT = "new/text"
     const val NEW_AUDIO = "new/audio/{ticketId}"
@@ -136,12 +140,10 @@ fun MyProblemApp(
                     )
                 }
                 composable(Routes.HOME) {
-                    HomeScreen(
-                        tickets = appVm.visibleTickets(),
-                        showArchived = ui.showArchived,
+                    RoomScreen(
+                        ticketCount = appVm.visibleTickets().size,
                         networkerEnabled = ui.networkerEnabled,
-                        onNewTicket = { nav.navigate(Routes.NEW_MODE) },
-                        onOpenTicket = { nav.navigate(Routes.ticket(it)) },
+                        onTickets = { nav.navigate(Routes.TICKETS) },
                         onSettings = { nav.navigate(Routes.SETTINGS) },
                         showDevTools = BuildFlags.SHOW_DEV_TOOLS,
                         onTestMode = {
@@ -150,20 +152,24 @@ fun MyProblemApp(
                                 nav.navigate(Routes.TEST)
                             }
                         },
-                        onRetrySync = { appVm.retrySync(it) },
                         onNetworkerHome = {
                             appVm.setHomeMode("networker")
                             nav.navigate(Routes.NETWORKER) {
                                 popUpTo(Routes.HOME) { inclusive = true }
                             }
                         },
-                        onChat = {
-                            nav.navigate(Routes.NEW_TEXT)
+                    )
+                }
+                composable(Routes.TICKETS) {
+                    HomeScreen(
+                        tickets = appVm.visibleTickets(),
+                        showArchived = ui.showArchived,
+                        onOpenTicket = { nav.navigate(Routes.ticket(it)) },
+                        onBackToRoom = {
+                            nav.popBackStack(Routes.HOME, inclusive = false)
                         },
-                        onRecord = {
-                            val t = appVm.beginVideoMessage()
-                            nav.navigate(Routes.newVideo(t.id))
-                        },
+                        onSettings = { nav.navigate(Routes.SETTINGS) },
+                        onRetrySync = { appVm.retrySync(it) },
                     )
                 }
                 composable(Routes.NETWORKER) {
@@ -412,12 +418,18 @@ fun MyProblemApp(
                     }
                     TicketDetailScreen(
                         ticket = ticket,
-                        onBack = { nav.popBackStack(Routes.HOME, inclusive = false) },
+                        onBack = {
+                            if (!nav.popBackStack()) {
+                                nav.navigate(Routes.TICKETS)
+                            }
+                        },
                         onManualFill = { title, desc -> appVm.applyManualFill(id, title, desc) },
                         onAnswer = { q, a -> appVm.answerQuestion(id, q, a) },
                         onClose = {
                             appVm.closeTicket(id)
-                            nav.popBackStack(Routes.HOME, inclusive = false)
+                            nav.navigate(Routes.TICKETS) {
+                                popUpTo(Routes.HOME)
+                            }
                         },
                         onReopen = { appVm.reopenTicket(id) },
                         onRunIntake = { appVm.runIntakeAgain(id) },
@@ -444,7 +456,7 @@ fun MyProblemApp(
                     }
                     Column(Modifier.fillMaxSize().background(Bg)) {
                         Text(
-                            "← Tickets",
+                            "← Room",
                             color = Muted,
                             fontSize = 14.sp,
                             modifier =

@@ -106,7 +106,7 @@ fun NetworkerHomeScreen(
             horizontalArrangement = Arrangement.SpaceEvenly,
         ) {
             Text("Networker", color = Accent, fontWeight = FontWeight.SemiBold)
-            Text("Asker", color = Muted, modifier = Modifier.clickable(onClick = onAskerHome))
+            Text("Room", color = Muted, modifier = Modifier.clickable(onClick = onAskerHome))
         }
     }
 }
@@ -121,7 +121,7 @@ private fun NeedsList(
     Spacer(Modifier.height(8.dp))
     if (tips.isEmpty()) {
         Text(
-            "No open tips on this device yet. Switch to Asker to create one, or gather with Relay in Chrome.",
+            "No open tips on this device yet. Tips appear when the batch opens one, or after Relay gather in Chrome.",
             color = Muted,
             fontSize = 14.sp,
         )

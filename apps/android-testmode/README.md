@@ -1,17 +1,17 @@
 # MyProblem (Android)
 
-Ticket-first product shell + Test Mode frame-gate lab.
+Channel-first product shell: public Clevertree/IRC room (`#mp-general`) + secondary tickets + Test Mode lab.
 
-Docs: [`docs/apk-ticket-ux.md`](../../docs/apk-ticket-ux.md) · [`docs/progressive-transcription.md`](../../docs/progressive-transcription.md) · [`docs/anonymous-tickets.md`](../../docs/anonymous-tickets.md) · [`docs/capture-guidance.md`](../../docs/capture-guidance.md)
+Docs: [`docs/apk-ticket-ux.md`](../../docs/apk-ticket-ux.md) · [`docs/simple-max.md`](../../docs/simple-max.md) · [`docs/clevertree-chat.md`](../../docs/clevertree-chat.md)
 
-## Product shell (local drafts)
+## Product shell
 
-- Home: **open** tickets only; closed hidden (Settings → Show archived)
-- **New ticket** → pick **Text** / **Audio** / **Audio+frames** (no onboarding)
-- **Audio**: ticket UUID on mic start; coach lines + progressive proposed title/desc; stop via button or “stop recording”; **no later Submit**. Edit locks fields from auto-guess.
-- Ticket timeline + sync status chips; edit title/desc to lock vs “Proposed by MyProblem”
-- Evidence stays local for now (chunk upload sim until ticket APIs); stills only — **no video files**
-- Menu → **Test Mode** for the offline frame gate
+- **Home = public room** WebView (`https://myproblem.app/c/mp-general`, same as `/#room`)
+- Ask = type / speak / video in-channel → Bunny → `/api/chat/post` (same APIs as web)
+- **Tickets** are secondary — only when AI/batch opens one (no tip-mint CTA on home)
+- Networker (opt-in): keep existing tips moving; social gather stays in Relay Chrome
+- Endpoints: `ChatEndpoints.kt` (aligned with site `src/lib/contact.ts` + `src/lib/chat/channels.ts`)
+- Menu → **Test Mode** (debug) for the offline frame gate
 
 ## Test Mode (debug)
 
@@ -23,15 +23,19 @@ Docs: [`docs/apk-ticket-ux.md`](../../docs/apk-ticket-ux.md) · [`docs/progressi
 adb logcat -s MyProblemCoach:I MyProblemCtx:I MyProblemOcr:W
 ```
 
-## Build / install
+## Build / install / test
 
 ```bash
 cd apps/android-testmode
 ./gradlew :app:assembleDebug
+./gradlew :app:testDebugUnitTest
+# or from repo root:
+npm run test:android
+
 adb install -r app/build/outputs/apk/debug/app-debug.apk
 adb shell am start -n app.myproblem.testmode/.MainActivity
 ```
 
 ## Package
 
-`app.myproblem.testmode`
+`app.myproblem.testmode` (debug) / `app.myproblem` (release)

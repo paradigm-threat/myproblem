@@ -11,9 +11,14 @@ import java.util.UUID
 /**
  * Thin HTTP client for Intake ticket host (regional git SoT).
  * UUID = access. Marketing site stays on myproblem.app (Vercel).
+ *
+ * Product rule: public ask goes through the Clevertree/IRC room
+ * ([app.myproblem.testmode.chat.ChatEndpoints]), not this create path.
+ * Tickets are minted only when AI/batch decides they are needed — do not
+ * call [createTicket] from the primary Asker UX.
  */
 object TicketsApi {
-    /** Public Intake (Caddy TLS → Spot commit worker). Override in tests if needed. */
+    /** Public Intake (Caddy TLS → Spot commit worker / chat host). Override in tests if needed. */
     var baseUrl: String = "https://intake.myproblem.app"
 
     /** georgia | israel — which Relay tickets repo receives commits. */

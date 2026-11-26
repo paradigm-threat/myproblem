@@ -28,6 +28,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import app.myproblem.testmode.chat.ChatEndpoints
 import app.myproblem.testmode.tickets.StartMode
 
 @Composable
@@ -48,13 +49,13 @@ fun OnboardingScreen(
     ) {
         Text("MyProblem", color = Accent, fontWeight = FontWeight.SemiBold, fontSize = 28.sp)
         Text(
-            "Ask for help.",
+            "Ask in the public room.",
             color = Warm,
             fontWeight = FontWeight.Medium,
             fontSize = 22.sp,
         )
         Text(
-            "You can always start with Chat or Record.",
+            "Type, speak, or video in ${ChatEndpoints.DEFAULT_IRC_CHANNEL}. Public chat and channel AI stay free. Tickets open only when the batch needs one — not on every ask.",
             color = Muted,
             fontSize = 14.sp,
         )
@@ -67,8 +68,8 @@ fun OnboardingScreen(
                     .background(Card, RoundedCornerShape(12.dp))
                     .padding(14.dp),
         ) {
-            Text("Asker", color = Accent, fontWeight = FontWeight.SemiBold)
-            Text("Ready to use", color = Muted, fontSize = 13.sp)
+            Text("Public room", color = Accent, fontWeight = FontWeight.SemiBold)
+            Text("Ready — same path as myproblem.app/#room", color = Muted, fontSize = 13.sp)
         }
         Row(
             modifier =
@@ -83,7 +84,7 @@ fun OnboardingScreen(
             Column(Modifier.weight(1f)) {
                 Text("Also enable Networker mode", color = Warm, fontWeight = FontWeight.SemiBold)
                 Text(
-                    "Help keep existing tips moving — photos, actions, continuity.",
+                    "Help keep existing tips moving — photos, actions, continuity. Social gather stays in the Relay Chrome extension.",
                     color = Muted,
                     fontSize = 13.sp,
                 )
@@ -95,7 +96,7 @@ fun OnboardingScreen(
             )
         }
         Spacer(Modifier.height(16.dp))
-        PrimaryButton("Continue", onClick = { onDone(StartMode.VIDEO_MESSAGE, networker) })
-        Text("You can change this later in Settings.", color = Muted, fontSize = 12.sp)
+        PrimaryButton("Continue", onClick = { onDone(StartMode.TEXT, networker) })
+        Text("You can change Networker later in Settings.", color = Muted, fontSize = 12.sp)
     }
 }
