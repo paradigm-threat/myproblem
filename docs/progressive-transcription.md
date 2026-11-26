@@ -10,7 +10,7 @@ Speak / video on the website uploads to Bunny (`chat-public/…`) and posts a CD
 
 1. Submit / IRC fanout parses `[[mp:media]]` (and bare Bunny `chat-public/` URLs).
 2. Enqueues `kind: channel_asr` on the PVC queue (`var/clevertree-live/queue/channel_asr/`).
-3. Drain calls Groq Whisper when `GROQ_API_KEY` is present → posts `SI transcript (…): …` back into the same topic (WS + IRC). Still **no tip mint** unless a later batch decide needs tracking.
+3. Drain calls Groq Whisper when `GROQ_API_KEY` is present → posts `SI transcript (…): …` back into the same topic (WS + IRC). Still **no tip mint** unless a later batch decide needs tracking. **ASR has no Bedrock failover** (text SI only — [`providers-ai.md`](./providers-ai.md)); on Groq 429 the job returns to pending.
 4. Ops: `POST /api/chat` with `{"action":"drain_channel_asr","limit":5}`. Env: `CLEVERTREE_CHANNEL_ASR` (default on), `GROQ_API_KEY`, `GROQ_WHISPER_MODEL`, `CLEVERTREE_ASR_DRY_RUN=1` for stub replies without a key.
 
 **Status (channel media):** upload + marker + enqueue wired; live transcript reply when Groq key is on the chat host; otherwise enqueue-only / dry-run.

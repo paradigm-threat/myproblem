@@ -1,14 +1,18 @@
 /**
- * Light ticket intake LLM (Groq) — runs on Intake host / edge until proxied.
- * No local GPU. Falls back to naive heuristics without GROQ_API_KEY.
+ * Light ticket intake LLM — Groq free tier first, Bedrock on rate-limit failover.
+ * No local GPU. Falls back to naive heuristics without any provider key.
+ * ASR/Whisper is separate and Groq-only (no Bedrock drop-in).
  */
+
+import { completeText } from "../ai/textProvider";
 
 export type LightIntakeResult = {
   title: string;
   description: string;
   coachLine: string;
   intake: "named_and_questions" | "advice_ready" | "needs_user_text" | "figuring_out";
-  source: "groq" | "heuristic";
+  source: "groq" | "bedrock" | "heuristic";
+  failover?: boolean;
 };
 
 export function heuristicIntake(transcriptOrText: string): LightIntakeResult {
@@ -27,19 +31,15 @@ export function heuristicIntake(transcriptOrText: string): LightIntakeResult {
 }
 
 export async function lightIntakeFromText(transcriptOrText: string): Promise<LightIntakeResult> {
-  const key = process.env.GROQ_API_KEY;
-  if (!key) return heuristicIntake(transcriptOrText);
+  const hasGroq = Boolean(process.env.GROQ_API_KEY?.trim());
+  const hasBedrock = Boolean(
+    process.env.AWS_ACCESS_KEY_ID?.trim() && process.env.AWS_SECRET_ACCESS_KEY?.trim(),
+  );
+  if (!hasGroq && !hasBedrock) return heuristicIntake(transcriptOrText);
 
-  const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${key}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      model: process.env.GROQ_INTAKE_MODEL || "llama-3.1-8b-instant",
-      temperature: 0.2,
-      messages: [
+  try {
+    const completion = await completeText(
+      [
         {
           role: "system",
           content:
@@ -47,22 +47,21 @@ export async function lightIntakeFromText(transcriptOrText: string): Promise<Lig
         },
         { role: "user", content: transcriptOrText.slice(0, 4000) },
       ],
-      response_format: { type: "json_object" },
-    }),
-  });
-  if (!res.ok) return heuristicIntake(transcriptOrText);
-  const json = (await res.json()) as {
-    choices?: { message?: { content?: string } }[];
-  };
-  try {
-    const parsed = JSON.parse(json.choices?.[0]?.message?.content || "{}") as LightIntakeResult;
-    return {
-      title: String(parsed.title || "Spoken problem").slice(0, 120),
-      description: String(parsed.description || transcriptOrText).slice(0, 2000),
-      coachLine: String(parsed.coachLine || "Figuring out…"),
-      intake: parsed.intake || "figuring_out",
-      source: "groq",
-    };
+      { temperature: 0.2, responseJson: true },
+    );
+    try {
+      const parsed = JSON.parse(completion.text || "{}") as LightIntakeResult;
+      return {
+        title: String(parsed.title || "Spoken problem").slice(0, 120),
+        description: String(parsed.description || transcriptOrText).slice(0, 2000),
+        coachLine: String(parsed.coachLine || "Figuring out…"),
+        intake: parsed.intake || "figuring_out",
+        source: completion.provider,
+        failover: completion.failover || undefined,
+      };
+    } catch {
+      return heuristicIntake(transcriptOrText);
+    }
   } catch {
     return heuristicIntake(transcriptOrText);
   }

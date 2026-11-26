@@ -38,6 +38,20 @@ flowchart LR
 - Track **$/request** (tokens × list price or provider invoice fields). Surface after successful work. Public AI stays free; cost is covered by donations and (later) private-chat revenue ([`../src/app/how-we-run/page.tsx`](../src/app/how-we-run/page.tsx) intent — no tip-push on the homepage).
 - Recipes and preferred models live in public KB escalate docs — not in model weights.
 
+### Groq free tier → Bedrock failover (text SI)
+
+**Text** curation / SI calls prefer **Groq free tier** first, then **automatically** fall back to **Bedrock** when Groq hits limits (HTTP 429 / rate-limit / quota body; optional 5xx).
+
+| | |
+|---|---|
+| Implementation | Clevertree chat-host `clevertree_chat/providers.py` (`complete_text`); probe via `action=text_complete` / `action=provider_status` |
+| Enable | `CLEVERTREE_PROVIDER_FAILOVER` (default on); `CLEVERTREE_BEDROCK_FAILOVER_ON_5XX` (default on) |
+| Groq | `GROQ_API_KEY`, `GROQ_TEXT_MODEL` (default `llama-3.1-8b-instant`) — **paste on pub1; never commit** |
+| Bedrock | `AWS_ACCESS_KEY_ID` / `AWS_SECRET_ACCESS_KEY` / optional `AWS_SESSION_TOKEN`; `CLEVERTREE_BEDROCK_REGION` or `AWS_REGION`; `CLEVERTREE_BEDROCK_MODEL_ID` (default Haiku) |
+| Missing Bedrock | Log + stay failed on Groq rate-limit (no invented keys); if Groq unset but Bedrock creds exist, use Bedrock directly |
+
+**ASR caveat:** channel / tip **Whisper ASR stays on Groq** (or `CLEVERTREE_ASR_DRY_RUN` / pending). There is **no Bedrock drop-in** for Whisper — do not invent Marketplace Whisper. On Groq 429, ASR jobs return to `pending` for a later drain.
+
 ---
 
 ## Context, not training (MVP)
@@ -57,7 +71,7 @@ Optional later: distill a cheap specialist for one high-volume narrow job if API
 
 | Job | Path |
 |---|---|
-| ASR | Provider API (e.g. Groq Whisper) from the **batch** worker only — never a client `/api/transcribe` |
+| ASR | Provider API (e.g. Groq Whisper) from the **batch** / chat-host drain only — never a client `/api/transcribe`. **No Bedrock Whisper failover** (text SI only). |
 | Stills / OCR / VL | Provider vision APIs |
 | Deferred video | Provider video understanding (or frame package → VL); no local GPU preprocess fleet |
 | Choice stills | Batch may still select/publish Bunny stills after provider analysis |
