@@ -70,7 +70,7 @@ function wsBaseFromHttp(httpBase: string): string {
 }
 
 /** Bump when public/chat-room assets change so embeds don't keep a stale sheet. */
-const ROOM_ASSET_V = "20261126-invest1";
+const ROOM_ASSET_V = "20261126-lamp1";
 
 /**
  * Mounts shared Clevertree room (no gather). Always a public IRC room.

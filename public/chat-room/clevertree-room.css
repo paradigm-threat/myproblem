@@ -49,3 +49,15 @@ body.ct-room-page .room{height:100dvh;min-height:460px}
 @media(max-width:700px){
   .room .actions .theme-toggle{min-height:40px;width:40px}
 }
+
+/* Long SI / multi-paragraph replies: clamp + expand to fullscreen */
+.room .copy-clamp{max-height:9.5em;overflow:hidden;position:relative}
+.room .copy-clamp:after{content:"";position:absolute;left:0;right:0;bottom:0;height:2.4em;background:linear-gradient(transparent,var(--white))}
+.room .expand-msg{display:inline-flex;margin-top:6px;padding:4px 0;font-size:12px;font-weight:800;color:var(--green);text-decoration:underline;text-underline-offset:3px;background:none;border:0;cursor:pointer}
+.room .media-image{margin-top:8px;max-width:min(390px,100%);border:1px solid var(--ct-media-border,#bdc9bd);border-radius:7px;overflow:hidden;background:var(--white)}
+.room .media-image img{display:block;width:100%;height:auto;max-height:280px;object-fit:cover}
+.room .media-audio,.room .media-video{margin-top:8px;max-width:min(390px,100%)}
+.room .media-audio audio,.room .media-video video{width:100%;display:block}
+.room .overlay.open .modal:has(.modal-full-si){width:min(720px,100%);max-height:min(90dvh,900px);overflow:auto;padding:18px 20px 22px}
+.room .full-si-body{font-size:14px;line-height:1.5;margin-top:8px;white-space:normal}
+.room[data-theme="dark"] .copy-clamp:after{background:linear-gradient(transparent,var(--ct-canvas,#152019))}

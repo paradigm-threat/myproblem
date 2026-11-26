@@ -1,21 +1,23 @@
 #!/usr/bin/env node
 /**
- * Seed #mp-general with a few human-sounding public asks + one media-style post.
+ * Seed #mp-general with the lamp-fix demo arc:
+ *   1) human asks + photo
+ *   2) peer tip within minutes (2 sentences, same advice as SI)
+ *   3) SI batch deep dive (full text in room; IRC teaser ≤400 via host)
  *
  * Usage:
  *   node scripts/seed-mp-general.mjs
- *   CHAT_API_BASE=https://intake.myproblem.app node scripts/seed-mp-general.mjs
+ *   CHAT_API_BASE=https://api.clevertree.chat node scripts/seed-mp-general.mjs
+ *   SEED_RESET=1 …  # archive+clear mp-general irc log on host first (manual SSH) then seed
  *
  * Posts via Intake /api/chat (action=submit). No tip UUIDs minted.
- * Skips bodies already present in chat_history (safe re-run). Continues after
- * individual submit failures so the rest of the seed can still land.
  */
 import { randomUUID } from "node:crypto";
 
 const BASE = (
   process.env.CHAT_API_BASE ||
   process.env.NEXT_PUBLIC_CHAT_API_BASE ||
-  "https://intake.myproblem.app"
+  "https://api.clevertree.chat"
 ).replace(/\/$/, "");
 
 const TOPIC = "mp-general";
@@ -23,31 +25,34 @@ const SUBMIT_TIMEOUT_MS = Number(process.env.SEED_SUBMIT_TIMEOUT_MS || 90_000);
 const RETRIES = Number(process.env.SEED_RETRIES || 3);
 const GAP_MS = Number(process.env.SEED_GAP_MS || 2500);
 
-/** Public sample audio (MDN) — CDN-stable for media marker demos. */
-const SAMPLE_AUDIO =
-  process.env.SEED_MEDIA_URL ||
-  "https://mdn.github.io/webaudio-examples/audio-basics/outfoxing.mp3";
+const DEMO_IMAGE =
+  process.env.SEED_DEMO_IMAGE_URL ||
+  "https://myproblem.app/chat-room/demo/outdoor-lantern.jpg";
+
+const SI_BATCH = `SI batch: outdoor coach lantern — replace the bulb
+
+Safety: Turn the light off at the wall switch (and the breaker if unsure). Let the bulb cool. Use a stable ladder; work dry.
+
+Open the fixture: This brick-mounted coach lantern usually opens via the top finial (unscrew and lift the peaked roof) or a hinged/clipped glass panel with small latches. Support the glass; don’t force brittle panes. Note how pieces come apart for reassembly.
+
+Replace the bulb: Unscrew the old bulb counterclockwise (glove/cloth for grip). Check the socket for corrosion; clean gently with a cotton swab + white vinegar or contact cleaner, then dry. Screw in a new outdoor/damp-rated LED (match base — often E26 — and brightness in lumens). Snug, not overtight.
+
+Finish: Wipe haze inside the glass, reseat any gasket/seal, restore power, and test.
+
+Tips: Stuck/broken base → power off, pliers or a bulb remover. No socket (integrated LED) → fixture may need replacing. Closer photos of the top/sides/fasteners help pin the exact latch.`;
 
 const POSTS = [
   {
-    name: "jordan",
-    body: "Anyone else dealing with a landlord who won't fix a leaking ceiling in Midtown? Looking for who to call before it gets worse.",
+    name: "morgan",
+    body: `How can I replace the lamp, light bulb? [[mp:media kind=image url=${DEMO_IMAGE} channel=#mp-general]]`,
   },
   {
-    name: "sam",
-    body: "Garage door opener clicks but won't lift — battery and sensors seem fine. Has the room seen this brand of glitch before?",
+    name: "devon",
+    body: "Kill power at the switch, then open that coach lantern from the top finial or a side glass latch and swap in an outdoor-rated LED. Don’t overtighten the bulb and wipe the glass while it’s open.",
   },
   {
-    name: "riley",
-    body: "Need a plain-English path for a neighbor's outdoor cat that looks injured (not aggressive). Savannah Cat Rescue channel exists; is #mp-general the right place to start?",
-  },
-  {
-    name: "alex",
-    body: "Ring cam lost power overnight again. Is this usually the transformer, wiring, or just a bad unit?",
-  },
-  {
-    name: "casey",
-    body: `Public voice note: ${SAMPLE_AUDIO} [[mp:media kind=audio url=${SAMPLE_AUDIO} channel=#mp-general]]`,
+    name: "clevertree-si",
+    body: SI_BATCH,
   },
 ];
 
@@ -121,8 +126,13 @@ async function submitWithRetry(post) {
 async function main() {
   console.log(`Seeding #${TOPIC} via ${BASE}`);
   console.log(
-    `timeout=${SUBMIT_TIMEOUT_MS}ms retries=${RETRIES} gap=${GAP_MS}ms`,
+    `timeout=${SUBMIT_TIMEOUT_MS}ms retries=${RETRIES} gap=${GAP_MS}ms image=${DEMO_IMAGE}`,
   );
+  if (process.env.SEED_RESET === "1") {
+    console.log(
+      "SEED_RESET=1: clear pub1 irc-logs/mp-general (current.jsonl + segs) before this seed, then re-run.",
+    );
+  }
 
   let existing = new Set();
   try {
@@ -160,23 +170,6 @@ async function main() {
       );
     }
     await sleep(GAP_MS);
-  }
-
-  // Nudge ASR drain if host supports it (no-op / pending without GROQ key).
-  try {
-    const drain = await fetch(`${BASE}/api/chat`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ action: "drain_channel_asr", limit: 5 }),
-      signal: AbortSignal.timeout(90_000),
-    });
-    const drainBody = await drain.json().catch(() => ({}));
-    console.log(
-      `ASR drain: ${drain.status}`,
-      JSON.stringify(drainBody).slice(0, 240),
-    );
-  } catch (e) {
-    console.log(`ASR drain skipped: ${e instanceof Error ? e.message : e}`);
   }
 
   const hist = await history().catch(() => ({ chat_history: [] }));

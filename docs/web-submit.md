@@ -35,10 +35,16 @@ See [`progressive-transcription.md`](./progressive-transcription.md) (channel se
 
 ```bash
 node scripts/seed-mp-general.mjs
-# or: CHAT_API_BASE=https://intake.myproblem.app node scripts/seed-mp-general.mjs
+# or: CHAT_API_BASE=https://api.clevertree.chat node scripts/seed-mp-general.mjs
 ```
 
-Posts a few public asks + one media-style caption into `#mp-general` so the homepage room shows history on first open.
+Lamp-fix arc (successful demo narrative):
+
+1. **morgan** — “How can I replace the lamp, light bulb?” + coach-lantern photo (`public/chat-room/demo/outdoor-lantern.jpg` via `[[mp:media kind=image …]]`).
+2. **devon** — two-sentence peer tip (same advice as SI: kill power, open via finial/latch, outdoor LED).
+3. **clevertree-si** — `SI batch:` deep dive (safety / open / replace / finish). Full text in the room (clamped + expand); IRC teaser ≤400 chars.
+
+Clear stale `#mp-general` logs on pub1 before a clean reseed when rewriting history.
 
 ## Copy
 

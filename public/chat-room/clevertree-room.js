@@ -118,6 +118,72 @@
     return BOT_NICKS.indexOf(n) >= 0 || n.indexOf("clevertree") === 0;
   }
 
+  var MEDIA_RE =
+    /\[\[mp:media\s+([^\]]*)\]\]/gi;
+
+  function parseMediaMarkers(text) {
+    var out = [];
+    var m;
+    var re = new RegExp(MEDIA_RE.source, "gi");
+    while ((m = re.exec(String(text || ""))) !== null) {
+      var attrs = m[1] || "";
+      var kind = (attrs.match(/\bkind=(\S+)/i) || [])[1] || "file";
+      var url = (attrs.match(/\burl=(\S+)/i) || [])[1] || "";
+      if (url) out.push({ kind: kind.toLowerCase(), url: url });
+    }
+    return out;
+  }
+
+  function stripMediaMarkers(text) {
+    return String(text || "")
+      .replace(MEDIA_RE, " ")
+      .replace(/\s+/g, " ")
+      .trim();
+  }
+
+  function mediaHtml(items) {
+    if (!items || !items.length) return "";
+    var html = "";
+    for (var i = 0; i < items.length; i++) {
+      var it = items[i];
+      if (it.kind === "image") {
+        html +=
+          '<figure class="media media-image"><img src="' +
+          esc(it.url) +
+          '" alt="Problem photo" loading="lazy" decoding="async" /></figure>';
+      } else if (it.kind === "audio") {
+        html +=
+          '<div class="media media-audio"><audio controls preload="none" src="' +
+          esc(it.url) +
+          '"></audio></div>';
+      } else if (it.kind === "video") {
+        html +=
+          '<div class="media media-video"><video controls preload="metadata" src="' +
+          esc(it.url) +
+          '"></video></div>';
+      }
+    }
+    return html;
+  }
+
+  function shouldClamp(text, bot) {
+    var t = String(text || "");
+    if (bot && t.length > 220) return true;
+    if (t.length > 360) return true;
+    if ((t.match(/\n/g) || []).length >= 3) return true;
+    return false;
+  }
+
+  function formatCopyHtml(text, cfg) {
+    var plain = stripMediaMarkers(text);
+    var media = mediaHtml(parseMediaMarkers(text));
+    var bodyHtml = Tags.renderHtml(plain, cfg);
+    var display = Tags.stripTags
+      ? Tags.stripTags(plain)
+      : plain;
+    return (bodyHtml || esc(display)) + media;
+  }
+
   function pickMirror(list, i) {
     if (!list || !list.length) return null;
     return list[Math.max(0, i || 0) % list.length];
@@ -175,13 +241,15 @@
     );
   }
 
-  function appendMessage(stream, msg, cfg) {
+  function appendMessage(stream, msg, cfg, roomRoot) {
     var bot = isBot(msg.nick);
     var art = document.createElement("article");
     art.className = "msg" + (bot ? " botmsg" : "");
     art.dataset.nick = msg.nick || "";
-    var bodyHtml = Tags.renderHtml(msg.text || "", cfg);
-    var display = Tags.stripTags(msg.text || "");
+    var raw = msg.text || "";
+    var copyInner = formatCopyHtml(raw, cfg);
+    var clamp = shouldClamp(stripMediaMarkers(raw), bot);
+    var copyClass = "copy" + (clamp ? " copy-clamp" : "");
     art.innerHTML =
       '<div class="av' +
       (bot ? " bot" : "") +
@@ -197,10 +265,52 @@
       '<time class="time">' +
       esc(msg.time || "") +
       "</time></div>" +
-      '<div class="copy">' +
-      (bodyHtml || esc(display)) +
-      "</div></div>";
+      '<div class="' +
+      copyClass +
+      '" data-role="copy">' +
+      copyInner +
+      "</div>" +
+      (clamp
+        ? '<button type="button" class="expand-msg" data-role="expand-msg">Expand full reply</button>'
+        : "") +
+      "</div>";
     stream.appendChild(art);
+    if (clamp && roomRoot) {
+      var btn = art.querySelector('[data-role="expand-msg"]');
+      if (btn) {
+        btn.onclick = function () {
+          openMessageFullscreen(roomRoot, msg.nick || "SI", stripMediaMarkers(raw));
+        };
+      }
+    }
+  }
+
+  function openMessageFullscreen(roomRoot, nick, text) {
+    var overlay = $(roomRoot, '[data-role="overlay"]');
+    var modal = $(roomRoot, '[data-role="modal"]');
+    if (!overlay || !modal) return;
+    var safe = esc(text).replace(/\n/g, "<br>");
+    modal.innerHTML =
+      '<div class="modal-full-si">' +
+      '<div class="aicap">Full reply</div>' +
+      '<div class="aititle"><h2>' +
+      esc(nick) +
+      '</h2><button type="button" class="close" data-role="full-close" aria-label="Close">×</button></div>' +
+      '<div class="full-si-body">' +
+      safe +
+      "</div></div>";
+    overlay.hidden = false;
+    overlay.classList.add("open");
+    var closer = modal.querySelector('[data-role="full-close"]');
+    function close() {
+      overlay.classList.remove("open");
+      overlay.hidden = true;
+      modal.innerHTML = "";
+    }
+    if (closer) closer.onclick = close;
+    overlay.onclick = function (ev) {
+      if (ev.target === overlay) close();
+    };
   }
 
   function mount(el, opts) {
@@ -356,7 +466,7 @@
       } else {
         incoming.forEach(function (m) {
           state.messages.push(m);
-          appendMessage(stream, m, opts.tagConfig || {});
+          appendMessage(stream, m, opts.tagConfig || {}, el);
         });
         history.scrollTop = history.scrollHeight;
       }
@@ -375,7 +485,7 @@
         return;
       }
       state.messages.forEach(function (m) {
-        appendMessage(stream, m, opts.tagConfig || {});
+        appendMessage(stream, m, opts.tagConfig || {}, el);
       });
       history.scrollTop = history.scrollHeight;
     }
@@ -417,7 +527,7 @@
       // Optimistic local append when offline / mock
       if (!state.ws || state.ws.readyState !== 1) {
         state.messages.push(msg);
-        appendMessage(stream, msg, opts.tagConfig || {});
+        appendMessage(stream, msg, opts.tagConfig || {}, el);
         history.scrollTop = history.scrollHeight;
       } else {
         try {
@@ -430,7 +540,7 @@
           );
         } catch (e) {
           state.messages.push(msg);
-          appendMessage(stream, msg, opts.tagConfig || {});
+          appendMessage(stream, msg, opts.tagConfig || {}, el);
         }
       }
     }
@@ -559,7 +669,7 @@
             state.messages.push(msg);
             // Drop empty-state placeholder on first live message
             if (stream.querySelector(".empty")) stream.innerHTML = "";
-            appendMessage(stream, msg, opts.tagConfig || {});
+            appendMessage(stream, msg, opts.tagConfig || {}, el);
             history.scrollTop = history.scrollHeight;
           }
         };
@@ -607,7 +717,7 @@
       },
       appendMessage: function (msg) {
         state.messages.push(msg);
-        appendMessage(stream, msg, opts.tagConfig || {});
+        appendMessage(stream, msg, opts.tagConfig || {}, el);
       },
       destroy: function () {
         state.destroyed = true;
