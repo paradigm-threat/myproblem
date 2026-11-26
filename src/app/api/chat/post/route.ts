@@ -1,5 +1,9 @@
 import { randomUUID } from "crypto";
 import { NextResponse } from "next/server";
+import {
+  asrEligible,
+  extractChannelMedia,
+} from "@/lib/chat/channelMedia";
 import { resolveChannel, normalizeChannelSlug } from "@/lib/chat/channels";
 import { CHAT_API_BASE } from "@/lib/contact";
 
@@ -12,7 +16,8 @@ const UUID_RE =
  *
  * Does **not** mint tip UUIDs or write tip-repo queues. Channel talk *is*
  * submit; batch SI may create tickets later only if tracking is needed.
- * Media captions may include `[[mp:media …]]` for ASR/VL drain hooks.
+ * Media captions may include `[[mp:media …]]`. Intake fanout enqueues
+ * channel_asr jobs (no tip mint); provider drain replies in-channel.
  */
 export async function POST(req: Request) {
   let body: {
@@ -65,11 +70,20 @@ export async function POST(req: Request) {
         { status: res.status >= 400 && res.status < 600 ? res.status : 502 },
       );
     }
+    const media = extractChannelMedia(text).filter(asrEligible);
     return NextResponse.json({
       ok: true,
       channel: ch.ircChannel,
       topic,
       result: data,
+      // Intake host enqueues on fanout_submit; this is a client-visible hint only.
+      mediaAsr: media.length
+        ? {
+            detected: media.length,
+            urls: media.map((m) => m.url),
+            note: "enqueued_on_intake_fanout",
+          }
+        : undefined,
     });
   } catch (e) {
     return NextResponse.json(

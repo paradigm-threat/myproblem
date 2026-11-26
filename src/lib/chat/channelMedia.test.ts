@@ -1,7 +1,10 @@
 import { describe, expect, it } from "vitest";
 import {
+  asrEligible,
+  extractChannelMedia,
   extractMediaUrls,
   formatChannelMediaPost,
+  parseChannelMediaMarkers,
 } from "./channelMedia";
 
 describe("formatChannelMediaPost", () => {
@@ -40,5 +43,45 @@ describe("extractMediaUrls", () => {
 
   it("ignores unrelated links", () => {
     expect(extractMediaUrls("https://example.com/foo")).toEqual([]);
+  });
+});
+
+describe("parseChannelMediaMarkers", () => {
+  it("parses kind/url/channel attrs", () => {
+    const items = parseChannelMediaMarkers(
+      "Public voice note: https://cdn/x.webm [[mp:media kind=audio url=https://cdn/x.webm channel=#mp-general]]",
+    );
+    expect(items).toHaveLength(1);
+    expect(items[0]).toMatchObject({
+      kind: "audio",
+      url: "https://cdn/x.webm",
+      channel: "#mp-general",
+      source: "marker",
+    });
+  });
+
+  it("dedupes by url", () => {
+    const body =
+      "[[mp:media kind=audio url=https://cdn/a.webm channel=#mp-general]] " +
+      "[[mp:media kind=audio url=https://cdn/a.webm channel=#mp-general]]";
+    expect(parseChannelMediaMarkers(body)).toHaveLength(1);
+  });
+});
+
+describe("extractChannelMedia + asrEligible", () => {
+  it("merges markers and bare bunny urls", () => {
+    const items = extractChannelMedia(
+      "paste https://myproblem-stills.b-cdn.net/chat-public/mp-general/z.webm",
+    );
+    expect(items).toHaveLength(1);
+    expect(asrEligible(items[0])).toBe(true);
+  });
+
+  it("skips plain files for ASR", () => {
+    const items = extractChannelMedia(
+      "[[mp:media kind=file url=https://myproblem-stills.b-cdn.net/chat-public/doc.pdf channel=#mp-general]]",
+    );
+    expect(items).toHaveLength(1);
+    expect(asrEligible(items[0])).toBe(false);
   });
 });

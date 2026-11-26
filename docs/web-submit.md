@@ -24,11 +24,21 @@ Batch SI (Phase 1 Cursor / Phase 2 providers) may create or update a tip **only 
 ## Media → ASR / VL
 
 - Client never calls `/api/transcribe`.
-- Voice/video land as **public media URLs in IRC**.
-- Batch drains IRC / Clevertree queue, detects Bunny `chat-public/` URLs or `[[mp:media kind=… url=…]]`, then runs provider ASR/VL when useful.
-- Until that drain hook is fully wired on Intake, media is still visible in-channel for humans + AI; transcription is **batch-only**, not realtime.
+- Voice/video land as **public media URLs in IRC** with `[[mp:media kind=… url=… channel=…]]`.
+- Clevertree chat host detects markers (and bare Bunny `chat-public/` URLs) on submit / IRC fanout and enqueues `kind: channel_asr` under Intake PVC `var/clevertree-live/queue/channel_asr/`.
+- Drain (`action=drain_channel_asr`, also on the host tick) runs provider ASR when `GROQ_API_KEY` is set on the chat host → posts an SI transcript line back into the channel. No tip mint.
+- Without `GROQ_API_KEY`, jobs stay **pending** (set `CLEVERTREE_ASR_DRY_RUN=1` for a stub reply in staging). Media remains visible in-channel either way.
 
 See [`progressive-transcription.md`](./progressive-transcription.md) (channel section) · [`providers-ai.md`](./providers-ai.md).
+
+## Demo seed (`#mp-general`)
+
+```bash
+node scripts/seed-mp-general.mjs
+# or: CHAT_API_BASE=https://intake.myproblem.app node scripts/seed-mp-general.mjs
+```
+
+Posts a few public asks + one media-style caption into `#mp-general` so the homepage room shows history on first open.
 
 ## Copy
 

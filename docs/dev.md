@@ -67,7 +67,7 @@ Access may require an invite. Email [ari@asu.edu](mailto:ari@asu.edu) if you wan
 
 ### Next (planned)
 - Phase 2 automated batch (CPU + providers; go-live after parity + eval + operator confidence)
-- IRC / `[[mp:media]]` drain → provider ASR/VL for channel voice/video (batch-only)
+- IRC / `[[mp:media]]` → `channel_asr` enqueue on Intake; Groq transcript reply when keyed (else pending / dry-run)
 - Deferred tip video → choice stills + Bunny per-repo; purge unused
 - Batched coding / docs / networking Projects (not a realtime IDE)
 - Shared multi-site queue drain for QuizGate (tip = user) + Clevertree (tip = topic) in production

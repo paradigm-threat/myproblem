@@ -4,9 +4,16 @@ The client **never** calls an ASR / Whisper API. Transcription is always a **que
 
 ## Public room (homepage path)
 
-Speak / video on the website uploads to Bunny (`chat-public/…`) and posts a CDN URL plus `[[mp:media kind=… url=… channel=…]]` into the active IRC channel ([`web-submit.md`](./web-submit.md)). **No tip UUID is minted on post.** Batch SI drains IRC / Clevertree queue, detects those markers (or Bunny `chat-public/` URLs), runs provider ASR/VL when useful, and **may** mint a tip only if channel traffic needs durable tracking.
+Speak / video on the website uploads to Bunny (`chat-public/…`) and posts a CDN URL plus `[[mp:media kind=… url=… channel=…]]` into the active IRC channel ([`web-submit.md`](./web-submit.md)). **No tip UUID is minted on post.**
 
-**Status (channel media):** live upload + in-channel URL works; Intake ASR enqueue from IRC markers is the remaining batch hook (Phase 1 Cursor / Phase 2 providers).
+**Channel media → ASR (live path on Intake chat host):**
+
+1. Submit / IRC fanout parses `[[mp:media]]` (and bare Bunny `chat-public/` URLs).
+2. Enqueues `kind: channel_asr` on the PVC queue (`var/clevertree-live/queue/channel_asr/`).
+3. Drain calls Groq Whisper when `GROQ_API_KEY` is present → posts `SI transcript (…): …` back into the same topic (WS + IRC). Still **no tip mint** unless a later batch decide needs tracking.
+4. Ops: `POST /api/chat` with `{"action":"drain_channel_asr","limit":5}`. Env: `CLEVERTREE_CHANNEL_ASR` (default on), `GROQ_API_KEY`, `GROQ_WHISPER_MODEL`, `CLEVERTREE_ASR_DRY_RUN=1` for stub replies without a key.
+
+**Status (channel media):** upload + marker + enqueue wired; live transcript reply when Groq key is on the chat host; otherwise enqueue-only / dry-run.
 
 ## Tip Evidence path (APK / when a tip already exists)
 

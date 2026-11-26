@@ -1,6 +1,6 @@
 # Cursor batch playbook (Phase 1)
 
-Operator checklist when Cursor is the Relay-wide batch SI (Spot Phase 2 uses the **same** steps).  
+Operator checklist when Cursor is the Relay-wide batch SI (Phase 2 automated CPU + providers uses the **same** steps).  
 Canonical phases: [`batch-phases.md`](./batch-phases.md) — shared across MyProblem, QuizGate, and Clevertree; product tips differ, procedure and tool kit do not.
 
 **Trigger:** human ask in Cursor **or** local cron that opens/resumes a drain session.
@@ -95,7 +95,7 @@ Canonical detail: [`batch-phases.md`](./batch-phases.md) — Shared SI batch pro
 
 ### MyProblem / FixIt (tip = problem)
 
-Kinds include: `asr`, `vision`, `project`, `media_frame_select`, `capture_batch`, `fixit_pack`, IRC-tied ticket work.
+Kinds include: `asr`, `vision`, `project`, `media_frame_select`, `capture_batch`, `fixit_pack`, `channel_asr` (IRC `[[mp:media]]` → in-channel transcript, no tip mint unless decide), IRC-tied ticket work.
 
 - Inventory `tickets/<uuid>/` first; delete empty Listening shells.
 - Mint tip if cache has create intent and remotes exist; else block for human mint ([`topical-repos.md`](./topical-repos.md)).
@@ -126,7 +126,7 @@ Kinds include: enqueue body filing, IRC log batches, spam ascertain, key mint/re
 
 1. Summarize tips inventoried / deleted / curated, jobs done / blocked / failed, commit-queue accepted / kicked, operator confidence.
 2. Write a short drain report (e.g. `docs/ops/batch-drain-YYYY-MM-DD.md`) when the pass changes tip remotes (include merge-phase outcomes).
-3. Note any batch-server code/docs/tests that must change so Spot Phase 2 matches this run ([`batch-phases.md`](./batch-phases.md) Phase 1.5) — Spot must implement the **same** drain → commit queue → merge procedure.
+3. Note any batch-server code/docs/tests that must change so Phase 2 automation matches this run ([`batch-phases.md`](./batch-phases.md) Phase 1.5) — the automated runner must implement the **same** drain → providers → commit queue → merge procedure; log $/request.
 4. Ensure no leftover scratch dirs or orphaned Bunny inbox objects from this session.
 
 ---
