@@ -11,8 +11,9 @@
   --accent-deep: #1a8f64;
   --ticket: var(--ticket);
   --warm: var(--gold);
-  --line: rgba(232, 240, 255, 0.12);
-  --glow: rgba(78, 184, 255, 0.2);
+  /* Theme-aware: follow --border / glow tokens (do not hardcode dark-only RGBA) */
+  --line: color-mix(in srgb, var(--border) 65%, transparent);
+  --glow: var(--bg-glow-1);
   --focus: var(--gold);
   --font-display: var(--font-fraunces), Georgia, serif;
   --font-sans: var(--font-manrope), var(--font);
@@ -44,10 +45,15 @@ body {
   color: var(--text, var(--ink));
   font-family: var(--font-sans);
   background:
-    radial-gradient(1100px 700px at 12% -10%, rgba(78, 184, 255, 0.18), transparent 55%),
-    radial-gradient(900px 600px at 88% 8%, rgba(240, 193, 75, 0.12), transparent 50%),
-    radial-gradient(800px 500px at 50% 110%, rgba(95, 212, 164, 0.14), transparent 45%),
-    linear-gradient(180deg, #070d18 0%, #0b1524 42%, #070d18 100%);
+    radial-gradient(1100px 700px at 12% -10%, var(--bg-glow-1), transparent 55%),
+    radial-gradient(900px 600px at 88% 8%, var(--bg-glow-2), transparent 50%),
+    radial-gradient(800px 500px at 50% 110%, var(--bg-glow-3), transparent 45%),
+    linear-gradient(
+      180deg,
+      var(--bg-grad-top) 0%,
+      var(--bg-grad-mid) 42%,
+      var(--bg-grad-bottom) 100%
+    );
   background-attachment: fixed;
 }
 
@@ -63,7 +69,7 @@ a {
 }
 
 a:hover {
-  color: #9aebc8;
+  color: var(--link-hover);
 }
 
 a:focus-visible,
@@ -116,7 +122,7 @@ textarea:focus-visible,
   position: sticky;
   top: 0;
   z-index: 200;
-  background: rgba(7, 13, 24, 0.92);
+  background: var(--header-bg);
   backdrop-filter: blur(12px);
   border-bottom: 1px solid var(--line);
 }
@@ -177,7 +183,7 @@ textarea:focus-visible,
   display: none;
   appearance: none;
   border: 1px solid var(--line);
-  background: rgba(15, 26, 44, 0.9);
+  background: var(--elevated-fill);
   color: var(--ink);
   width: 2.75rem;
   height: 2.75rem;
@@ -409,7 +415,7 @@ textarea:focus-visible,
   background: linear-gradient(
     180deg,
     var(--hero-blue) 0%,
-    rgba(7, 13, 24, 0.96) 45%,
+    color-mix(in srgb, var(--canvas) 96%, transparent) 45%,
     var(--bg) 100%
   );
   border-bottom: 1px solid var(--line);
@@ -551,8 +557,8 @@ section h2 {
   border-radius: 1rem;
   overflow: hidden;
   border: 1px solid var(--line);
-  background: #06101f;
-  box-shadow: 0 18px 48px rgba(0, 0, 0, 0.28);
+  background: var(--surface-inset);
+  box-shadow: var(--shadow-raised);
 }
 
 .section-graphic picture {
@@ -586,8 +592,8 @@ section h2 {
   border: 1px solid var(--line);
   background: linear-gradient(
     180deg,
-    rgba(15, 26, 44, 0.9),
-    rgba(7, 13, 24, 0.55)
+    var(--elevated-fill),
+    var(--card-fill-bottom)
   );
 }
 
@@ -669,8 +675,8 @@ section h2 {
   border: 1px solid var(--line);
   background: linear-gradient(
     165deg,
-    rgba(15, 26, 44, 0.95),
-    rgba(7, 13, 24, 0.5)
+    var(--card-fill-top),
+    var(--card-fill-bottom)
   );
 }
 
@@ -764,7 +770,7 @@ section h2 {
   border: 1px solid var(--line);
   color: var(--ink);
   font-size: 0.92rem;
-  background: rgba(18, 32, 25, 0.5);
+  background: var(--chip-fill);
 }
 
 .chip-dot {
@@ -823,7 +829,7 @@ section h2 {
   width: 100%;
   border-radius: 0.65rem;
   border: 1px solid var(--line);
-  background: rgba(8, 14, 11, 0.65);
+  background: var(--input-fill);
   color: var(--ink);
   padding: 0.7rem 0.85rem;
   font: inherit;
@@ -940,7 +946,7 @@ section h2 {
   border: 1px solid var(--line);
   border-radius: 0.75rem;
   padding: 1.15rem 1.25rem;
-  background: rgba(15, 26, 44, 0.55);
+  background: var(--elevated-fill);
 }
 
 .dev-card h2 {
@@ -1444,7 +1450,7 @@ section h2 {
   border: 1px solid var(--line);
   border-radius: 0.75rem;
   padding: 1.1rem 1.2rem;
-  background: rgba(15, 26, 44, 0.65);
+  background: var(--elevated-fill);
 }
 
 .ticket-approach h3 {
@@ -1492,8 +1498,8 @@ section h2 {
   padding: 0.9rem 1rem;
   border-radius: 0.6rem;
   border: 1px solid var(--line);
-  background: #0c1524;
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.45);
+  background: var(--surface-raised);
+  box-shadow: var(--shadow-overlay);
 }
 
 .ticket-vault-warn {
@@ -1804,8 +1810,8 @@ section h2 {
   border-bottom: none;
   background: linear-gradient(
     180deg,
-    var(--hero-blue) 0%,
-    rgba(7, 13, 24, 0.92) 70%,
+    var(--bg-grad-top) 0%,
+    color-mix(in srgb, var(--bg-grad-mid) 92%, transparent) 70%,
     transparent 100%
   );
 }
@@ -1816,7 +1822,7 @@ section h2 {
 
 .hero-chat .hero-lead {
   max-width: 34rem;
-  color: #e4ebf5;
+  color: var(--text-secondary, var(--muted));
 }
 
 .hero-chat .cta-row {
