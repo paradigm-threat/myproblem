@@ -66,8 +66,11 @@ export default function HomePage() {
                 AI stay <strong className="emph">free forever</strong>.
               </p>
               <div className="cta-row">
-                <a className="btn-primary" href="#room">
-                  Ask in the public room
+                <a className="btn-primary" href="/?submit=1#room">
+                  Type / speak / video
+                </a>
+                <a className="btn-secondary" href="#room">
+                  Open the room
                 </a>
                 <a className="btn-secondary" href="/extension">
                   Be a Networker

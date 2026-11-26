@@ -1827,13 +1827,13 @@ section h2 {
 
 .hero-chat .cta-row {
   margin-top: 0.15rem;
-  margin-bottom: 1.75rem;
+  margin-bottom: 1.1rem;
 }
 
 .hero-chat-room {
   position: relative;
   z-index: 1;
-  margin-top: 0.15rem;
+  margin-top: 0;
   margin-bottom: 1.75rem;
   scroll-margin-top: 5.5rem;
 }
@@ -1853,15 +1853,20 @@ section h2 {
   gap: 0.65rem 1rem;
 }
 
+/* Homepage: no shell toolbar strip — room is the surface; CTAs live in the hero */
+.public-chat-shell.is-compact {
+  gap: 0;
+}
+
 .public-chat-shell.is-compact .public-chat-toolbar {
   position: absolute;
-  top: 0.7rem;
-  right: 0.7rem;
+  top: 0.65rem;
+  right: 0.65rem;
   z-index: 5;
   width: auto;
-  max-width: calc(100% - 1.4rem);
+  margin: 0;
   padding: 0;
-  gap: 0.45rem;
+  gap: 0.35rem;
   justify-content: flex-end;
   pointer-events: none;
 }
@@ -1872,24 +1877,18 @@ section h2 {
 
 .public-chat-shell.is-compact .public-chat-toolbar-actions {
   pointer-events: auto;
-  gap: 0.4rem;
 }
 
-.public-chat-shell.is-compact .public-chat-toolbar-actions .btn-primary {
-  padding: 0.55rem 0.95rem;
-  font-size: 0.88rem;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.28);
+.public-chat-shell.is-compact #submit-problem-cta {
+  /* Media CTA is in the hero on homepage; keep only the hidden rooms menu */
+  display: none;
 }
 
 .public-chat-shell.is-compact .channel-menu-trigger {
-  background: rgba(255, 254, 250, 0.92);
-  border-color: color-mix(in srgb, #202d29 18%, transparent);
-  color: #52645c;
-}
-
-.public-chat-shell.is-compact {
-  position: relative;
-  gap: 0;
+  background: color-mix(in srgb, var(--surface, #fffefa) 92%, transparent);
+  border-color: color-mix(in srgb, var(--ink, #202d29) 16%, transparent);
+  color: var(--muted, #52645c);
+  box-shadow: 0 4px 14px color-mix(in srgb, #000 12%, transparent);
 }
 
 .public-chat-channel {
@@ -1961,8 +1960,8 @@ section h2 {
 .public-room-mount .room .head,
 .public-room-mount .head {
   padding: 14px 18px 12px;
-  /* Leave room for the floating Type / speak / video control on compact shell */
-  padding-right: 12.5rem;
+  /* Leave room for the compact rooms (···) control */
+  padding-right: 3.25rem;
 }
 
 .public-room-mount .room .roomname h1,
@@ -2147,29 +2146,10 @@ section h2 {
     flex: 1;
   }
 
-  .public-chat-shell.is-compact .public-chat-toolbar {
-    position: static;
-    width: 100%;
-    max-width: none;
-    margin-bottom: 0.55rem;
-    justify-content: flex-start;
-    pointer-events: auto;
-  }
-
-  .public-chat-shell.is-compact .public-chat-toolbar-copy {
-    display: block;
-  }
-
-  .public-chat-shell.is-compact .public-chat-channel {
-    margin: 0;
-    font-size: 0.85rem;
-    color: var(--text-secondary, var(--muted));
-  }
-
   .public-room-mount .room .head,
   .public-room-mount .head {
     padding: 10px 12px 9px;
-    padding-right: 12px;
+    padding-right: 2.75rem;
   }
 
   .public-room-mount .room .roomname h1,

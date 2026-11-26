@@ -37,6 +37,14 @@ export function PublicChatShell({
 
   useEffect(() => {
     if (typeof window === "undefined") return;
+    const params = new URLSearchParams(window.location.search);
+    const wantsSubmit =
+      params.get("submit") === "1" || params.get("submit") === "true";
+    if (wantsSubmit) {
+      setSubmitOpen(true);
+      focusComposer();
+      return;
+    }
     if (window.location.hash === "#room") {
       focusComposer();
     }
