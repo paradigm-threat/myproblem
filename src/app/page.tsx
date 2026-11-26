@@ -155,14 +155,13 @@ export default function HomePage() {
           <section id="businesses" aria-labelledby="businesses-heading">
             <h2 id="businesses-heading">How it works for businesses</h2>
             <p className="section-lead">
-              $0 application. $0 subscription. Free forever —{" "}
-              <strong className="emph">Max and simple</strong>, and{" "}
-              <strong className="emph">zero obligation</strong>. Incoming
-              requests work like a social feed: open what looks like a fit, or{" "}
-              <strong className="emph">ignore entirely</strong> when you have
-              no time or it is not for you. No SLA, no “must respond,” no
-              penalty, no per-lead bill. You should never expect to enter a
-              card for public help.
+              Public help is <strong className="emph">free forever</strong> —
+              for shops and for the people you serve. $0 application. $0
+              subscription on the public path.{" "}
+              <strong className="emph">Max and simple</strong>,{" "}
+              <strong className="emph">zero obligation</strong>: open what looks
+              like a fit, or ignore entirely. No SLA, no “must respond,” no
+              penalty, no per-lead bill for public channels.
             </p>
             <figure className="section-graphic">
               <picture>
@@ -174,7 +173,7 @@ export default function HomePage() {
                 />
                 <img
                   src="/businesses.jpg"
-                  alt="MyProblem for local businesses: free forever for everyone, zero obligation — receive requests, review the SI dossier, accept or ignore entirely like a social feed"
+                  alt="MyProblem for local businesses: free forever on public help, zero obligation — private chat fees later fund infrastructure and pay providers for their time"
                   width={1024}
                   height={512}
                   className="section-graphic-img"
@@ -182,35 +181,39 @@ export default function HomePage() {
                 />
               </picture>
               <figcaption className="sr-only">
-                Infographic: free forever, no-obligation workflow for local
-                businesses and service providers.
+                Infographic: free forever public path for local businesses;
+                private chat funds infra and provider time.
               </figcaption>
             </figure>
             <ol className="steps">
               <li>
-                <strong>Sign up at zero</strong>
+                <strong>Public channels stay free</strong>
                 <p>
-                  No application fee, no monthly bill, no per-lead invoice. You
-                  show up as a local option when a Problem needs a real pro —
-                  still with no duty to answer anyone.
+                  Receive asks from public rooms (or anonymous public posts).
+                  Review the dossier when you want. Silence is fine — no
+                  invoice for ignoring a request.
                 </p>
               </li>
               <li>
-                <strong>Unsure customers create tickets — not phone calls</strong>
+                <strong>Unsure customers ask without ringing the desk</strong>
                 <p>
-                  MyProblem does <strong className="emph">not</strong> answer
-                  your shop’s phone (yet). Link your site (or share a QR) so
-                  people can ask in the public room or record evidence for a
-                  thorough deferred Project — without ringing the front desk.
+                  Link your site (or share a QR) so people can ask in the public
+                  room or capture evidence for a thorough deferred Project —
+                  without calling the front desk.
                 </p>
               </li>
               <li>
-                <strong>Engage only if you want to</strong>
+                <strong>Private chat is the paid lane (planned)</strong>
                 <p>
-                  Photos, facts, and Project notes sit on the dossier. Accept,
-                  bid, ask a question — or ignore the request entirely. Same
-                  freedom as skipping a post in a social network. No score
-                  hit, no timeout threat, no invoice for silence.
+                  When someone pays for private chat, those fees fund{" "}
+                  <strong className="emph">infrastructure</strong> and{" "}
+                  <strong className="emph">
+                    pay service providers for their time and effort
+                  </strong>{" "}
+                  — so the unpaid labor of helping people online can become
+                  compensated work, not only an offline cash transaction later.
+                  Public rooms and public AI stay free. The product stays
+                  nonprofit / public-utility framed.
                 </p>
               </li>
               <li>
@@ -221,6 +224,26 @@ export default function HomePage() {
                 </p>
               </li>
             </ol>
+            <div className="people-promise" style={{ marginTop: "1.5rem" }}>
+              <h3 id="businesses-money-heading">Free forever · private fees with a purpose</h3>
+              <ul aria-labelledby="businesses-money-heading">
+                <li>
+                  <strong>Public = free forever</strong> — using public channels
+                  and AI never requires a card.
+                </li>
+                <li>
+                  <strong>Private fees → infra + providers</strong> — revenue
+                  from private chat covers servers and metered AI, and
+                  compensates shops and helpers for real time spent solving
+                  problems.
+                </li>
+                <li>
+                  <strong>Not lead invoices</strong> — we do not sell ranking or
+                  charge per ignored request. Payment is for private
+                  conversation value, when that lane ships.
+                </li>
+              </ul>
+            </div>
             <p style={{ marginTop: "1.75rem" }}>
               <a
                 className="btn-secondary"
@@ -536,13 +559,13 @@ export default function HomePage() {
             <p className="section-lead">
               <strong className="emph">Public chat + AI are free forever.</strong>{" "}
               The paid lane is <strong className="emph">private chat</strong> —
-              that revenue funds the public room. We also seek{" "}
+              fees fund infrastructure and pay service providers for time spent
+              helping, so an offline handoff is not the only way helpers get
+              paid. We also seek{" "}
               <strong className="emph">tax-deductible donations</strong> under an
               educational public-utility framing (pursuing 501(c)(3)-compatible
               structure; this page is intent, not a legal claim that status
-              already exists). Compatible Relay node operators may later earn on
-              private usage if compliant — future, not a live billing product
-              this pass. See{" "}
+              already exists). Nonprofit posture; public path stays free. See{" "}
               <a href="/how-we-run">How we run</a>,{" "}
               <a href="/privacy">Privacy</a>, and <a href="/terms">Terms</a>.
             </p>

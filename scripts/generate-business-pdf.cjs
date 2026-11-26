@@ -38,7 +38,7 @@ const doc = new PDFDocument({
     Title: "MyProblem.app for Businesses & Service Providers",
     Author: "MyProblem",
     Subject:
-      "Free forever for everyone — zero obligation SI (Super Intelligence, i.e. AI) tickets for businesses and service providers",
+      "Public help free forever; private chat fees fund infra and pay providers for their time",
   },
 });
 
@@ -156,19 +156,18 @@ const rightColW = contentW - leftColW - gutter;
 const bodyTop = y;
 
 const lead =
-  "MyProblem is free forever for everyone. Providers get a free intake path: visitors capture audio and stills; Projects investigate; you open a dossier only when you choose to look. No application fee, monthly bill, or per-lead invoice — people and shops stay $0. Customer PII stays on their device; network tickets use safe locality (city / coarse band). Georgia & Israel pilots.";
+  "Public help is free forever for everyone — people and shops. Providers get a free public intake path: visitors ask in the public room or capture audio/stills; you open a dossier only when you choose. No application fee, monthly bill, or per-lead invoice on the public path. Planned private chat fees fund infrastructure and pay service providers for their time — so helping online can be compensated, not only via an offline cash deal. Nonprofit / public-utility framing. Georgia & Israel pilots.";
 
 let leftY = para(lead, left, bodyTop, leftColW, { size: 9.5, lineGap: 1.5 });
 leftY += 10;
 leftY = sectionLabel("What you get", left, leftY, leftColW);
 leftY = bullets(
   [
-    "$0 forever — no application fee, monthly bill, or per-lead invoice.",
-    "Zero obligation — ignore any request. Silence is fine.",
-    "Website → ticket, not phone — unsure visitors capture audio + stills (desk stays quiet).",
-    "One question on screen while they talk and show the problem, until the requirements are specific.",
-    "PII-safe dossiers — street/phone stay off the network; request details via secure DM only when needed.",
-    "Warmer handoffs — investigation notes on the tip when you engage.",
+    "Public path $0 forever — no application fee, monthly bill, or per-lead invoice.",
+    "Zero obligation — ignore any public request. Silence is fine.",
+    "Website → public room / ticket, not phone — desk stays quiet.",
+    "Private chat (planned) fees → infrastructure + pay for provider time.",
+    "PII-safe dossiers — street/phone stay off the network; secure DM only when needed.",
     "Legal stops — emergencies and licensed care redirect.",
   ],
   left,
@@ -230,9 +229,9 @@ for (let i = 0; i < steps.length; i++) {
 }
 
 // Who pays
-let c1 = sectionLabel("Who pays (not you)", colXs[1], lowerTop, colW);
+let c1 = sectionLabel("Who pays", colXs[1], lowerTop, colW);
 c1 = para(
-  "Nobody pays to use MyProblem — people or shops. Infrastructure is funded by optional tips after good help (person, SI, or both). We do not invoice anyone or punish silence.",
+  "Public rooms stay free forever. Private chat fees (when shipped) fund servers/AI and compensate service providers for time helping — not per-lead invoices for silence. Nonprofit / public-utility framing.",
   colXs[1],
   c1,
   colW,

@@ -40,7 +40,7 @@ const FAQ = [
   {
     question: "What is paid?",
     answer:
-      "Private chat is the paid lane — that revenue is meant to fund the public utility. Metered billing is not shipping on this pass; this page states intent only.",
+      "Private chat is the paid lane. Fees are meant to fund infrastructure and to pay service providers for time and effort helping people — so compensation is not only an offline transaction. Public rooms stay free. Metered billing is not shipping on this pass; this page states intent only.",
   },
   {
     question: "How do donations work?",
@@ -103,8 +103,10 @@ export default function HowWeRunPage() {
               You should never expect to enter a card on that path.
             </li>
             <li>
-              Private chat (when shipped) funds the mesh. Relay node operators
-              may later earn on private usage if compliant — future work.
+              Private chat (when shipped) is the paid lane: fees fund
+              infrastructure and pay service providers for time spent helping —
+              so compensation is not only an offline transaction. Public rooms
+              stay free. Nonprofit / public-utility framing.
             </li>
             <li>
               Donations welcome for the public utility. People who cannot donate
@@ -123,7 +125,9 @@ export default function HowWeRunPage() {
             </dd>
             <dt>Private chat</dt>
             <dd>
-              The paid lane (planned). Revenue funds free public AI and rooms.
+              The paid lane (planned). Fees cover infrastructure and compensate
+              service providers for their time; public chat + AI stay free
+              forever.
             </dd>
             <dt>Donation</dt>
             <dd>
