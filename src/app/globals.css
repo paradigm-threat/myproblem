@@ -1821,7 +1821,7 @@ section h2 {
 
 .hero-chat .cta-row {
   margin-top: 0.15rem;
-  margin-bottom: 1.35rem;
+  margin-bottom: 1.75rem;
 }
 
 .hero-chat-room {
@@ -1943,6 +1943,12 @@ section h2 {
  */
 .public-room-mount .room .top,
 .public-room-mount .top {
+  display: none !important;
+}
+
+/* Theme toggle lives in .top and .actions; hide both in site embed */
+.public-room-mount .room [data-role="theme-toggle"],
+.public-room-mount [data-role="theme-toggle"] {
   display: none !important;
 }
 

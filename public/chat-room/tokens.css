@@ -1,10 +1,10 @@
 /* Clevertree Chat room design tokens (independent of host site theme).
  * Preference: localStorage `clevertree.room.theme` = light | dark | (absent = system).
- * Applied on `.room` / `.ct-room` via data-theme — never on host <html>.
+ * --ct-* may live on :root (prefixed, safe for hosts).
+ * Working aliases (--ink/--muted/…) MUST stay under .room / .ct-room only —
+ * never on :root, or host pages like myproblem.app lose contrast.
  */
-:root,
-.room,
-.ct-room {
+:root {
   --ct-brand: #225744;
   --ct-paper: #faf9f5;
   --ct-canvas: #fffefa;
@@ -47,8 +47,12 @@
   --ct-motion-panel: 200ms;
   --ct-motion-dialog: 170ms;
   --ct-motion-control: 160ms;
+}
 
-  /* Room working aliases used by clevertree-room.css */
+/* Working aliases used by clevertree-room.css — host-safe (not on :root) */
+.room,
+.ct-room,
+.ct-room-host {
   --paper: var(--ct-paper);
   --white: var(--ct-canvas);
   --ink: var(--ct-ink);
@@ -90,7 +94,6 @@
   --ct-overlay: #050a0880;
   --ct-toast-bg: #e8f0eb;
   --ct-toast-ink: #121a17;
-  /* Re-bind working aliases so later absolute defaults cannot stick */
   --paper: var(--ct-paper);
   --white: var(--ct-canvas);
   --ink: var(--ct-ink);
@@ -150,8 +153,8 @@
 }
 
 @media (max-width:700px) {
-  :root, .room, .ct-room { --ct-title:20px; --ct-body:14px; --ct-nick:12px; --ct-time:10px; }
+  :root { --ct-title:20px; --ct-body:14px; --ct-nick:12px; --ct-time:10px; }
 }
 @media (prefers-reduced-motion:reduce) {
-  :root, .room, .ct-room { --ct-motion-panel:0ms; --ct-motion-dialog:0ms; --ct-motion-control:0ms; }
+  :root { --ct-motion-panel:0ms; --ct-motion-dialog:0ms; --ct-motion-control:0ms; }
 }
