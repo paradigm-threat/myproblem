@@ -47,7 +47,14 @@ function loadScript(src: string, id: string): Promise<void> {
 }
 
 function ensureCss(href: string, id: string) {
-  if (document.getElementById(id)) return;
+  const existing = document.getElementById(id) as HTMLLinkElement | null;
+  if (existing) {
+    if (existing.href.endsWith(href) || existing.getAttribute("href") === href) {
+      return;
+    }
+    existing.href = href;
+    return;
+  }
   const link = document.createElement("link");
   link.id = id;
   link.rel = "stylesheet";
@@ -62,6 +69,9 @@ function wsBaseFromHttp(httpBase: string): string {
   return u.replace(/^http/, "ws");
 }
 
+/** Bump when public/chat-room assets change so embeds don't keep a stale sheet. */
+const ROOM_ASSET_V = "20261126b";
+
 /**
  * Mounts shared Clevertree room (no gather). Always a public IRC room.
  */
@@ -75,11 +85,20 @@ export function PublicRoomMount({ channel, className }: Props) {
     if (!host) return;
 
     (async () => {
-      ensureCss("/chat-room/tokens.css", "ct-room-tokens");
-      ensureCss("/chat-room/clevertree-room.css", "ct-room-css");
+      ensureCss(`/chat-room/tokens.css?v=${ROOM_ASSET_V}`, "ct-room-tokens");
+      ensureCss(
+        `/chat-room/clevertree-room.css?v=${ROOM_ASSET_V}`,
+        "ct-room-css",
+      );
       try {
-        await loadScript("/chat-room/context-tags.js", "ct-context-tags");
-        await loadScript("/chat-room/clevertree-room.js", "ct-room-js");
+        await loadScript(
+          `/chat-room/context-tags.js?v=${ROOM_ASSET_V}`,
+          "ct-context-tags",
+        );
+        await loadScript(
+          `/chat-room/clevertree-room.js?v=${ROOM_ASSET_V}`,
+          "ct-room-js",
+        );
       } catch {
         return;
       }
