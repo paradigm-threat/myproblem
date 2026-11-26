@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useId, useState } from "react";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 type NavItem = { href: string; label: string };
 
@@ -81,16 +82,19 @@ export function SiteHeader({ variant = "home" }: Props) {
             ))}
           </nav>
 
-          <button
-            type="button"
-            className="nav-toggle"
-            aria-expanded={open}
-            aria-controls={panelId}
-            aria-label={open ? "Close menu" : "Open menu"}
-            onClick={() => setOpen((v) => !v)}
-          >
-            <span className="nav-toggle-bars" aria-hidden="true" />
-          </button>
+          <div className="nav-actions">
+            <ThemeToggle />
+            <button
+              type="button"
+              className="nav-toggle"
+              aria-expanded={open}
+              aria-controls={panelId}
+              aria-label={open ? "Close menu" : "Open menu"}
+              onClick={() => setOpen((v) => !v)}
+            >
+              <span className="nav-toggle-bars" aria-hidden="true" />
+            </button>
+          </div>
         </div>
 
         <nav

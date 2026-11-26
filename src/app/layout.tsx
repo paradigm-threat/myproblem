@@ -3,6 +3,7 @@ import { Fraunces, Manrope } from "next/font/google";
 import { JsonLd } from "@/components/JsonLd";
 import { ServiceWorkerRegister } from "@/components/ServiceWorkerRegister";
 import { CONTACT_EMAIL, OG_IMAGE, SITE_URL } from "@/lib/contact";
+import { SITE_THEME_BOOT_SCRIPT } from "@/lib/theme";
 import "./globals.css";
 
 const fraunces = Fraunces({
@@ -22,7 +23,7 @@ export const viewport: Viewport = {
     { media: "(prefers-color-scheme: dark)", color: "#007F86" },
     { media: "(prefers-color-scheme: light)", color: "#007F86" },
   ],
-  colorScheme: "dark",
+  colorScheme: "dark light",
   width: "device-width",
   initialScale: 1,
 };
@@ -105,7 +106,13 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     <html
       lang="en"
       className={`${fraunces.variable} ${manrope.variable} h-full antialiased`}
+      suppressHydrationWarning
     >
+      <head>
+        <script
+          dangerouslySetInnerHTML={{ __html: SITE_THEME_BOOT_SCRIPT }}
+        />
+      </head>
       <body className="min-h-full flex flex-col">
         <JsonLd />
         <ServiceWorkerRegister />

@@ -90,6 +90,16 @@
   --ct-overlay: #050a0880;
   --ct-toast-bg: #e8f0eb;
   --ct-toast-ink: #121a17;
+  /* Re-bind working aliases so later absolute defaults cannot stick */
+  --paper: var(--ct-paper);
+  --white: var(--ct-canvas);
+  --ink: var(--ct-ink);
+  --muted: var(--ct-muted);
+  --line: var(--ct-line);
+  --green: var(--ct-brand);
+  --green2: var(--ct-sage);
+  --amber: var(--ct-warning-ink);
+  --amberbg: var(--ct-warning-surface);
 }
 
 .room[data-theme="light"],
@@ -127,6 +137,15 @@
     --ct-overlay: #050a0880;
     --ct-toast-bg: #e8f0eb;
     --ct-toast-ink: #121a17;
+    --paper: var(--ct-paper);
+    --white: var(--ct-canvas);
+    --ink: var(--ct-ink);
+    --muted: var(--ct-muted);
+    --line: var(--ct-line);
+    --green: var(--ct-brand);
+    --green2: var(--ct-sage);
+    --amber: var(--ct-warning-ink);
+    --amberbg: var(--ct-warning-surface);
   }
 }
 

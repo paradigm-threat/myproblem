@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>CleverTree Chat · embed</title>
+    <link rel="stylesheet" href="tokens.css" />
+    <link rel="stylesheet" href="clevertree-room.css" />
+    <style>
+      html,
+      body {
+        margin: 0;
+        height: 100%;
+      }
+      #root {
+        height: 100%;
+      }
+      /* Embed must never show gather / refresh */
+      [data-gather],
+      .refreshbar,
+      .refreshbutton {
+        display: none !important;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script src="context-tags.js"></script>
+    <script src="clevertree-room.js"></script>
+    <script>
+      (function () {
+        var q = new URLSearchParams(location.search);
+        CleverTreeRoom.mount(document.getElementById("root"), {
+          mode: q.get("surface") === "side" ? "sidepanel" : "embed",
+          channel: q.get("channel") || "#ga-savannah-cat-rescue",
+          title: q.get("title") || "Savannah Cat Rescue",
+          collectionId: q.get("collection") || "savannah-cat-rescue",
+          context: {
+            collection: q.get("collection") || "savannah-cat-rescue",
+            topic: q.get("topic") || "",
+          },
+          aiOpen: q.get("ai") === "1",
+          tracked: q.get("tracked") === "1",
+          showGather: false,
+          mirrors: [],
+          seedMessages: [
+            {
+              nick: "mara_j",
+              text: "[[c:savannah-cat-rescue]] Found a stray near the rail crossing.",
+              time: "09:12",
+            },
+            {
+              nick: "clevertree",
+              text: "Keeping a shared checklist so the next person does not start over.",
+              time: "09:14",
+            },
+          ],
+        });
+      })();
+    </script>
+  </body>
+</html>

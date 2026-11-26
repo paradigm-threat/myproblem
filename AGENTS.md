@@ -16,4 +16,5 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 - Tickets mint **only** when batch SI decides channel traffic needs tracking — never on every public post.
 - Narrative: public chat + AI free forever; private chat = paid lane (infra + provider time); donations for public utility — no tip-push.
 - Room assets: `public/chat-room/` (from clevertree-chat `fronts/room/`).
+- **Themes (independent):** site chrome uses `localStorage` key `myproblem.theme` on `<html data-theme>`; embedded Clevertree room uses `clevertree.room.theme` on `.room` only — no forced coupling. Default both = `prefers-color-scheme`.
 - Docs SoT: [`docs/web-submit.md`](docs/web-submit.md) · [`docs/simple-max.md`](docs/simple-max.md).
