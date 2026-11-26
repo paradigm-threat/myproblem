@@ -151,6 +151,7 @@
       '<div class="actions">' +
       '<button type="button" class="theme-toggle" data-role="theme-toggle" aria-label="Toggle room theme"></button>' +
       '<button type="button" class="track" data-role="track" aria-pressed="false">Track this group</button>' +
+      '<button type="button" class="investigate" data-role="investigate" title="Ask SI to investigate this channel (!investigate)">Investigate</button>' +
       '<button type="button" class="ai-toggle" data-role="ai-toggle" aria-expanded="false">AI findings</button>' +
       "</div></section>" +
       '<div class="body"><main class="chat">' +
@@ -245,6 +246,7 @@
     var history = $(el, '[data-role="history"]');
     var draft = $(el, '[data-role="draft"]');
     var sendBtn = $(el, '[data-role="send"]');
+    var investigateBtn = $(el, '[data-role="investigate"]');
     var connEl = $(el, '[data-role="conn"]');
     var mirrorEl = $(el, '[data-role="mirror"]');
     var overlay = $(el, '[data-role="overlay"]');
@@ -483,6 +485,17 @@
         draft.value = "";
       });
     };
+
+    if (investigateBtn) {
+      investigateBtn.onclick = function () {
+        var focus = draft.value.trim();
+        var cmd = focus ? "!investigate " + focus : "!investigate";
+        confirmPublic(function () {
+          postLocal(cmd);
+          draft.value = "";
+        });
+      };
+    }
 
     function connect() {
       var url = pickMirror(state.mirrors, state.mirrorIndex);

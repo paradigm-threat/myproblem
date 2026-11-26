@@ -37,7 +37,7 @@ function groqModel(): string {
     process.env.GROQ_TEXT_MODEL ||
     process.env.GROQ_INTAKE_MODEL ||
     process.env.GROQ_SI_MODEL ||
-    "llama-3.1-8b-instant"
+    "openai/gpt-oss-20b"
   ).trim();
 }
 

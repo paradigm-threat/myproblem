@@ -46,11 +46,23 @@ flowchart LR
 |---|---|
 | Implementation | Clevertree chat-host `clevertree_chat/providers.py` (`complete_text`); probe via `action=text_complete` / `action=provider_status` |
 | Enable | `CLEVERTREE_PROVIDER_FAILOVER` (default on); `CLEVERTREE_BEDROCK_FAILOVER_ON_5XX` (default on) |
-| Groq | `GROQ_API_KEY`, `GROQ_TEXT_MODEL` (default `llama-3.1-8b-instant`) — **paste on pub1; never commit** |
+| Groq | `GROQ_API_KEY`, `GROQ_TEXT_MODEL` (default `openai/gpt-oss-20b`) — **paste on pub1; never commit** |
 | Bedrock | `AWS_ACCESS_KEY_ID` / `AWS_SECRET_ACCESS_KEY` / optional `AWS_SESSION_TOKEN`; `CLEVERTREE_BEDROCK_REGION` or `AWS_REGION`; `CLEVERTREE_BEDROCK_MODEL_ID` (default Haiku) |
 | Missing Bedrock | Log + stay failed on Groq rate-limit (no invented keys); if Groq unset but Bedrock creds exist, use Bedrock directly |
 
-**ASR caveat:** channel / tip **Whisper ASR stays on Groq** (or `CLEVERTREE_ASR_DRY_RUN` / pending). There is **no Bedrock drop-in** for Whisper — do not invent Marketplace Whisper. On Groq 429, ASR jobs return to `pending` for a later drain.
+### Manual `!investigate` (text SI only)
+
+Text SI does **not** run on every message. CPU heuristics file claims; Groq text runs only when a human posts **`!investigate`** (optional focus text) in the channel or taps **Investigate** in the room UI.
+
+| Soft Free-tier gate (host disk `var/clevertree-live/quota/`) | Default |
+|---|---|
+| Per-channel cooldown | `CLEVERTREE_INVESTIGATE_COOLDOWN_S=600` (10 min) |
+| Org daily max | `CLEVERTREE_INVESTIGATE_DAILY_MAX=48` |
+| Enable | `CLEVERTREE_INVESTIGATE=1` |
+
+Ops: `action=drain_investigate`, `action=quota_status`. Deny replies: `SI: investigate cooling down…`.
+
+**ASR caveat:** channel / tip **Whisper ASR stays on Groq** (or `CLEVERTREE_ASR_DRY_RUN` / pending), automatic on media, soft-capped (`CLEVERTREE_ASR_SOFT_RPD=1500`, `CLEVERTREE_ASR_SOFT_RPM=15`), default model `whisper-large-v3-turbo`. There is **no Bedrock drop-in** for Whisper. On Groq 429 or soft cap, ASR jobs return to `pending`.
 
 ---
 
