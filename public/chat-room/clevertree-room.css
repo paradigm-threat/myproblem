@@ -916,6 +916,25 @@ body.ct-room-page .room{height:var(--room-viewport-height);min-height:460px}
   background:var(--ct-action,#a8d4b4);
   border-color:color-mix(in srgb,var(--ct-action,#a8d4b4) 55%,var(--line));
 }
+/* Bot avatar + ROOM AI tag: never white-on-mint (same trap as Send). */
+.room .av.bot{
+  background:var(--ct-action,var(--green));
+  color:var(--ct-action-ink,#fff);
+}
+.room .tag{
+  background:var(--ct-tag-bg,#e2ede3);
+  color:var(--green);
+}
+.room[data-theme="dark"] .av.bot,
+.room[data-theme-pref="dark"] .av.bot{
+  color:var(--ct-action-ink,#14291d);
+  background:var(--ct-action,#a8d4b4);
+}
+.room[data-theme="dark"] .tag,
+.room[data-theme-pref="dark"] .tag{
+  background:var(--ct-tag-bg,#324c3b);
+  color:var(--ct-ink,#e6eee6);
+}
 .room .modal-actions .send{margin-left:0}
 .room .composer.drop-hover .composebox{outline:2px dashed var(--green);outline-offset:2px;background:color-mix(in srgb,var(--green2) 55%,var(--white))}
 .room .pending-media{display:flex;flex-direction:column;gap:8px;margin-top:8px}
