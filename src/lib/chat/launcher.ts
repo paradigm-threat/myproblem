@@ -3,7 +3,7 @@ import { resolveChannel } from "@/lib/chat/channels";
 import { CHAT_API_BASE } from "@/lib/contact";
 
 /** Bump when public/chat-room assets change. */
-export const ROOM_ASSET_V = "20261127-swipe2";
+export const ROOM_ASSET_V = "20261127-landscape";
 
 export type ChatLauncherGlobal = {
   mountButton: (

@@ -776,6 +776,7 @@
 
     function applyComposerClass(on) {
       if (!composerEl) return;
+      var wasExpanded = composerEl.classList.contains("composer-expanded");
       state.composerExpanded = !!on;
       composerEl.classList.toggle("composer-expanded", !!on);
       composerEl.classList.toggle("composer-collapsed", !on);
@@ -783,11 +784,12 @@
       if (draft) {
         draft.placeholder = on ? PLACEHOLDER_EXPANDED : PLACEHOLDER_COLLAPSED;
         try {
-          /* Expanding: focus in the same turn as the user gesture so mobile
-           * soft keyboards actually open. Never blur while holdComposerOpen. */
-          if (on) {
+          /* Expanding: focus only on collapsed→expanded so soft keyboards open.
+           * Never re-focus when already expanded (blocks SI open via hold). */
+          if (on && !wasExpanded) {
             if (document.activeElement !== draft) draft.focus();
           } else if (
+            !on &&
             document.activeElement === draft &&
             !state.holdComposerOpen
           ) {
@@ -826,8 +828,8 @@
           ? composerEl.classList.contains("composer-expanded") === nextComposer
           : state.composerExpanded === nextComposer);
       if (siSame && coSame) {
-        applySiClass(nextSi);
-        applyComposerClass(nextComposer);
+        /* Already in the requested state — do not re-apply (re-focusing the
+         * draft here would set holdComposerOpen and block focusSi). */
         return;
       }
 
@@ -946,6 +948,11 @@
       );
     }
 
+    /** Row chrome (landscape phone + desktop): composer stays full-size. */
+    function keepComposerOpenInRow() {
+      return isLandscapeChrome() || isDesktopChrome();
+    }
+
     function focusComposer() {
       /* Focus in the user gesture first (IME), then expand chrome. */
       holdComposer(CHROME_MS + 600);
@@ -953,12 +960,25 @@
       try {
         if (draft && document.activeElement !== draft) draft.focus();
       } catch (e) {}
-      setChromeState(false, true);
+      if (keepComposerOpenInRow()) {
+        var siOn =
+          state.siExpanded != null
+            ? !!state.siExpanded
+            : !!(aiPanel && aiPanel.classList.contains("si-expanded"));
+        setChromeState(siOn, true);
+      } else {
+        setChromeState(false, true);
+      }
     }
 
     function focusSi() {
       if (state.holdComposerOpen) return;
-      setChromeState(true, false);
+      /* Landscape/desktop: open SI without shrinking the composer column. */
+      if (keepComposerOpenInRow()) {
+        setChromeState(true, true);
+      } else {
+        setChromeState(true, false);
+      }
     }
 
     function releaseComposerHold() {
@@ -981,6 +1001,11 @@
         } catch (e) {}
       }
       releaseComposerHold();
+      /* Landscape/desktop: blur is fine; never minimize the composer column. */
+      if (keepComposerOpenInRow()) {
+        setChromeState(false, true);
+        return;
+      }
       setChromeState(false, false);
     }
 

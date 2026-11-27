@@ -721,44 +721,36 @@ body.ct-room-page .room{height:var(--room-viewport-height);min-height:460px}
     width:min(33vw,22rem);
     justify-content:stretch;
   }
+  /* Landscape keeps the composer full-size even if the collapsed class lingers. */
   .room .composer.composer-collapsed{
     height:100%;
     max-height:none;
-    flex:0 0 min(18vw,11rem);
-    width:min(18vw,11rem);
+    flex:0 0 min(33vw,22rem);
+    width:min(33vw,22rem);
     align-self:stretch;
-    /* Compact draft/tools sit at bottom of the full-height column. */
-    justify-content:flex-end;
+    justify-content:stretch;
   }
   .room .composer.composer-expanded .compose-inner,
-  .room .composer.composer-expanded .composebox{
+  .room .composer.composer-expanded .composebox,
+  .room .composer.composer-collapsed .compose-inner,
+  .room .composer.composer-collapsed .composebox{
     flex:1 1 auto;
     display:flex;
     flex-direction:column;
     min-height:0;
     height:100%;
   }
-  .room .composer.composer-collapsed .compose-inner,
-  .room .composer.composer-collapsed .composebox{
-    flex:none;
-    height:auto;
-    min-height:0;
-  }
   .room .composer .composebox{
     padding:10px;
     border:0;
     border-radius:8px;
   }
-  .room .composer.composer-expanded .composebox textarea{
+  .room .composer.composer-expanded .composebox textarea,
+  .room .composer.composer-collapsed .composebox textarea{
     flex:1 1 auto;
     min-height:0;
     height:auto;
-  }
-  .room .composer.composer-collapsed .composebox textarea{
-    flex:none;
-    height:37px;
-    min-height:37px;
-    overflow:hidden;
+    overflow:auto;
   }
   .room .composer .tools{margin-top:6px}
   .room[data-layout="chat"] .chat{display:flex;flex:1 1 auto}
@@ -819,9 +811,15 @@ body.ct-room-page .room{height:var(--room-viewport-height);min-height:460px}
     max-width:46%;
     height:100%;
     max-height:none;
+    justify-content:stretch;
   }
-  .room[data-chrome="desktop"] .composer.composer-collapsed{
-    justify-content:flex-end;
+  .room[data-chrome="desktop"] .composer.composer-collapsed .compose-inner,
+  .room[data-chrome="desktop"] .composer.composer-collapsed .composebox,
+  .room[data-chrome="desktop"] .composer.composer-collapsed .composebox textarea{
+    flex:1 1 auto;
+    min-height:0;
+    height:auto;
+    overflow:auto;
   }
   .room[data-chrome="desktop"] .chat{
     flex:1 1 auto;
@@ -866,14 +864,11 @@ body.ct-room-page .room{height:var(--room-viewport-height);min-height:460px}
   }
 }
 
-/* Phone landscape: wider collapsed draft so tap-to-open is reliable. */
+/* Phone landscape: composer stays full column width (no minimize-on-blur). */
 @media(orientation:landscape) and (max-width:899px){
-  .room[data-chrome="mobile"] .composer.composer-collapsed{
-    flex:0 0 min(28vw,14rem);
-    width:min(28vw,14rem);
-  }
   .room[data-chrome="mobile"] .si-panel.si-expanded,
-  .room[data-chrome="mobile"] .composer.composer-expanded{
+  .room[data-chrome="mobile"] .composer.composer-expanded,
+  .room[data-chrome="mobile"] .composer.composer-collapsed{
     flex:0 0 min(33vw,20rem);
     width:min(33vw,20rem);
   }
