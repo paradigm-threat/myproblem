@@ -6,7 +6,7 @@ Related: [`simple-max.md`](./simple-max.md) · [`anonymous-tickets.md`](./anonym
 
 **Status:** APK shell in [`apps/android-testmode`](../apps/android-testmode). Room WebView → `https://myproblem.app/c/mp-general` (same as `/#room`). Chat API base `https://intake.myproblem.app`. Constants: `ChatEndpoints.kt` (aligned with `src/lib/contact.ts` + `src/lib/chat/channels.ts`).
 
-**Design SoT:** [`design/ui-kit/`](../design/ui-kit/). Site tokens also in `src/styles/ui-kit-tokens.css` / FixIt.
+**Design SoT:** [`design/myproblem-design/`](../design/myproblem-design/). Live tokens in `src/styles/ui-kit-tokens.css` / FixIt.
 
 ### Phone E2E
 

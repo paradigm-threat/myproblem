@@ -2,7 +2,7 @@
 
 **Homepage SoT is the public Clevertree / IRC room** — not a tip-mint form.
 
-Open chat from the **header Chat** control (or `OpenChatButton`): fullscreen in-page room, or the Clevertree / Relay extension side panel when installed. Dedicated `/c/[channel]` pages may still mount the room inline. Design tokens: [`design/ui-kit/`](../design/ui-kit/) (being replaced by Open Commons kit).
+Open chat from the **header Chat** control (or `OpenChatButton`): fullscreen in-page room, or the Clevertree / Relay extension side panel when installed. Dedicated `/c/[channel]` pages may still mount the room inline. Design SoT: [`design/myproblem-design/`](../design/myproblem-design/) (Open Commons).
 
 ## Flow (live)
 

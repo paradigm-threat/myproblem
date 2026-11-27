@@ -1,0 +1,2 @@
+# 24 core icons
+Use the four custom SVGs here and the following 20 standard Lucide-style icons (install the icon library in the application): sun, moon, monitor, house, store, puzzle, messages-square, share-2, lock-keyhole, hand-heart, search, shield-check, menu, x, send, triangle-alert, eye, arrow-right, ticket, external-link. Use currentColor, 1.75px stroke, 24px viewBox. Custom SVGs represent public SI, posted rules, infrastructure and Networker.

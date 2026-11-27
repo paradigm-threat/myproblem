@@ -1,0 +1,146 @@
+ :root {
+  --font-display: "Literata", Georgia, serif;
+  --font-text: "Public Sans", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", monospace;
+  --radius-xs: 2px; --radius-sm: 6px; --radius-md: 10px; --radius-lg: 16px; --radius-pill: 999px;
+  --target-min: 48px; --container-max: 1440px; --reading-max: 68ch;
+  --gutter: clamp(24px, 5vw, 80px); --section-space: clamp(56px, 8vw, 128px);
+  --motion-fast: 140ms; --motion-room: 220ms; --motion-trace: 2400ms;
+  --ease-out: cubic-bezier(.2,.7,.2,1);
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-12: 48px;
+  --space-16: 64px;
+  --space-20: 80px;
+  --space-24: 96px;
+  --space-32: 128px;
+}
+
+:root, html[data-theme="light"], .room, .room[data-theme="light"], .room[data-theme="system"] {
+  color-scheme: light;
+  --canvas: #F4F7F6;
+  --surface: #FFFFFF;
+  --surface-alt: #E9F0EE;
+  --surface-inset: #DDE8E6;
+  --surface-hover: #DFEAE7;
+  --text: #182C35;
+  --text-secondary: #4C6069;
+  --text-muted: #596E75;
+  --border: #BCCACD;
+  --border-subtle: #D4DFDF;
+  --border-strong: #718890;
+  --disabled-bg: #E3EAE9;
+  --disabled-text: #677B80;
+  --commons: #14674F;
+  --commons-hover: #0E523F;
+  --commons-on: #FFFFFF;
+  --commons-soft: #DBEEE5;
+  --ticket: #245E91;
+  --ticket-on: #FFFFFF;
+  --ticket-soft: #DFEAF6;
+  --infra: #89611D;
+  --infra-on: #FFFFFF;
+  --infra-soft: #F0E8D4;
+  --danger: #A52D38;
+  --danger-on: #FFFFFF;
+  --danger-soft: #FBE4E6;
+  --warning: #89611D;
+  --success: #14674F;
+  --focus: #245E91;
+  --header: #F4F7F6;
+  --theme-color: #F4F7F6;
+  --scrim: rgba(15,35,43,.48);
+  --shadow-sm: 0 2px 6px #182C3510;
+  --shadow-md: 0 8px 24px #182C3514;
+  --shadow-lg: 0 16px 48px #182C3520;
+  --hero-wash: linear-gradient(110deg,#F4F7F6,#DCEBE5);
+  --hero-fade: linear-gradient(90deg,#F4F7F6,transparent);
+}
+
+html[data-theme="dark"], .room[data-theme="dark"] {
+  color-scheme: dark;
+  --canvas: #101E29;
+  --surface: #182936;
+  --surface-alt: #203442;
+  --surface-inset: #0B1720;
+  --surface-hover: #293E4C;
+  --text: #EDF5F4;
+  --text-secondary: #A9BBC5;
+  --text-muted: #91A6B2;
+  --border: #405664;
+  --border-subtle: #304552;
+  --border-strong: #8299A6;
+  --disabled-bg: #253743;
+  --disabled-text: #82939D;
+  --commons: #8DDBC0;
+  --commons-hover: #ADEBD5;
+  --commons-on: #092B20;
+  --commons-soft: #183D35;
+  --ticket: #92C3F2;
+  --ticket-on: #102E49;
+  --ticket-soft: #1C3651;
+  --infra: #E5C47E;
+  --infra-on: #35270F;
+  --infra-soft: #413621;
+  --danger: #FF9CA5;
+  --danger-on: #430E16;
+  --danger-soft: #46252D;
+  --warning: #E5C47E;
+  --success: #8DDBC0;
+  --focus: #A9D5FF;
+  --header: #101E29;
+  --theme-color: #101E29;
+  --scrim: rgba(0,8,15,.72);
+  --shadow-sm: 0 2px 6px #00000030;
+  --shadow-md: 0 8px 24px #00000048;
+  --shadow-lg: 0 16px 48px #00000060;
+  --hero-wash: linear-gradient(110deg,#101E29,#1B3840);
+  --hero-fade: linear-gradient(90deg,#101E29,transparent);
+}
+
+@media (prefers-color-scheme: dark) {
+ html:not([data-theme]), html[data-theme="system"], .room:not([data-theme]), .room[data-theme="system"] {
+  color-scheme: dark;
+  --canvas: #101E29;
+  --surface: #182936;
+  --surface-alt: #203442;
+  --surface-inset: #0B1720;
+  --surface-hover: #293E4C;
+  --text: #EDF5F4;
+  --text-secondary: #A9BBC5;
+  --text-muted: #91A6B2;
+  --border: #405664;
+  --border-subtle: #304552;
+  --border-strong: #8299A6;
+  --disabled-bg: #253743;
+  --disabled-text: #82939D;
+  --commons: #8DDBC0;
+  --commons-hover: #ADEBD5;
+  --commons-on: #092B20;
+  --commons-soft: #183D35;
+  --ticket: #92C3F2;
+  --ticket-on: #102E49;
+  --ticket-soft: #1C3651;
+  --infra: #E5C47E;
+  --infra-on: #35270F;
+  --infra-soft: #413621;
+  --danger: #FF9CA5;
+  --danger-on: #430E16;
+  --danger-soft: #46252D;
+  --warning: #E5C47E;
+  --success: #8DDBC0;
+  --focus: #A9D5FF;
+  --header: #101E29;
+  --theme-color: #101E29;
+  --scrim: rgba(0,8,15,.72);
+  --shadow-sm: 0 2px 6px #00000030;
+  --shadow-md: 0 8px 24px #00000048;
+  --shadow-lg: 0 16px 48px #00000060;
+  --hero-wash: linear-gradient(110deg,#101E29,#1B3840);
+  --hero-fade: linear-gradient(90deg,#101E29,transparent);
+ }
+}

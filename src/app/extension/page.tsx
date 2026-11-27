@@ -116,9 +116,7 @@ export default function ExtensionPage() {
         <section aria-labelledby="design-heading">
           <h2 id="design-heading">Design reference</h2>
           <p>
-            Visual contract:{" "}
-            <a href="/design/ui-kit/screen-board.html">UI kit screen board</a>{" "}
-            (screens 13–20).
+            Design SoT: <code>design/myproblem-design/</code> (Open Commons).
           </p>
         </section>
 

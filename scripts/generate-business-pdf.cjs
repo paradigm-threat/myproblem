@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
- * Build-time landscape one-pager for businesses & service providers.
- * Brand mark appears once (header). Workflow art: public/businesses.jpg.
+ * Landscape one-pager for businesses.
+ * Public free · private fees for capacity · Simple Max.
  */
 const PDFDocument = require("pdfkit");
 const fs = require("node:fs");
@@ -18,8 +18,8 @@ const SITE = "https://myproblem.app";
 
 const headerLogo = fs.existsSync(logoPath) ? logoPath : logoFallbackPath;
 for (const [label, p] of [
-  ["ticket icon", headerLogo],
-  ["businesses landscape graphic", businessesWidePath],
+  ["logo", headerLogo],
+  ["businesses art", businessesWidePath],
 ]) {
   if (!fs.existsSync(p)) {
     console.error(`Missing required asset (${label}): ${p}`);
@@ -35,21 +35,20 @@ const doc = new PDFDocument({
   margins: { top: 26, bottom: 24, left: 28, right: 28 },
   bufferPages: true,
   info: {
-    Title: "MyProblem.app for Businesses & Service Providers",
+    Title: "MyProblem for Businesses",
     Author: "MyProblem",
-    Subject:
-      "Public help free forever; private chat fees fund infra and pay providers for their time",
+    Subject: "Public help free; private tickets compensate time; Simple Max",
   },
 });
 
 const stream = fs.createWriteStream(outPath);
 doc.pipe(stream);
 
-const ink = "#0b1a2e";
-const muted = "#3d4a5c";
-const accent = "#0f6b4c";
-const rule = "#c5d0c9";
-const legal = "#6a7a72";
+const ink = "#182C35";
+const muted = "#4C6069";
+const accent = "#14674F";
+const rule = "#BCCACD";
+const legal = "#596E75";
 
 const pageW = doc.page.width;
 const pageH = doc.page.height;
@@ -79,222 +78,94 @@ function para(text, x, y, width, opts = {}) {
     .fillColor(opts.color || muted)
     .text(text, x, y, {
       width,
-      lineGap: opts.lineGap ?? 1.4,
       align: opts.align || "left",
+      lineGap: opts.lineGap ?? 2,
     });
   return doc.y;
 }
 
-function bullets(items, x, y, width) {
-  let cy = y;
-  for (const item of items) {
-    doc
-      .font("Helvetica")
-      .fontSize(9.5)
-      .fillColor(muted)
-      .text(`•  ${item}`, x, cy, { width, lineGap: 1.15 });
-    cy = doc.y + 3;
-  }
-  return cy;
-}
-
-// —— Header (logo once) ——
-const logoSize = 36;
-const headerY = m.top;
-doc.image(headerLogo, left, headerY, { width: logoSize, height: logoSize });
-
+let y = m.top;
+doc.image(headerLogo, left, y, { width: 28, height: 28 });
 doc
   .font("Helvetica-Bold")
   .fontSize(16)
   .fillColor(ink)
-  .text("MyProblem.app", left + logoSize + 10, headerY + 1, {
-    lineBreak: false,
-  });
+  .text("MyProblem", left + 36, y + 2, { lineBreak: false });
 doc
   .font("Helvetica")
   .fontSize(9)
-  .fillColor(accent)
-  .text(
-    "Free forever for everyone · Zero obligation for shops · Powered by Relay",
-    left + logoSize + 10,
-    headerY + 20,
-    { width: contentW - logoSize - 10, lineBreak: false },
-  );
-
-const ruleY = headerY + logoSize + 8;
-doc
-  .moveTo(left, ruleY)
-  .lineTo(right, ruleY)
-  .strokeColor(rule)
-  .lineWidth(0.75)
-  .stroke();
-
-// —— Headline ——
-let y = ruleY + 12;
-doc
-  .font("Helvetica-Bold")
-  .fontSize(15)
-  .fillColor(ink)
-  .text("Free forever for everyone — including your shop", left, y, {
-    width: contentW,
+  .fillColor(muted)
+  .text("Relay · Public free · Private = cost of capacity", left + 130, y + 8, {
+    lineBreak: false,
   });
-y = doc.y + 2;
+y += 40;
+doc
+  .moveTo(left, y)
+  .lineTo(right, y)
+  .strokeColor(rule)
+  .lineWidth(1)
+  .stroke();
+y += 14;
+
+const colGap = 18;
+const colW = (contentW - colGap) / 2;
+const leftCol = left;
+const rightCol = left + colW + colGap;
+
+y = sectionLabel("For local shops", leftCol, y, colW);
 y = para(
-  "Zero obligation. Ignore anytime. Website → SI (Super Intelligence, i.e. AI) tickets (we do not answer your phone yet).",
-  left,
+  "Answer local questions in the public room. Public asks are free to ignore. Private tickets (when shipped) can compensate your time. Occasional conversations become paid bay work—not purchased leads.",
+  leftCol,
   y,
-  contentW,
-  { size: 10, color: ink, bold: false },
+  colW,
+  { size: 10, color: ink },
 );
 y += 10;
-
-// —— Body band: left copy + right art ——
-const gutter = 18;
-const leftColW = 280;
-const rightColX = left + leftColW + gutter;
-const rightColW = contentW - leftColW - gutter;
-const bodyTop = y;
-
-const lead =
-  "Public help is free forever for everyone — people and shops. Providers get a free public intake path: visitors ask in the public room or capture audio/stills; you open a dossier only when you choose. No application fee, monthly bill, or per-lead invoice on the public path. Planned private chat fees fund infrastructure and pay service providers for their time — so helping online can be compensated, not only via an offline cash deal. Nonprofit / public-utility framing. Georgia & Israel pilots.";
-
-let leftY = para(lead, left, bodyTop, leftColW, { size: 9.5, lineGap: 1.5 });
-leftY += 10;
-leftY = sectionLabel("What you get", left, leftY, leftColW);
-leftY = bullets(
-  [
-    "Public path $0 forever — no application fee, monthly bill, or per-lead invoice.",
-    "Zero obligation — ignore any public request. Silence is fine.",
-    "Website → public room / ticket, not phone — desk stays quiet.",
-    "Private chat (planned) fees → infrastructure + pay for provider time.",
-    "PII-safe dossiers — street/phone stay off the network; secure DM only when needed.",
-    "Legal stops — emergencies and licensed care redirect.",
-  ],
-  left,
-  leftY,
-  leftColW,
-);
-
-const imgW = Math.min(448, rightColW);
-const imgH = imgW * (512 / 1024);
-const imgX = rightColX + Math.max(0, (rightColW - imgW) / 2);
-doc.image(businessesWidePath, imgX, bodyTop, { width: imgW, height: imgH });
-let rightY = bodyTop + imgH + 5;
-rightY = para(
-  "Receive → review SI dossier → accept, ask, or ignore entirely → manage only what you accept.",
-  rightColX,
-  rightY,
-  rightColW,
-  { size: 8, color: legal, lineGap: 1.1 },
-);
-
-y = Math.max(leftY, rightY) + 10;
-
-// —— Lower band: three columns (parked above pinned footer) ——
-const cols = 3;
-const colGap = 16;
-const colW = (contentW - colGap * (cols - 1)) / cols;
-const colXs = [left, left + colW + colGap, left + 2 * (colW + colGap)];
-const footerBlockH = 22;
-const lowerBandH = 118;
-const footerRuleY = bottomLimit - footerBlockH;
-const lowerTop = Math.max(y + 8, footerRuleY - lowerBandH);
-
-doc
-  .moveTo(left, lowerTop - 8)
-  .lineTo(right, lowerTop - 8)
-  .strokeColor(rule)
-  .lineWidth(0.6)
-  .stroke();
-
-// How it works
-let c0 = sectionLabel("How it works", colXs[0], lowerTop, colW);
-const steps = [
-  "Sign up at $0 — still no duty to answer anyone.",
-  "Point your site at tickets — audio + stills when capacity allows.",
-  "Open the tip — photos + notes, PII already converted to safe context.",
-  "Accept, bid, or ask — or ignore entirely.",
+y = sectionLabel("How it works", leftCol, y, colW);
+const beats = [
+  "Public or private ask appears (PII stripped on private).",
+  "Review the dossier; answer, ask, or ignore.",
+  "Optional tip when available; no obligation on public.",
+  "Some customers bring the job in for paid service.",
 ];
-for (let i = 0; i < steps.length; i++) {
-  doc
-    .font("Helvetica-Bold")
-    .fontSize(9.5)
-    .fillColor(ink)
-    .text(`${i + 1}. `, colXs[0], c0, { continued: true, width: colW });
-  doc
-    .font("Helvetica")
-    .fillColor(muted)
-    .text(steps[i], { width: colW - 14, lineGap: 1.1 });
-  c0 = doc.y + 4;
+for (const b of beats) {
+  y = para("•  " + b, leftCol, y, colW, { size: 9.5 });
+  y += 4;
 }
-
-// Who pays
-let c1 = sectionLabel("Who pays", colXs[1], lowerTop, colW);
-c1 = para(
-  "Public rooms stay free forever. Private chat fees (when shipped) fund servers/AI and compensate service providers for time helping — not per-lead invoices for silence. Nonprofit / public-utility framing.",
-  colXs[1],
-  c1,
+y += 8;
+y = sectionLabel("Who pays", leftCol, y, colW);
+y = para(
+  "Public path: $0. Private ≈ metered model cost + optional infra fee. Tips (Stripe, later) never required for public help. Examples are not prices.",
+  leftCol,
+  y,
   colW,
-  { size: 9.5, lineGap: 1.4 },
+  { size: 9.5 },
 );
 
-// Pilots + contact in third column
-let c2 = sectionLabel("Pilots", colXs[2], lowerTop, colW);
-c2 = para(
-  "Georgia (USA) and Israel. Want your region? Email us.",
-  colXs[2],
-  c2,
-  colW,
-  { size: 9.5, lineGap: 1.4 },
-);
-c2 += 8;
-c2 = sectionLabel("Contact", colXs[2], c2, colW);
-doc.font("Helvetica").fontSize(9.5).fillColor(accent).text(CONTACT, colXs[2], c2, {
-  width: colW,
+const artTop = m.top + 54;
+const artH = Math.min(280, bottomLimit - artTop - 48);
+doc.image(businessesWidePath, rightCol, artTop, {
+  fit: [colW, artH],
+  align: "center",
+  valign: "center",
 });
-c2 = doc.y + 2;
-doc.font("Helvetica").fontSize(9.5).fillColor(muted).text(SITE, colXs[2], c2, {
-  width: colW,
-});
-c2 = doc.y;
 
-// —— Footer pinned to page bottom ——
+const footY = bottomLimit - 28;
 doc
-  .moveTo(left, footerRuleY)
-  .lineTo(right, footerRuleY)
+  .moveTo(left, footY)
+  .lineTo(right, footY)
   .strokeColor(rule)
-  .lineWidth(0.6)
+  .lineWidth(1)
   .stroke();
-doc
-  .font("Helvetica")
-  .fontSize(7.5)
-  .fillColor(legal)
-  .text(
-    "Coming soon. Clevertree LLC · myproblem.app/privacy · /terms. Not medical, veterinary, or legal advice. Free forever for everyone. PII client-held + auto-convert.",
-    left,
-    footerRuleY + 6,
-    { width: contentW, lineGap: 1.05 },
-  );
-
-const pages = doc.bufferedPageRange().count;
-if (pages > 1) {
-  console.error(
-    `ERROR: PDF spilled to ${pages} pages — must stay 1 page. Tighten copy/spacing.`,
-  );
-  doc.end();
-  stream.on("finish", () => process.exit(1));
-  return;
-}
+para(
+  `${SITE}/businesses  ·  ${CONTACT}  ·  Simple Max: minimal UI, ungated public capability  ·  Illustration, not a forecast.`,
+  left,
+  footY + 8,
+  contentW,
+  { size: 8, color: legal },
+);
 
 doc.end();
-
 stream.on("finish", () => {
-  console.log(`Wrote ${outPath} (${pages} page, landscape)`);
-  console.log(
-    `Assets: ${path.basename(headerLogo)}, ${path.basename(businessesWidePath)}`,
-  );
-});
-stream.on("error", (err) => {
-  console.error(err);
-  process.exit(1);
+  console.log("Wrote", outPath);
 });

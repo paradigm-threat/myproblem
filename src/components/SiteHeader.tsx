@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useEffect, useId, useState } from "react";
 import {
   ChatLauncherBoot,
@@ -12,18 +13,17 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 type NavItem = { href: string; label: string };
 
 const HOME_LINKS: NavItem[] = [
-  { href: "/#simple-max", label: "Simple Max" },
-  { href: "/#businesses", label: "For businesses" },
-  { href: "/#people", label: "For people" },
-  { href: "/#investors", label: "Funding" },
-  { href: "/extension", label: "Networkers" },
+  { href: "/businesses", label: "Businesses" },
+  { href: "/investors", label: "Funding" },
+  { href: "/extension", label: "Extension" },
   { href: "/how-we-run", label: "How we run" },
+  { href: "/#simple-max", label: "Simple Max" },
   { href: "/dev", label: "Dev" },
 ];
 
 const DEMO_LINKS: NavItem[] = [
   { href: "/", label: "Home" },
-  { href: "/extension", label: "Networkers" },
+  { href: "/extension", label: "Extension" },
   { href: "/how-we-run", label: "How we run" },
   { href: "/dev", label: "Dev" },
   { href: "/terms", label: "Terms" },
@@ -37,6 +37,7 @@ type Props = {
 export function SiteHeader({ variant = "home" }: Props) {
   const [open, setOpen] = useState(false);
   const panelId = useId();
+  const pathname = usePathname();
   const links = variant === "demo" ? DEMO_LINKS : HOME_LINKS;
 
   useEffect(() => {
@@ -54,18 +55,6 @@ export function SiteHeader({ variant = "home" }: Props) {
   }, [open]);
 
   const close = () => setOpen(false);
-
-  const chatBtn = (
-    <button
-      type="button"
-      id={SITE_CHAT_BTN_ID}
-      className="nav-chat-btn"
-      aria-label="Open public chat"
-      aria-pressed="false"
-    >
-      Chat
-    </button>
-  );
 
   return (
     <>
@@ -91,17 +80,31 @@ export function SiteHeader({ variant = "home" }: Props) {
 
             <nav
               className="nav-links nav-links-desktop"
-              aria-label="Page sections"
+              aria-label="Primary"
             >
               {links.map((item) => (
-                <Link key={item.href + item.label} href={item.href}>
+                <Link
+                  key={item.href + item.label}
+                  href={item.href}
+                  aria-current={
+                    pathname === item.href ? "page" : undefined
+                  }
+                >
                   {item.label}
                 </Link>
               ))}
             </nav>
 
             <div className="nav-actions">
-              {chatBtn}
+              <button
+                type="button"
+                id={SITE_CHAT_BTN_ID}
+                className="nav-chat-btn"
+                aria-label="Open public chat"
+                aria-pressed="false"
+              >
+                Chat
+              </button>
               <ThemeToggle />
               <button
                 type="button"

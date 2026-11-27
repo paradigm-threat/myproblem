@@ -12,6 +12,7 @@ describe("public room intake contracts", () => {
   it("homepage opens fullscreen chat via OpenChatButton (no inline room)", () => {
     const page = read("src/app/page.tsx");
     expect(page).toMatch(/OpenChatButton/);
+    expect(page).toMatch(/VisionStrip|Simple Max/);
     expect(page).not.toMatch(/PublicChatShell/);
     expect(page).not.toMatch(/SubmitTicketForm/);
   });

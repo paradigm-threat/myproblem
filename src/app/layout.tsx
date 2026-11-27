@@ -1,27 +1,34 @@
 import type { Metadata, Viewport } from "next";
-import { Fraunces, Manrope } from "next/font/google";
+import { IBM_Plex_Mono, Literata, Public_Sans } from "next/font/google";
 import { JsonLd } from "@/components/JsonLd";
 import { ServiceWorkerRegister } from "@/components/ServiceWorkerRegister";
 import { CONTACT_EMAIL, OG_IMAGE, SITE_URL } from "@/lib/contact";
 import { SITE_THEME_BOOT_SCRIPT } from "@/lib/theme";
 import "./globals.css";
 
-const fraunces = Fraunces({
-  variable: "--font-fraunces",
+const literata = Literata({
+  variable: "--font-literata",
   subsets: ["latin"],
   display: "swap",
 });
 
-const manrope = Manrope({
-  variable: "--font-manrope",
+const publicSans = Public_Sans({
+  variable: "--font-public-sans",
+  subsets: ["latin"],
+  display: "swap",
+});
+
+const plexMono = IBM_Plex_Mono({
+  variable: "--font-plex-mono",
+  weight: ["400", "500"],
   subsets: ["latin"],
   display: "swap",
 });
 
 export const viewport: Viewport = {
   themeColor: [
-    { media: "(prefers-color-scheme: dark)", color: "#007F86" },
-    { media: "(prefers-color-scheme: light)", color: "#007F86" },
+    { media: "(prefers-color-scheme: dark)", color: "#101E29" },
+    { media: "(prefers-color-scheme: light)", color: "#F4F7F6" },
   ],
   colorScheme: "dark light",
   width: "device-width",
@@ -105,7 +112,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={`${fraunces.variable} ${manrope.variable} h-full antialiased`}
+      className={`${literata.variable} ${publicSans.variable} ${plexMono.variable} h-full antialiased`}
       suppressHydrationWarning
     >
       <head>

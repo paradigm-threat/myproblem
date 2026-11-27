@@ -2,21 +2,20 @@
 @import "../styles/ui-kit-tokens.css";
 
 :root {
-  /* Site aliases → UI kit tokens (design/ui-kit/tokens.css) */
+  /* Site aliases → Open Commons tokens (design/myproblem-design) */
   --bg: var(--canvas);
   --bg-elevated: var(--surface);
   --ink: var(--text);
   --muted: var(--text-secondary);
-  --accent: var(--mint);
-  --accent-deep: #1a8f64;
+  --accent: var(--commons);
+  --accent-deep: var(--commons-hover);
   --ticket: var(--ticket);
-  --warm: var(--gold);
-  /* Theme-aware: follow --border / glow tokens (do not hardcode dark-only RGBA) */
+  --warm: var(--infra);
   --line: color-mix(in srgb, var(--border) 65%, transparent);
   --glow: var(--bg-glow-1);
-  --focus: var(--gold);
-  --font-display: var(--font-fraunces), Georgia, serif;
-  --font-sans: var(--font-manrope), var(--font);
+  --font-display: var(--font-literata), Literata, Georgia, serif;
+  --font-sans: var(--font-public-sans), "Public Sans", system-ui, sans-serif;
+  --font-mono: var(--font-plex-mono), "IBM Plex Mono", monospace;
 }
 
 @theme inline {
@@ -2205,4 +2204,100 @@ section h2 {
   .public-room-mount .roomname h1 {
     font-size: 1.15rem;
   }
+}
+
+/* Open Commons: vision strip, theme group, footer columns */
+.vision-strip {
+  background: #101e29;
+  color: #edf5f4;
+  padding-block: clamp(2rem, 5vw, 4rem);
+  border-block: 1px solid var(--border-subtle, #304552);
+}
+.vision-strip-inner {
+  max-width: 68ch;
+}
+.vision-strip h2 {
+  color: #edf5f4;
+  margin: 0.35rem 0 0.75rem;
+  font-size: clamp(1.5rem, 3vw, 2.25rem);
+}
+.vision-strip p {
+  color: #a9bbc5;
+  max-width: 68ch;
+}
+.vision-strip a,
+.vision-strip .eyebrow {
+  color: #8ddbc0;
+}
+.theme-toggle-group {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.15rem;
+  border: 1px solid var(--border, var(--line));
+  border-radius: 999px;
+  padding: 0.15rem;
+  background: var(--surface, var(--elevated-fill));
+}
+.theme-toggle-group .theme-toggle {
+  width: 2.35rem;
+  height: 2.35rem;
+  min-width: 2.35rem;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+}
+.theme-toggle-group .theme-toggle.is-selected {
+  background: var(--commons-soft, var(--nav-hover));
+  color: var(--text, var(--ink));
+}
+.footer-nav {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+  gap: 1.25rem 2rem;
+  margin: 1rem 0 1.25rem;
+}
+.footer-col {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.4rem;
+}
+.footer-col-label {
+  margin: 0;
+  font: 600 0.75rem/1.4 var(--font-mono, monospace);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-muted, var(--muted));
+}
+.footer-muted {
+  color: var(--text-muted, var(--muted));
+  font-size: 0.9rem;
+}
+.footer-contact {
+  margin: 0 0 0.75rem;
+}
+.disclaimer {
+  padding: 1rem 1.15rem;
+  border-inline-start: 2px solid var(--border-strong, var(--border));
+  color: var(--text-secondary, var(--muted));
+  font-size: 0.9rem;
+  line-height: 1.6;
+  margin: 1.5rem 0;
+}
+.disclaimer--warning {
+  border-inline-start-color: var(--warning, var(--infra));
+}
+.btn-primary {
+  background: var(--commons, var(--mint));
+  color: var(--commons-on, var(--ink-on-accent));
+  border-color: var(--commons, var(--mint));
+}
+.btn-primary:hover {
+  background: var(--commons-hover, var(--mint));
+  filter: brightness(1.05);
+}
+.nav-chat-btn {
+  background: var(--commons, var(--mint));
+  color: var(--commons-on, var(--ink-on-accent));
+  border-color: var(--commons, var(--mint));
 }
