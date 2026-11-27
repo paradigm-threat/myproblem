@@ -720,8 +720,8 @@ export default function HomePage() {
         </nav>
         <p>
           <a href="/#si-different">{SI_FOOTER_GLOSS}</a> Operated by Clevertree
-          LLC (Georgia). Pilots in Georgia and Israel. Public chat + AI free
-          forever. Built on{" "}
+          LLC (Georgia). Pilots in Georgia and Israel. Public chat and AI stay
+          free. Built on{" "}
           <a href={RELAY_URL} rel="noopener noreferrer" target="_blank">
             Relay
           </a>

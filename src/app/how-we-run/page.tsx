@@ -11,7 +11,7 @@ import {
 
 const TITLE = "How we run";
 const DESCRIPTION =
-  "Public chat + AI free forever. Private chat is the paid lane. Seeking tax-deductible donations for an educational public utility. Intent, not a contract.";
+  "Public chat and AI stay free. Private chat is the paid lane. Seeking tax-deductible donations for an educational public utility. Intent, not a contract.";
 
 export const metadata: Metadata = {
   title: TITLE,
@@ -35,7 +35,7 @@ const FAQ = [
   {
     question: "Does anyone pay for public help?",
     answer:
-      "No. Public chat rooms and channel AI are free forever for everyone. Nobody pays to join, to ask in #mp-general, or to get help there. There is no membership, no lead invoice, and no subscription for the public path.",
+      "No. Public chat rooms and channel AI stay free. Nobody pays to join, to ask in #mp-general, or to get help there. There is no membership, no lead invoice, and no subscription for the public path.",
   },
   {
     question: "What is paid?",

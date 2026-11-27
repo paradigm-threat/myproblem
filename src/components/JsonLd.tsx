@@ -23,7 +23,7 @@ export function JsonLd() {
           RELAY_SOURCE_URL,
           RELAY_URL,
         ],
-        description: `Investigation service for Problems. Public chat + AI free forever. Private chat is the paid lane. Seeking donations for an educational public utility. Powered by Relay.`,
+        description: `Investigation service for Problems. Public chat and AI stay free. Private chat is the paid lane. Seeking donations for an educational public utility. Powered by Relay.`,
       },
       {
         "@type": "WebSite",
@@ -38,8 +38,8 @@ export function JsonLd() {
         "@type": "WebPage",
         "@id": `${SITE_URL}/#webpage`,
         url: SITE_URL,
-        name: "MyProblem — Public chat free forever",
-        description: `Ask in #mp-general. Public chat + AI free forever. Private chat is the paid lane. Pilots in Georgia and Israel.`,
+        name: "MyProblem — Public help, free",
+        description: `Ask in #mp-general. Public chat and AI stay free. Private chat is the paid lane. Pilots in Georgia and Israel.`,
         isPartOf: { "@id": `${SITE_URL}/#website` },
         about: { "@id": `${SITE_URL}/#organization` },
         primaryImageOfPage: `${SITE_URL}/og.jpg`,
@@ -50,7 +50,7 @@ export function JsonLd() {
         url: `${SITE_URL}/how-we-run`,
         name: "How we run",
         description:
-          "Public chat + AI free forever. Private chat is the paid lane. Seeking tax-deductible donations for an educational public utility. Intent, not a contract.",
+          "Public chat and AI stay free. Private chat is the paid lane. Seeking tax-deductible donations for an educational public utility. Intent, not a contract.",
         isPartOf: { "@id": `${SITE_URL}/#website` },
         about: { "@id": `${SITE_URL}/#organization` },
       },

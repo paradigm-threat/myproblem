@@ -48,7 +48,7 @@ async function ChannelRoomMain({ params, searchParams }: Props) {
         </h1>
         <p className="section-lead" style={{ marginBottom: "1rem" }}>
           Ask in the public room. History is visible. AI and people help
-          in-channel. Public chat + AI stay free forever —{" "}
+          in-channel. Public chat and AI stay free —{" "}
           <a href="/how-we-run">how we run</a>.
         </p>
       </div>
