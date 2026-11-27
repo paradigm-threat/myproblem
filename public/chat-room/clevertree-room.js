@@ -86,6 +86,17 @@
     '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="1.75"/><path d="M12 2v2.2M12 19.8V22M4.2 12H2M22 12h-2.2M5.05 5.05l1.56 1.56M17.39 17.39l1.56 1.56M5.05 18.95l1.56-1.56M17.39 6.61l1.56-1.56" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"/></svg>';
   var THEME_MOON =
     '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M20.5 14.2A8.2 8.2 0 0 1 9.8 3.5 7.4 7.4 0 1 0 20.5 14.2Z" stroke="currentColor" stroke-width="1.75" stroke-linejoin="round"/></svg>';
+  /* Kit icons (design/clevertree-chat-kit/icons/ui) — attach/send from kit; mic/video match stroke. */
+  var ICON_ATTACH =
+    '<svg class="icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m8 13 6-6a3 3 0 0 1 4 4l-8 8a5 5 0 0 1-7-7l9-9a3.5 3.5 0 0 1 5 0" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  var ICON_MIC =
+    '<svg class="icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="9" y="2" width="6" height="11" rx="3" stroke="currentColor" stroke-width="1.7"/><path d="M5 11a7 7 0 0 0 14 0M12 18v4M9 22h6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  var ICON_VIDEO =
+    '<svg class="icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="2" y="6" width="13" height="12" rx="2" stroke="currentColor" stroke-width="1.7"/><path d="m15 10 6-3v10l-6-3V10Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg>';
+  var ICON_STOP =
+    '<svg class="icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="6" y="6" width="12" height="12" rx="1.5" stroke="currentColor" stroke-width="1.7"/></svg>';
+  var ICON_SEND =
+    '<svg class="icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 20V4M5 11l7-7 7 7" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 
   function $(root, sel) {
     return root.querySelector(sel);
@@ -354,25 +365,29 @@
       '<div class="stream" data-role="stream"></div></div>' +
       '<footer class="composer" data-role="composer">' +
       '<div class="compose-inner">' +
-      '<div class="public"><strong>You\'re posting publicly.</strong> Messages go to this IRC room. Anyone may see or save them. Media is covered until AI review.</div>' +
+      '<p class="public" role="note">Public · visible in this room</p>' +
       '<div class="composebox" data-role="composebox">' +
       '<textarea data-role="draft" aria-label="Message to public room" placeholder="Help me with a problem… · Help me find something… · What\'s the latest news on something… · What\'s going on in town…"></textarea>' +
-      '<div class="compose-suggestions" data-role="suggestions" role="group" aria-label="Suggestions">' +
-      '<button type="button" class="suggest" data-suggest="Help me with a problem">Help me with a problem</button>' +
-      '<button type="button" class="suggest" data-suggest="Help me find something">Help me find something</button>' +
-      '<button type="button" class="suggest" data-suggest="What\'s the latest news on something">What\'s the latest news on something</button>' +
-      '<button type="button" class="suggest" data-suggest="What\'s going on in town">What\'s going on in town</button>' +
-      "</div>" +
       '<div class="tools">' +
       '<input type="file" data-role="file-input" hidden accept="image/*,video/*,audio/*,.pdf,text/*,.txt,.md,.json,.csv,.xml,.yaml,.yml" />' +
-      '<button type="button" class="tool" data-role="attach" title="Attach file">Attach</button>' +
-      '<button type="button" class="tool" data-role="record-audio" title="Record audio">Audio</button>' +
-      '<button type="button" class="tool" data-role="record-video" title="Record video">Video</button>' +
-      '<button type="button" class="tool recording-stop" data-role="stop-record" hidden title="Stop recording">Stop</button>' +
+      '<button type="button" class="tool" data-role="attach" title="Attach file" aria-label="Attach file">' +
+      ICON_ATTACH +
+      "</button>" +
+      '<button type="button" class="tool" data-role="record-audio" title="Record audio" aria-label="Record audio">' +
+      ICON_MIC +
+      "</button>" +
+      '<button type="button" class="tool" data-role="record-video" title="Record video" aria-label="Record video">' +
+      ICON_VIDEO +
+      "</button>" +
+      '<button type="button" class="tool recording-stop" data-role="stop-record" hidden title="Stop recording" aria-label="Stop recording">' +
+      ICON_STOP +
+      "</button>" +
       '<span class="upload-status" data-role="upload-status" hidden></span>' +
-      '<button type="button" class="send" data-role="send">Send publicly</button>' +
+      '<button type="button" class="send" data-role="send" title="Send">' +
+      ICON_SEND +
+      "<span>Send</span></button>" +
       "</div></div>" +
-      '<div class="footnote"><span>Tags appended at end · domain or topic only</span><span>Max 50 MiB · images/video/audio/PDF/text</span></div>' +
+      '<div class="footnote"><span>Tags · domain or topic</span><span>Max 50 MiB</span></div>' +
       "</div></footer></main>" +
       '<aside class="ai" data-role="ai" aria-label="SI panel" hidden>' +
       '<div class="aicap">SI workspace</div>' +
@@ -558,7 +573,6 @@
     var sendBtn = $(el, '[data-role="send"]');
     var composerEl = $(el, '[data-role="composer"]');
     var composeBox = $(el, '[data-role="composebox"]');
-    var suggestionsEl = $(el, '[data-role="suggestions"]');
     var investigateBtn = $(el, '[data-role="investigate"]');
     var COMPOSER_EXPANDED_KEY = "clevertree.room.composerExpanded";
     var PLACEHOLDER_EXPANDED =
@@ -598,23 +612,6 @@
     }
 
     setComposerExpanded(readComposerExpanded());
-
-    if (suggestionsEl) {
-      suggestionsEl.addEventListener("click", function (ev) {
-        var btn = ev.target && ev.target.closest
-          ? ev.target.closest("[data-suggest]")
-          : null;
-        if (!btn || !draft) return;
-        var text = btn.getAttribute("data-suggest") || "";
-        if (!text) return;
-        setComposerExpanded(true);
-        draft.value = text;
-        draft.focus();
-        try {
-          draft.setSelectionRange(text.length, text.length);
-        } catch (e) {}
-      });
-    }
 
     if (composeBox) {
       composeBox.addEventListener("click", function () {
