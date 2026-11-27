@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Clevertree Chat</title>
+    <link rel="stylesheet" href="tokens.css" />
+    <link rel="stylesheet" href="themes/index.css" />
+    <link rel="stylesheet" href="clevertree-room.css" />
+    <style>
+      html,
+      body {
+        margin: 0;
+        height: 100%;
+        background: var(--ct-bg, #0b0f14);
+      }
+      #root {
+        height: 100%;
+      }
+      /* Embed must never show gather / refresh */
+      [data-gather],
+      .refreshbar,
+      .refreshbutton {
+        display: none !important;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script src="context-tags.js"></script>
+    <script src="clevertree-room.js"></script>
+    <script>
+      (function () {
+        var q = new URLSearchParams(location.search);
+        var channel = q.get("channel") || "#web";
+        var title = q.get("title") || "Clevertree";
+        var collection = q.get("collection") || "";
+        var topic = q.get("topic") || "";
+        var apiBase = q.get("api") || "https://api.clevertree.chat";
+        var theme = q.get("theme") || "";
+        if (theme === "light" || theme === "dark") {
+          document.documentElement.setAttribute("data-theme", theme);
+        }
+        CleverTreeRoom.mount(document.getElementById("root"), {
+          mode: q.get("surface") === "side" ? "sidepanel" : "embed",
+          channel: channel,
+          title: title,
+          collectionId: collection,
+          apiBase: apiBase,
+          context: {
+            collection: collection,
+            topic: topic,
+          },
+          aiOpen: q.get("ai") === "1",
+          tracked: q.get("tracked") === "1",
+          showGather: false,
+          seedMessages: [],
+        });
+      })();
+    </script>
+  </body>
+</html>

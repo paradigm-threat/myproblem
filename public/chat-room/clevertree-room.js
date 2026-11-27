@@ -47,17 +47,46 @@
   var THEME_KEY = "clevertree.room.theme";
   var VISITOR_KEY = "clevertree.visitor";
 
+  function mintVisitorId() {
+    if (typeof crypto !== "undefined" && crypto.randomUUID) {
+      try {
+        return crypto.randomUUID();
+      } catch (e) {}
+    }
+    // RFC4122-ish fallback for older WebViews without randomUUID.
+    var bytes = new Array(16);
+    for (var i = 0; i < 16; i++) bytes[i] = (Math.random() * 256) | 0;
+    bytes[6] = (bytes[6] & 0x0f) | 0x40;
+    bytes[8] = (bytes[8] & 0x3f) | 0x80;
+    var hex = bytes
+      .map(function (b) {
+        return (b + 0x100).toString(16).slice(1);
+      })
+      .join("");
+    return (
+      hex.slice(0, 8) +
+      "-" +
+      hex.slice(8, 12) +
+      "-" +
+      hex.slice(12, 16) +
+      "-" +
+      hex.slice(16, 20) +
+      "-" +
+      hex.slice(20)
+    );
+  }
+
   function ensureVisitor(opts) {
     if (opts && opts.visitor) return String(opts.visitor);
     try {
       var id = localStorage.getItem(VISITOR_KEY);
-      if (!id && typeof crypto !== "undefined" && crypto.randomUUID) {
-        id = crypto.randomUUID();
+      if (!id) {
+        id = mintVisitorId();
         localStorage.setItem(VISITOR_KEY, id);
       }
-      return id || "";
+      return id || mintVisitorId();
     } catch (e) {
-      return "";
+      return mintVisitorId();
     }
   }
 
@@ -321,6 +350,22 @@
     return list[Math.max(0, i || 0) % list.length];
   }
 
+  /** Build WS mirrors from apiBase + channel when callers pass none (live.html / Android). */
+  function defaultMirrors(apiBase, channel) {
+    var topic = String(channel || "#web")
+      .replace(/^#/, "")
+      .trim() || "web";
+    var base = String(apiBase || "https://api.clevertree.chat").replace(/\/$/, "");
+    var wsHost = base.replace(/^https:/, "wss:").replace(/^http:/, "ws:");
+    var path = "/api/chat/ws?topic=" + encodeURIComponent(topic);
+    var list = [wsHost + path];
+    if (wsHost.indexOf("api.clevertree.chat") < 0) {
+      list.push("wss://api.clevertree.chat" + path);
+    }
+    list.push("wss://pub1.relaygateway.net/chat/ws?topic=" + encodeURIComponent(topic));
+    return list;
+  }
+
   function shellHtml(opts) {
     var ch = esc(opts.channel || "#web");
     var title = esc(opts.title || "Public room");
@@ -365,6 +410,7 @@
       '<p class="public" role="note">Public · visible in this room</p>' +
       '<div class="composebox" data-role="composebox">' +
       '<textarea data-role="draft" aria-label="Message to public room" placeholder="Help me with a problem… · Help me find something… · What\'s the latest news on something… · What\'s going on in town…"></textarea>' +
+      '<div class="pending-media" data-role="pending-media" hidden></div>' +
       '<div class="tools">' +
       '<input type="file" data-role="file-input" hidden accept="image/*,video/*,audio/*,.pdf,text/*,.txt,.md,.json,.csv,.xml,.yaml,.yml" />' +
       '<button type="button" class="tool" data-role="attach" title="Attach file" aria-label="Attach file">' +
@@ -384,7 +430,7 @@
       ICON_SEND +
       "<span>Send</span></button>" +
       "</div></div>" +
-      '<div class="footnote"><span>Tags · domain or topic</span><span>Max 50 MiB</span></div>' +
+      '<div class="footnote"><span>Drop audio · video · files · Tags</span><span>Max 50 MiB</span></div>' +
       "</div></footer></main></div>" +
       '<div class="overlay" data-role="overlay" hidden><div class="modal" data-role="modal"></div></div>'
     );
@@ -529,6 +575,13 @@
     if (mode === "page") document.body.classList.add("ct-room-page");
     else el.classList.add("ct-room-host", "embedded");
 
+    if (!opts.apiBase) opts.apiBase = "https://api.clevertree.chat";
+    if (!opts.channel) opts.channel = "#web";
+    if (!opts.mirrors || !opts.mirrors.length) {
+      opts.mirrors = defaultMirrors(opts.apiBase, opts.channel);
+    }
+    if (!opts.wsUrl) opts.wsUrl = opts.mirrors[0];
+
     el.innerHTML = shellHtml(opts);
 
     var state = {
@@ -551,6 +604,7 @@
       mediaStream: null,
       recordChunks: [],
       recordKind: "",
+      pendingMedia: [],
     };
     applyRoomTheme(el, state.theme, state.themePref);
 
@@ -629,6 +683,7 @@
     var recordVideoBtn = $(el, '[data-role="record-video"]');
     var stopRecordBtn = $(el, '[data-role="stop-record"]');
     var uploadStatus = $(el, '[data-role="upload-status"]');
+    var pendingMediaEl = $(el, '[data-role="pending-media"]');
 
     function apiBase() {
       var base =
@@ -641,6 +696,65 @@
       return String(opts.channel || "#web")
         .replace(/^#/, "")
         .trim() || "web";
+    }
+
+    function renderPendingMedia() {
+      if (!pendingMediaEl) return;
+      var items = state.pendingMedia || [];
+      if (!items.length) {
+        pendingMediaEl.hidden = true;
+        pendingMediaEl.innerHTML = "";
+        return;
+      }
+      pendingMediaEl.hidden = false;
+      pendingMediaEl.innerHTML = items
+        .map(function (it, idx) {
+          var kind = esc(it.kind || "file");
+          var name = esc(it.name || it.kind || "attachment");
+          var preview = "";
+          if (it.kind === "image" && it.url) {
+            preview =
+              '<img class="pending-thumb" src="' +
+              esc(it.url) +
+              '" alt="" />';
+          } else if (it.kind === "audio" && it.url) {
+            preview =
+              '<audio class="pending-player" controls preload="metadata" src="' +
+              esc(it.url) +
+              '"></audio>';
+          } else if (it.kind === "video" && it.url) {
+            preview =
+              '<video class="pending-player" controls muted playsinline preload="metadata" src="' +
+              esc(it.url) +
+              '"></video>';
+          }
+          return (
+            '<div class="pending-item" data-pending-idx="' +
+            idx +
+            '">' +
+            preview +
+            '<div class="pending-meta"><strong>' +
+            kind +
+            "</strong><span>" +
+            name +
+            '</span></div><button type="button" class="pending-clear" data-role="clear-pending" data-pending-idx="' +
+            idx +
+            '" aria-label="Remove ' +
+            kind +
+            ' attachment">Remove</button></div>'
+          );
+        })
+        .join("");
+      var clears = pendingMediaEl.querySelectorAll('[data-role="clear-pending"]');
+      for (var ci = 0; ci < clears.length; ci++) {
+        clears[ci].onclick = function (ev) {
+          var btn = ev.currentTarget;
+          var i = parseInt(btn.getAttribute("data-pending-idx") || "-1", 10);
+          if (i < 0) return;
+          state.pendingMedia.splice(i, 1);
+          renderPendingMedia();
+        };
+      }
     }
 
     function setUploadStatus(text) {
@@ -829,23 +943,55 @@
         throw new Error(data.error || "upload_" + res.status);
       }
       setReview(data.sha256, data.url, data.review || "pending");
-      var caption = draft.value.trim();
+      var kind = data.kind || kindHint || "file";
       var marker =
         data.marker ||
         "[[mp:media kind=" +
-          (data.kind || kindHint || "file") +
+          kind +
           " url=" +
           data.url +
           " channel=#" +
           channelSlug() +
-          " review=pending sha=" +
+          " review=" +
+          (data.review || "pending") +
+          " sha=" +
           (data.sha256 || "") +
           "]]";
-      var body = caption ? caption + "\n" + marker : marker;
+      state.pendingMedia.push({
+        kind: kind,
+        url: data.url,
+        sha256: data.sha256 || "",
+        name: file.name || kind,
+        marker: marker,
+      });
+      renderPendingMedia();
       setUploadStatus("");
-      confirmPublic(function () {
-        postLocal(body);
-        draft.value = "";
+      setComposerExpanded(true);
+    }
+
+    function takePendingMarkers() {
+      var markers = (state.pendingMedia || [])
+        .map(function (it) {
+          return it.marker;
+        })
+        .filter(Boolean);
+      state.pendingMedia = [];
+      renderPendingMedia();
+      return markers;
+    }
+
+    function ingestDroppedFiles(fileList) {
+      var files = [];
+      if (!fileList || !fileList.length) return;
+      for (var i = 0; i < fileList.length; i++) files.push(fileList[i]);
+      files.forEach(function (f) {
+        var hint = "";
+        if (/^audio\//i.test(f.type || "")) hint = "audio";
+        else if (/^video\//i.test(f.type || "")) hint = "video";
+        else if (/^image\//i.test(f.type || "")) hint = "image";
+        uploadBlob(f, hint).catch(function (err) {
+          setUploadStatus(err && err.message ? err.message : "Upload failed");
+        });
       });
     }
 
@@ -949,6 +1095,46 @@
           setUploadStatus(err && err.message ? err.message : "Upload failed");
         });
       };
+    }
+    if (composerEl) {
+      ;["dragenter", "dragover"].forEach(function (evName) {
+        composerEl.addEventListener(evName, function (ev) {
+          ev.preventDefault();
+          ev.stopPropagation();
+          composerEl.classList.add("drop-hover");
+        });
+      });
+      ;["dragleave", "dragend"].forEach(function (evName) {
+        composerEl.addEventListener(evName, function (ev) {
+          ev.preventDefault();
+          composerEl.classList.remove("drop-hover");
+        });
+      });
+      composerEl.addEventListener("drop", function (ev) {
+        ev.preventDefault();
+        ev.stopPropagation();
+        composerEl.classList.remove("drop-hover");
+        var dt = ev.dataTransfer;
+        if (!dt || !dt.files || !dt.files.length) return;
+        ingestDroppedFiles(dt.files);
+      });
+    }
+    if (draft) {
+      draft.addEventListener("paste", function (ev) {
+        var items = ev.clipboardData && ev.clipboardData.items;
+        if (!items || !items.length) return;
+        var files = [];
+        for (var pi = 0; pi < items.length; pi++) {
+          var item = items[pi];
+          if (item.kind === "file") {
+            var pf = item.getAsFile();
+            if (pf) files.push(pf);
+          }
+        }
+        if (!files.length) return;
+        ev.preventDefault();
+        ingestDroppedFiles(files);
+      });
     }
     if (recordAudioBtn) {
       recordAudioBtn.onclick = function () {
@@ -1074,13 +1260,23 @@
 
     sendBtn.onclick = function () {
       var text = draft.value.trim();
-      if (!text) {
+      var markers = (state.pendingMedia || [])
+        .map(function (it) {
+          return it.marker;
+        })
+        .filter(Boolean);
+      if (!text && !markers.length) {
         setComposerExpanded(true);
         draft.focus();
         return;
       }
       confirmPublic(function () {
-        postLocal(text);
+        var attached = takePendingMarkers();
+        var body = text;
+        if (attached.length) {
+          body = body ? body + "\n" + attached.join("\n") : attached.join("\n");
+        }
+        postLocal(body);
         draft.value = "";
         setComposerExpanded(false);
       });
@@ -1119,8 +1315,13 @@
           state.connected = false;
           setConnUi("Reconnecting…", "");
           state.mirrorIndex += 1;
-          if (!state.destroyed && state.mirrors.length) {
+          if (
+            !state.destroyed &&
+            (state.mirrors.length || opts.wsUrl)
+          ) {
             setTimeout(connect, 800);
+          } else if (!state.destroyed) {
+            setConnUi("Offline", "no mirror");
           }
         };
         ws.onmessage = function (ev) {
@@ -1271,6 +1472,7 @@
     isBotNick: isBot,
     BOT_NICKS: BOT_NICKS,
     pickMirror: pickMirror,
+    defaultMirrors: defaultMirrors,
     THEME_KEY: THEME_KEY,
     resolveTheme: resolveRoomTheme,
   };
