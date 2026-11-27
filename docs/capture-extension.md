@@ -1,11 +1,12 @@
 # Relay — MyProblem capture extension
 
 **Public page:** [https://myproblem.app/extension](https://myproblem.app/extension)  
-**Code:** [`extensions/capture/`](../extensions/capture/)  
-**Design SoT:** [`design/ui-kit/`](../design/ui-kit/) (screens 13–20)  
+**Networker UI (canonical):** CleverTree Chat [`fronts/relay-extension/`](../../clevertree-chat/fronts/relay-extension/) + shared room [`fronts/room/`](../../clevertree-chat/fronts/room/)  
+**Gather engine (this repo):** [`extensions/capture/`](../extensions/capture/) — content scripts / Lab until Relay background owns gather end-to-end  
+**Design kits:** `clevertree-chat/design/{relay-ui-kit,clevertree-kit}/`  
 **Related:** [`social-group-monitor.md`](./social-group-monitor.md) · [`ephemeral-media.md`](./ephemeral-media.md) · [`pii-and-privacy.md`](./pii-and-privacy.md) · [`batched-agent-work.md`](./batched-agent-work.md) · [`clevertree-chat.md`](./clevertree-chat.md) · [`apk-ticket-ux.md`](./apk-ticket-ux.md)
 
-**Unified home:** this folder is the one Relay / Networker garden-wall extension — the **primary way to be a Networker**. Clevertree’s debate side panel remains separate for board URL debates; Networker gather ships from MyProblem (`/extension` copy leads with that).
+**Simple Max:** one CleverTree room component (web / embed / side panel modes). Extension wraps it with always-on **Refresh**; embed never gets gather. MyProblem consumes CleverTree — do not fork a second chat UI here.
 
 ---
 

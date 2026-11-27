@@ -1,18 +1,19 @@
-# MyProblem X (browser extension)
+# MyProblem X (browser extension) — gather engine (legacy UI)
 
 Session-bound capture + human-approved reply paste for locked social feeds (Nextdoor pilot).
 
-**v0.1.22:** Main leads with **TNR matches** (litters / unfixed moms → trap network); collection mission + craft “Coordinate trappers”. See `../../content/collections/savannah-cat-rescue.md`.
+**Networker chat + Refresh UI (canonical):** load unpacked from CleverTree Chat  
+`/home/ari/dev/clevertree-chat/fronts/relay-extension`  
+(shared room component in `fronts/room/`). Do **not** fork a second chat UI here.
 
-**Not a bot scraper.** Platforms ban unattended scrapers. You browse; the extension harvests what you can already see, caches a local batch, scrubs PII, suggests topics, and helps paste batch-drafted reply templates that **you** edit and send.
+This folder still holds the **gather / deep-capture / upload** content-script engine until Relay’s background fully owns those jobs. Product page: [https://myproblem.app/extension](https://myproblem.app/extension)
 
-Product page: [https://myproblem.app/extension](https://myproblem.app/extension)
-
-## Load unpacked (Chrome)
+## Load unpacked (Chrome) — gather-only / legacy panel
 
 1. Open `chrome://extensions`
 2. Enable **Developer mode**
-3. **Load unpacked** → select this folder:  
+3. **Preferred:** Load unpacked → `/home/ari/dev/clevertree-chat/fronts/relay-extension`  
+   **Legacy gather Lab UI:** Load unpacked → this folder:  
    `/home/ari/dev/myproblem/extensions/capture`
 4. Pin **MyProblem X** from the puzzle-piece menu (icon only enables on social hosts — see `lib/social-hosts.js`)
 5. In a normal Chrome window (not the Cursor browser), open Nextdoor **logged in**
