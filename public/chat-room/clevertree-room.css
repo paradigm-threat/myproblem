@@ -298,8 +298,14 @@ body.ct-room-page .room{height:100dvh;min-height:460px}
 .room[data-orient="right"] .si-rail-head{
   flex-direction:row-reverse; /* titles | FAB (FAB far right) */
 }
-.room[data-orient="right"] .si-rail-titles{
-  text-align:right;
+/* Title/subtitle strings stay left-justified in every orient (FAB corner only flips). */
+.room .si-rail-titles,
+.room .si-rail-title,
+.room .si-rail-sub,
+.room[data-orient="right"] .si-rail-titles,
+.room[data-orient="right"] .si-rail-title,
+.room[data-orient="right"] .si-rail-sub{
+  text-align:left;
 }
 .room .si-rail-titles{
   min-width:0;
