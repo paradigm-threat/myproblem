@@ -37,19 +37,110 @@ body.ct-room-page .room{height:100dvh;min-height:460px}
   width:100%;
   margin:0;
 }
+.room .head{flex:none;position:relative;z-index:4}
+.room .head .channel-switch-wrap{position:relative;flex:none}
+.room .head .channel-switch{
+  display:inline-flex;
+  align-items:center;
+  gap:4px;
+  min-height:36px;
+  padding:4px 6px 4px 8px;
+  border:1px solid var(--ct-control-border,#9eafa3);
+  border-radius:6px;
+  background:var(--white);
+  color:var(--ink);
+}
+.room .head .channel-switch.open,
+.room .head .channel-switch:focus-visible{
+  border-color:var(--green);
+  box-shadow:0 0 0 2px #dce9de;
+}
 .room .head .channel-tag{
   font:12px/1.3 var(--mono);
   font-weight:700;
   letter-spacing:0;
   text-transform:none;
-  color:var(--muted);
+  color:var(--ink);
   background:transparent;
   padding:0;
 }
+.room .head .channel-caret-icon{width:16px;height:16px;color:var(--muted)}
+.room .head .channel-menu{
+  position:absolute;
+  right:0;
+  top:calc(100% + 6px);
+  z-index:20;
+  width:min(320px,78vw);
+  max-height:min(50dvh,360px);
+  overflow:auto;
+  -webkit-overflow-scrolling:touch;
+  overscroll-behavior:contain;
+  padding:6px;
+  border:1px solid var(--line);
+  border-radius:8px;
+  background:var(--white);
+  box-shadow:0 12px 32px #142c2340;
+}
+.room .head .channel-menu[hidden]{display:none!important}
+.room .head .channel-option{
+  width:100%;
+  display:flex;
+  flex-direction:column;
+  align-items:flex-start;
+  gap:2px;
+  text-align:left;
+  padding:10px 10px;
+  border-radius:6px;
+  min-height:44px;
+  color:var(--ink);
+}
+.room .head .channel-option:hover,
+.room .head .channel-option:focus-visible{background:var(--green2)}
+.room .head .channel-option.active{background:color-mix(in srgb,var(--green2) 70%,var(--white))}
+.room .head .channel-option code{font:12px/1.3 var(--mono);font-weight:700;color:var(--green)}
+.room .head .channel-option-title{font-size:12px;color:var(--muted)}
+.room .head .channel-menu-empty{padding:12px;font-size:12px;color:var(--muted)}
+.room .si-strip{
+  margin-top:10px;
+  padding:8px 10px;
+  border:1px solid var(--line);
+  border-radius:8px;
+  background:color-mix(in srgb,var(--green2) 45%,var(--white));
+  max-height:22dvh;
+  overflow:auto;
+  -webkit-overflow-scrolling:touch;
+}
+.room .si-strip-label{
+  font:10px/1.2 var(--mono);
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  font-weight:900;
+  color:var(--green);
+  margin-bottom:4px;
+}
+.room .si-strip-body{font-size:13px;color:var(--ink)}
+.room .si-strip-body .si-stub,
+.room .si-strip-body p{margin:0;color:var(--muted);font-size:12px}
+.room .si-strip-body .si-channel-label{font:11px/1.3 var(--mono);color:var(--green);margin-bottom:6px}
+.room .si-strip-body .ai-section{margin-top:8px}
+.room .si-strip-body .ai-section h3{margin:0 0 4px;font-size:13px}
+.room .si-strip-body .ai-pairs ul{margin:4px 0 0;padding-left:1.1em}
 .room .head .actions{display:none}
 @media(max-width:700px){
   .room .head{padding:10px 12px 8px}
   .room .head .channel-tag{font-size:11px}
+  .room .si-strip{max-height:18dvh}
+}
+.room[data-theme="dark"] .head .channel-switch{
+  background:var(--white);
+  border-color:color-mix(in srgb,var(--green) 40%,var(--line));
+}
+.room[data-theme="dark"] .head .channel-menu{
+  background:var(--white);
+  box-shadow:0 12px 32px #0008;
+}
+.room[data-theme="dark"] .si-strip{
+  background:color-mix(in srgb,var(--green2) 28%,var(--white));
 }
 
 /* Public note: short banner with AA contrast (not low-contrast amber-on-dark). */

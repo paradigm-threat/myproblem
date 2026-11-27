@@ -126,6 +126,8 @@
     '<svg class="icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="6" y="6" width="12" height="12" rx="1.5" stroke="currentColor" stroke-width="1.7"/></svg>';
   var ICON_SEND =
     '<svg class="icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 20V4M5 11l7-7 7 7" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  var ICON_CARET =
+    '<svg class="icon channel-caret-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m6 9 6 6 6-6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 
   function $(root, sel) {
     return root.querySelector(sel);
@@ -398,10 +400,19 @@
       '<div class="roomname">' +
       '<div class="eyebrow">' +
       "<span>Public IRC room</span>" +
+      '<div class="channel-switch-wrap" data-role="channel-switch-wrap">' +
+      '<button type="button" class="channel-switch" data-role="channel-switch" aria-haspopup="listbox" aria-expanded="false" title="List channels" aria-label="List channels">' +
       '<code class="channel-tag" data-role="channel-tag">' +
       ch +
       "</code>" +
-      "</div></div></section>" +
+      ICON_CARET +
+      "</button>" +
+      '<div class="channel-menu" data-role="channel-menu" role="listbox" aria-label="IRC channels" hidden></div>' +
+      "</div></div></div>" +
+      '<section class="si-strip" data-role="si" aria-label="SI panel for this channel">' +
+      '<div class="si-strip-label">SI</div>' +
+      '<div class="si-strip-body" data-role="ai-body"><p class="si-stub">Connecting…</p></div>' +
+      "</section></section>" +
       '<div class="body"><main class="chat">' +
       '<div class="history" data-role="history" role="log" aria-label="Public IRC channel messages">' +
       '<div class="stream" data-role="stream"></div></div>' +
@@ -605,12 +616,13 @@
       recordChunks: [],
       recordKind: "",
       pendingMedia: [],
+      channelCatalog: [],
     };
     applyRoomTheme(el, state.theme, state.themePref);
 
     var trackBtn = $(el, '[data-role="track"]');
     var aiBtn = $(el, '[data-role="ai-toggle"]');
-    var aiPanel = $(el, '[data-role="ai"]');
+    var aiPanel = $(el, '[data-role="si"]');
     var aiBody = $(el, '[data-role="ai-body"]');
     var stream = $(el, '[data-role="stream"]');
     var history = $(el, '[data-role="history"]');
@@ -619,7 +631,10 @@
     var composerEl = $(el, '[data-role="composer"]');
     var composeBox = $(el, '[data-role="composebox"]');
     var investigateBtn = $(el, '[data-role="investigate"]');
-    /* AI findings panel + Investigate chrome removed from shell (keep refs null-safe). */
+    var channelTag = $(el, '[data-role="channel-tag"]');
+    var channelSwitchBtn = $(el, '[data-role="channel-switch"]');
+    var channelMenu = $(el, '[data-role="channel-menu"]');
+    /* Investigate chrome removed; SI strip + channel switcher stay in the head. */
     var PLACEHOLDER_EXPANDED =
       "Help me with a problem… · Help me find something… · What's the latest news on something… · What's going on in town…";
     var PLACEHOLDER_COLLAPSED = "Ask something…";
@@ -644,6 +659,30 @@
       localStorage.removeItem("clevertree.room.composerExpanded");
     } catch (e) {}
     setComposerExpanded(true);
+
+    if (channelSwitchBtn) {
+      channelSwitchBtn.onclick = function (ev) {
+        ev.preventDefault();
+        ev.stopPropagation();
+        var open = channelMenu && channelMenu.hidden;
+        if (open) {
+          loadChannelCatalog().then(function () {
+            setChannelMenuOpen(true);
+          });
+        } else {
+          setChannelMenuOpen(false);
+        }
+      };
+    }
+    if (el) {
+      el.addEventListener("click", function (ev) {
+        if (!channelMenu || channelMenu.hidden) return;
+        var wrap = $(el, '[data-role="channel-switch-wrap"]');
+        if (wrap && wrap.contains(ev.target)) return;
+        setChannelMenuOpen(false);
+      });
+    }
+    loadChannelCatalog().catch(function () {});
 
     if (history) {
       history.addEventListener("click", function () {
@@ -694,6 +733,197 @@
       return String(opts.channel || "#web")
         .replace(/^#/, "")
         .trim() || "web";
+    }
+
+    function normalizeChannelName(ch) {
+      var s = String(ch || "").trim();
+      if (!s) return "#web";
+      return s.charAt(0) === "#" ? s : "#" + s;
+    }
+
+    function setChannelMenuOpen(open) {
+      if (!channelMenu || !channelSwitchBtn) return;
+      channelMenu.hidden = !open;
+      channelSwitchBtn.setAttribute("aria-expanded", open ? "true" : "false");
+      channelSwitchBtn.classList.toggle("open", !!open);
+    }
+
+    function renderChannelMenu(list) {
+      if (!channelMenu) return;
+      var rows = Array.isArray(list) ? list : [];
+      if (!rows.length) {
+        channelMenu.innerHTML =
+          '<div class="channel-menu-empty">No channels listed</div>';
+        return;
+      }
+      var current = normalizeChannelName(opts.channel);
+      channelMenu.innerHTML = rows
+        .map(function (row) {
+          var ch = normalizeChannelName(row.channel || row.name || row);
+          var title = row.title || row.label || "";
+          var active = ch === current ? " active" : "";
+          return (
+            '<button type="button" class="channel-option' +
+            active +
+            '" role="option" data-channel="' +
+            esc(ch) +
+            '" aria-selected="' +
+            (ch === current ? "true" : "false") +
+            '"><code>' +
+            esc(ch) +
+            "</code>" +
+            (title
+              ? '<span class="channel-option-title">' + esc(title) + "</span>"
+              : "") +
+            "</button>"
+          );
+        })
+        .join("");
+      var btns = channelMenu.querySelectorAll("[data-channel]");
+      for (var i = 0; i < btns.length; i++) {
+        btns[i].onclick = function (ev) {
+          var btn = ev.currentTarget;
+          var next = btn.getAttribute("data-channel");
+          setChannelMenuOpen(false);
+          switchChannel(next);
+        };
+      }
+    }
+
+    function fallbackChannelCatalog() {
+      return [
+        {
+          channel: "#web",
+          topic: "web",
+          title: "Clevertree Chat · public web",
+        },
+        { channel: "#pt", topic: "general", title: "Paradigm Threat" },
+        {
+          channel: "#mp-general",
+          topic: "mp-general",
+          title: "MyProblem general",
+        },
+        {
+          channel: "#ga-savannah-cat-rescue",
+          topic: "ga-savannah-cat-rescue",
+          title: "Savannah Cat Rescue",
+        },
+      ];
+    }
+
+    async function loadChannelCatalog() {
+      var merged = fallbackChannelCatalog().slice();
+      var seen = {};
+      merged.forEach(function (r) {
+        seen[normalizeChannelName(r.channel)] = 1;
+      });
+      function absorb(list) {
+        (list || []).forEach(function (row) {
+          var ch = normalizeChannelName(
+            (row && (row.channel || row.name)) || row
+          );
+          if (seen[ch]) {
+            if (row && row.title) {
+              for (var i = 0; i < merged.length; i++) {
+                if (normalizeChannelName(merged[i].channel) === ch) {
+                  merged[i].title = row.title;
+                  break;
+                }
+              }
+            }
+            return;
+          }
+          seen[ch] = 1;
+          merged.push(
+            typeof row === "string"
+              ? { channel: ch, title: ch }
+              : {
+                  channel: ch,
+                  topic: row.topic || ch.replace(/^#/, ""),
+                  title: row.title || ch,
+                }
+          );
+        });
+      }
+      try {
+        var policyUrl = new URL("channel-policy.json", location.href).toString();
+        var polRes = await fetch(policyUrl, { cache: "no-store" });
+        if (polRes.ok) {
+          var policy = await polRes.json();
+          var repos = (policy && policy.repos) || {};
+          Object.keys(repos).forEach(function (rk) {
+            var repo = repos[rk] || {};
+            if (repo.default_channel) absorb([repo.default_channel]);
+            var channels = repo.channels;
+            if (Array.isArray(channels)) absorb(channels);
+            else if (channels && typeof channels === "object") {
+              Object.keys(channels).forEach(function (key) {
+                var meta = channels[key];
+                if (meta && typeof meta === "object") {
+                  absorb([
+                    {
+                      channel: meta.irc_channel || "#" + key,
+                      topic: key,
+                      title: meta.title || key,
+                    },
+                  ]);
+                } else if (typeof meta === "string") {
+                  absorb([{ channel: meta, topic: key }]);
+                }
+              });
+            }
+          });
+        }
+      } catch (e) {}
+      try {
+        var res = await fetch(apiBase() + "/api/chat", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ action: "channels" }),
+        });
+        if (res.ok) {
+          var data = await res.json();
+          absorb(data.channels || data.list || []);
+        }
+      } catch (e2) {}
+      state.channelCatalog = merged;
+      renderChannelMenu(merged);
+      return merged;
+    }
+
+    function switchChannel(nextChannel) {
+      var ch = normalizeChannelName(nextChannel);
+      if (!ch || ch === normalizeChannelName(opts.channel)) return;
+      opts.channel = ch;
+      if (channelTag) channelTag.textContent = ch;
+      if (el.querySelector(".head")) {
+        el.querySelector(".head").setAttribute("aria-label", ch);
+      }
+      state.mirrors = defaultMirrors(apiBase(), ch);
+      opts.mirrors = state.mirrors;
+      opts.wsUrl = state.mirrors[0];
+      state.mirrorIndex = 0;
+      state.messages = [];
+      state.historyHydrated = false;
+      state.mediaReviews = {};
+      state.connected = false;
+      clearSiPanel("Loading SI for " + ch + "…");
+      renderSeed();
+      setConnUi("Switching…", ch);
+      if (state.ws) {
+        try {
+          state.ws.onclose = null;
+          state.ws.onmessage = null;
+          state.ws.close();
+        } catch (e) {}
+        state.ws = null;
+      }
+      if (typeof opts.onChannelChange === "function") {
+        try {
+          opts.onChannelChange(ch);
+        } catch (e2) {}
+      }
+      connect();
     }
 
     function renderPendingMedia() {
@@ -795,22 +1025,37 @@
       }
     );
 
+    function clearSiPanel(msg) {
+      state.view = null;
+      if (!aiBody) return;
+      aiBody.innerHTML =
+        '<p class="si-stub">' +
+        esc(msg || "Loading SI for this channel…") +
+        "</p>";
+    }
+
     function renderAiFindings(view) {
       if (!aiBody) return;
-      state.view = view || state.view;
+      /* Always replace — never keep the previous channel's SI markup. */
+      state.view = view || null;
       var v = state.view;
       if (!v || (!v.sections && !v.pairs && !v.exists)) {
         aiBody.innerHTML =
-          '<p class="si-stub">SI panel stub — batch curation (topics, findings, CleverScript) will appear here.</p>';
+          '<p class="si-stub">No SI filing for ' +
+          esc(opts.channel || "#web") +
+          " yet — talk in the room.</p>";
         return;
       }
       var sections = v.sections || {};
       var keys = Object.keys(sections).filter(function (k) {
         return k !== "uncategorized";
       });
-      var html = "";
+      var html =
+        '<div class="si-channel-label">SI · ' +
+        esc(opts.channel || "#web") +
+        "</div>";
       if (v.pairs && v.pairs.length) {
-        html += '<div class="ai-pairs"><h3>Paired perspectives</h3><ul>';
+        html += '<div class="ai-pairs"><strong>Paired</strong><ul>';
         v.pairs.forEach(function (pair) {
           var a = (pair && (pair[0] || pair.a || pair.left)) || "";
           var b = (pair && (pair[1] || pair.b || pair.right)) || "";
@@ -845,24 +1090,21 @@
           uncat.comments.length +
           " comment(s) waiting for batch filing.</p></article>";
       }
-      if (!html) {
-        html =
-          "<p>Channel is live. No standing perspectives filed yet — keep talking in the room.</p>";
+      if (keys.length === 0 && !(v.pairs && v.pairs.length) && !(uncat && uncat.comments && uncat.comments.length)) {
+        html +=
+          "<p>Channel is live. No standing perspectives filed yet.</p>";
       }
       aiBody.innerHTML = html;
+      if (aiPanel) aiPanel.hidden = false;
     }
 
     function setAiUi() {
-      if (!aiPanel || !aiBtn) {
-        state.aiOpen = false;
-        return;
+      /* SI strip is always present for the active channel; legacy toggle is a no-op. */
+      if (aiBtn) {
+        aiBtn.hidden = true;
       }
-      aiPanel.hidden = !state.aiOpen;
-      aiPanel.classList.toggle("open", state.aiOpen);
-      aiBtn.classList.toggle("active", state.aiOpen);
-      aiBtn.textContent = state.aiOpen ? "Hide AI" : "AI findings";
-      aiBtn.setAttribute("aria-expanded", state.aiOpen ? "true" : "false");
-      if (state.aiOpen) renderAiFindings(state.view);
+      state.aiOpen = true;
+      if (state.view) renderAiFindings(state.view);
     }
 
     function normalizeHistoryLines(raw) {
@@ -1329,17 +1571,24 @@
           }
           var typ = data.type || "";
           if (typ === "hello") {
-            if (data.view) renderAiFindings(data.view);
+            state.mediaReviews = {};
             if (data.media_reviews && typeof data.media_reviews === "object") {
               Object.keys(data.media_reviews).forEach(function (k) {
                 state.mediaReviews[k] = data.media_reviews[k];
               });
             }
+            /* Fresh SI for this channel — never keep the previous room's panel. */
+            if (data.view) renderAiFindings(data.view);
+            else clearSiPanel("No SI filing for " + (opts.channel || "#web") + " yet.");
             hydrateHistory(
               data.chat_history || data.history || data.lines || [],
               true
             );
             if (typeof opts.onHello === "function") opts.onHello(data);
+            return;
+          }
+          if (typ === "board.snapshot" || typ === "batch.notice") {
+            if (data.view) renderAiFindings(data.view);
             return;
           }
           if (typ === "chat.history" || typ === "chat_history") {
@@ -1422,13 +1671,18 @@
         state.tracked = !!v;
         setTrackUi();
       },
-      setAiOpen: function (v) {
-        /* Panel chrome removed; API kept as no-op for hosts. */
-        state.aiOpen = false;
+      setAiOpen: function () {
+        state.aiOpen = true;
         setAiUi();
       },
       setView: function (view) {
-        if (aiBody) renderAiFindings(view);
+        renderAiFindings(view);
+      },
+      setChannel: function (channel) {
+        switchChannel(channel);
+      },
+      listChannels: function () {
+        return loadChannelCatalog();
       },
       appendMessage: function (msg) {
         state.messages.push(msg);
