@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { OpenChatButton } from "@/components/chat/OpenChatButton";
 import { SiteHeader } from "@/components/SiteHeader";
 import { CONTACT_EMAIL, OG_IMAGE, SITE_URL } from "@/lib/contact";
 
@@ -47,9 +48,9 @@ export default function ExtensionPage() {
           <a className="btn-primary" href="#install">
             Get Relay for Networkers
           </a>
-          <Link className="btn-secondary" href="/#room">
+          <OpenChatButton className="btn-secondary">
             Just asking for help? Open the public room
-          </Link>
+          </OpenChatButton>
           <a
             className="btn-secondary"
             href={`mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent("Relay for Networkers — want to help")}`}

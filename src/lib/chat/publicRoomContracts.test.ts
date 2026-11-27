@@ -9,10 +9,10 @@ function read(rel: string): string {
 }
 
 describe("public room intake contracts", () => {
-  it("homepage mounts PublicChatShell with mp-general", () => {
+  it("homepage opens fullscreen chat via OpenChatButton (no inline room)", () => {
     const page = read("src/app/page.tsx");
-    expect(page).toMatch(/PublicChatShell/);
-    expect(page).toMatch(/resolveChannel\("mp-general"\)/);
+    expect(page).toMatch(/OpenChatButton/);
+    expect(page).not.toMatch(/PublicChatShell/);
     expect(page).not.toMatch(/SubmitTicketForm/);
   });
 
@@ -54,9 +54,10 @@ describe("public room intake contracts", () => {
     expect(route).not.toMatch(/createTicket/);
   });
 
-  it("SiteHeader primary CTA is public room not /submit form", () => {
+  it("SiteHeader always exposes Chat launcher (not /submit form)", () => {
     const header = read("src/components/SiteHeader.tsx");
-    expect(header).toMatch(/\/#room/);
+    expect(header).toMatch(/SITE_CHAT_BTN_ID|site-chat-btn|ChatLauncherBoot/);
     expect(header).not.toMatch(/href: "\/submit"/);
   });
 });
+

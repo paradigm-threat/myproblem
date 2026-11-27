@@ -1,0 +1,61 @@
+/**
+ * Living Commons — light (matches design/clevertree-chat-kit/tokens/light.css).
+ */
+:root {
+  --ct-brand: #285c46;
+  --ct-paper: #f2f4ef;
+  --ct-canvas: #ffffff;
+  --ct-ink: #23352b;
+  --ct-muted: #52665a;
+  --ct-sage: #e5ece5;
+  --ct-line: #c5d0c5;
+  --ct-warning-ink: #80571e;
+  --ct-warning-surface: #f8edd6;
+  --ct-online: #285c46;
+  --ct-focus: #28684c;
+  --ct-ai-surface: #e5ece5;
+  --ct-control-border: #879c8b;
+  --ct-host-bg: #edf2ec;
+  --ct-av-bg: #dce9dd;
+  --ct-av-ink: #285c46;
+  --ct-tag-bg: #dce9dd;
+  --ct-media-border: #c5d0c5;
+  --ct-shield-bg: #edf2ec;
+  --ct-wave: #879c8b;
+  --ct-side-label: #edf2ec;
+  --ct-overlay: #23352b80;
+  --ct-toast-bg: #23352b;
+  --ct-toast-ink: #f2f4ef;
+  --ct-action: #285c46;
+  --ct-action-ink: #ffffff;
+  --ct-action-soft: #dce9dd;
+  --ct-nick-alt: #486681;
+  --ct-nick-warm: #805b34;
+  --ct-shadow: #23352b1a;
+}
+
+.room,
+.ct-room,
+.ct-room-host,
+.room[data-theme="light"],
+.ct-room[data-theme="light"],
+.ct-room-host[data-theme="light"] {
+  color-scheme: light;
+  --paper: var(--ct-paper);
+  --white: var(--ct-canvas);
+  --ink: var(--ct-ink);
+  --muted: var(--ct-muted);
+  --line: var(--ct-line);
+  --green: var(--ct-brand);
+  --green2: var(--ct-sage);
+  --amber: var(--ct-warning-ink);
+  --amberbg: var(--ct-warning-surface);
+  --canvas: var(--ct-paper);
+  --irc: var(--ct-canvas);
+  --si: var(--ct-ai-surface);
+  --card: var(--ct-canvas);
+  --action: var(--ct-action);
+  --action-ink: var(--ct-action-ink);
+  --action-soft: var(--ct-action-soft);
+  --focus: var(--ct-focus);
+}

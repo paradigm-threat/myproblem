@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { OpenChatButton } from "@/components/chat/OpenChatButton";
 import { SiteHeader } from "@/components/SiteHeader";
 import { OG_IMAGE, SITE_URL } from "@/lib/contact";
 
@@ -47,9 +48,9 @@ export default function NetworkersPage() {
           <Link className="btn-primary" href="/extension">
             Get Relay for Networkers
           </Link>
-          <Link className="btn-secondary" href="/#room">
+          <OpenChatButton className="btn-secondary">
             Just asking for help? Open the public room
-          </Link>
+          </OpenChatButton>
         </div>
 
         <section aria-labelledby="simple-max-heading">

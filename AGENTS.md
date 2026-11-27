@@ -10,8 +10,10 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 ## Public room (homepage SoT)
 
-- Homepage embeds Clevertree room → default IRC `#mp-general` (`src/lib/chat/channels.ts`). `/submit` client-redirects to `/#room`.
+- Prefer **header Clevertree Chat launcher** (`public/chat-room/chat-launcher.js` + `ChatLauncherBoot`) — fullscreen in-page room, or extension side panel when installed. No scrolled-in homepage embeds; use `OpenChatButton`.
+- Default IRC `#mp-general` (`src/lib/chat/channels.ts`). Dedicated `/c/[channel]` may still mount the room. `/submit` and `/#room` open the launcher.
 - `/c/[channel]` allowlist: `mp-general`, `ga-savannah-cat-rescue`; unknown → general. Hidden room menu only.
+- Networker: Clevertree Chat extension **Options** only (off by default).
 - Submit overlay: type / speak / video → Bunny (`/api/chat-media/upload`) → `/api/chat/post` into active channel with `[[mp:media …]]` markers. No tip-repo queue as public submit SoT.
 - Tickets mint **only** when batch SI decides channel traffic needs tracking — never on every public post.
 - Text SI is **manual**: channel `!investigate` / room Investigate (Free-tier soft budgets on chat-host). Whisper ASR stays automatic on media. See [`docs/providers-ai.md`](docs/providers-ai.md).

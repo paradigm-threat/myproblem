@@ -179,6 +179,55 @@ textarea:focus-visible,
   color: var(--ink);
 }
 
+.nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
+.nav-chat-btn {
+  appearance: none;
+  border: 1px solid var(--line);
+  background: var(--mint, #5fd4a4);
+  color: var(--ink-on-accent, #070d18);
+  font: 600 0.9rem/1 var(--font-body, system-ui, sans-serif);
+  min-height: 2.75rem;
+  min-width: 4.25rem;
+  padding: 0 0.95rem;
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+.nav-chat-btn:hover,
+.nav-chat-btn.is-open {
+  filter: brightness(1.05);
+}
+
+.nav-panel-chat {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  color: var(--ink);
+  font: inherit;
+  text-align: left;
+  padding: 0;
+  cursor: pointer;
+  width: 100%;
+}
+
+.footer-chat-link {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  padding: 0;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
+}
+
 .nav-toggle {
   display: none;
   appearance: none;

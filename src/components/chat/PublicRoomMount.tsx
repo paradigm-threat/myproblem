@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import type { ChatChannel } from "@/lib/chat/channels";
+import { ROOM_ASSET_V } from "@/lib/chat/launcher";
 import { CHAT_API_BASE } from "@/lib/contact";
 
 type RoomApi = {
@@ -69,11 +70,9 @@ function wsBaseFromHttp(httpBase: string): string {
   return u.replace(/^http/, "ws");
 }
 
-/** Bump when public/chat-room assets change so embeds don't keep a stale sheet. */
-const ROOM_ASSET_V = "20261126-lamp1";
-
 /**
  * Mounts shared Clevertree room (no gather). Always a public IRC room.
+ * Prefer header ChatLauncher for marketing pages; use this on dedicated /c routes.
  */
 export function PublicRoomMount({ channel, className }: Props) {
   const hostRef = useRef<HTMLDivElement>(null);

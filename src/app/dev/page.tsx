@@ -53,7 +53,7 @@ export default function DevPage() {
             page is the public summary.
           </p>
           <div className="cta-row">
-            <Link className="btn-primary" href="/#room">
+            <Link className="btn-primary" href="/?chat=1#room">
               Open the public room
             </Link>
             <Link className="btn-secondary" href="/extension">

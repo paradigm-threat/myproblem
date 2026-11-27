@@ -75,26 +75,30 @@
     return pref === "light" || pref === "dark" ? pref : systemTheme();
   }
 
-  function applyRoomTheme(el, mode) {
+  function applyRoomTheme(el, resolved, pref) {
     if (!el) return;
-    el.setAttribute("data-theme", mode);
-    el.style.colorScheme = mode;
+    pref = pref || readThemePref();
+    resolved = resolved === "dark" ? "dark" : "light";
+    el.setAttribute("data-theme-pref", pref);
+    el.setAttribute("data-theme", resolved);
+    el.style.colorScheme = resolved;
     var btns = el.querySelectorAll('[data-role="theme-toggle"]');
     for (var i = 0; i < btns.length; i++) {
       var btn = btns[i];
-      var next = mode === "dark" ? "light" : "dark";
+      var next = resolved === "dark" ? "light" : "dark";
       btn.setAttribute(
         "aria-label",
         next === "light" ? "Switch room to light theme" : "Switch room to dark theme"
       );
       btn.title = btn.getAttribute("aria-label");
-      btn.innerHTML = mode === "dark" ? THEME_SUN : THEME_MOON;
+      btn.innerHTML = resolved === "dark" ? THEME_SUN : THEME_MOON;
     }
   }
 
-  function persistRoomTheme(mode) {
+  function persistRoomTheme(pref) {
     try {
-      localStorage.setItem(THEME_KEY, mode);
+      if (pref === "system") localStorage.removeItem(THEME_KEY);
+      else localStorage.setItem(THEME_KEY, pref);
     } catch (e) {}
   }
 
@@ -190,24 +194,33 @@
   }
 
   function shellHtml(opts) {
-    var ch = esc(opts.channel || "#general");
+    var ch = esc(opts.channel || "#web");
     var title = esc(opts.title || "Public room");
     var mode = opts.mode || "page";
+    var nw = !!opts.showNetworker;
     var sideLabel =
       mode === "sidepanel"
-        ? '<div class="surface-label"><span>Chrome side panel · CleverTree</span><span>ROOM</span></div>'
+        ? '<div class="surface-label"><span>Chrome side panel · Clevertree</span><span>ROOM</span></div>'
         : "";
+    var nwBar = nw
+      ? '<div class="networker-bar" data-role="networker-bar" aria-label="Networker">' +
+        '<button type="button" class="track" data-role="track" aria-pressed="false">Track</button>' +
+        '<button type="button" data-role="gather">Gather</button>' +
+        '<button type="button" data-role="refresh">Refresh</button>' +
+        "</div>"
+      : "";
     return (
       sideLabel +
+      nwBar +
       '<header class="top">' +
-      '<div class="brand"><span>CleverTree <small>Chat</small></span></div>' +
-      '<div class="sep"></div><div class="crumb">Public help network</div>' +
+      '<div class="brand"><span>Clevertree <small>Chat</small></span></div>' +
+      '<div class="sep"></div><div class="crumb">Debate board · IRC + SI</div>' +
       '<div class="status" data-role="status">' +
       '<button type="button" class="theme-toggle" data-role="theme-toggle" aria-label="Toggle room theme"></button>' +
       '<span class="dot"></span><strong data-role="conn">Connecting…</strong>' +
       '<span class="mirror" data-role="mirror"></span></div></header>' +
       '<section class="head"><div class="roomname">' +
-      '<div class="eyebrow">Public room</div>' +
+      '<div class="eyebrow">Public IRC room</div>' +
       "<h1>" +
       title +
       "</h1>" +
@@ -216,27 +229,26 @@
       "</div></div>" +
       '<div class="actions">' +
       '<button type="button" class="theme-toggle" data-role="theme-toggle" aria-label="Toggle room theme"></button>' +
-      '<button type="button" class="track" data-role="track" aria-pressed="false">Track this group</button>' +
       '<button type="button" class="investigate" data-role="investigate" title="Ask SI to investigate this channel (!investigate)">Investigate</button>' +
-      '<button type="button" class="ai-toggle" data-role="ai-toggle" aria-expanded="false">AI findings</button>' +
+      '<button type="button" class="ai-toggle" data-role="ai-toggle" aria-expanded="false">SI panel</button>' +
       "</div></section>" +
       '<div class="body"><main class="chat">' +
       '<div class="history" data-role="history" role="log" aria-label="Public IRC channel messages">' +
       '<div class="stream" data-role="stream"></div></div>' +
       '<footer class="composer"><div class="compose-inner">' +
-      '<div class="public"><strong>You\'re posting publicly.</strong> Text, photos, voice and video go to this IRC room. Anyone may see or save them. There is no private mode.</div>' +
+      '<div class="public"><strong>You\'re posting publicly.</strong> Messages go to this IRC room. Anyone may see or save them.</div>' +
       '<div class="composebox"><textarea data-role="draft" aria-label="Message to public room" placeholder="Message this public room…"></textarea>' +
       '<div class="tools">' +
       '<button type="button" class="send" data-role="send">Send publicly</button>' +
       "</div></div>" +
-      '<div class="footnote"><span>Markdown · context tags auto-applied</span><span>Private Relay AI · coming later</span></div>' +
+      '<div class="footnote"><span>Tags appended at end · domain or topic only</span><span>SI panel · batch curated</span></div>' +
       "</div></footer></main>" +
-      '<aside class="ai" data-role="ai" aria-label="AI curation panel" hidden>' +
-      '<div class="aicap">Room intelligence</div>' +
-      '<div class="aititle"><h2>Shared findings</h2>' +
-      '<button type="button" class="close" data-role="ai-hide" aria-label="Hide AI panel">×</button></div>' +
-      '<p class="aidesc">AI organizes the public conversation. All replies happen in the room. Hide this panel anytime.</p>' +
-      '<div data-role="ai-body"></div></aside></div>' +
+      '<aside class="ai" data-role="ai" aria-label="SI panel" hidden>' +
+      '<div class="aicap">SI workspace</div>' +
+      '<div class="aititle"><h2>SI panel</h2>' +
+      '<button type="button" class="close" data-role="ai-hide" aria-label="Hide SI panel">×</button></div>' +
+      '<p class="aidesc">Batch SI organizes the conversation here (topics, findings, CleverScript). Stub for now — content ships next.</p>' +
+      '<div data-role="ai-body"><p class="si-stub">Waiting for conversation…</p></div></aside></div>' +
       '<div class="overlay" data-role="overlay" hidden><div class="modal" data-role="modal"></div></div>'
     );
   }
@@ -344,9 +356,10 @@
       view: null,
       opts: opts,
       destroyed: false,
+      themePref: readThemePref(),
       theme: resolveRoomTheme(),
     };
-    applyRoomTheme(el, state.theme);
+    applyRoomTheme(el, state.theme, state.themePref);
 
     var trackBtn = $(el, '[data-role="track"]');
     var aiBtn = $(el, '[data-role="ai-toggle"]');
@@ -363,10 +376,20 @@
     var modal = $(el, '[data-role="modal"]');
 
     function setTrackUi() {
-      trackBtn.textContent = state.tracked ? "Tracked" : "Track this group";
+      if (!trackBtn) return;
+      trackBtn.textContent = state.tracked ? "Tracked" : "Track";
       trackBtn.classList.toggle("tracked", state.tracked);
       trackBtn.setAttribute("aria-pressed", state.tracked ? "true" : "false");
     }
+
+    var tagCfg = Object.assign(
+      {},
+      opts.tagConfig || {},
+      {
+        topics: opts.topics || (opts.tagConfig && opts.tagConfig.topics) || [],
+        siteOrigin: opts.siteOrigin || "",
+      }
+    );
 
     function renderAiFindings(view) {
       if (!aiBody) return;
@@ -374,7 +397,7 @@
       var v = state.view;
       if (!v || (!v.sections && !v.pairs && !v.exists)) {
         aiBody.innerHTML =
-          "<p>No filed topics yet for this channel. AI will organize perspectives here when batch accepts them.</p>";
+          '<p class="si-stub">SI panel stub — batch curation (topics, findings, CleverScript) will appear here.</p>';
         return;
       }
       var sections = v.sections || {};
@@ -466,7 +489,7 @@
       } else {
         incoming.forEach(function (m) {
           state.messages.push(m);
-          appendMessage(stream, m, opts.tagConfig || {}, el);
+          appendMessage(stream, m, tagCfg, el);
         });
         history.scrollTop = history.scrollHeight;
       }
@@ -485,7 +508,7 @@
         return;
       }
       state.messages.forEach(function (m) {
-        appendMessage(stream, m, opts.tagConfig || {}, el);
+        appendMessage(stream, m, tagCfg, el);
       });
       history.scrollTop = history.scrollHeight;
     }
@@ -527,7 +550,7 @@
       // Optimistic local append when offline / mock
       if (!state.ws || state.ws.readyState !== 1) {
         state.messages.push(msg);
-        appendMessage(stream, msg, opts.tagConfig || {}, el);
+        appendMessage(stream, msg, tagCfg, el);
         history.scrollTop = history.scrollHeight;
       } else {
         try {
@@ -540,15 +563,17 @@
           );
         } catch (e) {
           state.messages.push(msg);
-          appendMessage(stream, msg, opts.tagConfig || {}, el);
+          appendMessage(stream, msg, tagCfg, el);
         }
       }
     }
 
     function onThemeClick() {
-      state.theme = state.theme === "dark" ? "light" : "dark";
-      persistRoomTheme(state.theme);
-      applyRoomTheme(el, state.theme);
+      /* Explicit light/dark override; Options can restore system. */
+      state.themePref = state.theme === "dark" ? "light" : "dark";
+      state.theme = state.themePref;
+      persistRoomTheme(state.themePref);
+      applyRoomTheme(el, state.theme, state.themePref);
     }
     var themeBtns = el.querySelectorAll('[data-role="theme-toggle"]');
     for (var ti = 0; ti < themeBtns.length; ti++) {
@@ -560,17 +585,20 @@
         : null;
     function onSchemeChange() {
       if (state.destroyed) return;
-      if (readThemePref() !== "system") return;
+      state.themePref = readThemePref();
+      if (state.themePref !== "system") return;
       state.theme = resolveRoomTheme("system");
-      applyRoomTheme(el, state.theme);
+      applyRoomTheme(el, state.theme, state.themePref);
     }
     if (mq && mq.addEventListener) mq.addEventListener("change", onSchemeChange);
 
-    trackBtn.onclick = function () {
-      state.tracked = !state.tracked;
-      setTrackUi();
-      if (typeof opts.onTrack === "function") opts.onTrack(state.tracked);
-    };
+    if (trackBtn) {
+      trackBtn.onclick = function () {
+        state.tracked = !state.tracked;
+        setTrackUi();
+        if (typeof opts.onTrack === "function") opts.onTrack(state.tracked);
+      };
+    }
     aiBtn.onclick = function () {
       state.aiOpen = !state.aiOpen;
       setAiUi();
@@ -669,7 +697,7 @@
             state.messages.push(msg);
             // Drop empty-state placeholder on first live message
             if (stream.querySelector(".empty")) stream.innerHTML = "";
-            appendMessage(stream, msg, opts.tagConfig || {}, el);
+            appendMessage(stream, msg, tagCfg, el);
             history.scrollTop = history.scrollHeight;
           }
         };
@@ -696,13 +724,15 @@
           mode: mode,
           channel: opts.channel,
           theme: state.theme,
+          themePref: state.themePref,
         };
       },
       setTheme: function (mode) {
-        if (mode !== "light" && mode !== "dark") return;
-        state.theme = mode;
+        if (mode !== "light" && mode !== "dark" && mode !== "system") return;
+        state.themePref = mode;
         persistRoomTheme(mode);
-        applyRoomTheme(el, mode);
+        state.theme = resolveRoomTheme(mode);
+        applyRoomTheme(el, state.theme, state.themePref);
       },
       setTracked: function (v) {
         state.tracked = !!v;
@@ -717,7 +747,7 @@
       },
       appendMessage: function (msg) {
         state.messages.push(msg);
-        appendMessage(stream, msg, opts.tagConfig || {}, el);
+        appendMessage(stream, msg, tagCfg, el);
       },
       destroy: function () {
         state.destroyed = true;

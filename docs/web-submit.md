@@ -2,11 +2,11 @@
 
 **Homepage SoT is the public Clevertree / IRC room** — not a tip-mint form.
 
-Design tokens still live under [`design/ui-kit/`](../design/ui-kit/). Product path: ask in-channel.
+Open chat from the **header Chat** control (or `OpenChatButton`): fullscreen in-page room, or the Clevertree / Relay extension side panel when installed. Dedicated `/c/[channel]` pages may still mount the room inline. Design tokens: [`design/ui-kit/`](../design/ui-kit/) (being replaced by Open Commons kit).
 
 ## Flow (live)
 
-1. Open [`/`](https://myproblem.app/) → `#room` (or `/c/mp-general`, `/c/ga-savannah-cat-rescue`).
+1. Open [`/`](https://myproblem.app/) → header **Chat**, `#room`, or `/c/mp-general` / `/c/ga-savannah-cat-rescue`.
 2. **Talk** in the room composer — that *is* submit.
 3. Or use **Type / speak / video**:
    - Text → `POST /api/chat/post` → Clevertree host → IRC (`#mp-general` by default).

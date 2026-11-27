@@ -1,0 +1,114 @@
+/**
+ * Living Commons — dark (matches design/clevertree-chat-kit/tokens/dark.css).
+ */
+.room[data-theme="dark"],
+.ct-room[data-theme="dark"],
+.ct-room-host[data-theme="dark"] {
+  color-scheme: dark;
+  --ct-brand: #a8d4b4;
+  --ct-paper: #141e19;
+  --ct-canvas: #1a2520;
+  --ct-ink: #e6eee6;
+  --ct-muted: #b0c1b5;
+  --ct-sage: #202f27;
+  --ct-line: #3d5144;
+  --ct-warning-ink: #e5c38c;
+  --ct-warning-surface: #3a2e18;
+  --ct-online: #a8d4b4;
+  --ct-focus: #b9e7c5;
+  --ct-ai-surface: #202f27;
+  --ct-control-border: #768e7d;
+  --ct-host-bg: #0e1412;
+  --ct-av-bg: #324c3b;
+  --ct-av-ink: #a8d4b4;
+  --ct-tag-bg: #324c3b;
+  --ct-media-border: #3d5144;
+  --ct-shield-bg: #26362d;
+  --ct-wave: #768e7d;
+  --ct-side-label: #1a2520;
+  --ct-overlay: #00000080;
+  --ct-toast-bg: #e6eee6;
+  --ct-toast-ink: #141e19;
+  --ct-action: #a8d4b4;
+  --ct-action-ink: #14291d;
+  --ct-action-soft: #324c3b;
+  --ct-nick-alt: #a8c5e0;
+  --ct-nick-warm: #d9bb91;
+  --ct-shadow: #00000045;
+  --paper: var(--ct-paper);
+  --white: var(--ct-canvas);
+  --ink: var(--ct-ink);
+  --muted: var(--ct-muted);
+  --line: var(--ct-line);
+  --green: var(--ct-brand);
+  --green2: var(--ct-sage);
+  --amber: var(--ct-warning-ink);
+  --amberbg: var(--ct-warning-surface);
+  --canvas: var(--ct-paper);
+  --irc: var(--ct-canvas);
+  --si: var(--ct-ai-surface);
+  --card: #26362d;
+  --action: var(--ct-action);
+  --action-ink: var(--ct-action-ink);
+  --action-soft: var(--ct-action-soft);
+  --focus: var(--ct-focus);
+}
+
+/* OS dark when preference is system (or unset = system) */
+@media (prefers-color-scheme: dark) {
+  .room:not([data-theme="light"]):not([data-theme-pref="light"]),
+  .ct-room:not([data-theme="light"]):not([data-theme-pref="light"]),
+  .ct-room-host:not([data-theme="light"]):not([data-theme-pref="light"]),
+  .room[data-theme-pref="system"],
+  .ct-room[data-theme-pref="system"],
+  .ct-room-host[data-theme-pref="system"] {
+    color-scheme: dark;
+    --ct-brand: #a8d4b4;
+    --ct-paper: #141e19;
+    --ct-canvas: #1a2520;
+    --ct-ink: #e6eee6;
+    --ct-muted: #b0c1b5;
+    --ct-sage: #202f27;
+    --ct-line: #3d5144;
+    --ct-warning-ink: #e5c38c;
+    --ct-warning-surface: #3a2e18;
+    --ct-online: #a8d4b4;
+    --ct-focus: #b9e7c5;
+    --ct-ai-surface: #202f27;
+    --ct-control-border: #768e7d;
+    --ct-host-bg: #0e1412;
+    --ct-av-bg: #324c3b;
+    --ct-av-ink: #a8d4b4;
+    --ct-tag-bg: #324c3b;
+    --ct-media-border: #3d5144;
+    --ct-shield-bg: #26362d;
+    --ct-wave: #768e7d;
+    --ct-side-label: #1a2520;
+    --ct-overlay: #00000080;
+    --ct-toast-bg: #e6eee6;
+    --ct-toast-ink: #141e19;
+    --ct-action: #a8d4b4;
+    --ct-action-ink: #14291d;
+    --ct-action-soft: #324c3b;
+    --ct-nick-alt: #a8c5e0;
+    --ct-nick-warm: #d9bb91;
+    --ct-shadow: #00000045;
+    --paper: var(--ct-paper);
+    --white: var(--ct-canvas);
+    --ink: var(--ct-ink);
+    --muted: var(--ct-muted);
+    --line: var(--ct-line);
+    --green: var(--ct-brand);
+    --green2: var(--ct-sage);
+    --amber: var(--ct-warning-ink);
+    --amberbg: var(--ct-warning-surface);
+    --canvas: var(--ct-paper);
+    --irc: var(--ct-canvas);
+    --si: var(--ct-ai-surface);
+    --card: #26362d;
+    --action: var(--ct-action);
+    --action-ink: var(--ct-action-ink);
+    --action-soft: var(--ct-action-soft);
+    --focus: var(--ct-focus);
+  }
+}

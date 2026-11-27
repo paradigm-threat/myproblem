@@ -1,7 +1,6 @@
 import Image from "next/image";
 import { SiteHeader } from "@/components/SiteHeader";
-import { PublicChatShell } from "@/components/chat/PublicChatShell";
-import { resolveChannel } from "@/lib/chat/channels";
+import { OpenChatButton } from "@/components/chat/OpenChatButton";
 import {
   BUSINESS_PDF_PATH,
   CONTACT_EMAIL,
@@ -39,8 +38,6 @@ const VIRTUES = [
 ] as const;
 
 export default function HomePage() {
-  const general = resolveChannel("mp-general");
-
   return (
     <>
       <a className="skip-link" href="#main">
@@ -50,7 +47,7 @@ export default function HomePage() {
       <SiteHeader variant="home" />
 
       <main id="main">
-        <section className="hero hero-chat" aria-labelledby="hero-heading">
+        <section className="hero" aria-labelledby="hero-heading" id="room">
           <div className="hero-bar">
             <div className="site hero-bar-inner">
               <p className="eyebrow">
@@ -61,25 +58,24 @@ export default function HomePage() {
                 MyProblem
               </h1>
               <p className="hero-lead">
-                Ask in the <strong className="emph">public room</strong> below.
-                History is visible; AI and people help in-channel. Public chat +
-                AI stay <strong className="emph">free forever</strong>.
+                Ask in the <strong className="emph">public room</strong>. History
+                is visible; AI and people help in-channel. Public chat + AI stay{" "}
+                <strong className="emph">free forever</strong>. Use{" "}
+                <strong className="emph">Chat</strong> in the header anytime — or
+                open fullscreen below (extension side panel when installed).
               </p>
               <div className="cta-row">
-                <a className="btn-primary" href="/?submit=1#room">
+                <OpenChatButton submit>
                   Type / speak / video
-                </a>
-                <a className="btn-secondary" href="#room">
+                </OpenChatButton>
+                <OpenChatButton className="btn-secondary">
                   Open the room
-                </a>
+                </OpenChatButton>
                 <a className="btn-secondary" href="/extension">
                   Be a Networker
                 </a>
               </div>
             </div>
-          </div>
-          <div className="hero-chat-room site" id="room">
-            <PublicChatShell channel={general} compact />
           </div>
         </section>
 
@@ -682,7 +678,7 @@ export default function HomePage() {
         <nav className="footer-nav" aria-label="Footer">
           <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>
           <span aria-hidden="true"> · </span>
-          <a href="/#room">Public room</a>
+          <OpenChatButton className="footer-chat-link">Public room</OpenChatButton>
           <span aria-hidden="true"> · </span>
           <a href="/extension">Relay for Networkers</a>
           <span aria-hidden="true"> · </span>
