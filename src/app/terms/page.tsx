@@ -278,7 +278,7 @@ export default function TermsPage() {
         <section className="legal-section" aria-labelledby="biz-heading">
           <h2 id="biz-heading">8. Businesses and service providers</h2>
           <p>
-            Free forever for everyone — shops and people. Local businesses join
+            Public help stays free for shops and people. Local businesses join
             at <strong>$0</strong> with <strong>zero obligation</strong> to
             respond. You should not expect to enter a credit card. Any money is
             a voluntary tip, after a good experience, for a person, the SI, or

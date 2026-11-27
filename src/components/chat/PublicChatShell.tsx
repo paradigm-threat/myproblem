@@ -69,8 +69,8 @@ export function PublicChatShell({
           </p>
           {!compact ? (
             <p className="public-chat-hint">
-              Public help room — history loads from IRC when connected. AI and
-              people can see what you post. Free forever.
+              Public help room — history loads from IRC when connected. Posts
+              are visible. Public chat and AI stay free.
             </p>
           ) : null}
         </div>

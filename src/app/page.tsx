@@ -10,30 +10,30 @@ import {
   SI_FOOTER_GLOSS,
 } from "@/lib/contact";
 
-const VIRTUES = [
+const PRINCIPLES = [
   {
-    title: "Max and simple",
-    body: "Full help behind few modes. Public chat and AI are free forever — anonymous first, no paywall.",
+    title: "Simple Max",
+    body: "Minimal UI by default; advanced tools stay available but out of the way. Full capability on the public path—no premium unlocks, ads, or artificial feature gates.",
   },
   {
     title: "Thorough over instant",
-    body: "A free investigation waits for capacity instead of a shorter answer.",
+    body: "Investigations wait for capacity rather than cutting corners for speed.",
   },
   {
     title: "Silence is allowed",
-    body: "A shop can ignore a request. No timer, no score, no duty to answer.",
+    body: "Businesses may ignore a public request. No response timer, score, or penalty.",
   },
   {
-    title: "No boosting",
-    body: "Nobody pays to rank a lesson or a business above another.",
+    title: "No paid ranking",
+    body: "Lessons and businesses are not sold ranking positions.",
   },
   {
-    title: "No card expected",
-    body: "Using public help never becomes a bill. Private chat is the paid lane later — not this room.",
+    title: "No card for public help",
+    body: "Public chat and AI do not require payment. Private chat is a separate paid lane when it ships.",
   },
   {
     title: "Anonymous by default",
-    body: "Core help does not require an account. Ask in the public room so publicity is obvious.",
+    body: "Public help does not require an account. Ask in the public room so visibility is clear.",
   },
 ] as const;
 
@@ -58,11 +58,11 @@ export default function HomePage() {
                 MyProblem
               </h1>
               <p className="hero-lead">
-                Ask in the <strong className="emph">public room</strong>. History
-                is visible; AI and people help in-channel. Public chat + AI stay{" "}
-                <strong className="emph">free forever</strong>. Use{" "}
-                <strong className="emph">Chat</strong> in the header anytime — or
-                open fullscreen below (extension side panel when installed).
+                Ask in the <strong className="emph">public room</strong>. Posts
+                are visible. People and SI help in-channel. Public chat and AI
+                stay <strong className="emph">free</strong>. Open{" "}
+                <strong className="emph">Chat</strong> in the header (extension
+                side panel when installed).
               </p>
               <div className="cta-row">
                 <OpenChatButton submit>
@@ -80,13 +80,43 @@ export default function HomePage() {
         </section>
 
         <div className="site">
+          <section id="simple-max" aria-labelledby="simple-max-heading">
+            <h2 id="simple-max-heading">Simple Max</h2>
+            <p className="section-lead">
+              Relay follows a product principle called{" "}
+              <strong className="emph">Simple Max</strong>.
+            </p>
+            <ul className="steps" style={{ listStyle: "none", padding: 0 }}>
+              <li>
+                <strong>Simple</strong>
+                <p>
+                  The default interface stays minimal. Advanced features remain
+                  available, but stay out of the way until needed.
+                </p>
+              </li>
+              <li>
+                <strong>Max</strong>
+                <p>
+                  Capability is not locked behind premium tiers, upsells, or
+                  advertising. Limits exist only for capacity and safety—not as
+                  a funnel.
+                </p>
+              </li>
+            </ul>
+            <p style={{ color: "var(--muted)", lineHeight: 1.55 }}>
+              Same idea for Networkers: help shows up where people already are;
+              they should not need a new app for basic participation. Details:{" "}
+              <a href="/networkers">Networkers</a> ·{" "}
+              <a href="/how-we-run">How we run</a>.
+            </p>
+          </section>
+
           <section className="relay-promo" aria-labelledby="networker-heading">
-            <h2 id="networker-heading">Be a Networker</h2>
+            <h2 id="networker-heading">Networkers</h2>
             <p>
-              A Networker is anyone who already belongs to the communities they
-              want to help — and is willing to sign into a few familiar pages a
-              day. That&apos;s it. No new app to learn, no audience to build, no
-              schedule to keep.
+              A Networker already belongs to the communities they help and can
+              sign into those sites as part of normal use. No separate audience
+              to build; no mandatory schedule.
             </p>
             <p>
               Using the{" "}
@@ -141,13 +171,10 @@ export default function HomePage() {
           <section id="businesses" aria-labelledby="businesses-heading">
             <h2 id="businesses-heading">How it works for businesses</h2>
             <p className="section-lead">
-              Public help is <strong className="emph">free forever</strong> —
-              for shops and for the people you serve. $0 application. $0
-              subscription on the public path.{" "}
-              <strong className="emph">Max and simple</strong>,{" "}
-              <strong className="emph">zero obligation</strong>: open what looks
-              like a fit, or ignore entirely. No SLA, no “must respond,” no
-              penalty, no per-lead bill for public channels.
+              Public help is free for shops and for the people they serve. No
+              application fee. No subscription on the public path. Respond when
+              a request fits; ignore when it does not. No SLA, no penalty, no
+              per-lead charge for public channels.
             </p>
             <figure className="section-graphic">
               <picture>
@@ -211,22 +238,21 @@ export default function HomePage() {
               </li>
             </ol>
             <div className="people-promise" style={{ marginTop: "1.5rem" }}>
-              <h3 id="businesses-money-heading">Free forever · private fees with a purpose</h3>
+              <h3 id="businesses-money-heading">Public free · private fees for capacity</h3>
               <ul aria-labelledby="businesses-money-heading">
                 <li>
-                  <strong>Public = free forever</strong> — using public channels
-                  and AI never requires a card.
+                  <strong>Public path stays free</strong> — public channels and
+                  AI do not require a card.
                 </li>
                 <li>
-                  <strong>Private fees → infra + providers</strong> — revenue
-                  from private chat covers servers and metered AI, and
-                  compensates shops and helpers for real time spent solving
-                  problems.
+                  <strong>Private fees cover capacity</strong> — when private
+                  chat ships, fees fund infrastructure, metered AI, and paid
+                  provider time.
                 </li>
                 <li>
-                  <strong>Not lead invoices</strong> — we do not sell ranking or
-                  charge per ignored request. Payment is for private
-                  conversation value, when that lane ships.
+                  <strong>Not lead sales</strong> — no ranking fees and no charge
+                  for ignored public requests. Payment is for private service
+                  when that lane ships.
                 </li>
               </ul>
             </div>
@@ -246,11 +272,9 @@ export default function HomePage() {
           <section id="people" aria-labelledby="people-heading">
             <h2 id="people-heading">How it works for people</h2>
             <p className="section-lead">
-              Ask in the public room first — so publicity is obvious. Core SI
-              help in public channels is{" "}
-              <strong className="emph">free forever</strong>. Deep investigation
-              runs as a Project when capacity allows — thorough, not rushed. You
-              should never expect to enter a card for public help.
+              Ask in the public room so the request is openly visible. Public
+              channel help is free. Deeper investigation runs as a Project when
+              capacity allows. Public help does not require a card.
             </p>
             <figure className="section-graphic">
               <picture>
@@ -313,8 +337,8 @@ export default function HomePage() {
                   private lanes.
                 </li>
                 <li>
-                  <strong>Free forever for public chat + AI</strong> — no login
-                  required for the basics. No card expected.
+                  <strong>Public chat and AI stay free</strong> — no login
+                  required for basic use; no card on that path.
                 </li>
                 <li>
                   <strong>Thorough over instant</strong> — deferred Projects
@@ -335,39 +359,33 @@ export default function HomePage() {
               Projects — capture, queue, batch (not on-demand LLM)
             </h2>
             <p className="section-lead">
-              We don’t need live frontier chatbots as the product. We need a{" "}
-              <strong className="emph">smart-enough</strong> intake model, a
-              public IRC bus for live problems, and batch workers that
-              investigate{" "}
-              <strong className="emph">ASAP and completely</strong> via{" "}
-              <strong className="emph">Groq, Bedrock, and peer providers</strong>
-              . Stronger models escalate when the cheap path truly cannot.
+              Intake uses a capable but economical model, a public IRC bus for
+              live problems, and batch workers that investigate via Groq,
+              Bedrock, and peer providers. Stronger models escalate when the
+              cheaper path cannot finish the job.
             </p>
           </section>
 
           <section id="plan" aria-labelledby="plan-heading">
-            <h2 id="plan-heading">The plan</h2>
+            <h2 id="plan-heading">Roadmap</h2>
             <p className="section-lead">
-              Relay-native investigation service. Problems first — not a frontier
-              chatbot. The live bus is{" "}
-              <strong className="emph">public IRC</strong> (
+              Relay-native investigation. Live traffic runs on public IRC (
               <code>#mp-general</code>
-              ). Clevertree Chat mounts that room on the homepage. Free forever
-              for public chat + AI. Private chat is the paid lane that funds the
-              public utility. Why the SI stays ephemeral →{" "}
-              <a href="#si-different">Why is this SI different?</a>
+              ). Clevertree Chat opens from the header. Public chat and AI stay
+              free; private chat is the paid lane that funds capacity. SI design:{" "}
+              <a href="#si-different">Why this SI is different</a>.
             </p>
 
             <h3 id="plan-now-heading" style={{ marginTop: "1.5rem" }}>
-              Now — live / in pilot
+              Live / in pilot
             </h3>
             <div className="plan-grid">
               <article>
                 <h3>Public room first</h3>
                 <p>
-                  Homepage embeds <code>#mp-general</code>. Ask in the room
-                  (type / speak / video). Unknown <code>/c/…</code> slugs fall
-                  back to general — always a room.
+                  Header Chat opens <code>#mp-general</code> fullscreen (or the
+                  extension side panel). Type, speak, or video. Unknown{" "}
+                  <code>/c/…</code> slugs fall back to general.
                 </p>
               </article>
               <article>
@@ -527,12 +545,12 @@ export default function HomePage() {
           </section>
 
           <section id="virtues" aria-labelledby="virtues-heading">
-            <h2 id="virtues-heading">How we behave</h2>
+            <h2 id="virtues-heading">Operating principles</h2>
             <div className="plan-grid">
-              {VIRTUES.map((virtue) => (
-                <article key={virtue.title}>
-                  <h3>{virtue.title}</h3>
-                  <p>{virtue.body}</p>
+              {PRINCIPLES.map((item) => (
+                <article key={item.title}>
+                  <h3>{item.title}</h3>
+                  <p>{item.body}</p>
                 </article>
               ))}
             </div>
@@ -543,15 +561,12 @@ export default function HomePage() {
               Funding the public utility
             </h2>
             <p className="section-lead">
-              <strong className="emph">Public chat + AI are free forever.</strong>{" "}
-              The paid lane is <strong className="emph">private chat</strong> —
-              fees fund infrastructure and pay service providers for time spent
-              helping, so an offline handoff is not the only way helpers get
-              paid. We also seek{" "}
-              <strong className="emph">tax-deductible donations</strong> under an
-              educational public-utility framing (pursuing 501(c)(3)-compatible
-              structure; this page is intent, not a legal claim that status
-              already exists). Nonprofit posture; public path stays free. See{" "}
+              Public chat and AI stay free. The paid lane is{" "}
+              <strong className="emph">private chat</strong>: fees fund
+              infrastructure and paid provider time. We also seek tax-deductible
+              donations under an educational public-utility framing (pursuing
+              501(c)(3)-compatible structure; this page is intent, not a claim
+              that status already exists). See{" "}
               <a href="/how-we-run">How we run</a>,{" "}
               <a href="/privacy">Privacy</a>, and <a href="/terms">Terms</a>.
             </p>
@@ -585,35 +600,34 @@ export default function HomePage() {
                 Compatibility is the product
               </h3>
               <p style={{ margin: 0, color: "var(--muted)", lineHeight: 1.55 }}>
-                If you stand up hardware or a region, it must remain{" "}
-                <strong className="emph">
-                  compatible with the world network
-                </strong>{" "}
-                so problems stay findable under the same conditions. Splintering
-                defeats the Relay / MyProblem vision. We are{" "}
-                <strong className="emph">not</strong> looking for partners whose
-                plan is to clone and go their own way.
+                Regional hardware must stay{" "}
+                <strong className="emph">compatible with the wider network</strong>{" "}
+                so problems remain findable under shared conditions. Isolated
+                forks that abandon Relay interoperability are out of scope.
               </p>
               <ul aria-labelledby="investors-compat-heading">
                 <li>
-                  <strong>Public free forever</strong> — rooms like{" "}
+                  <strong>Public path free</strong> — rooms like{" "}
                   <code>#mp-general</code> and channel AI stay free
                 </li>
                 <li>
-                  <strong>Private chat funds the mesh</strong> — paid lane, not
+                  <strong>Private chat funds capacity</strong> — paid lane; no
                   tip-push on the homepage
                 </li>
                 <li>
-                  <strong>Donations for public utility</strong> — seeking
-                  tax-deductible support; careful nonprofit language until
-                  entity status is clear
+                  <strong>Simple Max</strong> — minimal UI defaults; no premium
+                  feature gates on the public path
                 </li>
                 <li>
-                  <strong>Zero-payroll LLC posture</strong> — Clevertree LLC
-                  (Georgia) / MyProblem product; capital for infra and growth
+                  <strong>Donations</strong> — seeking tax-deductible support;
+                  status claims only after the entity exists
                 </li>
                 <li>
-                  <strong>Intent ≠ agreement</strong> — nothing here binds
+                  <strong>Clevertree LLC (Georgia)</strong> — capital for
+                  infrastructure and growth; zero-payroll posture
+                </li>
+                <li>
+                  <strong>Intent is not agreement</strong> — nothing here binds
                   either side until separate paperwork exists
                 </li>
               </ul>
@@ -624,10 +638,7 @@ export default function HomePage() {
                   lineHeight: 1.5,
                 }}
               >
-                Free forever for public help.{" "}
-                <strong className="emph">Max and simple</strong> — anonymous
-                first, no paywall. Partners who fit: builders of the shared
-                network. Contact{" "}
+                Contact{" "}
                 <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>.
               </p>
             </div>

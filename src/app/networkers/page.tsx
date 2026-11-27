@@ -34,14 +34,14 @@ export default function NetworkersPage() {
       </a>
       <SiteHeader variant="home" />
       <main id="main" className="site legal-page">
-        <p className="eyebrow">Simple Max · Relay · human-paced sync</p>
-        <h1 className="legal-title">Networkers unify the groups you already visit</h1>
+        <p className="eyebrow">Relay · Simple Max · Networkers</p>
+        <h1 className="legal-title">Networkers work where people already are</h1>
         <p className="section-lead">
-          <strong>Simple</strong> means the people being helped never install
-          anything new — they keep using Nextdoor, Facebook, X, Instagram,
-          Reddit, and the rest. <strong>Max</strong> means maximum reach across
-          those walled gardens without building a separate front door for each.
-          Networkers are the humans who make that possible.
+          Relay&apos;s <strong>Simple Max</strong> principle: keep the default
+          experience minimal, and keep capability available without premium
+          unlocks. For Networkers that also means adoption where people already
+          are—Nextdoor, Facebook, X, Instagram, Reddit, and similar—without
+          forcing a new app for basic participation.
         </p>
 
         <div className="cta-row">
@@ -54,20 +54,19 @@ export default function NetworkersPage() {
         </div>
 
         <section aria-labelledby="simple-max-heading">
-          <h2 id="simple-max-heading">Simple Max in one pass</h2>
+          <h2 id="simple-max-heading">How gather stays Simple Max</h2>
           <p>
-            Adoption first: value has to show up where people already are.
-            Safety second: no deep scrapers, no headless logins, no bot behavior
-            platforms hunt and kill. Relay rides a real logged-in session —
-            shallow, session-bound gather only.
+            Adoption first: value has to appear on networks people already use.
+            Safety next: no deep scrapers, no headless logins, no bot behavior
+            platforms treat as abuse. Relay uses a real logged-in browser
+            session—shallow, session-bound gather only.
           </p>
           <p>
             Each gathered post becomes one ticket candidate with an external
-            ref. The AI server receives <strong>batches</strong>, not a live
-            firehose. It strips PII, scrubs photos, reduces video to choice
-            stills, and prepares incidents for review before anything posts
-            back as a trim status update. Full detail overflows to standing
-            stores; social feeds only ever see the clean version.
+            ref. The AI path receives <strong>batches</strong>, not a live
+            firehose. It strips PII, scrubs photos, reduces video to stills, and
+            prepares incidents for review before any trim status update returns
+            to the origin network. Full detail stays in standing stores.
           </p>
         </section>
 

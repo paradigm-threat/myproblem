@@ -17,7 +17,7 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 - Submit overlay: type / speak / video → Bunny (`/api/chat-media/upload`) → `/api/chat/post` into active channel with `[[mp:media …]]` markers. No tip-repo queue as public submit SoT.
 - Tickets mint **only** when batch SI decides channel traffic needs tracking — never on every public post.
 - Text SI is **manual**: channel `!investigate` / room Investigate (Free-tier soft budgets on chat-host). Whisper ASR stays automatic on media. See [`docs/providers-ai.md`](docs/providers-ai.md).
-- Narrative: public chat + AI free forever; private chat = paid lane (infra + provider time); donations for public utility — no tip-push.
+- Narrative: public chat + AI free; private chat = paid lane (infra + provider time); donations for public utility — no tip-push. **Simple Max:** minimal UI by default; advanced features available but out of the way; no premium unlocks/ads/artificial feature gates on the public path ([`docs/simple-max.md`](docs/simple-max.md)).
 - Room assets: `public/chat-room/` (from clevertree-chat `fronts/room/`).
 - **Themes (independent):** site chrome uses `localStorage` key `myproblem.theme` on `<html data-theme>`; embedded Clevertree room uses `clevertree.room.theme` on `.room` only — no forced coupling. Default both = `prefers-color-scheme`.
 - Docs SoT: [`docs/web-submit.md`](docs/web-submit.md) · [`docs/simple-max.md`](docs/simple-max.md).

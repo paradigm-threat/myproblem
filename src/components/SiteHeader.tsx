@@ -12,10 +12,10 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 type NavItem = { href: string; label: string };
 
 const HOME_LINKS: NavItem[] = [
+  { href: "/#simple-max", label: "Simple Max" },
   { href: "/#businesses", label: "For businesses" },
   { href: "/#people", label: "For people" },
   { href: "/#investors", label: "Funding" },
-  { href: "/#regions", label: "Regions" },
   { href: "/extension", label: "Networkers" },
   { href: "/how-we-run", label: "How we run" },
   { href: "/dev", label: "Dev" },

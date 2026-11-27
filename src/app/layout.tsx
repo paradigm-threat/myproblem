@@ -31,10 +31,10 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: "MyProblem — Free forever for everyone",
+    default: "MyProblem — Public help, free",
     template: "%s · MyProblem",
   },
-  description: `Public chat + AI free forever. Ask in #mp-general — people and SI help in-channel. Private chat is the paid lane. Seeking donations for an educational public utility. Georgia and Israel pilots.`,
+  description: `Public chat and AI stay free. Ask in #mp-general — people and SI help in-channel. Simple Max: minimal UI, full capability without premium gates. Private chat is the paid lane. Georgia and Israel pilots.`,
   applicationName: "MyProblem",
   category: "technology",
   manifest: "/manifest.webmanifest",
@@ -66,9 +66,9 @@ export const metadata: Metadata = {
     shortcut: ["/favicon.ico"],
   },
   openGraph: {
-    title: "MyProblem — Public chat free forever",
+    title: "MyProblem — Public help, free",
     description:
-      "Ask in #mp-general. Public chat + AI free forever. Private chat is the paid lane. Seeking donations for an educational public utility.",
+      "Ask in #mp-general. Public chat and AI stay free. Simple Max interface principle. Private chat is the paid lane.",
     url: SITE_URL,
     siteName: "MyProblem",
     locale: "en_US",
@@ -77,9 +77,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "MyProblem — Public chat free forever",
+    title: "MyProblem — Public help, free",
     description:
-      "Ask in #mp-general. Public chat + AI free forever. Private chat is the paid lane.",
+      "Ask in #mp-general. Public chat and AI stay free. Private chat is the paid lane.",
     images: [OG_IMAGE.url],
   },
   appleWebApp: {

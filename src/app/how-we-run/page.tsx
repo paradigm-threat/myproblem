@@ -86,11 +86,10 @@ export default function HowWeRunPage() {
         <p className="eyebrow">Clevertree LLC · Georgia</p>
         <h1 className="legal-title">How we run</h1>
         <p className="section-lead">
-          Public chat + AI stay free forever. Private chat is the paid lane that
-          funds the public room. We seek tax-deductible donations under an
-          educational public-utility framing. You should never expect to enter a
-          card for public help. This page is intent — not a contract and not an
-          offer.
+          Public chat and AI stay free. Private chat is the paid lane that funds
+          capacity. We seek tax-deductible donations under an educational
+          public-utility framing. Public help does not require a card. This page
+          is intent—not a contract and not an offer.
         </p>
 
         <section aria-labelledby="principles-heading">
@@ -98,9 +97,10 @@ export default function HowWeRunPage() {
           <ul>
             <li>No salaries, and no subscription for public help.</li>
             <li>
-              Free forever for public chat + AI.{" "}
-              <strong>Max and simple</strong> — anonymous first, no paywall.
-              You should never expect to enter a card on that path.
+              Public chat and AI stay free.{" "}
+              <strong>Simple Max</strong>: minimal UI by default; no premium
+              unlocks or ads on the public path. No card required for public
+              help.
             </li>
             <li>
               Private chat (when shipped) is the paid lane: fees fund
@@ -118,6 +118,13 @@ export default function HowWeRunPage() {
         <section aria-labelledby="words-heading">
           <h2 id="words-heading">Words we use</h2>
           <dl className="glossary">
+            <dt>Simple Max</dt>
+            <dd>
+              Relay product principle. Simple: default UI stays minimal;
+              advanced features stay available but out of the way. Max: full
+              capability without premium unlocks, advertising, or artificial
+              feature gates. Limits exist for capacity and safety only.
+            </dd>
             <dt>Public room</dt>
             <dd>
               IRC channels such as #mp-general. Posts are visible; there is no
@@ -126,8 +133,7 @@ export default function HowWeRunPage() {
             <dt>Private chat</dt>
             <dd>
               The paid lane (planned). Fees cover infrastructure and compensate
-              service providers for their time; public chat + AI stay free
-              forever.
+              service providers for their time; public chat and AI stay free.
             </dd>
             <dt>Donation</dt>
             <dd>
@@ -141,18 +147,18 @@ export default function HowWeRunPage() {
         </section>
 
         <section aria-labelledby="virtues-heading">
-          <h2 id="virtues-heading">Virtues</h2>
+          <h2 id="virtues-heading">Operating principles</h2>
           <ul>
             <li>
-              <strong>Max and simple</strong> — full help behind few modes. Free
-              for everyone on the public path.
+              <strong>Simple Max</strong> — minimal defaults; full public-path
+              capability without feature gates.
             </li>
             <li>Thorough over instant.</li>
-            <li>A shop may stay silent. Silence is a valid outcome.</li>
+            <li>Businesses may stay silent on public requests.</li>
             <li>No paid ranking of lessons or businesses.</li>
-            <li>Anonymous by default.</li>
+            <li>Anonymous by default on the public path.</li>
             <li>
-              Legal stops stay on screen. We are not a doctor, a vet, or a
+              Legal redirects stay visible. We are not a doctor, veterinarian, or
               lawyer.
             </li>
           </ul>
