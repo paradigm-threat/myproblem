@@ -762,10 +762,30 @@
       if (draft) {
         draft.placeholder = on ? PLACEHOLDER_EXPANDED : PLACEHOLDER_COLLAPSED;
         try {
-          if (on) draft.focus();
-          else draft.blur();
+          /* Only nudge focus when expanding; avoid blur thrash if something
+           * else already moved focus away during a layout race. */
+          if (on) {
+            if (document.activeElement !== draft) draft.focus();
+          } else if (document.activeElement === draft) {
+            draft.blur();
+          }
         } catch (e) {}
       }
+    }
+
+    /**
+     * Expanding/collapsing chrome reflows .history (flex sibling). Browsers
+     * clamp scrollTop and fire scroll — that must not call collapseChrome()
+     * or focus→expand immediately undoes itself. Same for keepComposerInView.
+     */
+    function suppressHistoryCollapse(ms) {
+      state.suppressHistoryScrollCollapse = true;
+      if (state.historyScrollUnlockTimer) clearTimeout(state.historyScrollUnlockTimer);
+      var wait = typeof ms === "number" && ms >= 0 ? ms : 160;
+      state.historyScrollUnlockTimer = setTimeout(function () {
+        state.suppressHistoryScrollCollapse = false;
+        state.historyScrollUnlockTimer = null;
+      }, wait);
     }
 
     /**
@@ -786,6 +806,9 @@
         applyComposerClass(nextComposer);
         return;
       }
+
+      /* Cover measure/tween reflow + post-anim keyboard viewport sync. */
+      suppressHistoryCollapse(CHROME_MS + 280);
 
       var landscape = isLandscapeChrome();
       var reduce = prefersReducedMotion();
@@ -862,6 +885,8 @@
         state.chromeAnimTimer = null;
         clearChromeInlineSize(aiPanel);
         clearChromeInlineSize(composerEl);
+        /* Clearing inline sizes + keyboard sync can scroll history again. */
+        suppressHistoryCollapse(240);
         if (typeof scheduleKeyboardViewport === "function") {
           scheduleKeyboardViewport();
         } else if (typeof syncKeyboardViewport === "function") {
@@ -886,6 +911,8 @@
     }
 
     function focusComposer() {
+      /* Intentional expand — keep scroll-collapse locked across the anim. */
+      suppressHistoryCollapse(CHROME_MS + 280);
       setChromeState(false, true);
     }
 
@@ -899,13 +926,8 @@
 
     function scrollHistoryToBottom() {
       if (!history) return;
-      state.suppressHistoryScrollCollapse = true;
+      suppressHistoryCollapse(120);
       history.scrollTop = history.scrollHeight;
-      if (state.historyScrollUnlockTimer) clearTimeout(state.historyScrollUnlockTimer);
-      state.historyScrollUnlockTimer = setTimeout(function () {
-        state.suppressHistoryScrollCollapse = false;
-        state.historyScrollUnlockTimer = null;
-      }, 120);
     }
 
     /* Start with draft big; SI header-only until tapped. No persisted onboarding state. */
@@ -1173,7 +1195,8 @@
             history.classList.remove("is-scrolling");
             historyScrollHideTimer = null;
           }, 900);
-          if (state.suppressHistoryScrollCollapse) return;
+          /* Layout reflow during chrome anim / viewport sync is not a user scroll. */
+          if (state.suppressHistoryScrollCollapse || state.chromeAnimTimer) return;
           collapseChrome();
         },
         { passive: true }
@@ -1211,6 +1234,14 @@
       draft.addEventListener("focus", function () {
         focusComposer();
       });
+      /* Pointer down expands before focus steals the gesture on some WebViews. */
+      draft.addEventListener(
+        "pointerdown",
+        function () {
+          focusComposer();
+        },
+        { passive: true }
+      );
     }
     var connEl = $(el, '[data-role="conn"]');
     var mirrorEl = $(el, '[data-role="mirror"]');
@@ -2333,6 +2364,7 @@
       var limit = vv ? vv.offsetTop + vv.height : window.innerHeight;
       var box = composerEl.getBoundingClientRect();
       if (box.bottom > limit - 6 && history) {
+        suppressHistoryCollapse(160);
         history.scrollTop = Math.min(
           history.scrollHeight,
           history.scrollTop + (box.bottom - limit + 12)
