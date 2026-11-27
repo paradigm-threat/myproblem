@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
+import { ThemeArt } from "@/components/ThemeArt";
 import { CONTACT_EMAIL, OG_IMAGE, SITE_URL } from "@/lib/contact";
 
 const TITLE = "Funding and node operation";
@@ -58,22 +59,12 @@ export default function InvestorsPage() {
             <Link href="/businesses">for businesses</Link>.
           </p>
           <figure className="section-graphic">
-            <picture>
-              <source
-                media="(max-width: 767px)"
-                srcSet="/investors-portrait.jpg"
-                width={768}
-                height={1024}
-              />
-              <img
-                src="/investors.jpg"
-                alt="Regional infrastructure connected on a Relay-compatible mesh with posted public rules"
-                width={1024}
-                height={576}
-                className="section-graphic-img"
-                decoding="async"
-              />
-            </picture>
+            <ThemeArt
+              base="/investors"
+              alt="Regional infrastructure connected on a Relay-compatible mesh with posted public rules"
+              width={1024}
+              height={576}
+            />
           </figure>
         </section>
 

@@ -3,6 +3,7 @@ import Link from "next/link";
 import { OpenChatButton } from "@/components/chat/OpenChatButton";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
+import { ThemeArt } from "@/components/ThemeArt";
 import {
   BUSINESS_PDF_PATH,
   CONTACT_EMAIL,
@@ -68,22 +69,12 @@ export default function BusinessesPage() {
             the role you want.
           </p>
           <figure className="section-graphic">
-            <picture>
-              <source
-                media="(max-width: 767px)"
-                srcSet="/businesses-portrait.jpg"
-                width={576}
-                height={1024}
-              />
-              <img
-                src="/businesses.jpg"
-                alt="Local auto shop answering community questions, then optional paid service"
-                width={1024}
-                height={512}
-                className="section-graphic-img"
-                decoding="async"
-              />
-            </picture>
+            <ThemeArt
+              base="/businesses"
+              alt="Local auto shop answering community questions, then optional paid service"
+              width={1024}
+              height={512}
+            />
           </figure>
         </section>
 

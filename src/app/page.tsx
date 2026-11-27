@@ -2,6 +2,7 @@ import Link from "next/link";
 import { OpenChatButton } from "@/components/chat/OpenChatButton";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
+import { ThemeArt } from "@/components/ThemeArt";
 import { VisionStrip } from "@/components/VisionStrip";
 import {
   BUSINESS_PDF_PATH,
@@ -83,6 +84,14 @@ export default function HomePage() {
               Answer questions in your community. Share what you know. Sometimes
               a helpful conversation becomes paid work.
             </p>
+            <figure className="section-graphic">
+              <ThemeArt
+                base="/businesses"
+                alt="Local business answering community questions, then optional paid service"
+                width={1024}
+                height={512}
+              />
+            </figure>
             <div className="cta-row">
               <Link className="btn-primary" href="/businesses">
                 Are you a business?
@@ -135,13 +144,13 @@ export default function HomePage() {
               browser. Not a sales funnel for private premium.
             </p>
             <figure className="section-graphic">
-              <img
-                src="/networkers-unify.png"
+              <ThemeArt
+                base="/networkers-unify"
+                ext="jpg"
+                portraitBase="/networkers-portrait"
                 alt="Networkers connect existing social groups into collection rooms"
                 width={1024}
                 height={682}
-                className="section-graphic-img"
-                decoding="async"
               />
             </figure>
             <div className="cta-row">
@@ -160,6 +169,14 @@ export default function HomePage() {
               Free public intelligence needs real infrastructure. Fund capacity
               or operate a compatible Relay node under publicly posted rules.
             </p>
+            <figure className="section-graphic">
+              <ThemeArt
+                base="/investors"
+                alt="Regional infrastructure on a Relay-compatible mesh with posted public rules"
+                width={1024}
+                height={576}
+              />
+            </figure>
             <div className="cta-row">
               <Link className="btn-primary" href="/investors">
                 Explore funding and node operation
@@ -172,6 +189,14 @@ export default function HomePage() {
 
           <section id="lanes" aria-labelledby="lanes-heading">
             <h2 id="lanes-heading">The same help. A different privacy boundary.</h2>
+            <figure className="section-graphic">
+              <ThemeArt
+                base="/people"
+                alt="Neighbors getting public help in a shared room—no account required"
+                width={1024}
+                height={576}
+              />
+            </figure>
             <ul>
               <li>
                 <strong>Public</strong> — free, no account, public conversations,

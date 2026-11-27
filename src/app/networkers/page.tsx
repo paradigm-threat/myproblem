@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { OpenChatButton } from "@/components/chat/OpenChatButton";
+import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
+import { ThemeArt } from "@/components/ThemeArt";
 import { OG_IMAGE, SITE_URL } from "@/lib/contact";
 
 const TITLE = "Networkers";
@@ -73,18 +75,14 @@ export default function NetworkersPage() {
         <section aria-labelledby="diagram-heading">
           <h2 id="diagram-heading">One Networker, a few collections</h2>
           <figure className="section-graphic">
-            <img
-              src="/networkers-unify.png"
-              alt="Networkers unify related community groups across social networks. Social network icons on the left feed into a central Networker, who links related groups into one Collection hub on the right. Bottom callout: scalable but focused — one Networker manages a few collections, not unlimited."
+            <ThemeArt
+              base="/networkers-unify"
+              ext="jpg"
+              portraitBase="/networkers-portrait"
+              alt="Networkers unify related community groups across social networks into focused collections"
               width={1024}
               height={682}
-              className="section-graphic-img"
-              decoding="async"
             />
-            <figcaption className="sr-only">
-              Infographic: Networkers unify related community groups across
-              social networks into focused collections.
-            </figcaption>
           </figure>
           <p>
             Scalable but focused. One Networker manages a few collections — not
@@ -151,6 +149,7 @@ export default function NetworkersPage() {
           <Link href="/dev">Dev</Link>
         </p>
       </main>
+      <SiteFooter />
     </>
   );
 }

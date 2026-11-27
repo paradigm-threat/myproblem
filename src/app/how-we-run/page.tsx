@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import Image from "next/image";
+import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
 import {
   CONTACT_EMAIL,
@@ -241,29 +241,7 @@ export default function HowWeRunPage() {
           <a href="/">Back to the product</a>.
         </p>
       </main>
-      <footer className="site footer">
-        <div className="footer-brand">
-          <Image
-            src="/icons/icon-64.png"
-            alt=""
-            width={40}
-            height={40}
-            className="brand-mark"
-          />
-          <strong>MyProblem</strong>
-        </div>
-        <nav className="footer-nav" aria-label="Footer">
-          <a href="/">Home</a>
-          <span aria-hidden="true"> · </span>
-          <a href="/#si-different">Why this SI</a>
-          <span aria-hidden="true"> · </span>
-          <a href="/terms">Terms</a>
-          <span aria-hidden="true"> · </span>
-          <a href="/privacy">Privacy</a>
-          <span aria-hidden="true"> · </span>
-          <a href={SITE_URL}>{SITE_URL.replace("https://", "")}</a>
-        </nav>
-      </footer>
+      <SiteFooter />
     </>
   );
 }
