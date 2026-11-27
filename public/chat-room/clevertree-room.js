@@ -347,19 +347,16 @@
       '<button type="button" class="theme-toggle" data-role="theme-toggle" aria-label="Toggle room theme"></button>' +
       '<span class="dot"></span><strong data-role="conn">Connecting…</strong>' +
       '<span class="mirror" data-role="mirror"></span></div></header>' +
-      '<section class="head"><div class="roomname">' +
-      '<div class="eyebrow">Public IRC room</div>' +
-      "<h1>" +
+      '<section class="head" aria-label="' +
       title +
-      "</h1>" +
-      '<div class="sub">' +
+      '">' +
+      '<div class="roomname">' +
+      '<div class="eyebrow">' +
+      "<span>Public IRC room</span>" +
+      '<code class="channel-tag" data-role="channel-tag">' +
       ch +
-      "</div></div>" +
-      '<div class="actions">' +
-      '<button type="button" class="theme-toggle" data-role="theme-toggle" aria-label="Toggle room theme"></button>' +
-      '<button type="button" class="investigate" data-role="investigate" title="Ask SI to investigate this channel (!investigate)">Investigate</button>' +
-      '<button type="button" class="ai-toggle" data-role="ai-toggle" aria-expanded="false">SI panel</button>' +
-      "</div></section>" +
+      "</code>" +
+      "</div></div></section>" +
       '<div class="body"><main class="chat">' +
       '<div class="history" data-role="history" role="log" aria-label="Public IRC channel messages">' +
       '<div class="stream" data-role="stream"></div></div>' +
@@ -388,13 +385,7 @@
       "<span>Send</span></button>" +
       "</div></div>" +
       '<div class="footnote"><span>Tags · domain or topic</span><span>Max 50 MiB</span></div>' +
-      "</div></footer></main>" +
-      '<aside class="ai" data-role="ai" aria-label="SI panel" hidden>' +
-      '<div class="aicap">SI workspace</div>' +
-      '<div class="aititle"><h2>SI panel</h2>' +
-      '<button type="button" class="close" data-role="ai-hide" aria-label="Hide SI panel">×</button></div>' +
-      '<p class="aidesc">Batch SI organizes the conversation here (topics, findings, CleverScript). Stub for now — content ships next.</p>' +
-      '<div data-role="ai-body"><p class="si-stub">Waiting for conversation…</p></div></aside></div>' +
+      "</div></footer></main></div>" +
       '<div class="overlay" data-role="overlay" hidden><div class="modal" data-role="modal"></div></div>'
     );
   }
@@ -574,6 +565,7 @@
     var composerEl = $(el, '[data-role="composer"]');
     var composeBox = $(el, '[data-role="composebox"]');
     var investigateBtn = $(el, '[data-role="investigate"]');
+    /* AI findings panel + Investigate chrome removed from shell (keep refs null-safe). */
     var COMPOSER_EXPANDED_KEY = "clevertree.room.composerExpanded";
     var PLACEHOLDER_EXPANDED =
       "Help me with a problem… · Help me find something… · What's the latest news on something… · What's going on in town…";
@@ -749,6 +741,10 @@
     }
 
     function setAiUi() {
+      if (!aiPanel || !aiBtn) {
+        state.aiOpen = false;
+        return;
+      }
       aiPanel.hidden = !state.aiOpen;
       aiPanel.classList.toggle("open", state.aiOpen);
       aiBtn.classList.toggle("active", state.aiOpen);
@@ -1058,18 +1054,23 @@
         if (typeof opts.onTrack === "function") opts.onTrack(state.tracked);
       };
     }
-    aiBtn.onclick = function () {
-      state.aiOpen = !state.aiOpen;
-      setAiUi();
-      if (state.aiOpen && !state.view && typeof opts.onNeedView === "function") {
-        opts.onNeedView();
-      }
-    };
-    $(el, '[data-role="ai-hide"]').onclick = function () {
-      state.aiOpen = false;
-      setAiUi();
-      aiBtn.focus();
-    };
+    if (aiBtn) {
+      aiBtn.onclick = function () {
+        state.aiOpen = !state.aiOpen;
+        setAiUi();
+        if (state.aiOpen && !state.view && typeof opts.onNeedView === "function") {
+          opts.onNeedView();
+        }
+      };
+    }
+    var aiHide = $(el, '[data-role="ai-hide"]');
+    if (aiHide) {
+      aiHide.onclick = function () {
+        state.aiOpen = false;
+        setAiUi();
+        if (aiBtn) aiBtn.focus();
+      };
+    }
 
     sendBtn.onclick = function () {
       var text = draft.value.trim();
@@ -1225,11 +1226,12 @@
         setTrackUi();
       },
       setAiOpen: function (v) {
-        state.aiOpen = !!v;
+        /* Panel chrome removed; API kept as no-op for hosts. */
+        state.aiOpen = false;
         setAiUi();
       },
       setView: function (view) {
-        renderAiFindings(view);
+        if (aiBody) renderAiFindings(view);
       },
       appendMessage: function (msg) {
         state.messages.push(msg);
