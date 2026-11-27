@@ -45,6 +45,43 @@
   var BOT_NICKS = ["clevertree", "clevertree-si", "clevertree-ai", "relay-bot"];
   /** Separate from MyProblem site theme (`myproblem.theme`). */
   var THEME_KEY = "clevertree.room.theme";
+  var VISITOR_KEY = "clevertree.visitor";
+
+  function ensureVisitor(opts) {
+    if (opts && opts.visitor) return String(opts.visitor);
+    try {
+      var id = localStorage.getItem(VISITOR_KEY);
+      if (!id && typeof crypto !== "undefined" && crypto.randomUUID) {
+        id = crypto.randomUUID();
+        localStorage.setItem(VISITOR_KEY, id);
+      }
+      return id || "";
+    } catch (e) {
+      return "";
+    }
+  }
+
+  function withVisitorParam(url, visitor) {
+    if (!url || !visitor) return url;
+    try {
+      var base =
+        typeof location !== "undefined" && location.href
+          ? location.href
+          : "https://api.clevertree.chat/";
+      var u = new URL(url, base);
+      if (!u.searchParams.get("visitor")) {
+        u.searchParams.set("visitor", visitor);
+      }
+      return u.toString();
+    } catch (e) {
+      return (
+        url +
+        (url.indexOf("?") >= 0 ? "&" : "?") +
+        "visitor=" +
+        encodeURIComponent(visitor)
+      );
+    }
+  }
   var THEME_SUN =
     '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="1.75"/><path d="M12 2v2.2M12 19.8V22M4.2 12H2M22 12h-2.2M5.05 5.05l1.56 1.56M17.39 17.39l1.56 1.56M5.05 18.95l1.56-1.56M17.39 6.61l1.56-1.56" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"/></svg>';
   var THEME_MOON =
@@ -133,7 +170,16 @@
       var attrs = m[1] || "";
       var kind = (attrs.match(/\bkind=(\S+)/i) || [])[1] || "file";
       var url = (attrs.match(/\burl=(\S+)/i) || [])[1] || "";
-      if (url) out.push({ kind: kind.toLowerCase(), url: url });
+      var review = (attrs.match(/\breview=(\S+)/i) || [])[1] || "pending";
+      var sha = (attrs.match(/\bsha=(\S+)/i) || [])[1] || "";
+      if (url) {
+        out.push({
+          kind: kind.toLowerCase(),
+          url: url,
+          review: String(review).toLowerCase(),
+          sha: sha,
+        });
+      }
     }
     return out;
   }
@@ -145,26 +191,97 @@
       .trim();
   }
 
-  function mediaHtml(items) {
+  function mediaKey(it) {
+    return (it && (it.sha || it.url)) || "";
+  }
+
+  function effectiveReview(it, reviewMap) {
+    var key = mediaKey(it);
+    if (reviewMap && key && reviewMap[key]) return reviewMap[key];
+    if (reviewMap && it && it.url && reviewMap[it.url]) return reviewMap[it.url];
+    var r = (it && it.review) || "pending";
+    return r === "clear" || r === "reject" ? r : "pending";
+  }
+
+  function mediaHtml(items, reviewMap) {
     if (!items || !items.length) return "";
     var html = "";
     for (var i = 0; i < items.length; i++) {
       var it = items[i];
+      var status = effectiveReview(it, reviewMap);
+      var key = esc(mediaKey(it));
+      var url = esc(it.url);
       if (it.kind === "image") {
-        html +=
-          '<figure class="media media-image"><img src="' +
-          esc(it.url) +
-          '" alt="Problem photo" loading="lazy" decoding="async" /></figure>';
+        if (status === "clear") {
+          html +=
+            '<figure class="media media-image" data-media-key="' +
+            key +
+            '" data-review="clear"><img src="' +
+            url +
+            '" alt="Shared image" loading="lazy" decoding="async" /></figure>';
+        } else {
+          html +=
+            '<figure class="media media-image media-covered" data-media-key="' +
+            key +
+            '" data-review="' +
+            esc(status) +
+            '">' +
+            '<button type="button" class="shield" data-role="reveal-media" aria-label="Show image after AI review">' +
+            (status === "reject"
+              ? "Hidden — not cleared for this channel"
+              : "Covered until AI review — click to peek") +
+            "</button>" +
+            '<img class="media-hidden" hidden src="' +
+            url +
+            '" alt="Shared image" loading="lazy" decoding="async" />' +
+            "</figure>";
+        }
       } else if (it.kind === "audio") {
         html +=
-          '<div class="media media-audio"><audio controls preload="none" src="' +
-          esc(it.url) +
+          '<div class="media media-audio" data-media-key="' +
+          key +
+          '" data-review="clear"><audio controls preload="none" src="' +
+          url +
           '"></audio></div>';
       } else if (it.kind === "video") {
+        if (status === "clear") {
+          html +=
+            '<div class="media media-video media-video-clear" data-media-key="' +
+            key +
+            '" data-review="clear">' +
+            '<video controls muted autoplay playsinline loop preload="metadata" data-role="room-video" src="' +
+            url +
+            '"></video>' +
+            '<button type="button" class="video-unmute" data-role="unmute-video">Click for sound</button>' +
+            "</div>";
+        } else {
+          html +=
+            '<div class="media media-video media-covered" data-media-key="' +
+            key +
+            '" data-review="' +
+            esc(status) +
+            '">' +
+            '<button type="button" class="shield" data-role="reveal-media" aria-label="Show video after AI review">' +
+            (status === "reject"
+              ? "Hidden — not cleared for this channel"
+              : "Covered until AI review — click to peek (muted)") +
+            "</button>" +
+            '<video class="media-hidden" hidden muted playsinline preload="metadata" data-role="room-video" src="' +
+            url +
+            '"></video>' +
+            "</div>";
+        }
+      } else if (it.kind === "pdf" || it.kind === "text" || it.kind === "file") {
+        var label =
+          it.kind === "pdf" ? "PDF" : it.kind === "text" ? "Text file" : "File";
         html +=
-          '<div class="media media-video"><video controls preload="metadata" src="' +
-          esc(it.url) +
-          '"></video></div>';
+          '<div class="media media-file" data-media-key="' +
+          key +
+          '"><a class="media-file-link" href="' +
+          url +
+          '" target="_blank" rel="noopener noreferrer">' +
+          label +
+          " — open / download</a></div>";
       }
     }
     return html;
@@ -178,9 +295,9 @@
     return false;
   }
 
-  function formatCopyHtml(text, cfg) {
+  function formatCopyHtml(text, cfg, reviewMap) {
     var plain = stripMediaMarkers(text);
-    var media = mediaHtml(parseMediaMarkers(text));
+    var media = mediaHtml(parseMediaMarkers(text), reviewMap);
     var bodyHtml = Tags.renderHtml(plain, cfg);
     var display = Tags.stripTags
       ? Tags.stripTags(plain)
@@ -235,13 +352,27 @@
       '<div class="body"><main class="chat">' +
       '<div class="history" data-role="history" role="log" aria-label="Public IRC channel messages">' +
       '<div class="stream" data-role="stream"></div></div>' +
-      '<footer class="composer"><div class="compose-inner">' +
-      '<div class="public"><strong>You\'re posting publicly.</strong> Messages go to this IRC room. Anyone may see or save them.</div>' +
-      '<div class="composebox"><textarea data-role="draft" aria-label="Message to public room" placeholder="Message this public room…"></textarea>' +
+      '<footer class="composer" data-role="composer">' +
+      '<div class="compose-inner">' +
+      '<div class="public"><strong>You\'re posting publicly.</strong> Messages go to this IRC room. Anyone may see or save them. Media is covered until AI review.</div>' +
+      '<div class="composebox" data-role="composebox">' +
+      '<textarea data-role="draft" aria-label="Message to public room" placeholder="Help me with a problem… · Help me find something… · What\'s the latest news on something… · What\'s going on in town…"></textarea>' +
+      '<div class="compose-suggestions" data-role="suggestions" role="group" aria-label="Suggestions">' +
+      '<button type="button" class="suggest" data-suggest="Help me with a problem">Help me with a problem</button>' +
+      '<button type="button" class="suggest" data-suggest="Help me find something">Help me find something</button>' +
+      '<button type="button" class="suggest" data-suggest="What\'s the latest news on something">What\'s the latest news on something</button>' +
+      '<button type="button" class="suggest" data-suggest="What\'s going on in town">What\'s going on in town</button>' +
+      "</div>" +
       '<div class="tools">' +
+      '<input type="file" data-role="file-input" hidden accept="image/*,video/*,audio/*,.pdf,text/*,.txt,.md,.json,.csv,.xml,.yaml,.yml" />' +
+      '<button type="button" class="tool" data-role="attach" title="Attach file">Attach</button>' +
+      '<button type="button" class="tool" data-role="record-audio" title="Record audio">Audio</button>' +
+      '<button type="button" class="tool" data-role="record-video" title="Record video">Video</button>' +
+      '<button type="button" class="tool recording-stop" data-role="stop-record" hidden title="Stop recording">Stop</button>' +
+      '<span class="upload-status" data-role="upload-status" hidden></span>' +
       '<button type="button" class="send" data-role="send">Send publicly</button>' +
       "</div></div>" +
-      '<div class="footnote"><span>Tags appended at end · domain or topic only</span><span>SI panel · batch curated</span></div>' +
+      '<div class="footnote"><span>Tags appended at end · domain or topic only</span><span>Max 50 MiB · images/video/audio/PDF/text</span></div>' +
       "</div></footer></main>" +
       '<aside class="ai" data-role="ai" aria-label="SI panel" hidden>' +
       '<div class="aicap">SI workspace</div>' +
@@ -253,13 +384,60 @@
     );
   }
 
-  function appendMessage(stream, msg, cfg, roomRoot) {
+  function wireMediaControls(root) {
+    if (!root) return;
+    var shields = root.querySelectorAll('[data-role="reveal-media"]');
+    for (var i = 0; i < shields.length; i++) {
+      (function (btn) {
+        if (btn._ctWired) return;
+        btn._ctWired = true;
+        btn.onclick = function () {
+          var wrap = btn.closest(".media");
+          if (!wrap) return;
+          if (wrap.getAttribute("data-review") === "reject") return;
+          var hidden = wrap.querySelector(".media-hidden");
+          if (hidden) {
+            hidden.hidden = false;
+            hidden.classList.remove("media-hidden");
+          }
+          btn.hidden = true;
+          var vid = wrap.querySelector("video");
+          if (vid) {
+            try {
+              vid.muted = true;
+              vid.play();
+            } catch (e) {}
+          }
+        };
+      })(shields[i]);
+    }
+    var unmutes = root.querySelectorAll('[data-role="unmute-video"]');
+    for (var j = 0; j < unmutes.length; j++) {
+      (function (btn) {
+        if (btn._ctWired) return;
+        btn._ctWired = true;
+        btn.onclick = function () {
+          var wrap = btn.closest(".media");
+          var vid = wrap && wrap.querySelector("video");
+          if (!vid) return;
+          vid.muted = false;
+          try {
+            vid.play();
+          } catch (e2) {}
+          btn.textContent = "Sound on";
+          btn.disabled = true;
+        };
+      })(unmutes[j]);
+    }
+  }
+
+  function appendMessage(stream, msg, cfg, roomRoot, reviewMap) {
     var bot = isBot(msg.nick);
     var art = document.createElement("article");
     art.className = "msg" + (bot ? " botmsg" : "");
     art.dataset.nick = msg.nick || "";
     var raw = msg.text || "";
-    var copyInner = formatCopyHtml(raw, cfg);
+    var copyInner = formatCopyHtml(raw, cfg, reviewMap);
     var clamp = shouldClamp(stripMediaMarkers(raw), bot);
     var copyClass = "copy" + (clamp ? " copy-clamp" : "");
     art.innerHTML =
@@ -287,6 +465,7 @@
         : "") +
       "</div>";
     stream.appendChild(art);
+    wireMediaControls(art);
     if (clamp && roomRoot) {
       var btn = art.querySelector('[data-role="expand-msg"]');
       if (btn) {
@@ -327,6 +506,8 @@
 
   function mount(el, opts) {
     opts = opts || {};
+    var visitor = ensureVisitor(opts);
+    opts.visitor = visitor;
     if (!el) throw new Error("CleverTreeRoom.mount: element required");
 
     var mode = opts.mode || "page";
@@ -358,6 +539,12 @@
       destroyed: false,
       themePref: readThemePref(),
       theme: resolveRoomTheme(),
+      mediaReviews: {},
+      recording: false,
+      mediaRecorder: null,
+      mediaStream: null,
+      recordChunks: [],
+      recordKind: "",
     };
     applyRoomTheme(el, state.theme, state.themePref);
 
@@ -369,11 +556,127 @@
     var history = $(el, '[data-role="history"]');
     var draft = $(el, '[data-role="draft"]');
     var sendBtn = $(el, '[data-role="send"]');
+    var composerEl = $(el, '[data-role="composer"]');
+    var composeBox = $(el, '[data-role="composebox"]');
+    var suggestionsEl = $(el, '[data-role="suggestions"]');
     var investigateBtn = $(el, '[data-role="investigate"]');
+    var COMPOSER_EXPANDED_KEY = "clevertree.room.composerExpanded";
+    var PLACEHOLDER_EXPANDED =
+      "Help me with a problem… · Help me find something… · What's the latest news on something… · What's going on in town…";
+    var PLACEHOLDER_COLLAPSED = "Ask something…";
+
+    function readComposerExpanded() {
+      try {
+        var raw = localStorage.getItem(COMPOSER_EXPANDED_KEY);
+        if (raw === null || raw === undefined || raw === "") return true;
+        return raw === "1" || raw === "true";
+      } catch (e) {
+        return true;
+      }
+    }
+
+    function writeComposerExpanded(on) {
+      try {
+        localStorage.setItem(COMPOSER_EXPANDED_KEY, on ? "1" : "0");
+      } catch (e) {}
+    }
+
+    function setComposerExpanded(on) {
+      if (!composerEl) return;
+      composerEl.classList.toggle("composer-expanded", !!on);
+      composerEl.classList.toggle("composer-collapsed", !on);
+      composerEl.setAttribute("data-expanded", on ? "true" : "false");
+      if (draft) {
+        draft.placeholder = on ? PLACEHOLDER_EXPANDED : PLACEHOLDER_COLLAPSED;
+        if (on) {
+          try {
+            draft.focus();
+          } catch (e) {}
+        }
+      }
+      writeComposerExpanded(!!on);
+    }
+
+    setComposerExpanded(readComposerExpanded());
+
+    if (suggestionsEl) {
+      suggestionsEl.addEventListener("click", function (ev) {
+        var btn = ev.target && ev.target.closest
+          ? ev.target.closest("[data-suggest]")
+          : null;
+        if (!btn || !draft) return;
+        var text = btn.getAttribute("data-suggest") || "";
+        if (!text) return;
+        setComposerExpanded(true);
+        draft.value = text;
+        draft.focus();
+        try {
+          draft.setSelectionRange(text.length, text.length);
+        } catch (e) {}
+      });
+    }
+
+    if (composeBox) {
+      composeBox.addEventListener("click", function () {
+        if (composerEl && composerEl.classList.contains("composer-collapsed")) {
+          setComposerExpanded(true);
+        }
+      });
+    }
+    if (draft) {
+      draft.addEventListener("focus", function () {
+        if (composerEl && composerEl.classList.contains("composer-collapsed")) {
+          setComposerExpanded(true);
+        }
+      });
+    }
     var connEl = $(el, '[data-role="conn"]');
     var mirrorEl = $(el, '[data-role="mirror"]');
     var overlay = $(el, '[data-role="overlay"]');
     var modal = $(el, '[data-role="modal"]');
+    var fileInput = $(el, '[data-role="file-input"]');
+    var attachBtn = $(el, '[data-role="attach"]');
+    var recordAudioBtn = $(el, '[data-role="record-audio"]');
+    var recordVideoBtn = $(el, '[data-role="record-video"]');
+    var stopRecordBtn = $(el, '[data-role="stop-record"]');
+    var uploadStatus = $(el, '[data-role="upload-status"]');
+
+    function apiBase() {
+      var base =
+        opts.apiBase ||
+        "https://api.clevertree.chat";
+      return String(base).replace(/\/$/, "");
+    }
+
+    function channelSlug() {
+      return String(opts.channel || "#web")
+        .replace(/^#/, "")
+        .trim() || "web";
+    }
+
+    function setUploadStatus(text) {
+      if (!uploadStatus) return;
+      if (!text) {
+        uploadStatus.hidden = true;
+        uploadStatus.textContent = "";
+        return;
+      }
+      uploadStatus.hidden = false;
+      uploadStatus.textContent = text;
+    }
+
+    function setReview(sha, url, status) {
+      if (sha) state.mediaReviews[sha] = status;
+      if (url) state.mediaReviews[url] = status;
+    }
+
+    function applyMediaReviewEvent(data) {
+      var status = String((data && data.status) || "").toLowerCase();
+      if (status !== "clear" && status !== "reject" && status !== "pending") return;
+      setReview(data.sha, data.url, status);
+      // Re-render stream so covers / muted autoplay update
+      renderSeed();
+    }
 
     function setTrackUi() {
       if (!trackBtn) return;
@@ -489,7 +792,7 @@
       } else {
         incoming.forEach(function (m) {
           state.messages.push(m);
-          appendMessage(stream, m, tagCfg, el);
+          appendMessage(stream, m, tagCfg, el, state.mediaReviews);
         });
         history.scrollTop = history.scrollHeight;
       }
@@ -508,9 +811,166 @@
         return;
       }
       state.messages.forEach(function (m) {
-        appendMessage(stream, m, tagCfg, el);
+        appendMessage(stream, m, tagCfg, el, state.mediaReviews);
       });
       history.scrollTop = history.scrollHeight;
+    }
+
+    async function uploadBlob(file, kindHint) {
+      setUploadStatus("Uploading…");
+      var fd = new FormData();
+      fd.append("file", file, file.name || "upload.bin");
+      fd.append("channel", channelSlug());
+      if (kindHint) fd.append("kind", kindHint);
+      var res = await fetch(apiBase() + "/api/chat/media/upload", {
+        method: "POST",
+        body: fd,
+      });
+      var data = {};
+      try {
+        data = await res.json();
+      } catch (e) {
+        data = {};
+      }
+      if (!res.ok || !data.url) {
+        throw new Error(data.error || "upload_" + res.status);
+      }
+      setReview(data.sha256, data.url, data.review || "pending");
+      var caption = draft.value.trim();
+      var marker =
+        data.marker ||
+        "[[mp:media kind=" +
+          (data.kind || kindHint || "file") +
+          " url=" +
+          data.url +
+          " channel=#" +
+          channelSlug() +
+          " review=pending sha=" +
+          (data.sha256 || "") +
+          "]]";
+      var body = caption ? caption + "\n" + marker : marker;
+      setUploadStatus("");
+      confirmPublic(function () {
+        postLocal(body);
+        draft.value = "";
+      });
+    }
+
+    function stopMediaTracks() {
+      if (state.mediaStream) {
+        try {
+          state.mediaStream.getTracks().forEach(function (t) {
+            t.stop();
+          });
+        } catch (e) {}
+      }
+      state.mediaStream = null;
+    }
+
+    function setRecordingUi(on) {
+      state.recording = !!on;
+      if (stopRecordBtn) stopRecordBtn.hidden = !on;
+      if (recordAudioBtn) recordAudioBtn.disabled = !!on;
+      if (recordVideoBtn) recordVideoBtn.disabled = !!on;
+      if (attachBtn) attachBtn.disabled = !!on;
+    }
+
+    function startCapture(video) {
+      if (
+        !navigator.mediaDevices ||
+        typeof MediaRecorder === "undefined"
+      ) {
+        setUploadStatus("Recording not supported in this browser");
+        return;
+      }
+      setUploadStatus(video ? "Starting camera…" : "Starting mic…");
+      navigator.mediaDevices
+        .getUserMedia({
+          audio: true,
+          video: video ? { facingMode: "user" } : false,
+        })
+        .then(function (mediaStream) {
+          state.mediaStream = mediaStream;
+          state.recordChunks = [];
+          state.recordKind = video ? "video" : "audio";
+          var mime = video
+            ? MediaRecorder.isTypeSupported("video/webm;codecs=vp8,opus")
+              ? "video/webm;codecs=vp8,opus"
+              : "video/webm"
+            : MediaRecorder.isTypeSupported("audio/webm;codecs=opus")
+              ? "audio/webm;codecs=opus"
+              : "audio/webm";
+          var rec = new MediaRecorder(mediaStream, { mimeType: mime });
+          state.mediaRecorder = rec;
+          rec.ondataavailable = function (ev) {
+            if (ev.data && ev.data.size) state.recordChunks.push(ev.data);
+          };
+          rec.onstop = function () {
+            var blob = new Blob(state.recordChunks, { type: mime });
+            var name = video
+              ? "clip-" + Date.now() + ".webm"
+              : "voice-" + Date.now() + ".webm";
+            var file = new File([blob], name, { type: mime });
+            setRecordingUi(false);
+            stopMediaTracks();
+            uploadBlob(file, video ? "video" : "audio").catch(function (err) {
+              setUploadStatus(err && err.message ? err.message : "Upload failed");
+            });
+          };
+          rec.start();
+          setRecordingUi(true);
+          setUploadStatus(
+            video
+              ? "Recording video… tap Stop when done"
+              : "Recording audio… tap Stop when done"
+          );
+        })
+        .catch(function () {
+          setUploadStatus("Mic/camera permission needed");
+          setRecordingUi(false);
+          stopMediaTracks();
+        });
+    }
+
+    function stopCapture() {
+      if (state.mediaRecorder && state.mediaRecorder.state !== "inactive") {
+        try {
+          state.mediaRecorder.stop();
+        } catch (e) {}
+      } else {
+        setRecordingUi(false);
+        stopMediaTracks();
+        setUploadStatus("");
+      }
+    }
+
+    if (attachBtn && fileInput) {
+      attachBtn.onclick = function () {
+        fileInput.click();
+      };
+      fileInput.onchange = function () {
+        var f = fileInput.files && fileInput.files[0];
+        fileInput.value = "";
+        if (!f) return;
+        uploadBlob(f, "").catch(function (err) {
+          setUploadStatus(err && err.message ? err.message : "Upload failed");
+        });
+      };
+    }
+    if (recordAudioBtn) {
+      recordAudioBtn.onclick = function () {
+        startCapture(false);
+      };
+    }
+    if (recordVideoBtn) {
+      recordVideoBtn.onclick = function () {
+        startCapture(true);
+      };
+    }
+    if (stopRecordBtn) {
+      stopRecordBtn.onclick = function () {
+        stopCapture();
+      };
     }
 
     function confirmPublic(onOk) {
@@ -559,6 +1019,8 @@
               type: "privmsg",
               channel: opts.channel,
               text: tagged,
+              visitor: visitor,
+              nick: opts.nick || "you",
             })
           );
         } catch (e) {
@@ -615,12 +1077,14 @@
     sendBtn.onclick = function () {
       var text = draft.value.trim();
       if (!text) {
+        setComposerExpanded(true);
         draft.focus();
         return;
       }
       confirmPublic(function () {
         postLocal(text);
         draft.value = "";
+        setComposerExpanded(false);
       });
     };
 
@@ -631,6 +1095,7 @@
         confirmPublic(function () {
           postLocal(cmd);
           draft.value = "";
+          setComposerExpanded(false);
         });
       };
     }
@@ -638,6 +1103,7 @@
     function connect() {
       var url = pickMirror(state.mirrors, state.mirrorIndex);
       if (!url && opts.wsUrl) url = opts.wsUrl;
+      url = withVisitorParam(url, visitor);
       if (!url) {
         setConnUi("Offline (demo)", "no mirror");
         return;
@@ -669,6 +1135,11 @@
           var typ = data.type || "";
           if (typ === "hello") {
             if (data.view) renderAiFindings(data.view);
+            if (data.media_reviews && typeof data.media_reviews === "object") {
+              Object.keys(data.media_reviews).forEach(function (k) {
+                state.mediaReviews[k] = data.media_reviews[k];
+              });
+            }
             hydrateHistory(
               data.chat_history || data.history || data.lines || [],
               true
@@ -680,24 +1151,42 @@
             hydrateHistory(data.lines || data.chat_history || data, true);
             return;
           }
+          if (typ === "media.review") {
+            applyMediaReviewEvent(data);
+            return;
+          }
           if (
             typ === "privmsg" ||
             typ === "message" ||
             typ === "post.live" ||
             data.text ||
-            data.body
+            data.body ||
+            (data.comment && data.comment.body)
           ) {
-            var nick = data.nick || data.from || data.author || "anon";
+            var comment = data.comment || {};
+            var line = data.chat_line || {};
+            var nick =
+              data.nick ||
+              line.nick ||
+              comment.author ||
+              data.from ||
+              data.author ||
+              "anon";
             var msg = {
               nick: nick,
-              text: data.text || data.body || "",
-              time: data.time || "",
+              text:
+                data.text ||
+                data.body ||
+                line.body ||
+                comment.body ||
+                "",
+              time: data.time || line.ts || "",
             };
             if (!msg.text) return;
             state.messages.push(msg);
             // Drop empty-state placeholder on first live message
             if (stream.querySelector(".empty")) stream.innerHTML = "";
-            appendMessage(stream, msg, tagCfg, el);
+            appendMessage(stream, msg, tagCfg, el, state.mediaReviews);
             history.scrollTop = history.scrollHeight;
           }
         };
@@ -747,10 +1236,11 @@
       },
       appendMessage: function (msg) {
         state.messages.push(msg);
-        appendMessage(stream, msg, tagCfg, el);
+        appendMessage(stream, msg, tagCfg, el, state.mediaReviews);
       },
       destroy: function () {
         state.destroyed = true;
+        stopCapture();
         if (mq && mq.removeEventListener) {
           mq.removeEventListener("change", onSchemeChange);
         }
