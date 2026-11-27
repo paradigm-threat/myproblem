@@ -337,6 +337,29 @@
     return false;
   }
 
+  /** Turn #channel tokens into clickable switches (skips markup already inside tags). */
+  function linkifyChannelRefs(html) {
+    return String(html || "").replace(/(^|>)([^<]*)/g, function (_m, prefix, text) {
+      var linked = String(text).replace(
+        /(^|[\s([{'"“‘])(#[a-zA-Z][a-zA-Z0-9_-]{0,62})\b/g,
+        function (_m2, lead, ch) {
+          var norm = String(ch).toLowerCase();
+          return (
+            lead +
+            '<button type="button" class="channel-link" data-role="channel-link" data-channel="' +
+            esc(norm) +
+            '" title="Switch to ' +
+            esc(norm) +
+            '">' +
+            esc(ch) +
+            "</button>"
+          );
+        }
+      );
+      return prefix + linked;
+    });
+  }
+
   function formatCopyHtml(text, cfg, reviewMap) {
     var plain = stripMediaMarkers(text);
     var media = mediaHtml(parseMediaMarkers(text), reviewMap);
@@ -344,7 +367,8 @@
     var display = Tags.stripTags
       ? Tags.stripTags(plain)
       : plain;
-    return (bodyHtml || esc(display)) + media;
+    var html = bodyHtml || esc(display);
+    return linkifyChannelRefs(html) + media;
   }
 
   function pickMirror(list, i) {
@@ -543,7 +567,7 @@
     var overlay = $(roomRoot, '[data-role="overlay"]');
     var modal = $(roomRoot, '[data-role="modal"]');
     if (!overlay || !modal) return;
-    var safe = esc(text).replace(/\n/g, "<br>");
+    var safe = linkifyChannelRefs(esc(text).replace(/\n/g, "<br>"));
     modal.innerHTML =
       '<div class="modal-full-si">' +
       '<div class="aicap">Full reply</div>' +
@@ -676,6 +700,16 @@
     }
     if (el) {
       el.addEventListener("click", function (ev) {
+        var link =
+          ev.target && ev.target.closest
+            ? ev.target.closest('[data-role="channel-link"]')
+            : null;
+        if (link && el.contains(link)) {
+          ev.preventDefault();
+          ev.stopPropagation();
+          confirmSwitchChannel(link.getAttribute("data-channel") || "");
+          return;
+        }
         if (!channelMenu || channelMenu.hidden) return;
         var wrap = $(el, '[data-role="channel-switch-wrap"]');
         if (wrap && wrap.contains(ev.target)) return;
@@ -685,7 +719,14 @@
     loadChannelCatalog().catch(function () {});
 
     if (history) {
-      history.addEventListener("click", function () {
+      history.addEventListener("click", function (ev) {
+        if (
+          ev.target &&
+          ev.target.closest &&
+          ev.target.closest('[data-role="channel-link"]')
+        ) {
+          return;
+        }
         if (composerEl && composerEl.classList.contains("composer-expanded")) {
           setComposerExpanded(false);
           if (draft) {
@@ -891,9 +932,70 @@
       return merged;
     }
 
-    function switchChannel(nextChannel) {
+    var DRAFTS_KEY = "clevertree.room.channelDrafts";
+
+    function readDraftMap() {
+      try {
+        var raw = localStorage.getItem(DRAFTS_KEY);
+        if (!raw) return {};
+        var parsed = JSON.parse(raw);
+        return parsed && typeof parsed === "object" ? parsed : {};
+      } catch (e) {
+        return {};
+      }
+    }
+
+    function writeDraftMap(map) {
+      try {
+        localStorage.setItem(DRAFTS_KEY, JSON.stringify(map || {}));
+      } catch (e) {}
+    }
+
+    function saveChannelDraft(channel) {
+      var ch = normalizeChannelName(channel || opts.channel);
+      var map = readDraftMap();
+      map[ch] = {
+        text: draft ? String(draft.value || "") : "",
+        pendingMedia: (state.pendingMedia || []).map(function (it) {
+          return {
+            kind: it.kind || "file",
+            url: it.url || "",
+            sha256: it.sha256 || "",
+            name: it.name || "",
+            marker: it.marker || "",
+          };
+        }),
+        updatedAt: Date.now(),
+      };
+      writeDraftMap(map);
+    }
+
+    function restoreChannelDraft(channel) {
+      var ch = normalizeChannelName(channel || opts.channel);
+      var row = readDraftMap()[ch] || {};
+      if (draft) draft.value = row.text || "";
+      state.pendingMedia = Array.isArray(row.pendingMedia)
+        ? row.pendingMedia.filter(function (it) {
+            return it && it.marker;
+          })
+        : [];
+      renderPendingMedia();
+    }
+
+    function clearChannelDraft(channel) {
+      var ch = normalizeChannelName(channel || opts.channel);
+      var map = readDraftMap();
+      if (map[ch]) {
+        delete map[ch];
+        writeDraftMap(map);
+      }
+    }
+
+    function switchChannel(nextChannel, optsSwitch) {
       var ch = normalizeChannelName(nextChannel);
+      var force = optsSwitch && optsSwitch.force;
       if (!ch || ch === normalizeChannelName(opts.channel)) return;
+      saveChannelDraft(opts.channel);
       opts.channel = ch;
       if (channelTag) channelTag.textContent = ch;
       if (el.querySelector(".head")) {
@@ -907,9 +1009,11 @@
       state.historyHydrated = false;
       state.mediaReviews = {};
       state.connected = false;
+      restoreChannelDraft(ch);
       clearSiPanel("Loading SI for " + ch + "…");
       renderSeed();
       setConnUi("Switching…", ch);
+      setComposerExpanded(true);
       if (state.ws) {
         try {
           state.ws.onclose = null;
@@ -924,6 +1028,47 @@
         } catch (e2) {}
       }
       connect();
+      if (force && draft) {
+        try {
+          draft.focus();
+        } catch (e3) {}
+      }
+    }
+
+    function confirmSwitchChannel(nextChannel) {
+      var ch = normalizeChannelName(nextChannel);
+      var current = normalizeChannelName(opts.channel);
+      if (!ch || ch === current) return;
+      if (!overlay || !modal) {
+        switchChannel(ch);
+        return;
+      }
+      modal.innerHTML =
+        '<div class="eyebrow">SWITCH CHANNEL</div>' +
+        "<h2>Switch to " +
+        esc(ch) +
+        "?</h2>" +
+        "<p>Leave " +
+        esc(current) +
+        " and open " +
+        esc(ch) +
+        ". Your draft in " +
+        esc(current) +
+        " is saved on this device and will be there when you come back.</p>" +
+        '<div class="modal-actions">' +
+        '<button type="button" class="cancel" data-role="cancel">Stay here</button>' +
+        '<button type="button" class="send" data-role="confirm">Switch channels</button></div>';
+      overlay.hidden = false;
+      overlay.classList.add("open");
+      $(modal, '[data-role="cancel"]').onclick = function () {
+        overlay.hidden = true;
+        overlay.classList.remove("open");
+      };
+      $(modal, '[data-role="confirm"]').onclick = function () {
+        overlay.hidden = true;
+        overlay.classList.remove("open");
+        switchChannel(ch, { force: true });
+      };
     }
 
     function renderPendingMedia() {
@@ -1094,7 +1239,7 @@
         html +=
           "<p>Channel is live. No standing perspectives filed yet.</p>";
       }
-      aiBody.innerHTML = html;
+      aiBody.innerHTML = linkifyChannelRefs(html);
       if (aiPanel) aiPanel.hidden = false;
     }
 
@@ -1518,6 +1663,7 @@
         }
         postLocal(body);
         draft.value = "";
+        clearChannelDraft(opts.channel);
       });
     };
 
@@ -1638,6 +1784,13 @@
         setConnUi("Offline", "ws error");
       }
     }
+
+    if (draft) {
+      draft.addEventListener("input", function () {
+        saveChannelDraft(opts.channel);
+      });
+    }
+    restoreChannelDraft(opts.channel);
 
     setTrackUi();
     setAiUi();
