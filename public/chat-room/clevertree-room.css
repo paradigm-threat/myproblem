@@ -100,15 +100,70 @@ body.ct-room-page .room{height:100dvh;min-height:460px}
 .room .head .channel-option code{font:12px/1.3 var(--mono);font-weight:700;color:var(--green)}
 .room .head .channel-option-title{font-size:12px;color:var(--muted)}
 .room .head .channel-menu-empty{padding:12px;font-size:12px;color:var(--muted)}
-.room .si-strip{
-  margin-top:10px;
-  padding:8px 10px;
+.room .head .eyebrow{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+  flex-wrap:wrap;
+}
+.room .head .layout-switch-wrap{position:relative;flex:none}
+.room .head .layout-switch{
+  display:inline-flex;
+  align-items:center;
+  gap:4px;
+  min-height:36px;
+  padding:4px 6px 4px 8px;
+  border:1px solid var(--ct-control-border,#9eafa3);
+  border-radius:6px;
+  background:var(--white);
+  color:var(--ink);
+  font-size:12px;
+  font-weight:800;
+}
+.room .head .layout-switch.open,
+.room .head .layout-switch:focus-visible{
+  border-color:var(--green);
+  box-shadow:0 0 0 2px #dce9de;
+}
+.room .head .layout-menu{
+  position:absolute;
+  right:0;
+  top:calc(100% + 6px);
+  z-index:20;
+  width:min(220px,70vw);
+  padding:6px;
+  border:1px solid var(--line);
+  border-radius:8px;
+  background:var(--white);
+  box-shadow:0 12px 32px #142c2340;
+}
+.room .head .layout-menu[hidden]{display:none!important}
+.room .head .layout-option{
+  width:100%;
+  text-align:left;
+  padding:10px 10px;
+  border-radius:6px;
+  min-height:40px;
+  font-size:13px;
+  font-weight:700;
+  color:var(--ink);
+}
+.room .head .layout-option:hover,
+.room .head .layout-option:focus-visible,
+.room .head .layout-option.active{background:var(--green2)}
+.room .si-panel{
+  display:none;
+  flex-direction:column;
+  min-height:0;
+  min-width:0;
+  padding:10px 12px;
   border:1px solid var(--line);
   border-radius:8px;
   background:color-mix(in srgb,var(--green2) 45%,var(--white));
-  max-height:22dvh;
   overflow:auto;
   -webkit-overflow-scrolling:touch;
+  overscroll-behavior:contain;
 }
 .room .si-strip-label{
   font:10px/1.2 var(--mono);
@@ -117,8 +172,9 @@ body.ct-room-page .room{height:100dvh;min-height:460px}
   font-weight:900;
   color:var(--green);
   margin-bottom:4px;
+  flex:none;
 }
-.room .si-strip-body{font-size:13px;color:var(--ink)}
+.room .si-strip-body{font-size:13px;color:var(--ink);min-height:0;flex:1}
 .room .si-strip-body .si-stub,
 .room .si-strip-body p{margin:0;color:var(--muted);font-size:12px}
 .room .si-strip-body .si-channel-label{font:11px/1.3 var(--mono);color:var(--green);margin-bottom:6px}
@@ -151,17 +207,19 @@ body.ct-room-page .room{height:100dvh;min-height:460px}
 @media(max-width:700px){
   .room .head{padding:10px 12px 8px}
   .room .head .channel-tag{font-size:11px}
-  .room .si-strip{max-height:18dvh}
+  .room .head .layout-switch{font-size:11px;min-height:34px}
 }
-.room[data-theme="dark"] .head .channel-switch{
+.room[data-theme="dark"] .head .channel-switch,
+.room[data-theme="dark"] .head .layout-switch{
   background:var(--white);
   border-color:color-mix(in srgb,var(--green) 40%,var(--line));
 }
-.room[data-theme="dark"] .head .channel-menu{
+.room[data-theme="dark"] .head .channel-menu,
+.room[data-theme="dark"] .head .layout-menu{
   background:var(--white);
   box-shadow:0 12px 32px #0008;
 }
-.room[data-theme="dark"] .si-strip{
+.room[data-theme="dark"] .si-panel{
   background:color-mix(in srgb,var(--green2) 28%,var(--white));
 }
 
@@ -237,7 +295,11 @@ body.ct-room-page .room{height:100dvh;min-height:460px}
 .room .full-si-body{font-size:14px;line-height:1.5;margin-top:8px;white-space:normal}
 .room[data-theme="dark"] .copy-clamp:after{background:linear-gradient(transparent,var(--ct-canvas,#152019))}
 
-/* Shell: history scrolls; composer stays pinned at the bottom (always visible). */
+/*
+ * Workspace under fixed header:
+ *  - portrait: modes stack; composer always pinned
+ *  - landscape: SI | chat | draft columns (mode hides SI and/or chat)
+ */
 .room .body{
   flex:1 1 auto;
   min-height:0;
@@ -245,7 +307,10 @@ body.ct-room-page .room{height:100dvh;min-height:460px}
   width:100%;
   display:flex;
   flex-direction:column;
+  gap:8px;
+  padding:0 12px 8px;
   overflow:hidden;
+  box-sizing:border-box;
 }
 .room .chat{
   flex:1 1 auto;
@@ -262,6 +327,7 @@ body.ct-room-page .room{height:100dvh;min-height:460px}
   overflow:auto;
   -webkit-overflow-scrolling:touch;
   overscroll-behavior:contain;
+  padding:0 4px;
 }
 .room .composer,
 .room .compose-inner,
@@ -277,16 +343,26 @@ body.ct-room-page .room{height:100dvh;min-height:460px}
   z-index:2;
   width:100%;
   overflow:hidden;
+  border:1px solid var(--line);
+  border-radius:8px;
 }
-.room .chat:has(.composer-expanded) .empty{
+.room .body:has(.composer-expanded) .empty{
   padding:16px 12px;
 }
-.room .chat:has(.composer-expanded) .empty h2{font-size:18px;margin:0 0 4px}
-.room .chat:has(.composer-expanded) .empty p{font-size:13px;margin:0}
-/* Expanded = half the chat column (cap 50dvh); collapsed = compact bar. Always on-screen. */
+.room .body:has(.composer-expanded) .empty h2{font-size:18px;margin:0 0 4px}
+.room .body:has(.composer-expanded) .empty p{font-size:13px;margin:0}
+
+/* Layout modes (portrait default = column) */
+.room[data-layout="chat"] .si-panel{display:none}
+.room[data-layout="chat"] .chat{display:flex;flex:1 1 auto}
+.room[data-layout="si"] .chat{display:none}
+.room[data-layout="si"] .si-panel{display:flex;flex:1 1 auto}
+.room[data-layout="split"] .si-panel{display:flex;flex:0 0 34%;max-height:34%;min-height:7rem}
+.room[data-layout="split"] .chat{display:flex;flex:1 1 auto;min-height:0}
+
 .room .composer.composer-expanded{
   flex:0 0 auto;
-  height:50%;
+  height:42%;
   max-height:50dvh;
   display:flex;
   flex-direction:column;
@@ -335,14 +411,61 @@ body.ct-room-page .room{height:100dvh;min-height:460px}
   overflow:hidden;
 }
 @media(max-width:700px){
+  .room .body{padding:0 8px 6px;gap:6px}
   .room .composer.composer-expanded .composebox textarea{font-size:16px}
   .room .composer.composer-collapsed .composebox textarea{height:33px;min-height:33px}
 }
+
+/* Landscape: SI | chat | draft — header unchanged above */
 @media(orientation:landscape){
-  .room .composer.composer-expanded{height:50%;max-height:50dvh}
-  .room .composer,
-  .room .compose-inner,
-  .room .composebox{width:100%;max-width:none}
+  .room .body{
+    flex-direction:row;
+    align-items:stretch;
+    gap:8px;
+    padding:0 10px 8px;
+  }
+  .room .si-panel,
+  .room .chat,
+  .room .composer{
+    height:100%;
+    max-height:none;
+  }
+  .room .composer{
+    flex:0 0 min(34vw,22rem);
+    width:min(34vw,22rem);
+    display:flex;
+    flex-direction:column;
+    overflow:hidden;
+  }
+  .room .composer.composer-expanded,
+  .room .composer.composer-collapsed{
+    height:100%;
+    max-height:none;
+    flex:0 0 min(34vw,22rem);
+  }
+  .room .composer .compose-inner,
+  .room .composer .composebox{
+    flex:1;
+    display:flex;
+    flex-direction:column;
+    min-height:0;
+  }
+  .room .composer .composebox textarea{
+    flex:1;
+    min-height:4rem;
+    height:auto;
+  }
+  .room[data-layout="chat"] .si-panel{display:none}
+  .room[data-layout="chat"] .chat{display:flex;flex:1 1 auto}
+  .room[data-layout="si"] .chat{display:none}
+  .room[data-layout="si"] .si-panel{display:flex;flex:1 1 auto;max-height:none}
+  .room[data-layout="split"] .si-panel{
+    display:flex;
+    flex:0 0 28%;
+    max-height:none;
+    min-height:0;
+  }
+  .room[data-layout="split"] .chat{display:flex;flex:1 1 auto;min-width:0}
 }
 
 /* Media upload composer + review covers — icon tools (kit stroke) */

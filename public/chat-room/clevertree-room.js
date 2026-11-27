@@ -432,14 +432,25 @@
       ICON_CARET +
       "</button>" +
       '<div class="channel-menu" data-role="channel-menu" role="listbox" aria-label="IRC channels" hidden></div>' +
-      "</div></div></div>" +
-      '<section class="si-strip" data-role="si" aria-label="SI panel for this channel">' +
+      "</div>" +
+      '<div class="layout-switch-wrap" data-role="layout-switch-wrap">' +
+      '<button type="button" class="layout-switch" data-role="layout-switch" aria-haspopup="listbox" aria-expanded="false" title="Layout mode" aria-label="Layout mode">' +
+      '<span data-role="layout-label">Chat log</span>' +
+      ICON_CARET +
+      "</button>" +
+      '<div class="layout-menu" data-role="layout-menu" role="listbox" aria-label="Layout modes" hidden>' +
+      '<button type="button" class="layout-option" role="option" data-layout="chat">Chat log</button>' +
+      '<button type="button" class="layout-option" role="option" data-layout="si">SI panel</button>' +
+      '<button type="button" class="layout-option" role="option" data-layout="split">Split</button>' +
+      "</div></div></div></div></section>" +
+      '<div class="body" data-role="body">' +
+      '<aside class="si-panel" data-role="si" aria-label="SI panel for this channel">' +
       '<div class="si-strip-label">SI</div>' +
       '<div class="si-strip-body" data-role="ai-body"><p class="si-stub">Connecting…</p></div>' +
-      "</section></section>" +
-      '<div class="body"><main class="chat">' +
+      "</aside>" +
+      '<main class="chat" data-role="chat">' +
       '<div class="history" data-role="history" role="log" aria-label="Public IRC channel messages">' +
-      '<div class="stream" data-role="stream"></div></div>' +
+      '<div class="stream" data-role="stream"></div></div></main>' +
       '<footer class="composer" data-role="composer">' +
       '<div class="compose-inner">' +
       '<p class="public" role="note">Public · visible in this room</p>' +
@@ -466,7 +477,7 @@
       "<span>Send</span></button>" +
       "</div></div>" +
       '<div class="footnote"><span>Drop audio · video · files · Tags</span><span>Max 50 MiB</span></div>' +
-      "</div></footer></main></div>" +
+      "</div></footer></div>" +
       '<div class="overlay" data-role="overlay" hidden><div class="modal" data-role="modal"></div></div>'
     );
   }
@@ -641,6 +652,7 @@
       recordKind: "",
       pendingMedia: [],
       channelCatalog: [],
+      layoutMode: "chat",
     };
     applyRoomTheme(el, state.theme, state.themePref);
 
@@ -658,7 +670,11 @@
     var channelTag = $(el, '[data-role="channel-tag"]');
     var channelSwitchBtn = $(el, '[data-role="channel-switch"]');
     var channelMenu = $(el, '[data-role="channel-menu"]');
-    /* Investigate chrome removed; SI strip + channel switcher stay in the head. */
+    var layoutSwitchBtn = $(el, '[data-role="layout-switch"]');
+    var layoutMenu = $(el, '[data-role="layout-menu"]');
+    var layoutLabel = $(el, '[data-role="layout-label"]');
+    var bodyEl = $(el, '[data-role="body"]');
+    /* Investigate chrome removed; channel + layout switchers stay in the head. */
     var PLACEHOLDER_EXPANDED =
       "Help me with a problem… · Help me find something… · What's the latest news on something… · What's going on in town…";
     var PLACEHOLDER_COLLAPSED = "Ask something…";
@@ -684,10 +700,79 @@
     } catch (e) {}
     setComposerExpanded(true);
 
+    var LAYOUT_KEY = "clevertree.room.layoutMode";
+    var LAYOUT_LABELS = {
+      chat: "Chat log",
+      si: "SI panel",
+      split: "Split",
+    };
+
+    function normalizeLayoutMode(mode) {
+      var m = String(mode || "").toLowerCase();
+      if (m === "si" || m === "split" || m === "chat") return m;
+      return "chat";
+    }
+
+    function setLayoutMenuOpen(open) {
+      if (!layoutMenu || !layoutSwitchBtn) return;
+      layoutMenu.hidden = !open;
+      layoutSwitchBtn.setAttribute("aria-expanded", open ? "true" : "false");
+      layoutSwitchBtn.classList.toggle("open", !!open);
+    }
+
+    function setLayoutMode(mode) {
+      var next = normalizeLayoutMode(mode);
+      state.layoutMode = next;
+      el.setAttribute("data-layout", next);
+      if (bodyEl) bodyEl.setAttribute("data-layout", next);
+      if (layoutLabel) layoutLabel.textContent = LAYOUT_LABELS[next] || "Chat log";
+      if (layoutMenu) {
+        var opts = layoutMenu.querySelectorAll("[data-layout]");
+        for (var i = 0; i < opts.length; i++) {
+          var active = opts[i].getAttribute("data-layout") === next;
+          opts[i].classList.toggle("active", active);
+          opts[i].setAttribute("aria-selected", active ? "true" : "false");
+        }
+      }
+      try {
+        localStorage.setItem(LAYOUT_KEY, next);
+      } catch (e) {}
+      setLayoutMenuOpen(false);
+    }
+
+    function readLayoutMode() {
+      try {
+        return normalizeLayoutMode(localStorage.getItem(LAYOUT_KEY));
+      } catch (e) {
+        return "chat";
+      }
+    }
+
+    setLayoutMode(readLayoutMode());
+
+    if (layoutSwitchBtn) {
+      layoutSwitchBtn.onclick = function (ev) {
+        ev.preventDefault();
+        ev.stopPropagation();
+        setChannelMenuOpen(false);
+        setLayoutMenuOpen(layoutMenu && layoutMenu.hidden);
+      };
+    }
+    if (layoutMenu) {
+      var layoutOpts = layoutMenu.querySelectorAll("[data-layout]");
+      for (var li = 0; li < layoutOpts.length; li++) {
+        layoutOpts[li].onclick = function (ev) {
+          var btn = ev.currentTarget;
+          setLayoutMode(btn.getAttribute("data-layout"));
+        };
+      }
+    }
+
     if (channelSwitchBtn) {
       channelSwitchBtn.onclick = function (ev) {
         ev.preventDefault();
         ev.stopPropagation();
+        setLayoutMenuOpen(false);
         var open = channelMenu && channelMenu.hidden;
         if (open) {
           loadChannelCatalog().then(function () {
@@ -710,10 +795,14 @@
           confirmSwitchChannel(link.getAttribute("data-channel") || "");
           return;
         }
-        if (!channelMenu || channelMenu.hidden) return;
-        var wrap = $(el, '[data-role="channel-switch-wrap"]');
-        if (wrap && wrap.contains(ev.target)) return;
-        setChannelMenuOpen(false);
+        var chWrap = $(el, '[data-role="channel-switch-wrap"]');
+        var layWrap = $(el, '[data-role="layout-switch-wrap"]');
+        if (channelMenu && !channelMenu.hidden) {
+          if (!(chWrap && chWrap.contains(ev.target))) setChannelMenuOpen(false);
+        }
+        if (layoutMenu && !layoutMenu.hidden) {
+          if (!(layWrap && layWrap.contains(ev.target))) setLayoutMenuOpen(false);
+        }
       });
     }
     loadChannelCatalog().catch(function () {});
@@ -1809,6 +1898,7 @@
           connected: state.connected,
           mode: mode,
           channel: opts.channel,
+          layoutMode: state.layoutMode,
           theme: state.theme,
           themePref: state.themePref,
         };
@@ -1836,6 +1926,12 @@
       },
       listChannels: function () {
         return loadChannelCatalog();
+      },
+      setLayoutMode: function (mode) {
+        setLayoutMode(mode);
+      },
+      getLayoutMode: function () {
+        return state.layoutMode;
       },
       appendMessage: function (msg) {
         state.messages.push(msg);
