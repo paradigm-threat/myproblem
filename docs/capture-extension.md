@@ -4,7 +4,7 @@
 **Networker UI (canonical):** CleverTree Chat [`fronts/relay-extension/`](../../clevertree-chat/fronts/relay-extension/) + shared room [`fronts/room/`](../../clevertree-chat/fronts/room/)  
 **Gather engine (this repo):** [`extensions/capture/`](../extensions/capture/) — content scripts / Lab until Relay background owns gather end-to-end  
 **Design kits:** `clevertree-chat/design/{relay-ui-kit,clevertree-kit}/`  
-**Related:** [`social-group-monitor.md`](./social-group-monitor.md) · [`ephemeral-media.md`](./ephemeral-media.md) · [`pii-and-privacy.md`](./pii-and-privacy.md) · [`batched-agent-work.md`](./batched-agent-work.md) · [`clevertree-chat.md`](./clevertree-chat.md) · [`apk-ticket-ux.md`](./apk-ticket-ux.md)
+**Related:** [`social-group-monitor.md`](./social-group-monitor.md) · [`ephemeral-media.md`](./ephemeral-media.md) · [`pii-and-privacy.md`](./pii-and-privacy.md) · [`batched-agent-work.md`](./batched-agent-work.md) · [`clevertree-chat.md`](./clevertree-chat.md) · [`android-retired.md`](./android-retired.md)
 
 **Simple Max:** one CleverTree room component (web / embed / side panel modes). Extension wraps it with always-on **Refresh**; embed never gets gather. MyProblem consumes CleverTree — do not fork a second chat UI here.
 

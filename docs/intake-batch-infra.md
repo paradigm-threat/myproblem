@@ -105,5 +105,5 @@ Details: [`myproblem-tickets/infra/INTAKE_HOST.md`](../../myproblem-tickets/infr
 - [`anonymous-tickets.md`](./anonymous-tickets.md)
 - [`ephemeral-media.md`](./ephemeral-media.md)
 - [`progressive-transcription.md`](./progressive-transcription.md)
-- [`apk-ticket-ux.md`](./apk-ticket-ux.md)
+- [`android-retired.md`](./android-retired.md)
 - [`abandoned/spot-ai-mvp.md`](./abandoned/spot-ai-mvp.md) — historical GPU plan (abandoned)

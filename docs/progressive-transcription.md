@@ -25,7 +25,7 @@ Tickets are keyed by server **`ticket_uuid`** (anonymous by default). See [`anon
 
 PII in transcripts is auto-converted before tip commit — see [`pii-and-privacy.md`](./pii-and-privacy.md).
 
-Related: [`web-submit.md`](./web-submit.md) · [`projects.md`](./projects.md) · [`apk-ticket-ux.md`](./apk-ticket-ux.md) · [`intake-fixtures.md`](./intake-fixtures.md) · [`intake-batch-infra.md`](./intake-batch-infra.md) · [`providers-ai.md`](./providers-ai.md) · [`context-for-server.md`](./context-for-server.md) · [`capture-guidance.md`](./capture-guidance.md).
+Related: [`web-submit.md`](./web-submit.md) · [`projects.md`](./projects.md) · [`android-retired.md`](./android-retired.md) · [`intake-fixtures.md`](./intake-fixtures.md) · [`intake-batch-infra.md`](./intake-batch-infra.md) · [`providers-ai.md`](./providers-ai.md) · [`context-for-server.md`](./context-for-server.md) · [`capture-guidance.md`](./capture-guidance.md).
 
 **Status (tip Evidence):** edge + Intake APIs live; APK uploads via `TicketsApi`; media is **ephemeral** ([`ephemeral-media.md`](./ephemeral-media.md)).
 
@@ -153,7 +153,7 @@ There is **no** client-facing “transcribe this blob” endpoint. Workers load 
 | Proposed vs locked | Intake may revise title/desc until user edits (`locked: true`); then never auto-overwrite |
 | Handoff | Light intake may set `queue_project` / `advice_ready` without a Submit step |
 
-See also [`apk-ticket-ux.md`](./apk-ticket-ux.md).
+See also [`android-retired.md`](./android-retired.md).
 
 ---
 

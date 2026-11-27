@@ -2,7 +2,7 @@
 
 Tickets are **anonymous by default**. Each Problem is keyed by an unguessable **`ticket_uuid`** (API + private device transfer). **Public share links use a short live slug only** (`/t/<slug>`). Durable recovery is optional and **always free**: secret recover email and/or register. Pure anon must warn that **losing the phone (without local backup or recover email) loses those tickets**.
 
-Related: [`projects.md`](./projects.md) · [`apk-ticket-ux.md`](./apk-ticket-ux.md) · [`pii-and-privacy.md`](./pii-and-privacy.md) · [`intake-batch-infra.md`](./intake-batch-infra.md) · [`infra-definition.md`](./infra-definition.md) · [`clevertree-chat.md`](./clevertree-chat.md) · plan [`06-infrastructure.md`](../../relay/clevertree-llc-plan/06-infrastructure.md).
+Related: [`projects.md`](./projects.md) · [`android-retired.md`](./android-retired.md) · [`pii-and-privacy.md`](./pii-and-privacy.md) · [`intake-batch-infra.md`](./intake-batch-infra.md) · [`infra-definition.md`](./infra-definition.md) · [`clevertree-chat.md`](./clevertree-chat.md) · plan [`06-infrastructure.md`](../../relay/clevertree-llc-plan/06-infrastructure.md).
 
 ---
 

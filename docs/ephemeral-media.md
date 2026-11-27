@@ -133,7 +133,7 @@ Batch must blur/remove faces, bodies, street numbers, plates, and strip EXIF bef
 
 - [`intake-batch-infra.md`](./intake-batch-infra.md)
 - [`progressive-transcription.md`](./progressive-transcription.md)
-- [`apk-ticket-ux.md`](./apk-ticket-ux.md)
+- [`android-retired.md`](./android-retired.md)
 - [`fixit-and-repair.md`](./fixit-and-repair.md)
 - [`capture-extension.md`](./capture-extension.md)
 - [`social-group-monitor.md`](./social-group-monitor.md)

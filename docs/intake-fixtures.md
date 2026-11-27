@@ -44,5 +44,5 @@ noise beds are procedural (license-clean). Do not vendor CC BY-NC call-center co
 
 ## Related
 
-- [`apk-ticket-ux.md`](./apk-ticket-ux.md) — live audio intake UX  
+- [`android-retired.md`](./android-retired.md) — live audio intake UX  
 - [`progressive-transcription.md`](./progressive-transcription.md) — Evidence / ASR jobs  

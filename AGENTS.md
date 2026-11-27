@@ -11,6 +11,7 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 ## Public room (homepage SoT)
 
 - Prefer **header Clevertree Chat launcher** (`public/chat-room/chat-launcher.js` + `ChatLauncherBoot`) — fullscreen in-page room, or extension side panel when installed. No scrolled-in homepage embeds; use `OpenChatButton`.
+- **No MyProblem Android APK** — phone app is Clevertree Chat (`clevertree-chat` `:clevertree-app`). Archive tag `archive/android-testmode-2026-11-27`. See [`docs/android-retired.md`](docs/android-retired.md).
 - Default IRC `#mp-general` (`src/lib/chat/channels.ts`). Dedicated `/c/[channel]` may still mount the room. `/submit` and `/#room` open the launcher.
 - `/c/[channel]` allowlist: `mp-general`, `ga-savannah-cat-rescue`; unknown → general. Hidden room menu only.
 - Networker: Clevertree Chat extension **Options** only (off by default).

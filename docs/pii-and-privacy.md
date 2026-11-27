@@ -2,7 +2,7 @@
 
 **Document now; implement over time.** Server tips are safe problem dossiers — not identity files.
 
-Related: [`anonymous-tickets.md`](./anonymous-tickets.md) · [`apk-ticket-ux.md`](./apk-ticket-ux.md) · [`intake-batch-infra.md`](./intake-batch-infra.md) · [`progressive-transcription.md`](./progressive-transcription.md) · [`capture-extension.md`](./capture-extension.md).
+Related: [`anonymous-tickets.md`](./anonymous-tickets.md) · [`android-retired.md`](./android-retired.md) · [`intake-batch-infra.md`](./intake-batch-infra.md) · [`progressive-transcription.md`](./progressive-transcription.md) · [`capture-extension.md`](./capture-extension.md).
 
 ### MyProblem X (social capture)
 

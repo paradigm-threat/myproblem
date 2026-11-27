@@ -2,7 +2,7 @@
 
 **Status:** Architecture for a later release. Not implemented on the APK yet.
 
-Related: [`apk-ticket-ux.md`](./apk-ticket-ux.md) · [`ephemeral-media.md`](./ephemeral-media.md) · [`pii-and-privacy.md`](./pii-and-privacy.md).
+Related: [`android-retired.md`](./android-retired.md) · [`ephemeral-media.md`](./ephemeral-media.md) · [`pii-and-privacy.md`](./pii-and-privacy.md).
 
 ## Product rule
 

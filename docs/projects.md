@@ -12,7 +12,7 @@ Realtime AI in the app exists only to **build the ticket** (capture → Intake c
 
 Public product terms / softer professional disclaimers: [https://myproblem.app/terms](https://myproblem.app/terms) (Clevertree LLC).
 
-Related: [`batch-phases.md`](./batch-phases.md) · [`anonymous-tickets.md`](./anonymous-tickets.md) · [`apk-ticket-ux.md`](./apk-ticket-ux.md) · [`backbone-escalate.md`](./backbone-escalate.md) · [`context-for-server.md`](./context-for-server.md) · [`providers-ai.md`](./providers-ai.md) · [`progressive-transcription.md`](./progressive-transcription.md) · [`infra-definition.md`](./infra-definition.md) · [`knowledge-base.md`](./knowledge-base.md).
+Related: [`batch-phases.md`](./batch-phases.md) · [`anonymous-tickets.md`](./anonymous-tickets.md) · [`android-retired.md`](./android-retired.md) · [`backbone-escalate.md`](./backbone-escalate.md) · [`context-for-server.md`](./context-for-server.md) · [`providers-ai.md`](./providers-ai.md) · [`progressive-transcription.md`](./progressive-transcription.md) · [`infra-definition.md`](./infra-definition.md) · [`knowledge-base.md`](./knowledge-base.md).
 
 ---
 

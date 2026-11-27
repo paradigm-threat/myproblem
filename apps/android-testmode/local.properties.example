@@ -1,2 +1,0 @@
-## Copy to local.properties (gitignored) if Android Studio does not auto-detect SDK.
-sdk.dir=/home/ari/Android/Sdk
