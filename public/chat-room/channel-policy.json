@@ -33,6 +33,18 @@
       "channels": ["#web"],
       "topic_via": "domain_tag",
       "notes": "Universal room (#web): Clevertree Chat website + app + unassigned embeds; attribution [[d:host]] for non-product hosts"
+    },
+    "songwalker": {
+      "hosts": ["songwalker.net", "www.songwalker.net"],
+      "default_channel": "#songwalker",
+      "channels": ["#songwalker"],
+      "notes": "SongWalker product room — dedicated IRC channel"
+    },
+    "snesology": {
+      "hosts": ["snesology.org", "www.snesology.org"],
+      "default_channel": "#snesology",
+      "channels": ["#snesology"],
+      "notes": "SNESology product room — dedicated IRC channel"
     }
   },
   "product_hosts": {
@@ -42,7 +54,11 @@
     "www.clevertree.net": { "repo": "public-web", "channel": "#web" },
     "quizgate.app": { "repo": "public-web", "channel": "#web" },
     "www.quizgate.app": { "repo": "public-web", "channel": "#web" },
-    "api.clevertree.chat": { "repo": "public-web", "channel": "#web" }
+    "api.clevertree.chat": { "repo": "public-web", "channel": "#web" },
+    "songwalker.net": { "repo": "songwalker", "channel": "#songwalker" },
+    "www.songwalker.net": { "repo": "songwalker", "channel": "#songwalker" },
+    "snesology.org": { "repo": "snesology", "channel": "#snesology" },
+    "www.snesology.org": { "repo": "snesology", "channel": "#snesology" }
   },
   "mirrors": [
     "pub1.relaygateway.net",

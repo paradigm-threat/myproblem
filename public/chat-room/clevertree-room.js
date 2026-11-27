@@ -1341,6 +1341,16 @@
           topic: "ga-savannah-cat-rescue",
           title: "Savannah Cat Rescue",
         },
+        {
+          channel: "#songwalker",
+          topic: "songwalker",
+          title: "SongWalker",
+        },
+        {
+          channel: "#snesology",
+          topic: "snesology",
+          title: "SNESology",
+        },
       ];
     }
 

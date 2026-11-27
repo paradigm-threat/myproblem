@@ -28,6 +28,14 @@
     "quizgate.app": 1,
     "api.clevertree.chat": 1,
   };
+  var SW_HOSTS = {
+    "songwalker.net": 1,
+    "www.songwalker.net": 1,
+  };
+  var SNES_HOSTS = {
+    "snesology.org": 1,
+    "www.snesology.org": 1,
+  };
 
   function normalizeHost(host) {
     var h = String(host || "")
@@ -52,11 +60,17 @@
     } catch (e) {
       domain = normalizeHost(href);
     }
-    if (opts.topicId !== undefined && opts.topicId !== null && opts.channel) {
+    // Explicit channel always wins (dedicated product rooms, embeds, CE attrs).
+    if (opts.channel) {
+      var chOpt = String(opts.channel).trim();
+      if (chOpt.charAt(0) !== "#") chOpt = "#" + chOpt;
       return {
-        channel: opts.channel,
+        channel: chOpt,
         title: opts.title || "Public room",
-        topicId: opts.topicId,
+        topicId:
+          opts.topicId !== undefined && opts.topicId !== null
+            ? opts.topicId
+            : null,
         domain: "",
         repo: opts.repo || "product",
       };
@@ -100,6 +114,24 @@
         topicId: null,
         domain: "",
         repo: "public-web",
+      };
+    }
+    if (SW_HOSTS[domain] || SW_HOSTS["www." + domain]) {
+      return {
+        channel: "#songwalker",
+        title: "SongWalker",
+        topicId: null,
+        domain: "",
+        repo: "songwalker",
+      };
+    }
+    if (SNES_HOSTS[domain] || SNES_HOSTS["www." + domain]) {
+      return {
+        channel: "#snesology",
+        title: "SNESology",
+        topicId: null,
+        domain: "",
+        repo: "snesology",
       };
     }
     return {

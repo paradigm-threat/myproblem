@@ -3,7 +3,7 @@ import { resolveChannel } from "@/lib/chat/channels";
 import { CHAT_API_BASE } from "@/lib/contact";
 
 /** Bump when public/chat-room assets change. */
-export const ROOM_ASSET_V = "20261127-fs1";
+export const ROOM_ASSET_V = "20261127-sw-snes";
 
 export type ChatLauncherGlobal = {
   mountButton: (

@@ -70,7 +70,7 @@ export function JsonLd() {
             "Public rooms and channel AI are free. No card is required to ask in #mp-general. Private chat is the planned paid lane.",
         },
         description:
-          "Homepage embeds the public #mp-general room. Submit via type, speak, or video into IRC. Free forever for public help.",
+          "Header Clevertree Chat opens #mp-general (fullscreen or extension). Submit via type, speak, or video into IRC. Free forever for public help.",
       },
     ],
   };
