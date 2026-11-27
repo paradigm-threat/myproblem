@@ -124,15 +124,39 @@ body.ct-room-page .room{height:100dvh;min-height:460px}
 .room .full-si-body{font-size:14px;line-height:1.5;margin-top:8px;white-space:normal}
 .room[data-theme="dark"] .copy-clamp:after{background:linear-gradient(transparent,var(--ct-canvas,#152019))}
 
-/* Expandable ask composer: big on first use, compact after send; click to expand again */
-.room .composer.composer-expanded{flex:1 1 auto;min-height:42%;display:flex;flex-direction:column;justify-content:stretch}
+/* Expandable ask composer: most of the phone when expanded; compact after send */
+.room .chat:has(.composer-expanded) .history{
+  flex:0 1 auto;
+  max-height:22dvh;
+  min-height:0;
+}
+.room .chat:has(.composer-expanded) .empty{
+  padding:16px 12px;
+}
+.room .chat:has(.composer-expanded) .empty h2{font-size:18px;margin:0 0 4px}
+.room .chat:has(.composer-expanded) .empty p{font-size:13px;margin:0}
+.room .composer.composer-expanded{
+  flex:1 1 auto;
+  min-height:68dvh;
+  display:flex;
+  flex-direction:column;
+  justify-content:stretch;
+}
 .room .composer.composer-expanded .compose-inner{flex:1;display:flex;flex-direction:column;min-height:0}
 .room .composer.composer-expanded .composebox{flex:1;display:flex;flex-direction:column;min-height:0;padding:12px 12px 10px}
-.room .composer.composer-expanded .composebox textarea{flex:1;min-height:8rem;height:auto;font-size:17px;line-height:1.45;padding:6px 4px}
+.room .composer.composer-expanded .composebox textarea{
+  flex:1;
+  min-height:12rem;
+  height:auto;
+  font-size:17px;
+  line-height:1.45;
+  padding:6px 4px;
+}
 .room .composer.composer-collapsed .composebox{cursor:text}
 @media(max-width:700px){
-  .room .composer.composer-expanded{min-height:48%}
-  .room .composer.composer-expanded .composebox textarea{min-height:7rem;font-size:16px}
+  .room .chat:has(.composer-expanded) .history{max-height:18dvh}
+  .room .composer.composer-expanded{min-height:74dvh}
+  .room .composer.composer-expanded .composebox textarea{min-height:14rem;font-size:16px}
 }
 
 /* Media upload composer + review covers — icon tools (kit stroke) */
