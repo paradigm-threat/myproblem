@@ -291,6 +291,16 @@ body.ct-room-page .room{height:100dvh;min-height:460px}
   min-height:56px;
   box-sizing:border-box;
 }
+/* Menu FAB stays in the app outer corner for both orientations. */
+.room[data-orient="left"] .si-rail-head{
+  flex-direction:row; /* FAB | titles (FAB far left) */
+}
+.room[data-orient="right"] .si-rail-head{
+  flex-direction:row-reverse; /* titles | FAB (FAB far right) */
+}
+.room[data-orient="right"] .si-rail-titles{
+  text-align:right;
+}
 .room .si-rail-titles{
   min-width:0;
   flex:1 1 auto;
@@ -642,26 +652,26 @@ body.ct-room-page .room{height:100dvh;min-height:460px}
   }
   .room .chat{
     height:100%;
+    min-height:0;
     max-height:none;
+    align-self:stretch;
   }
-  .room .si-panel.si-expanded{
-    height:100%;
-    max-height:none;
-    flex:0 0 min(34vw,22rem);
-    width:min(34vw,22rem);
-  }
+  .room .si-panel.si-expanded,
   .room .si-panel.si-collapsed{
-    height:auto;
+    height:100%;
+    min-height:0;
     max-height:none;
     flex:0 0 min(34vw,22rem);
     width:min(34vw,22rem);
-    align-self:flex-start;
+    align-self:stretch;
   }
   .room .composer{
     display:flex;
     flex-direction:column;
     overflow:hidden;
     padding:0;
+    height:100%;
+    min-height:0;
     align-self:stretch;
   }
   .room .composer.composer-expanded{
@@ -669,13 +679,16 @@ body.ct-room-page .room{height:100dvh;min-height:460px}
     max-height:none;
     flex:0 0 min(34vw,22rem);
     width:min(34vw,22rem);
+    justify-content:stretch;
   }
   .room .composer.composer-collapsed{
-    height:auto;
+    height:100%;
     max-height:none;
     flex:0 0 min(18vw,11rem);
     width:min(18vw,11rem);
-    align-self:flex-end;
+    align-self:stretch;
+    /* Compact draft/tools sit at bottom of the full-height column. */
+    justify-content:flex-end;
   }
   .room .composer.composer-expanded .compose-inner,
   .room .composer.composer-expanded .composebox{
