@@ -620,26 +620,9 @@
     var composeBox = $(el, '[data-role="composebox"]');
     var investigateBtn = $(el, '[data-role="investigate"]');
     /* AI findings panel + Investigate chrome removed from shell (keep refs null-safe). */
-    var COMPOSER_EXPANDED_KEY = "clevertree.room.composerExpanded";
     var PLACEHOLDER_EXPANDED =
       "Help me with a problem… · Help me find something… · What's the latest news on something… · What's going on in town…";
     var PLACEHOLDER_COLLAPSED = "Ask something…";
-
-    function readComposerExpanded() {
-      try {
-        var raw = localStorage.getItem(COMPOSER_EXPANDED_KEY);
-        if (raw === null || raw === undefined || raw === "") return true;
-        return raw === "1" || raw === "true";
-      } catch (e) {
-        return true;
-      }
-    }
-
-    function writeComposerExpanded(on) {
-      try {
-        localStorage.setItem(COMPOSER_EXPANDED_KEY, on ? "1" : "0");
-      } catch (e) {}
-    }
 
     function setComposerExpanded(on) {
       if (!composerEl) return;
@@ -654,11 +637,26 @@
           } catch (e) {}
         }
       }
-      writeComposerExpanded(!!on);
     }
 
-    setComposerExpanded(readComposerExpanded());
+    /* Start big; history tap → small; composer tap → big. No persisted onboarding state. */
+    try {
+      localStorage.removeItem("clevertree.room.composerExpanded");
+    } catch (e) {}
+    setComposerExpanded(true);
 
+    if (history) {
+      history.addEventListener("click", function () {
+        if (composerEl && composerEl.classList.contains("composer-expanded")) {
+          setComposerExpanded(false);
+          if (draft) {
+            try {
+              draft.blur();
+            } catch (e) {}
+          }
+        }
+      });
+    }
     if (composeBox) {
       composeBox.addEventListener("click", function () {
         if (composerEl && composerEl.classList.contains("composer-collapsed")) {
@@ -1278,7 +1276,6 @@
         }
         postLocal(body);
         draft.value = "";
-        setComposerExpanded(false);
       });
     };
 
@@ -1289,7 +1286,6 @@
         confirmPublic(function () {
           postLocal(cmd);
           draft.value = "";
-          setComposerExpanded(false);
         });
       };
     }
