@@ -681,8 +681,13 @@ body.ct-room-page .room{height:var(--room-viewport-height);min-height:460px}
   }
 }
 
-/* Landscape / wide: SI | chat | draft (or mirrored). Menu sits in SI rail. */
-/* A resized portrait WebView can report landscape while the keyboard is open. */
+/*
+ * Row chrome (phone landscape ≥600 + desktop ≥900): SI | chat | draft.
+ * Default ~33% / ~33% panels; gutters resize; widths persist in localStorage
+ * as --ct-si-w / --ct-co-w (clevertree.room.panelWidths).
+ * A resized portrait WebView can report landscape while the keyboard is open —
+ * min-width:600px avoids that false row layout.
+ */
 @media(orientation:landscape) and (min-width:600px), (min-width:900px){
   .room .body{
     flex-direction:row;
@@ -696,15 +701,6 @@ body.ct-room-page .room{height:var(--room-viewport-height);min-height:460px}
     max-height:none;
     align-self:stretch;
   }
-  .room .si-panel.si-expanded,
-  .room .si-panel.si-collapsed{
-    height:100%;
-    min-height:0;
-    max-height:none;
-    flex:0 0 min(33vw,22rem);
-    width:min(33vw,22rem);
-    align-self:stretch;
-  }
   .room .composer{
     display:flex;
     flex-direction:column;
@@ -713,22 +709,6 @@ body.ct-room-page .room{height:var(--room-viewport-height);min-height:460px}
     height:100%;
     min-height:0;
     align-self:stretch;
-  }
-  .room .composer.composer-expanded{
-    height:100%;
-    max-height:none;
-    flex:0 0 min(33vw,22rem);
-    width:min(33vw,22rem);
-    justify-content:stretch;
-  }
-  /* Landscape keeps the composer full-size even if the collapsed class lingers. */
-  .room .composer.composer-collapsed{
-    height:100%;
-    max-height:none;
-    flex:0 0 min(33vw,22rem);
-    width:min(33vw,22rem);
-    align-self:stretch;
-    justify-content:stretch;
   }
   .room .composer.composer-expanded .compose-inner,
   .room .composer.composer-expanded .composebox,
@@ -760,12 +740,6 @@ body.ct-room-page .room{height:var(--room-viewport-height);min-height:460px}
     width:auto;
     max-height:none;
   }
-  .room[data-layout="split"] .si-panel.si-expanded{
-    flex:0 0 28%;
-    width:28%;
-    max-height:none;
-    min-height:0;
-  }
   .room[data-layout="split"] .chat{display:flex;flex:1 1 auto;min-width:0}
 
   /* Left = SI left + draft right; Right = draft left + SI right; chat center */
@@ -779,99 +753,108 @@ body.ct-room-page .room{height:var(--room-viewport-height);min-height:460px}
   .room[data-orient="right"] .chat{order:3}
   .room[data-orient="right"] .panel-gutter[data-role="gutter-si"]{order:4}
   .room[data-orient="right"] .si-panel{order:5}
-}
 
-/*
- * Desktop (≥900px): fixed ~33% columns, user-resizable gutters, snappy chrome
- * (no expand/collapse width animation — panels stay put).
- */
-@media(min-width:900px){
-  .room[data-chrome="desktop"]{
+  /* Resizable ~33% columns (JS sets --ct-si-w / --ct-co-w from memory). */
+  .room[data-chrome="row"]{
     --ct-si-w:33%;
     --ct-co-w:33%;
   }
-  .room[data-chrome="desktop"] .body{gap:0}
-  .room[data-chrome="desktop"] .si-panel,
-  .room[data-chrome="desktop"] .composer,
-  .room[data-chrome="desktop"] .composebox textarea{
+  .room[data-chrome="row"] .body{gap:0}
+  .room[data-chrome="row"] .si-panel,
+  .room[data-chrome="row"] .composer,
+  .room[data-chrome="row"] .composebox textarea{
     transition:none;
   }
-  .room[data-chrome="desktop"] .si-panel.si-expanded,
-  .room[data-chrome="desktop"] .si-panel.si-collapsed{
+  .room[data-chrome="row"] .si-panel.si-expanded,
+  .room[data-chrome="row"] .si-panel.si-collapsed{
+    height:100%;
+    min-height:0;
+    max-height:none;
     flex:0 0 var(--ct-si-w,33%);
     width:var(--ct-si-w,33%);
-    min-width:12rem;
+    min-width:0;
     max-width:46%;
+    align-self:stretch;
   }
-  .room[data-chrome="desktop"] .composer.composer-expanded,
-  .room[data-chrome="desktop"] .composer.composer-collapsed{
+  .room[data-chrome="row"] .composer.composer-expanded,
+  .room[data-chrome="row"] .composer.composer-collapsed{
     flex:0 0 var(--ct-co-w,33%);
     width:var(--ct-co-w,33%);
-    min-width:12rem;
+    min-width:0;
     max-width:46%;
     height:100%;
     max-height:none;
     justify-content:stretch;
+    align-self:stretch;
   }
-  .room[data-chrome="desktop"] .composer.composer-collapsed .compose-inner,
-  .room[data-chrome="desktop"] .composer.composer-collapsed .composebox,
-  .room[data-chrome="desktop"] .composer.composer-collapsed .composebox textarea{
+  .room[data-chrome="row"] .composer.composer-collapsed .compose-inner,
+  .room[data-chrome="row"] .composer.composer-collapsed .composebox,
+  .room[data-chrome="row"] .composer.composer-collapsed .composebox textarea{
     flex:1 1 auto;
     min-height:0;
     height:auto;
     overflow:auto;
   }
-  .room[data-chrome="desktop"] .chat{
+  .room[data-chrome="row"] .chat{
     flex:1 1 auto;
-    min-width:12rem;
+    min-width:0;
   }
-  .room[data-chrome="desktop"] .panel-gutter{
+  .room[data-chrome="row"] .panel-gutter{
     display:block;
-    flex:0 0 8px;
-    width:8px;
+    flex:0 0 10px;
+    width:10px;
     align-self:stretch;
     cursor:col-resize;
+    touch-action:none;
     position:relative;
     z-index:3;
     background:transparent;
   }
-  .room[data-chrome="desktop"] .panel-gutter:before{
+  .room[data-chrome="row"] .panel-gutter:before{
     content:"";
     position:absolute;
     top:12%;
     bottom:12%;
-    left:3px;
+    left:4px;
     width:2px;
     border-radius:2px;
     background:color-mix(in srgb,var(--line) 80%,var(--green));
     opacity:.7;
   }
-  .room[data-chrome="desktop"] .panel-gutter:hover:before,
-  .room[data-chrome="desktop"].is-resizing .panel-gutter:before{
+  .room[data-chrome="row"] .panel-gutter:hover:before,
+  .room[data-chrome="row"].is-resizing .panel-gutter:before{
     opacity:1;
     background:var(--green);
   }
-  .room[data-chrome="desktop"].is-resizing{
+  .room[data-chrome="row"].is-resizing{
     cursor:col-resize;
     user-select:none;
   }
-  .room[data-chrome="desktop"].is-resizing .history{
+  .room[data-chrome="row"].is-resizing .history{
     pointer-events:none;
   }
-  /* SI-only: no chat column to resize against — hide gutters. */
-  .room[data-chrome="desktop"][data-layout="si"] .panel-gutter{
+  .room[data-chrome="row"][data-layout="si"] .panel-gutter{
     display:none;
   }
-}
-
-/* Phone landscape: composer stays full column width (no minimize-on-blur). */
-@media(orientation:landscape) and (max-width:899px){
-  .room[data-chrome="mobile"] .si-panel.si-expanded,
-  .room[data-chrome="mobile"] .composer.composer-expanded,
-  .room[data-chrome="mobile"] .composer.composer-collapsed{
-    flex:0 0 min(33vw,20rem);
-    width:min(33vw,20rem);
+  .room[data-chrome="row"][data-layout="si"] .si-panel.si-expanded{
+    flex:1 1 auto;
+    width:auto;
+    max-width:none;
   }
+  .room[data-chrome="row"][data-layout="split"] .si-panel.si-expanded{
+    flex:0 0 var(--ct-si-w,33%);
+    width:var(--ct-si-w,33%);
+    max-height:none;
+    min-height:0;
+  }
+}
+@media(orientation:landscape) and (min-width:600px) and (max-width:899px) and (pointer:coarse){
+  /* Wider gutters for finger resize on phone landscape. */
+  .room[data-chrome="row"] .panel-gutter{
+    flex:0 0 16px;
+    width:16px;
+  }
+  .room[data-chrome="row"] .panel-gutter:before{left:7px}
 }
 
 /* Media upload composer + review covers — icon tools (kit stroke) */

@@ -1181,19 +1181,21 @@
     }
 
     function syncChromeMode() {
-      var desktop = isDesktopChrome();
-      el.setAttribute("data-chrome", desktop ? "desktop" : "mobile");
+      /* Row chrome = phone landscape (≥600) + desktop (≥900): ~33% panels,
+       * gutters, and persisted widths. Portrait stays stacked. */
+      var row = isLandscapeChrome();
+      el.setAttribute("data-chrome", row ? "row" : "stack");
       var gSi = $(el, '[data-role="gutter-si"]');
       var gCo = $(el, '[data-role="gutter-composer"]');
       if (gSi) {
-        gSi.hidden = !desktop;
-        gSi.setAttribute("aria-hidden", desktop ? "false" : "true");
+        gSi.hidden = !row;
+        gSi.setAttribute("aria-hidden", row ? "false" : "true");
       }
       if (gCo) {
-        gCo.hidden = !desktop;
-        gCo.setAttribute("aria-hidden", desktop ? "false" : "true");
+        gCo.hidden = !row;
+        gCo.setAttribute("aria-hidden", row ? "false" : "true");
       }
-      if (desktop) {
+      if (row) {
         var w = readPanelWidths();
         applyPanelWidths(w.si, w.co);
       } else {
@@ -1208,8 +1210,13 @@
       if (!gSi || !gCo || !bodyEl) return;
 
       function startDrag(which, ev) {
-        if (!isDesktopChrome()) return;
+        if (!isLandscapeChrome()) return;
         ev.preventDefault();
+        try {
+          if (ev.pointerId != null && gSi.setPointerCapture) {
+            (which === "si" ? gSi : gCo).setPointerCapture(ev.pointerId);
+          }
+        } catch (capErr) {}
         var startX =
           ev.clientX != null
             ? ev.clientX
@@ -1281,14 +1288,14 @@
     syncChromeMode();
     wirePanelResize();
     if (typeof matchMedia === "function") {
-      var desktopMq = matchMedia(DESKTOP_MQ);
-      var onDesktopMq = function () {
+      var rowMq = matchMedia(ROW_MQ);
+      var onRowMq = function () {
         syncChromeMode();
       };
-      if (desktopMq.addEventListener) desktopMq.addEventListener("change", onDesktopMq);
-      else if (desktopMq.addListener) desktopMq.addListener(onDesktopMq);
-      state._desktopMq = desktopMq;
-      state._onDesktopMq = onDesktopMq;
+      if (rowMq.addEventListener) rowMq.addEventListener("change", onRowMq);
+      else if (rowMq.addListener) rowMq.addListener(onRowMq);
+      state._rowMq = rowMq;
+      state._onRowMq = onRowMq;
     }
 
     function scrollHistoryToBottom() {
@@ -2980,11 +2987,11 @@
             state._onKbViewport
           );
         }
-        if (state._desktopMq && state._onDesktopMq) {
-          if (state._desktopMq.removeEventListener) {
-            state._desktopMq.removeEventListener("change", state._onDesktopMq);
-          } else if (state._desktopMq.removeListener) {
-            state._desktopMq.removeListener(state._onDesktopMq);
+        if (state._rowMq && state._onRowMq) {
+          if (state._rowMq.removeEventListener) {
+            state._rowMq.removeEventListener("change", state._onRowMq);
+          } else if (state._rowMq.removeListener) {
+            state._rowMq.removeListener(state._onRowMq);
           }
         }
         if (mq && mq.removeEventListener) {
