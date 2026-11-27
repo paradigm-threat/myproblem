@@ -380,6 +380,10 @@
     return list[Math.max(0, i || 0) % list.length];
   }
 
+  function isWsUrl(url) {
+    return /^wss?:\/\//i.test(String(url || "").trim());
+  }
+
   /** Build WS mirrors from apiBase + channel when callers pass none (live.html / Android). */
   function defaultMirrors(apiBase, channel) {
     var topic = String(channel || "#web")
@@ -394,6 +398,60 @@
     }
     list.push("wss://pub1.relaygateway.net/chat/ws?topic=" + encodeURIComponent(topic));
     return list;
+  }
+
+  /**
+   * Accept full wss URLs, or bare hosts (legacy sidepanel), and ensure ?topic=.
+   * Drops junk so connect() never opens WebSocket("pub1.example").
+   */
+  function normalizeMirrors(list, apiBase, channel) {
+    var topic = String(channel || "#web")
+      .replace(/^#/, "")
+      .trim() || "web";
+    var out = [];
+    (Array.isArray(list) ? list : []).forEach(function (raw) {
+      var s = String(raw || "").trim();
+      if (!s) return;
+      if (!isWsUrl(s)) {
+        if (/^[a-z0-9.-]+$/i.test(s)) {
+          s =
+            "wss://" +
+            s +
+            "/chat/ws?topic=" +
+            encodeURIComponent(topic);
+        } else {
+          return;
+        }
+      }
+      try {
+        var u = new URL(s);
+        if (!u.searchParams.get("topic")) {
+          u.searchParams.set("topic", topic);
+        }
+        out.push(u.toString());
+      } catch (e) {
+        out.push(s);
+      }
+    });
+    return out.length ? out : defaultMirrors(apiBase, channel);
+  }
+
+  /** Resolve room-sibling assets (channel-policy.json) from the script URL, not the page. */
+  function roomAssetUrl(name) {
+    try {
+      var scripts = document.getElementsByTagName("script");
+      for (var i = scripts.length - 1; i >= 0; i--) {
+        var src = scripts[i].src || "";
+        if (src.indexOf("clevertree-room.js") >= 0) {
+          return new URL(name, src).toString();
+        }
+      }
+    } catch (e) {}
+    try {
+      return new URL("/fronts/room/" + name, location.origin).toString();
+    } catch (e2) {
+      return name;
+    }
   }
 
   function shellHtml(opts) {
@@ -423,7 +481,9 @@
       ICON_CLOSE +
       "</button></div>" +
       '<p class="menu-conn" data-role="status"><span class="dot" data-role="conn-dot"></span><strong data-role="conn">Connecting…</strong><span class="mirror" data-role="mirror"></span></p>' +
-      '<h2 class="menu-room-title">Public IRC room</h2>' +
+      '<h2 class="menu-room-title" data-role="menu-room-title">' +
+      title +
+      "</h2>" +
       '<div class="menu-section">' +
       '<label class="menu-label">Channel</label>' +
       '<div class="channel-switch-wrap" data-role="channel-switch-wrap">' +
@@ -468,7 +528,9 @@
       ICON_MENU +
       "</button>" +
       '<div class="si-rail-titles">' +
-      '<h2 class="si-rail-title" data-role="si-title">Public IRC room</h2>' +
+      '<h2 class="si-rail-title" data-role="si-title">' +
+      title +
+      "</h2>" +
       '<p class="si-rail-sub" data-role="si-sub">' +
       ch +
       "</p>" +
@@ -650,10 +712,8 @@
 
     if (!opts.apiBase) opts.apiBase = "https://api.clevertree.chat";
     if (!opts.channel) opts.channel = "#web";
-    if (!opts.mirrors || !opts.mirrors.length) {
-      opts.mirrors = defaultMirrors(opts.apiBase, opts.channel);
-    }
-    if (!opts.wsUrl) opts.wsUrl = opts.mirrors[0];
+    opts.mirrors = normalizeMirrors(opts.mirrors, opts.apiBase, opts.channel);
+    if (!opts.wsUrl || !isWsUrl(opts.wsUrl)) opts.wsUrl = opts.mirrors[0];
 
     el.innerHTML = shellHtml(opts);
 
@@ -1715,7 +1775,7 @@
         });
       }
       try {
-        var policyUrl = new URL("channel-policy.json", location.href).toString();
+        var policyUrl = roomAssetUrl("channel-policy.json");
         var polRes = await fetch(policyUrl, { cache: "no-store" });
         if (polRes.ok) {
           var policy = await polRes.json();
@@ -2037,6 +2097,8 @@
         "#web";
       if (siTitle) siTitle.textContent = title;
       if (siSub) siSub.textContent = sub;
+      var menuTitle = $(el, '[data-role="menu-room-title"]');
+      if (menuTitle) menuTitle.textContent = title;
     }
 
     function renderSiBodyFallback() {
@@ -2612,9 +2674,9 @@
 
     function connect() {
       var url = pickMirror(state.mirrors, state.mirrorIndex);
-      if (!url && opts.wsUrl) url = opts.wsUrl;
+      if (!isWsUrl(url) && isWsUrl(opts.wsUrl)) url = opts.wsUrl;
       url = withVisitorParam(url, visitor);
-      if (!url) {
+      if (!isWsUrl(url)) {
         setConnUi("Offline (demo)", "no mirror");
         return;
       }
