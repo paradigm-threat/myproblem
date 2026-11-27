@@ -128,6 +128,10 @@
     '<svg class="icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 20V4M5 11l7-7 7 7" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>';
   var ICON_CARET =
     '<svg class="icon channel-caret-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m6 9 6 6 6-6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  var ICON_MENU =
+    '<svg class="icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>';
+  var ICON_CLOSE =
+    '<svg class="icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>';
 
   function $(root, sel) {
     return root.querySelector(sel);
@@ -411,19 +415,17 @@
     return (
       sideLabel +
       nwBar +
-      '<header class="top">' +
-      '<div class="brand"><span>Clevertree <small>Chat</small></span></div>' +
-      '<div class="sep"></div><div class="crumb">Debate board · IRC + SI</div>' +
-      '<div class="status" data-role="status">' +
-      '<button type="button" class="theme-toggle" data-role="theme-toggle" aria-label="Toggle room theme"></button>' +
-      '<span class="dot"></span><strong data-role="conn">Connecting…</strong>' +
-      '<span class="mirror" data-role="mirror"></span></div></header>' +
-      '<section class="head" aria-label="' +
-      title +
-      '">' +
-      '<div class="roomname">' +
-      '<div class="eyebrow">' +
-      "<span>Public IRC room</span>" +
+      '<div class="menu-backdrop" data-role="menu-backdrop" hidden></div>' +
+      '<nav class="menu-drawer" data-role="menu-drawer" id="ct-room-drawer" aria-label="Room menu" hidden>' +
+      '<div class="menu-drawer-top">' +
+      '<div class="menu-brand">Clevertree <small>Chat</small></div>' +
+      '<button type="button" class="menu-close" data-role="menu-close" aria-label="Close menu">' +
+      ICON_CLOSE +
+      "</button></div>" +
+      '<p class="menu-conn" data-role="status"><span class="dot" data-role="conn-dot"></span><strong data-role="conn">Connecting…</strong><span class="mirror" data-role="mirror"></span></p>' +
+      '<h2 class="menu-room-title">Public IRC room</h2>' +
+      '<div class="menu-section">' +
+      '<label class="menu-label">Channel</label>' +
       '<div class="channel-switch-wrap" data-role="channel-switch-wrap">' +
       '<button type="button" class="channel-switch" data-role="channel-switch" aria-haspopup="listbox" aria-expanded="false" title="List channels" aria-label="List channels">' +
       '<code class="channel-tag" data-role="channel-tag">' +
@@ -432,7 +434,9 @@
       ICON_CARET +
       "</button>" +
       '<div class="channel-menu" data-role="channel-menu" role="listbox" aria-label="IRC channels" hidden></div>' +
-      "</div>" +
+      "</div></div>" +
+      '<div class="menu-section">' +
+      '<label class="menu-label">Layout</label>' +
       '<div class="layout-switch-wrap" data-role="layout-switch-wrap">' +
       '<button type="button" class="layout-switch" data-role="layout-switch" aria-haspopup="listbox" aria-expanded="false" title="Layout mode" aria-label="Layout mode">' +
       '<span data-role="layout-label">Chat log</span>' +
@@ -442,18 +446,40 @@
       '<button type="button" class="layout-option" role="option" data-layout="chat">Chat log</button>' +
       '<button type="button" class="layout-option" role="option" data-layout="si">SI panel</button>' +
       '<button type="button" class="layout-option" role="option" data-layout="split">Split</button>' +
-      "</div></div></div></div></section>" +
-      '<div class="body" data-role="body">' +
-      '<aside class="si-panel" data-role="si" aria-label="SI panel for this channel">' +
-      '<div class="si-strip-label">SI</div>' +
-      '<div class="si-strip-body" data-role="ai-body"><p class="si-stub">Connecting…</p></div>' +
+      "</div></div></div>" +
+      '<div class="menu-section">' +
+      '<label class="menu-label">Theme</label>' +
+      '<button type="button" class="theme-toggle menu-theme" data-role="theme-toggle" aria-label="Toggle room theme"></button>' +
+      "</div>" +
+      '<div class="menu-section">' +
+      '<label class="menu-label">Orientation</label>' +
+      '<div class="orient-toggle" role="group" aria-label="Board orientation">' +
+      '<button type="button" class="orient-option" data-role="orient-left" data-orient="left" aria-pressed="true">Left</button>' +
+      '<button type="button" class="orient-option" data-role="orient-right" data-orient="right" aria-pressed="false">Right</button>' +
+      "</div>" +
+      '<p class="menu-hint">Menu + SI share a side; draft sits opposite. Chat stays center.</p>' +
+      "</div></nav>" +
+      '<div class="body" data-role="body" aria-label="' +
+      title +
+      '">' +
+      '<aside class="si-panel si-collapsed" data-role="si" aria-label="SI panel">' +
+      '<header class="si-rail-head" data-role="si-head">' +
+      '<button type="button" class="menu-fab" data-role="menu-fab" aria-label="Open menu" aria-expanded="false" aria-controls="ct-room-drawer">' +
+      ICON_MENU +
+      "</button>" +
+      '<div class="si-rail-titles">' +
+      '<h2 class="si-rail-title" data-role="si-title">Public IRC room</h2>' +
+      '<p class="si-rail-sub" data-role="si-sub">' +
+      ch +
+      "</p>" +
+      "</div></header>" +
+      '<div class="si-strip-body" data-role="ai-body"></div>' +
       "</aside>" +
       '<main class="chat" data-role="chat">' +
       '<div class="history" data-role="history" role="log" aria-label="Public IRC channel messages">' +
       '<div class="stream" data-role="stream"></div></div></main>' +
       '<footer class="composer" data-role="composer">' +
       '<div class="compose-inner">' +
-      '<p class="public" role="note">Public · visible in this room</p>' +
       '<div class="composebox" data-role="composebox">' +
       '<textarea data-role="draft" aria-label="Message to public room" placeholder="Help me with a problem… · Help me find something… · What\'s the latest news on something… · What\'s going on in town…"></textarea>' +
       '<div class="pending-media" data-role="pending-media" hidden></div>' +
@@ -476,7 +502,6 @@
       ICON_SEND +
       "<span>Send</span></button>" +
       "</div></div>" +
-      '<div class="footnote"><span>Drop audio · video · files · Tags</span><span>Max 50 MiB</span></div>' +
       "</div></footer></div>" +
       '<div class="overlay" data-role="overlay" hidden><div class="modal" data-role="modal"></div></div>'
     );
@@ -653,6 +678,15 @@
       pendingMedia: [],
       channelCatalog: [],
       layoutMode: "chat",
+      orient: "left",
+      menuOpen: false,
+      menuCloseTimer: null,
+      chromeAnimTimer: null,
+      composerExpanded: null,
+      siExpanded: false,
+      topicText: "",
+      ircChannel: opts.channel || "#web",
+      pin: null,
     };
     applyRoomTheme(el, state.theme, state.themePref);
 
@@ -674,33 +708,215 @@
     var layoutMenu = $(el, '[data-role="layout-menu"]');
     var layoutLabel = $(el, '[data-role="layout-label"]');
     var bodyEl = $(el, '[data-role="body"]');
-    /* Investigate chrome removed; channel + layout switchers stay in the head. */
+    var menuFab = $(el, '[data-role="menu-fab"]');
+    var menuDrawer = $(el, '[data-role="menu-drawer"]');
+    var menuBackdrop = $(el, '[data-role="menu-backdrop"]');
+    var menuCloseBtn = $(el, '[data-role="menu-close"]');
+    var orientLeftBtn = $(el, '[data-role="orient-left"]');
+    var orientRightBtn = $(el, '[data-role="orient-right"]');
+    var siSub = $(el, '[data-role="si-sub"]');
+    var siTitle = $(el, '[data-role="si-title"]');
+    /* Menu button lives in the SI rail header (not floating). */
     var PLACEHOLDER_EXPANDED =
       "Help me with a problem… · Help me find something… · What's the latest news on something… · What's going on in town…";
     var PLACEHOLDER_COLLAPSED = "Ask something…";
 
-    function setComposerExpanded(on) {
+    var CHROME_MS = 340;
+    var CHROME_EASE = "cubic-bezier(0.32, 0.72, 0, 1)";
+
+    function prefersReducedMotion() {
+      return (
+        typeof matchMedia === "function" &&
+        matchMedia("(prefers-reduced-motion: reduce)").matches
+      );
+    }
+
+    function isLandscapeChrome() {
+      return (
+        typeof matchMedia === "function" &&
+        matchMedia("(orientation: landscape), (min-width: 900px)").matches
+      );
+    }
+
+    function clearChromeInlineSize(node) {
+      if (!node) return;
+      node.style.height = "";
+      node.style.width = "";
+      node.style.transition = "";
+    }
+
+    function applySiClass(on) {
+      if (!aiPanel) return;
+      state.siExpanded = !!on;
+      aiPanel.classList.toggle("si-expanded", !!on);
+      aiPanel.classList.toggle("si-collapsed", !on);
+      aiPanel.setAttribute("data-expanded", on ? "true" : "false");
+    }
+
+    function applyComposerClass(on) {
       if (!composerEl) return;
+      state.composerExpanded = !!on;
       composerEl.classList.toggle("composer-expanded", !!on);
       composerEl.classList.toggle("composer-collapsed", !on);
       composerEl.setAttribute("data-expanded", on ? "true" : "false");
       if (draft) {
         draft.placeholder = on ? PLACEHOLDER_EXPANDED : PLACEHOLDER_COLLAPSED;
-        if (on) {
-          try {
-            draft.focus();
-          } catch (e) {}
-        }
+        try {
+          if (on) draft.focus();
+          else draft.blur();
+        } catch (e) {}
       }
     }
 
-    /* Start big; history tap → small; composer tap → big. No persisted onboarding state. */
+    /**
+     * Smoothly resize SI + composer together (push/expand, not snap).
+     * Snapshot → apply classes → measure targets → tween height/width.
+     */
+    function setChromeState(nextSi, nextComposer) {
+      nextSi = !!nextSi;
+      nextComposer = !!nextComposer;
+      var siSame = !aiPanel || state.siExpanded === nextSi;
+      var coSame =
+        !composerEl ||
+        (state.composerExpanded == null
+          ? composerEl.classList.contains("composer-expanded") === nextComposer
+          : state.composerExpanded === nextComposer);
+      if (siSame && coSame) {
+        applySiClass(nextSi);
+        applyComposerClass(nextComposer);
+        return;
+      }
+
+      var landscape = isLandscapeChrome();
+      var reduce = prefersReducedMotion();
+      var siStart = aiPanel ? aiPanel.getBoundingClientRect() : null;
+      var coStart = composerEl ? composerEl.getBoundingClientRect() : null;
+
+      if (aiPanel) {
+        clearChromeInlineSize(aiPanel);
+        aiPanel.style.transition = "none";
+        if (siStart) {
+          aiPanel.style.height = siStart.height + "px";
+          if (landscape) aiPanel.style.width = siStart.width + "px";
+        }
+      }
+      if (composerEl) {
+        clearChromeInlineSize(composerEl);
+        composerEl.style.transition = "none";
+        if (coStart) {
+          composerEl.style.height = coStart.height + "px";
+          if (landscape) composerEl.style.width = coStart.width + "px";
+        }
+      }
+
+      applySiClass(nextSi);
+      applyComposerClass(nextComposer);
+
+      if (reduce) {
+        clearChromeInlineSize(aiPanel);
+        clearChromeInlineSize(composerEl);
+        return;
+      }
+
+      // Natural end sizes with new classes (inline sizes cleared briefly).
+      if (aiPanel) {
+        aiPanel.style.height = "";
+        aiPanel.style.width = "";
+      }
+      if (composerEl) {
+        composerEl.style.height = "";
+        composerEl.style.width = "";
+      }
+      var siEnd = aiPanel ? aiPanel.getBoundingClientRect() : null;
+      var coEnd = composerEl ? composerEl.getBoundingClientRect() : null;
+
+      if (aiPanel && siStart) {
+        aiPanel.style.height = siStart.height + "px";
+        if (landscape) aiPanel.style.width = siStart.width + "px";
+      }
+      if (composerEl && coStart) {
+        composerEl.style.height = coStart.height + "px";
+        if (landscape) composerEl.style.width = coStart.width + "px";
+      }
+      void el.offsetWidth;
+
+      var tween =
+        "height " +
+        CHROME_MS +
+        "ms " +
+        CHROME_EASE +
+        (landscape ? ", width " + CHROME_MS + "ms " + CHROME_EASE : "");
+      if (aiPanel && siEnd) {
+        aiPanel.style.transition = tween;
+        aiPanel.style.height = Math.max(0, siEnd.height) + "px";
+        if (landscape) aiPanel.style.width = Math.max(0, siEnd.width) + "px";
+      }
+      if (composerEl && coEnd) {
+        composerEl.style.transition = tween;
+        composerEl.style.height = Math.max(0, coEnd.height) + "px";
+        if (landscape) composerEl.style.width = Math.max(0, coEnd.width) + "px";
+      }
+
+      if (state.chromeAnimTimer) clearTimeout(state.chromeAnimTimer);
+      state.chromeAnimTimer = setTimeout(function () {
+        state.chromeAnimTimer = null;
+        clearChromeInlineSize(aiPanel);
+        clearChromeInlineSize(composerEl);
+        if (typeof scheduleKeyboardViewport === "function") {
+          scheduleKeyboardViewport();
+        } else if (typeof syncKeyboardViewport === "function") {
+          syncKeyboardViewport();
+        }
+      }, CHROME_MS + 80);
+    }
+
+    function setSiExpanded(on) {
+      setChromeState(on, state.composerExpanded != null
+        ? state.composerExpanded
+        : !!(composerEl && composerEl.classList.contains("composer-expanded")));
+    }
+
+    function setComposerExpanded(on) {
+      setChromeState(
+        state.siExpanded != null
+          ? state.siExpanded
+          : !!(aiPanel && aiPanel.classList.contains("si-expanded")),
+        on
+      );
+    }
+
+    function focusComposer() {
+      setChromeState(false, true);
+    }
+
+    function focusSi() {
+      setChromeState(true, false);
+    }
+
+    function collapseChrome() {
+      setChromeState(false, false);
+    }
+
+    function scrollHistoryToBottom() {
+      if (!history) return;
+      state.suppressHistoryScrollCollapse = true;
+      history.scrollTop = history.scrollHeight;
+      if (state.historyScrollUnlockTimer) clearTimeout(state.historyScrollUnlockTimer);
+      state.historyScrollUnlockTimer = setTimeout(function () {
+        state.suppressHistoryScrollCollapse = false;
+        state.historyScrollUnlockTimer = null;
+      }, 120);
+    }
+
+    /* Start with draft big; SI header-only until tapped. No persisted onboarding state. */
     try {
       localStorage.removeItem("clevertree.room.composerExpanded");
     } catch (e) {}
     setComposerExpanded(true);
+    setSiExpanded(false);
 
     var LAYOUT_KEY = "clevertree.room.layoutMode";
+    var ORIENT_KEY = "clevertree.room.orient";
     var LAYOUT_LABELS = {
       chat: "Chat log",
       si: "SI panel",
@@ -711,6 +927,81 @@
       var m = String(mode || "").toLowerCase();
       if (m === "si" || m === "split" || m === "chat") return m;
       return "chat";
+    }
+
+    function normalizeOrient(o) {
+      return String(o || "").toLowerCase() === "right" ? "right" : "left";
+    }
+
+    function setMenuOpen(open) {
+      open = !!open;
+      if (state.menuCloseTimer) {
+        clearTimeout(state.menuCloseTimer);
+        state.menuCloseTimer = null;
+      }
+      state.menuOpen = open;
+      if (menuFab) {
+        menuFab.setAttribute("aria-expanded", open ? "true" : "false");
+        menuFab.setAttribute("aria-label", open ? "Close menu" : "Open menu");
+        menuFab.classList.toggle("open", open);
+        menuFab.innerHTML = open ? ICON_CLOSE : ICON_MENU;
+      }
+      if (open) {
+        setChannelMenuOpen(false);
+        setLayoutMenuOpen(false);
+        if (menuDrawer) {
+          menuDrawer.hidden = false;
+          menuDrawer.setAttribute("aria-hidden", "false");
+        }
+        if (menuBackdrop) {
+          menuBackdrop.hidden = false;
+          menuBackdrop.setAttribute("aria-hidden", "false");
+        }
+        // Measure drawer width so the body push matches the panel exactly.
+        if (menuDrawer) {
+          var mw = menuDrawer.getBoundingClientRect().width;
+          if (mw > 0) el.style.setProperty("--ct-menu-w", Math.round(mw) + "px");
+        }
+        // Two frames: paint off-screen, then add .menu-open so transform transitions.
+        el.classList.remove("menu-open");
+        requestAnimationFrame(function () {
+          requestAnimationFrame(function () {
+            if (!state.menuOpen) return;
+            el.classList.add("menu-open");
+          });
+        });
+        return;
+      }
+      el.classList.remove("menu-open");
+      var finishClose = function () {
+        if (state.menuOpen) return;
+        if (menuDrawer) {
+          menuDrawer.hidden = true;
+          menuDrawer.setAttribute("aria-hidden", "true");
+        }
+        if (menuBackdrop) {
+          menuBackdrop.hidden = true;
+          menuBackdrop.setAttribute("aria-hidden", "true");
+        }
+      };
+      var reduce =
+        typeof matchMedia === "function" &&
+        matchMedia("(prefers-reduced-motion: reduce)").matches;
+      if (reduce || !menuDrawer) {
+        finishClose();
+        return;
+      }
+      state.menuCloseTimer = setTimeout(finishClose, 380);
+      var onEnd = function (ev) {
+        if (ev.target !== menuDrawer || ev.propertyName !== "transform") return;
+        menuDrawer.removeEventListener("transitionend", onEnd);
+        if (state.menuCloseTimer) {
+          clearTimeout(state.menuCloseTimer);
+          state.menuCloseTimer = null;
+        }
+        finishClose();
+      };
+      menuDrawer.addEventListener("transitionend", onEnd);
     }
 
     function setLayoutMenuOpen(open) {
@@ -734,10 +1025,37 @@
           opts[i].setAttribute("aria-selected", active ? "true" : "false");
         }
       }
+      if (next === "chat") {
+        setSiExpanded(false);
+      } else {
+        setSiExpanded(true);
+        if (next === "si") setComposerExpanded(false);
+      }
       try {
         localStorage.setItem(LAYOUT_KEY, next);
       } catch (e) {}
       setLayoutMenuOpen(false);
+    }
+
+    function setOrient(orient) {
+      var next = normalizeOrient(orient);
+      state.orient = next;
+      el.setAttribute("data-orient", next);
+      if (bodyEl) bodyEl.setAttribute("data-orient", next);
+      if (orientLeftBtn) {
+        orientLeftBtn.classList.toggle("active", next === "left");
+        orientLeftBtn.setAttribute("aria-pressed", next === "left" ? "true" : "false");
+      }
+      if (orientRightBtn) {
+        orientRightBtn.classList.toggle("active", next === "right");
+        orientRightBtn.setAttribute(
+          "aria-pressed",
+          next === "right" ? "true" : "false"
+        );
+      }
+      try {
+        localStorage.setItem(ORIENT_KEY, next);
+      } catch (e) {}
     }
 
     function readLayoutMode() {
@@ -748,7 +1066,44 @@
       }
     }
 
+    function readOrient() {
+      try {
+        return normalizeOrient(localStorage.getItem(ORIENT_KEY));
+      } catch (e) {
+        return "left";
+      }
+    }
+
     setLayoutMode(readLayoutMode());
+    setOrient(readOrient());
+
+    if (menuFab) {
+      menuFab.onclick = function (ev) {
+        ev.preventDefault();
+        ev.stopPropagation();
+        setMenuOpen(!state.menuOpen);
+      };
+    }
+    if (menuCloseBtn) {
+      menuCloseBtn.onclick = function () {
+        setMenuOpen(false);
+      };
+    }
+    if (menuBackdrop) {
+      menuBackdrop.onclick = function () {
+        setMenuOpen(false);
+      };
+    }
+    if (orientLeftBtn) {
+      orientLeftBtn.onclick = function () {
+        setOrient("left");
+      };
+    }
+    if (orientRightBtn) {
+      orientRightBtn.onclick = function () {
+        setOrient("right");
+      };
+    }
 
     if (layoutSwitchBtn) {
       layoutSwitchBtn.onclick = function (ev) {
@@ -808,6 +1163,21 @@
     loadChannelCatalog().catch(function () {});
 
     if (history) {
+      var historyScrollHideTimer = null;
+      history.addEventListener(
+        "scroll",
+        function () {
+          history.classList.add("is-scrolling");
+          if (historyScrollHideTimer) clearTimeout(historyScrollHideTimer);
+          historyScrollHideTimer = setTimeout(function () {
+            history.classList.remove("is-scrolling");
+            historyScrollHideTimer = null;
+          }, 900);
+          if (state.suppressHistoryScrollCollapse) return;
+          collapseChrome();
+        },
+        { passive: true }
+      );
       history.addEventListener("click", function (ev) {
         if (
           ev.target &&
@@ -816,28 +1186,30 @@
         ) {
           return;
         }
-        if (composerEl && composerEl.classList.contains("composer-expanded")) {
-          setComposerExpanded(false);
-          if (draft) {
-            try {
-              draft.blur();
-            } catch (e) {}
-          }
+        collapseChrome();
+      });
+    }
+    if (aiPanel) {
+      aiPanel.addEventListener("click", function (ev) {
+        if (
+          ev.target &&
+          ev.target.closest &&
+          (ev.target.closest('[data-role="menu-fab"]') ||
+            ev.target.closest(".menu-drawer"))
+        ) {
+          return;
         }
+        focusSi();
       });
     }
     if (composeBox) {
       composeBox.addEventListener("click", function () {
-        if (composerEl && composerEl.classList.contains("composer-collapsed")) {
-          setComposerExpanded(true);
-        }
+        focusComposer();
       });
     }
     if (draft) {
       draft.addEventListener("focus", function () {
-        if (composerEl && composerEl.classList.contains("composer-collapsed")) {
-          setComposerExpanded(true);
-        }
+        focusComposer();
       });
     }
     var connEl = $(el, '[data-role="conn"]');
@@ -1087,9 +1459,8 @@
       saveChannelDraft(opts.channel);
       opts.channel = ch;
       if (channelTag) channelTag.textContent = ch;
-      if (el.querySelector(".head")) {
-        el.querySelector(".head").setAttribute("aria-label", ch);
-      }
+      updateSiRailChrome();
+      if (bodyEl) bodyEl.setAttribute("aria-label", ch);
       state.mirrors = defaultMirrors(apiBase(), ch);
       opts.mirrors = state.mirrors;
       opts.wsUrl = state.mirrors[0];
@@ -1099,7 +1470,7 @@
       state.mediaReviews = {};
       state.connected = false;
       restoreChannelDraft(ch);
-      clearSiPanel("Loading SI for " + ch + "…");
+      clearSiPanel();
       renderSeed();
       setConnUi("Switching…", ch);
       setComposerExpanded(true);
@@ -1259,13 +1630,65 @@
       }
     );
 
-    function clearSiPanel(msg) {
+    function clearSiPanel() {
       state.view = null;
       if (!aiBody) return;
+      renderSiBodyFallback();
+      updateSiRailChrome();
+    }
+
+    function applyIrcChrome(data) {
+      if (!data || typeof data !== "object") return;
+      if (data.topic_text != null) state.topicText = String(data.topic_text || "");
+      if (data.channel) state.ircChannel = String(data.channel || "");
+      if (Object.prototype.hasOwnProperty.call(data, "pin")) {
+        state.pin =
+          data.pin && typeof data.pin === "object" ? data.pin : null;
+      }
+      updateSiRailChrome();
+      if (!state.view || (!state.view.sections && !state.view.pairs && !state.view.exists)) {
+        renderSiBodyFallback();
+      }
+    }
+
+    function pinBodyText() {
+      var pin = state.pin;
+      if (!pin || typeof pin !== "object") return "";
+      return String(pin.body || pin.text || "").trim();
+    }
+
+    function updateSiRailChrome() {
+      /* Title = IRC TOPIC; subtitle = pinned PRIVMSG body (else #channel). */
+      var title =
+        String(state.topicText || "").trim() ||
+        String(opts.title || "").trim() ||
+        "Public IRC room";
+      var pinText = pinBodyText();
+      var sub =
+        pinText ||
+        String(state.ircChannel || opts.channel || "").trim() ||
+        "#web";
+      if (siTitle) siTitle.textContent = title;
+      if (siSub) siSub.textContent = sub;
+    }
+
+    function renderSiBodyFallback() {
+      if (!aiBody) return;
+      var pinText = pinBodyText();
+      if (!pinText) {
+        aiBody.innerHTML = "";
+        return;
+      }
+      var nick = state.pin && state.pin.nick ? String(state.pin.nick) : "";
       aiBody.innerHTML =
-        '<p class="si-stub">' +
-        esc(msg || "Loading SI for this channel…") +
-        "</p>";
+        '<article class="ai-section si-pin-fallback">' +
+        "<h3>Pinned</h3>" +
+        (nick
+          ? '<p class="si-pin-nick"><code>' + esc(nick) + "</code></p>"
+          : "") +
+        '<div class="ai-position">' +
+        esc(pinText) +
+        "</div></article>";
     }
 
     function renderAiFindings(view) {
@@ -1273,21 +1696,16 @@
       /* Always replace — never keep the previous channel's SI markup. */
       state.view = view || null;
       var v = state.view;
+      updateSiRailChrome();
       if (!v || (!v.sections && !v.pairs && !v.exists)) {
-        aiBody.innerHTML =
-          '<p class="si-stub">No SI filing for ' +
-          esc(opts.channel || "#web") +
-          " yet — talk in the room.</p>";
+        renderSiBodyFallback();
         return;
       }
       var sections = v.sections || {};
       var keys = Object.keys(sections).filter(function (k) {
         return k !== "uncategorized";
       });
-      var html =
-        '<div class="si-channel-label">SI · ' +
-        esc(opts.channel || "#web") +
-        "</div>";
+      var html = "";
       if (v.pairs && v.pairs.length) {
         html += '<div class="ai-pairs"><strong>Paired</strong><ul>';
         v.pairs.forEach(function (pair) {
@@ -1324,11 +1742,7 @@
           uncat.comments.length +
           " comment(s) waiting for batch filing.</p></article>";
       }
-      if (keys.length === 0 && !(v.pairs && v.pairs.length) && !(uncat && uncat.comments && uncat.comments.length)) {
-        html +=
-          "<p>Channel is live. No standing perspectives filed yet.</p>";
-      }
-      aiBody.innerHTML = linkifyChannelRefs(html);
+      aiBody.innerHTML = html ? linkifyChannelRefs(html) : "";
       if (aiPanel) aiPanel.hidden = false;
     }
 
@@ -1355,6 +1769,7 @@
             nick: row.nick || row.from || row.author || "anon",
             text: row.text || row.body || row.message || "",
             time: row.time || row.ts || "",
+            pinned: !!row.pinned,
           };
         })
         .filter(function (m) {
@@ -1375,13 +1790,20 @@
           state.messages.push(m);
           appendMessage(stream, m, tagCfg, el, state.mediaReviews);
         });
-        history.scrollTop = history.scrollHeight;
+        scrollHistoryToBottom();
       }
+      updateSiRailChrome();
     }
 
     function setConnUi(label, mirrorNote) {
-      connEl.textContent = label;
-      mirrorEl.textContent = mirrorNote ? " · " + mirrorNote : "";
+      if (connEl) connEl.textContent = label;
+      if (mirrorEl) mirrorEl.textContent = mirrorNote ? " · " + mirrorNote : "";
+      var connected =
+        /connected/i.test(String(label || "")) &&
+        !/reconnecting|offline|switching|connecting/i.test(String(label || ""));
+      el.classList.toggle("is-connected", connected);
+      var status = $(el, '[data-role="status"]');
+      if (status) status.classList.toggle("is-connected", connected);
     }
 
     function renderSeed() {
@@ -1394,7 +1816,7 @@
       state.messages.forEach(function (m) {
         appendMessage(stream, m, tagCfg, el, state.mediaReviews);
       });
-      history.scrollTop = history.scrollHeight;
+      scrollHistoryToBottom();
     }
 
     async function uploadBlob(file, kindHint) {
@@ -1664,7 +2086,7 @@
       if (!state.ws || state.ws.readyState !== 1) {
         state.messages.push(msg);
         appendMessage(stream, msg, tagCfg, el);
-        history.scrollTop = history.scrollHeight;
+        scrollHistoryToBottom();
       } else {
         try {
           state.ws.send(
@@ -1812,9 +2234,11 @@
                 state.mediaReviews[k] = data.media_reviews[k];
               });
             }
+            applyIrcChrome(data);
+            if (data.view) applyIrcChrome(data.view);
             /* Fresh SI for this channel — never keep the previous room's panel. */
             if (data.view) renderAiFindings(data.view);
-            else clearSiPanel("No SI filing for " + (opts.channel || "#web") + " yet.");
+            else clearSiPanel();
             hydrateHistory(
               data.chat_history || data.history || data.lines || [],
               true
@@ -1822,8 +2246,15 @@
             if (typeof opts.onHello === "function") opts.onHello(data);
             return;
           }
+          if (typ === "topic.update" || typ === "pin.update") {
+            applyIrcChrome(data);
+            return;
+          }
           if (typ === "board.snapshot" || typ === "batch.notice") {
-            if (data.view) renderAiFindings(data.view);
+            if (data.view) {
+              applyIrcChrome(data.view);
+              renderAiFindings(data.view);
+            }
             return;
           }
           if (typ === "chat.history" || typ === "chat_history") {
@@ -1866,7 +2297,7 @@
             // Drop empty-state placeholder on first live message
             if (stream.querySelector(".empty")) stream.innerHTML = "";
             appendMessage(stream, msg, tagCfg, el, state.mediaReviews);
-            history.scrollTop = history.scrollHeight;
+            scrollHistoryToBottom();
           }
         };
       } catch (e) {
@@ -1886,6 +2317,93 @@
     renderSeed();
     connect();
 
+    /* Keep composer above the soft keyboard; follow visualViewport when the
+     * host overlays IME without resizing (and when interactive-widget helps). */
+    function keepComposerInView() {
+      if (!draft || document.activeElement !== draft) return;
+      try {
+        var len = (draft.value || "").length;
+        if (typeof draft.setSelectionRange === "function") {
+          draft.setSelectionRange(len, len);
+        }
+        draft.scrollTop = draft.scrollHeight;
+      } catch (e) {}
+      if (!composerEl) return;
+      var vv = window.visualViewport;
+      var limit = vv ? vv.offsetTop + vv.height : window.innerHeight;
+      var box = composerEl.getBoundingClientRect();
+      if (box.bottom > limit - 6 && history) {
+        history.scrollTop = Math.min(
+          history.scrollHeight,
+          history.scrollTop + (box.bottom - limit + 12)
+        );
+      }
+      try {
+        if (typeof draft.scrollIntoView === "function") {
+          draft.scrollIntoView({ block: "nearest", inline: "nearest" });
+        }
+      } catch (e2) {}
+    }
+
+    function syncKeyboardViewport() {
+      if (state.destroyed) return;
+      var vv = window.visualViewport;
+      var layoutH =
+        window.innerHeight ||
+        (document.documentElement && document.documentElement.clientHeight) ||
+        0;
+      var visibleH = vv ? vv.height : layoutH;
+      var offsetTop = vv ? vv.offsetTop : 0;
+      var inset = Math.max(0, Math.round(layoutH - visibleH - offsetTop));
+      var kbOpen = inset > 64 || (layoutH > 0 && layoutH - visibleH > 64);
+      el.classList.toggle("kb-open", kbOpen);
+      el.style.setProperty("--vv-height", Math.round(visibleH) + "px");
+      el.style.setProperty("--vv-offset-top", Math.round(offsetTop) + "px");
+      el.style.setProperty("--kb-inset", inset + "px");
+      /* Overlay keyboards: pin the room to the visible viewport. When the
+       * Android host already resized us (ime padding), inset≈0 and we clear. */
+      if (kbOpen && (inset > 40 || offsetTop > 0)) {
+        el.style.height = Math.round(visibleH) + "px";
+        el.style.maxHeight = Math.round(visibleH) + "px";
+        el.style.transform = offsetTop
+          ? "translateY(" + Math.round(offsetTop) + "px)"
+          : "";
+      } else if (!el.classList.contains("menu-open")) {
+        el.style.height = "";
+        el.style.maxHeight = "";
+        el.style.transform = "";
+      }
+      keepComposerInView();
+    }
+
+    function scheduleKeyboardViewport() {
+      if (state.kbViewportRaf) return;
+      state.kbViewportRaf = requestAnimationFrame(function () {
+        state.kbViewportRaf = 0;
+        syncKeyboardViewport();
+      });
+    }
+
+    state._onKbViewport = scheduleKeyboardViewport;
+    if (window.visualViewport) {
+      window.visualViewport.addEventListener("resize", scheduleKeyboardViewport);
+      window.visualViewport.addEventListener("scroll", scheduleKeyboardViewport);
+    }
+    window.addEventListener("resize", scheduleKeyboardViewport);
+    window.addEventListener("orientationchange", scheduleKeyboardViewport);
+    if (draft) {
+      draft.addEventListener("focus", scheduleKeyboardViewport);
+      draft.addEventListener("blur", function () {
+        setTimeout(scheduleKeyboardViewport, 120);
+      });
+      draft.addEventListener("input", function () {
+        scheduleKeyboardViewport();
+        keepComposerInView();
+      });
+      draft.addEventListener("keyup", keepComposerInView);
+    }
+    syncKeyboardViewport();
+
     return {
       el: el,
       mode: mode,
@@ -1899,6 +2417,7 @@
           mode: mode,
           channel: opts.channel,
           layoutMode: state.layoutMode,
+          orient: state.orient,
           theme: state.theme,
           themePref: state.themePref,
         };
@@ -1933,6 +2452,18 @@
       getLayoutMode: function () {
         return state.layoutMode;
       },
+      setOrient: function (orient) {
+        setOrient(orient);
+      },
+      getOrient: function () {
+        return state.orient;
+      },
+      openMenu: function () {
+        setMenuOpen(true);
+      },
+      closeMenu: function () {
+        setMenuOpen(false);
+      },
       appendMessage: function (msg) {
         state.messages.push(msg);
         appendMessage(stream, msg, tagCfg, el, state.mediaReviews);
@@ -1940,6 +2471,27 @@
       destroy: function () {
         state.destroyed = true;
         stopCapture();
+        if (state.kbViewportRaf) {
+          cancelAnimationFrame(state.kbViewportRaf);
+          state.kbViewportRaf = 0;
+        }
+        if (window.visualViewport && state._onKbViewport) {
+          window.visualViewport.removeEventListener(
+            "resize",
+            state._onKbViewport
+          );
+          window.visualViewport.removeEventListener(
+            "scroll",
+            state._onKbViewport
+          );
+        }
+        if (state._onKbViewport) {
+          window.removeEventListener("resize", state._onKbViewport);
+          window.removeEventListener(
+            "orientationchange",
+            state._onKbViewport
+          );
+        }
         if (mq && mq.removeEventListener) {
           mq.removeEventListener("change", onSchemeChange);
         }
@@ -1960,6 +2512,9 @@
         );
         el.removeAttribute("data-theme");
         el.style.colorScheme = "";
+        el.style.height = "";
+        el.style.maxHeight = "";
+        el.style.transform = "";
         el.innerHTML = "";
       },
       BOT_NICKS: BOT_NICKS,
