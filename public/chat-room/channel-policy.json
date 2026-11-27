@@ -1,14 +1,17 @@
 {
   "schema": "clevertree.channel-policy.v1",
-  "notes": "Per-repo channel topology. One IRC channel can host many topics via context tags.",
+  "notes": "Per-repo channel topology. One IRC channel can host many topics via context tags. #web is the universal channel — same room as clevertree.chat/chat and the Clevertree Chat app default.",
   "repos": {
     "paradigm-threat": {
+      "hosts": ["paradigmthreat.net", "www.paradigmthreat.net", "old.paradigmthreat.net"],
       "default_channel": "#pt",
       "channels": ["#pt"],
       "topic_via": "context_tags",
+      "topics_url": "/chat/topics.json",
       "consolidate_from_prefix": "#pt-"
     },
     "myproblem": {
+      "hosts": ["myproblem.app", "www.myproblem.app"],
       "default_channel": "#mp-general",
       "demo_allowlist": ["mp-general", "ga-savannah-cat-rescue"],
       "channels": {
@@ -24,7 +27,22 @@
           "path": "/c/ga-savannah-cat-rescue"
         }
       }
+    },
+    "public-web": {
+      "default_channel": "#web",
+      "channels": ["#web"],
+      "topic_via": "domain_tag",
+      "notes": "Universal room (#web): Clevertree Chat website + app + unassigned embeds; attribution [[d:host]] for non-product hosts"
     }
+  },
+  "product_hosts": {
+    "clevertree.chat": { "repo": "public-web", "channel": "#web" },
+    "www.clevertree.chat": { "repo": "public-web", "channel": "#web" },
+    "clevertree.net": { "repo": "public-web", "channel": "#web" },
+    "www.clevertree.net": { "repo": "public-web", "channel": "#web" },
+    "quizgate.app": { "repo": "public-web", "channel": "#web" },
+    "www.quizgate.app": { "repo": "public-web", "channel": "#web" },
+    "api.clevertree.chat": { "repo": "public-web", "channel": "#web" }
   },
   "mirrors": [
     "pub1.relaygateway.net",

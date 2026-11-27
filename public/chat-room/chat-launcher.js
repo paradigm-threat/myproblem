@@ -164,9 +164,10 @@
             title: opts.title,
           })
         : {
-            channel: opts.channel || "#mp-general",
-            title: opts.title || "Public help",
-            topicId: opts.topicId != null ? opts.topicId : 0,
+            // Universal = Clevertree Chat website room (#web)
+            channel: opts.channel || "#web",
+            title: opts.title || "Clevertree Chat",
+            topicId: opts.topicId != null ? opts.topicId : null,
             domain: opts.domain || "",
           };
     var ctx = {};
@@ -179,7 +180,7 @@
       } catch (e) {}
     }
     var topic = String(route.channel || "").replace(/^#/, "");
-    var apiBase = opts.apiBase || "https://intake.myproblem.app";
+    var apiBase = opts.apiBase || "https://api.clevertree.chat";
     var mirrors = opts.mirrors;
     if (!mirrors || !mirrors.length) {
       var wsHost = apiBase.replace(/^https:/, "wss:").replace(/^http:/, "ws:");
@@ -259,9 +260,29 @@
   }
 
   function syncBtn() {
-    if (!state.btn) return;
-    state.btn.setAttribute("aria-pressed", state.open ? "true" : "false");
-    state.btn.classList.toggle("is-open", state.open);
+    if (state.btn) {
+      state.btn.setAttribute("aria-pressed", state.open ? "true" : "false");
+      state.btn.classList.toggle("is-open", state.open);
+      if (state.btn.getAttribute("data-ct-chat-toggle") === "1") {
+        state.btn.setAttribute(
+          "aria-label",
+          state.open ? "Close chat" : "Open chat"
+        );
+        state.btn.title = state.open ? "Close chat" : "Chat";
+      }
+    }
+    try {
+      document.dispatchEvent(
+        new CustomEvent("clevertree-chat:openchange", {
+          detail: { open: !!state.open },
+        })
+      );
+    } catch (e) {}
+    if (typeof state.opts.onOpenChange === "function") {
+      try {
+        state.opts.onOpenChange(!!state.open);
+      } catch (e2) {}
+    }
   }
 
   function injectStyles() {
@@ -272,7 +293,7 @@
       "html.ct-chat-open{overflow:hidden}" +
       ".ct-chat-fab{position:fixed;z-index:2147483000;right:1rem;bottom:1rem;width:3rem;height:3rem;border-radius:999px;border:1px solid var(--border, #879c8b);background:var(--mint, var(--commons, #285c46));color:var(--ink-on-accent, #fff);font:600 0.85rem/1 system-ui,sans-serif;cursor:pointer;box-shadow:0 8px 24px #00000033}" +
       ".ct-chat-fab.is-open{filter:brightness(0.9)}" +
-      ".ct-chat-dock{position:fixed;z-index:2147482990;display:flex;flex-direction:column;background:var(--canvas, #f2f4ef);border:1px solid var(--border, #c5d0c5);box-shadow:0 12px 40px #00000040;color:var(--text, var(--ink, #23352b))}" +
+      ".ct-chat-dock{position:fixed;z-index:2147482900;display:flex;flex-direction:column;background:var(--canvas, #f2f4ef);border:1px solid var(--border, #c5d0c5);box-shadow:0 12px 40px #00000040;color:var(--text, var(--ink, #23352b))}" +
       '.ct-chat-dock[data-dock="fullscreen"]{inset:0;width:100vw;height:100dvh;max-width:none;border:0;border-radius:0}' +
       '.ct-chat-dock[data-dock="right"]{top:0;right:0;bottom:0;width:min(420px,100vw)}' +
       '.ct-chat-dock[data-dock="left"]{top:0;left:0;bottom:0;width:min(420px,100vw)}' +
@@ -293,30 +314,42 @@
     state.dock = readDock();
     var el =
       typeof selOrEl === "string" ? document.querySelector(selOrEl) : selOrEl;
-    if (!el) {
+    if (!el && !state.opts.noFab) {
       el = document.createElement("button");
       el.type = "button";
       el.className = "ct-chat-fab";
       el.textContent = "Chat";
       el.setAttribute("aria-label", "Open Clevertree Chat");
+      el.setAttribute("data-ct-chat-toggle", "1");
       document.body.appendChild(el);
     }
-    state.btn = el;
-    if (!el.getAttribute("data-ct-bound")) {
-      el.setAttribute("data-ct-bound", "1");
-      el.addEventListener("click", function () {
-        toggle(state.opts);
-      });
+    if (el) {
+      state.btn = el;
+      if (!el.getAttribute("data-ct-bound")) {
+        el.setAttribute("data-ct-bound", "1");
+        el.addEventListener("click", function () {
+          toggle(state.opts);
+        });
+      }
     }
     syncBtn();
     return {
       open: open,
       close: close,
       toggle: toggle,
+      isOpen: isOpen,
       setOptions: function (o) {
-        state.opts = o || {};
+        state.opts = Object.assign({}, state.opts || {}, o || {});
+      },
+      setButton: function (btn) {
+        state.btn = btn || null;
+        syncBtn();
       },
     };
+  }
+
+  function isOpen() {
+    return !!state.open;
   }
 
   return {
@@ -324,6 +357,7 @@
     open: open,
     close: close,
     toggle: toggle,
+    isOpen: isOpen,
     MSG_TYPE: MSG_TYPE,
   };
 });

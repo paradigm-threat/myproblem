@@ -1,6 +1,7 @@
 /**
  * Map active-tab host → IRC channel + attribution context.
- * Product hosts → repo channel; everyone else → #web + [[d:domain]].
+ * Product hosts → repo channel; Clevertree Chat site + everyone else →
+ * universal #web (same channel as https://clevertree.chat/chat) + [[d:domain]] when needed.
  */
 (function (root, factory) {
   if (typeof module === "object" && module.exports) {
@@ -19,6 +20,13 @@
   var MP_HOSTS = {
     "myproblem.app": 1,
     "www.myproblem.app": 1,
+  };
+  /** Product hosts that share #web without domain attribution tags. */
+  var CT_HOSTS = {
+    "clevertree.chat": 1,
+    "clevertree.net": 1,
+    "quizgate.app": 1,
+    "api.clevertree.chat": 1,
   };
 
   function normalizeHost(host) {
@@ -83,6 +91,15 @@
         topicId: null,
         domain: "",
         repo: "myproblem",
+      };
+    }
+    if (CT_HOSTS[domain]) {
+      return {
+        channel: "#web",
+        title: "Clevertree Chat",
+        topicId: null,
+        domain: "",
+        repo: "public-web",
       };
     }
     return {
