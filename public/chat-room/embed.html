@@ -42,7 +42,7 @@
           aiOpen: q.get("ai") === "1",
           tracked: q.get("tracked") === "1",
           showGather: false,
-          mirrors: [],
+          apiBase: q.get("api") || "https://api.clevertree.chat",
           seedMessages: [
             {
               nick: "mara_j",

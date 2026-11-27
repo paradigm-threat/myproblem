@@ -475,13 +475,15 @@
       "</div></header>" +
       '<div class="si-strip-body" data-role="ai-body"></div>' +
       "</aside>" +
+      '<div class="panel-gutter" data-role="gutter-si" role="separator" aria-orientation="vertical" aria-label="Resize SI panel" hidden></div>' +
       '<main class="chat" data-role="chat">' +
       '<div class="history" data-role="history" role="log" aria-label="Public IRC channel messages">' +
       '<div class="stream" data-role="stream"></div></div></main>' +
+      '<div class="panel-gutter" data-role="gutter-composer" role="separator" aria-orientation="vertical" aria-label="Resize composer" hidden></div>' +
       '<footer class="composer" data-role="composer">' +
       '<div class="compose-inner">' +
       '<div class="composebox" data-role="composebox">' +
-      '<textarea data-role="draft" aria-label="Message to public room" placeholder="Help me with a problem… · Help me find something… · What\'s the latest news on something… · What\'s going on in town…"></textarea>' +
+      '<textarea data-role="draft" aria-label="Message to public room" inputmode="text" enterkeyhint="send" autocomplete="off" autocorrect="on" placeholder="Help me with a problem… · Help me find something… · What\'s the latest news on something… · What\'s going on in town…"></textarea>' +
       '<div class="pending-media" data-role="pending-media" hidden></div>' +
       '<div class="tools">' +
       '<input type="file" data-role="file-input" hidden accept="image/*,video/*,audio/*,.pdf,text/*,.txt,.md,.json,.csv,.xml,.yaml,.yml" />' +
@@ -673,8 +675,6 @@
       recording: false,
       mediaRecorder: null,
       mediaStream: null,
-      recordChunks: [],
-      recordKind: "",
       pendingMedia: [],
       channelCatalog: [],
       layoutMode: "chat",
@@ -684,6 +684,9 @@
       chromeAnimTimer: null,
       composerExpanded: null,
       siExpanded: false,
+      holdComposerOpen: false,
+      holdComposerTimer: null,
+      panelResize: null,
       topicText: "",
       ircChannel: opts.channel || "#web",
       pin: null,
@@ -723,6 +726,11 @@
 
     var CHROME_MS = 340;
     var CHROME_EASE = "cubic-bezier(0.32, 0.72, 0, 1)";
+    var PANEL_W_KEY = "clevertree.room.panelWidths";
+    var DESKTOP_MQ = "(min-width: 900px)";
+    /* Narrow portrait WebViews can flip to "landscape" when the keyboard opens. */
+    var ROW_MQ =
+      "(orientation: landscape) and (min-width: 600px), (min-width: 900px)";
 
     function prefersReducedMotion() {
       return (
@@ -731,11 +739,14 @@
       );
     }
 
+    /** True desktop / wide tablet — resizable columns, snappy chrome. */
+    function isDesktopChrome() {
+      return typeof matchMedia === "function" && matchMedia(DESKTOP_MQ).matches;
+    }
+
+    /** Phone landscape or desktop row layout (SI | chat | draft). */
     function isLandscapeChrome() {
-      return (
-        typeof matchMedia === "function" &&
-        matchMedia("(orientation: landscape), (min-width: 900px)").matches
-      );
+      return typeof matchMedia === "function" && matchMedia(ROW_MQ).matches;
     }
 
     function clearChromeInlineSize(node) {
@@ -743,6 +754,16 @@
       node.style.height = "";
       node.style.width = "";
       node.style.transition = "";
+    }
+
+    function holdComposer(ms) {
+      state.holdComposerOpen = true;
+      if (state.holdComposerTimer) clearTimeout(state.holdComposerTimer);
+      var wait = typeof ms === "number" && ms >= 0 ? ms : CHROME_MS + 500;
+      state.holdComposerTimer = setTimeout(function () {
+        state.holdComposerOpen = false;
+        state.holdComposerTimer = null;
+      }, wait);
     }
 
     function applySiClass(on) {
@@ -762,11 +783,14 @@
       if (draft) {
         draft.placeholder = on ? PLACEHOLDER_EXPANDED : PLACEHOLDER_COLLAPSED;
         try {
-          /* Only nudge focus when expanding; avoid blur thrash if something
-           * else already moved focus away during a layout race. */
+          /* Expanding: focus in the same turn as the user gesture so mobile
+           * soft keyboards actually open. Never blur while holdComposerOpen. */
           if (on) {
             if (document.activeElement !== draft) draft.focus();
-          } else if (document.activeElement === draft) {
+          } else if (
+            document.activeElement === draft &&
+            !state.holdComposerOpen
+          ) {
             draft.blur();
           }
         } catch (e) {}
@@ -789,8 +813,8 @@
     }
 
     /**
-     * Smoothly resize SI + composer together (push/expand, not snap).
-     * Snapshot → apply classes → measure targets → tween height/width.
+     * Mobile (portrait + phone landscape): smooth push/expand tween.
+     * Desktop (≥900px): instant class swap — columns stay user-sized.
      */
     function setChromeState(nextSi, nextComposer) {
       nextSi = !!nextSi;
@@ -807,11 +831,29 @@
         return;
       }
 
+      var desktop = isDesktopChrome();
+      var reduce = prefersReducedMotion();
+      /* Desktop / reduced-motion: snap — no measure/tween (keeps focus + IME). */
+      if (desktop || reduce) {
+        suppressHistoryCollapse(180);
+        if (state.chromeAnimTimer) {
+          clearTimeout(state.chromeAnimTimer);
+          state.chromeAnimTimer = null;
+        }
+        clearChromeInlineSize(aiPanel);
+        clearChromeInlineSize(composerEl);
+        applySiClass(nextSi);
+        applyComposerClass(nextComposer);
+        if (typeof scheduleKeyboardViewport === "function") {
+          scheduleKeyboardViewport();
+        }
+        return;
+      }
+
       /* Cover measure/tween reflow + post-anim keyboard viewport sync. */
       suppressHistoryCollapse(CHROME_MS + 280);
 
       var landscape = isLandscapeChrome();
-      var reduce = prefersReducedMotion();
       var siStart = aiPanel ? aiPanel.getBoundingClientRect() : null;
       var coStart = composerEl ? composerEl.getBoundingClientRect() : null;
 
@@ -834,12 +876,6 @@
 
       applySiClass(nextSi);
       applyComposerClass(nextComposer);
-
-      if (reduce) {
-        clearChromeInlineSize(aiPanel);
-        clearChromeInlineSize(composerEl);
-        return;
-      }
 
       // Natural end sizes with new classes (inline sizes cleared briefly).
       if (aiPanel) {
@@ -911,17 +947,263 @@
     }
 
     function focusComposer() {
-      /* Intentional expand — keep scroll-collapse locked across the anim. */
+      /* Focus in the user gesture first (IME), then expand chrome. */
+      holdComposer(CHROME_MS + 600);
       suppressHistoryCollapse(CHROME_MS + 280);
+      try {
+        if (draft && document.activeElement !== draft) draft.focus();
+      } catch (e) {}
       setChromeState(false, true);
     }
 
     function focusSi() {
+      if (state.holdComposerOpen) return;
       setChromeState(true, false);
     }
 
-    function collapseChrome() {
+    function releaseComposerHold() {
+      state.holdComposerOpen = false;
+      if (state.holdComposerTimer) {
+        clearTimeout(state.holdComposerTimer);
+        state.holdComposerTimer = null;
+      }
+    }
+
+    function collapseChrome(opts) {
+      var force = !!(opts && opts.force);
+      /* Keep draft open while focused (hold covers pre-focus IME race). */
+      if (!force && draft && document.activeElement === draft) {
+        return;
+      }
+      if (force && draft && document.activeElement === draft) {
+        try {
+          draft.blur();
+        } catch (e) {}
+      }
+      releaseComposerHold();
       setChromeState(false, false);
+    }
+
+    /**
+     * Swipe open chrome on the panel/composer shells only (not the scrolling
+     * transcript). Portrait + landscape: drag down on SI → expand SI; drag up
+     * on composer → expand chat.
+     */
+    function wireChromeSwipe(target, direction) {
+      if (!target) return;
+      var SWIPE_MIN = 48;
+      var AXIS_RATIO = 1.2;
+      var startX = 0;
+      var startY = 0;
+      var pointerId = null;
+      var tracking = false;
+      var openDown = direction === "down";
+
+      function resetSwipe() {
+        tracking = false;
+        pointerId = null;
+      }
+
+      target.addEventListener("pointerdown", function (ev) {
+        if (ev.isPrimary === false) return;
+        if (ev.pointerType === "mouse" && ev.button !== 0) return;
+        if (state.menuOpen || el.classList.contains("is-resizing")) return;
+        if (
+          ev.target &&
+          ev.target.closest &&
+          ev.target.closest(
+            'a,button,input,textarea,select,[data-role="menu-fab"],[data-role="menu-drawer"],.menu-drawer'
+          )
+        ) {
+          return;
+        }
+        tracking = true;
+        pointerId = ev.pointerId;
+        startX = ev.clientX;
+        startY = ev.clientY;
+        try {
+          target.setPointerCapture(ev.pointerId);
+        } catch (e) {}
+      });
+
+      function onPointerEnd(ev) {
+        if (!tracking || (pointerId != null && ev.pointerId !== pointerId)) {
+          return;
+        }
+        var dx = ev.clientX - startX;
+        var dy = ev.clientY - startY;
+        try {
+          if (pointerId != null && target.hasPointerCapture(pointerId)) {
+            target.releasePointerCapture(pointerId);
+          }
+        } catch (e) {}
+        resetSwipe();
+        if (Math.abs(dy) < SWIPE_MIN) return;
+        if (Math.abs(dy) < Math.abs(dx) * AXIS_RATIO) return;
+        if (openDown) {
+          if (dy <= 0) return;
+          focusSi();
+        } else {
+          if (dy >= 0) return;
+          focusComposer();
+        }
+      }
+
+      target.addEventListener("pointerup", onPointerEnd);
+      target.addEventListener("pointercancel", function (ev) {
+        if (pointerId != null && ev.pointerId !== pointerId) return;
+        try {
+          if (pointerId != null && target.hasPointerCapture(pointerId)) {
+            target.releasePointerCapture(pointerId);
+          }
+        } catch (e) {}
+        resetSwipe();
+      });
+    }
+
+    function readPanelWidths() {
+      try {
+        var raw = localStorage.getItem(PANEL_W_KEY);
+        if (!raw) return { si: 33, co: 33 };
+        var j = JSON.parse(raw);
+        var si = Number(j && j.si);
+        var co = Number(j && j.co);
+        if (!(si >= 16 && si <= 46)) si = 33;
+        if (!(co >= 16 && co <= 46)) co = 33;
+        if (si + co > 78) {
+          var scale = 78 / (si + co);
+          si = Math.round(si * scale);
+          co = Math.round(co * scale);
+        }
+        return { si: si, co: co };
+      } catch (e) {
+        return { si: 33, co: 33 };
+      }
+    }
+
+    function writePanelWidths(si, co) {
+      try {
+        localStorage.setItem(
+          PANEL_W_KEY,
+          JSON.stringify({ si: si, co: co })
+        );
+      } catch (e) {}
+    }
+
+    function applyPanelWidths(siPct, coPct) {
+      el.style.setProperty("--ct-si-w", siPct + "%");
+      el.style.setProperty("--ct-co-w", coPct + "%");
+    }
+
+    function syncChromeMode() {
+      var desktop = isDesktopChrome();
+      el.setAttribute("data-chrome", desktop ? "desktop" : "mobile");
+      var gSi = $(el, '[data-role="gutter-si"]');
+      var gCo = $(el, '[data-role="gutter-composer"]');
+      if (gSi) {
+        gSi.hidden = !desktop;
+        gSi.setAttribute("aria-hidden", desktop ? "false" : "true");
+      }
+      if (gCo) {
+        gCo.hidden = !desktop;
+        gCo.setAttribute("aria-hidden", desktop ? "false" : "true");
+      }
+      if (desktop) {
+        var w = readPanelWidths();
+        applyPanelWidths(w.si, w.co);
+      } else {
+        el.style.removeProperty("--ct-si-w");
+        el.style.removeProperty("--ct-co-w");
+      }
+    }
+
+    function wirePanelResize() {
+      var gSi = $(el, '[data-role="gutter-si"]');
+      var gCo = $(el, '[data-role="gutter-composer"]');
+      if (!gSi || !gCo || !bodyEl) return;
+
+      function startDrag(which, ev) {
+        if (!isDesktopChrome()) return;
+        ev.preventDefault();
+        var startX =
+          ev.clientX != null
+            ? ev.clientX
+            : ev.touches && ev.touches[0]
+              ? ev.touches[0].clientX
+              : 0;
+        var bodyR = bodyEl.getBoundingClientRect();
+        var bodyW = Math.max(1, bodyR.width);
+        var cur = readPanelWidths();
+        var startSi = cur.si;
+        var startCo = cur.co;
+        var orientRight = state.orient === "right";
+        el.classList.add("is-resizing");
+
+        function onMove(e) {
+          var x =
+            e.clientX != null
+              ? e.clientX
+              : e.touches && e.touches[0]
+                ? e.touches[0].clientX
+                : startX;
+          var dxPct = ((x - startX) / bodyW) * 100;
+          if (orientRight) dxPct = -dxPct;
+          var si = startSi;
+          var co = startCo;
+          if (which === "si") {
+            si = Math.round(startSi + dxPct);
+          } else {
+            co = Math.round(startCo - dxPct);
+          }
+          si = Math.max(16, Math.min(46, si));
+          co = Math.max(16, Math.min(46, co));
+          if (si + co > 78) {
+            if (which === "si") si = 78 - co;
+            else co = 78 - si;
+          }
+          applyPanelWidths(si, co);
+          state.panelResize = { si: si, co: co };
+        }
+
+        function onUp() {
+          el.classList.remove("is-resizing");
+          document.removeEventListener("pointermove", onMove);
+          document.removeEventListener("pointerup", onUp);
+          document.removeEventListener("pointercancel", onUp);
+          document.removeEventListener("touchmove", onMove);
+          document.removeEventListener("touchend", onUp);
+          if (state.panelResize) {
+            writePanelWidths(state.panelResize.si, state.panelResize.co);
+            state.panelResize = null;
+          }
+        }
+
+        document.addEventListener("pointermove", onMove);
+        document.addEventListener("pointerup", onUp);
+        document.addEventListener("pointercancel", onUp);
+        document.addEventListener("touchmove", onMove, { passive: false });
+        document.addEventListener("touchend", onUp);
+      }
+
+      gSi.addEventListener("pointerdown", function (ev) {
+        startDrag("si", ev);
+      });
+      gCo.addEventListener("pointerdown", function (ev) {
+        startDrag("co", ev);
+      });
+    }
+
+    syncChromeMode();
+    wirePanelResize();
+    if (typeof matchMedia === "function") {
+      var desktopMq = matchMedia(DESKTOP_MQ);
+      var onDesktopMq = function () {
+        syncChromeMode();
+      };
+      if (desktopMq.addEventListener) desktopMq.addEventListener("change", onDesktopMq);
+      else if (desktopMq.addListener) desktopMq.addListener(onDesktopMq);
+      state._desktopMq = desktopMq;
+      state._onDesktopMq = onDesktopMq;
     }
 
     function scrollHistoryToBottom() {
@@ -1209,10 +1491,12 @@
         ) {
           return;
         }
-        collapseChrome();
+        collapseChrome({ force: true });
       });
     }
     if (aiPanel) {
+      /* Drag down on the SI shell opens it (history scroll stays untouched). */
+      wireChromeSwipe(aiPanel, "down");
       aiPanel.addEventListener("click", function (ev) {
         if (
           ev.target &&
@@ -1225,7 +1509,15 @@
         focusSi();
       });
     }
+    if (composerEl) {
+      /* Drag up on the composer shell opens chat. */
+      wireChromeSwipe(composerEl, "up");
+    }
     if (composeBox) {
+      composeBox.addEventListener("pointerdown", function (ev) {
+        /* Same-gesture focus so soft keyboards open on mobile WebViews. */
+        if (ev.target !== draft) focusComposer();
+      });
       composeBox.addEventListener("click", function () {
         focusComposer();
       });
@@ -1234,7 +1526,7 @@
       draft.addEventListener("focus", function () {
         focusComposer();
       });
-      /* Pointer down expands before focus steals the gesture on some WebViews. */
+      /* Pointer down expands + focuses before focus races on some WebViews. */
       draft.addEventListener(
         "pointerdown",
         function () {
@@ -1242,6 +1534,15 @@
         },
         { passive: true }
       );
+      draft.addEventListener("blur", function () {
+        /* Release hold shortly after blur so chrome can collapse again. */
+        if (state.holdComposerTimer) clearTimeout(state.holdComposerTimer);
+        state.holdComposerTimer = setTimeout(function () {
+          if (document.activeElement === draft) return;
+          state.holdComposerOpen = false;
+          state.holdComposerTimer = null;
+        }, 180);
+      });
     }
     var connEl = $(el, '[data-role="conn"]');
     var mirrorEl = $(el, '[data-role="mirror"]');
@@ -1954,12 +2255,33 @@
     function startCapture(video) {
       if (
         !navigator.mediaDevices ||
+        typeof navigator.mediaDevices.getUserMedia !== "function" ||
         typeof MediaRecorder === "undefined"
       ) {
-        setUploadStatus("Recording not supported in this browser");
+        setUploadStatus("Recording not supported. You can attach a file instead.");
         return;
       }
+
+      var kind = video ? "video" : "audio";
+      var candidates = video
+        ? ["video/webm;codecs=vp8,opus", "video/webm", "video/mp4"]
+        : ["audio/webm;codecs=opus", "audio/webm", "audio/mp4"];
+      var mime =
+        typeof MediaRecorder.isTypeSupported === "function"
+          ? candidates.find(function (type) {
+              return MediaRecorder.isTypeSupported(type);
+            })
+          : "";
       setUploadStatus(video ? "Starting camera…" : "Starting mic…");
+      if (recordAudioBtn) recordAudioBtn.disabled = true;
+      if (recordVideoBtn) recordVideoBtn.disabled = true;
+
+      function finishCapture() {
+        state.mediaRecorder = null;
+        setRecordingUi(false);
+        stopMediaTracks();
+      }
+
       navigator.mediaDevices
         .getUserMedia({
           audio: true,
@@ -1967,30 +2289,57 @@
         })
         .then(function (mediaStream) {
           state.mediaStream = mediaStream;
-          state.recordChunks = [];
-          state.recordKind = video ? "video" : "audio";
-          var mime = video
-            ? MediaRecorder.isTypeSupported("video/webm;codecs=vp8,opus")
-              ? "video/webm;codecs=vp8,opus"
-              : "video/webm"
-            : MediaRecorder.isTypeSupported("audio/webm;codecs=opus")
-              ? "audio/webm;codecs=opus"
-              : "audio/webm";
-          var rec = new MediaRecorder(mediaStream, { mimeType: mime });
+          if (state.destroyed) {
+            finishCapture();
+            return;
+          }
+          var chunks = [];
+          var rec = mime
+            ? new MediaRecorder(mediaStream, { mimeType: mime })
+            : new MediaRecorder(mediaStream);
           state.mediaRecorder = rec;
           rec.ondataavailable = function (ev) {
-            if (ev.data && ev.data.size) state.recordChunks.push(ev.data);
+            if (ev.data && ev.data.size) chunks.push(ev.data);
+          };
+          rec.onerror = function () {
+            rec.onstop = null;
+            finishCapture();
+            setUploadStatus("Recording failed. You can attach a file instead.");
           };
           rec.onstop = function () {
-            var blob = new Blob(state.recordChunks, { type: mime });
-            var name = video
-              ? "clip-" + Date.now() + ".webm"
-              : "voice-" + Date.now() + ".webm";
-            var file = new File([blob], name, { type: mime });
-            setRecordingUi(false);
-            stopMediaTracks();
-            uploadBlob(file, video ? "video" : "audio").catch(function (err) {
-              setUploadStatus(err && err.message ? err.message : "Upload failed");
+            finishCapture();
+            if (state.destroyed) return;
+            if (!chunks.length) {
+              setUploadStatus(
+                "No recording captured. You can attach a file instead."
+              );
+              return;
+            }
+            var type = (chunks[0].type || rec.mimeType || mime || "")
+              .split(";")[0]
+              .toLowerCase();
+            var extensions = {
+              "audio/mp4": "m4a",
+              "video/mp4": "mp4",
+              "audio/webm": "webm",
+              "video/webm": "webm",
+              "audio/ogg": "ogg",
+              "video/ogg": "ogv",
+            };
+            var extension = extensions[type];
+            if (!extension) {
+              setUploadStatus(
+                "Recording format unavailable. You can attach a file instead."
+              );
+              return;
+            }
+            var name =
+              (video ? "clip-" : "voice-") + Date.now() + "." + extension;
+            var file = new File(chunks, name, { type: type });
+            uploadBlob(file, kind).catch(function (err) {
+              setUploadStatus(
+                err && err.message ? err.message : "Upload failed"
+              );
             });
           };
           rec.start();
@@ -2000,11 +2349,17 @@
               ? "Recording video… tap Stop when done"
               : "Recording audio… tap Stop when done"
           );
+        }, function () {
+          finishCapture();
+          setUploadStatus(
+            "Mic/camera unavailable. Check permissions or attach a file instead."
+          );
         })
         .catch(function () {
-          setUploadStatus("Mic/camera permission needed");
-          setRecordingUi(false);
-          stopMediaTracks();
+          finishCapture();
+          setUploadStatus(
+            "Recording failed to start. You can attach a file instead."
+          );
         });
     }
 
@@ -2513,6 +2868,10 @@
       destroy: function () {
         state.destroyed = true;
         stopCapture();
+        if (state.holdComposerTimer) {
+          clearTimeout(state.holdComposerTimer);
+          state.holdComposerTimer = null;
+        }
         if (state.kbViewportRaf) {
           cancelAnimationFrame(state.kbViewportRaf);
           state.kbViewportRaf = 0;
@@ -2533,6 +2892,13 @@
             "orientationchange",
             state._onKbViewport
           );
+        }
+        if (state._desktopMq && state._onDesktopMq) {
+          if (state._desktopMq.removeEventListener) {
+            state._desktopMq.removeEventListener("change", state._onDesktopMq);
+          } else if (state._desktopMq.removeListener) {
+            state._desktopMq.removeListener(state._onDesktopMq);
+          }
         }
         if (mq && mq.removeEventListener) {
           mq.removeEventListener("change", onSchemeChange);
