@@ -124,7 +124,32 @@ body.ct-room-page .room{height:100dvh;min-height:460px}
 .room .full-si-body{font-size:14px;line-height:1.5;margin-top:8px;white-space:normal}
 .room[data-theme="dark"] .copy-clamp:after{background:linear-gradient(transparent,var(--ct-canvas,#152019))}
 
-/* Expandable ask composer: full width (edge padding kept); height ≤ 50% when expanded */
+/* Shell: history scrolls; composer stays pinned at the bottom (always visible). */
+.room .body{
+  flex:1 1 auto;
+  min-height:0;
+  min-width:0;
+  width:100%;
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+}
+.room .chat{
+  flex:1 1 auto;
+  min-height:0;
+  min-width:0;
+  width:100%;
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+}
+.room .history{
+  flex:1 1 auto;
+  min-height:0;
+  overflow:auto;
+  -webkit-overflow-scrolling:touch;
+  overscroll-behavior:contain;
+}
 .room .composer,
 .room .compose-inner,
 .room .composebox{
@@ -133,24 +158,27 @@ body.ct-room-page .room{height:100dvh;min-height:460px}
   box-sizing:border-box;
 }
 .room .compose-inner{margin:0}
-.room .chat:has(.composer-expanded) .history{
-  flex:1 1 auto;
-  min-height:0;
+.room .composer{
+  flex:0 0 auto;
+  position:relative;
+  z-index:2;
+  width:100%;
+  overflow:hidden;
 }
 .room .chat:has(.composer-expanded) .empty{
   padding:16px 12px;
 }
 .room .chat:has(.composer-expanded) .empty h2{font-size:18px;margin:0 0 4px}
 .room .chat:has(.composer-expanded) .empty p{font-size:13px;margin:0}
+/* Expanded = half the chat column (cap 50dvh); collapsed = compact bar. Always on-screen. */
 .room .composer.composer-expanded{
-  flex:0 1 auto;
-  width:100%;
-  max-height:50%;
+  flex:0 0 auto;
+  height:50%;
   max-height:50dvh;
   display:flex;
   flex-direction:column;
   justify-content:stretch;
-  overflow:auto;
+  overflow:hidden;
 }
 .room .composer.composer-expanded .compose-inner{
   flex:1;
@@ -159,6 +187,7 @@ body.ct-room-page .room{height:100dvh;min-height:460px}
   min-height:0;
   width:100%;
   max-width:none;
+  overflow:hidden;
 }
 .room .composer.composer-expanded .composebox{
   flex:1;
@@ -168,27 +197,36 @@ body.ct-room-page .room{height:100dvh;min-height:460px}
   width:100%;
   max-width:none;
   padding:12px 12px 10px;
+  overflow:hidden;
 }
 .room .composer.composer-expanded .composebox textarea{
   flex:1;
   min-height:4.5rem;
-  max-height:100%;
   height:auto;
   width:100%;
+  overflow:auto;
   font-size:17px;
   line-height:1.45;
   padding:6px 4px;
 }
 .room .composer.composer-collapsed{
   flex:0 0 auto;
+  height:auto;
   max-height:none;
 }
 .room .composer.composer-collapsed .composebox{cursor:text}
+.room .composer.composer-collapsed .composebox textarea{
+  height:37px;
+  min-height:37px;
+  flex:none;
+  overflow:hidden;
+}
 @media(max-width:700px){
   .room .composer.composer-expanded .composebox textarea{font-size:16px}
+  .room .composer.composer-collapsed .composebox textarea{height:33px;min-height:33px}
 }
 @media(orientation:landscape){
-  .room .composer.composer-expanded{max-height:50%;max-height:50dvh}
+  .room .composer.composer-expanded{height:50%;max-height:50dvh}
   .room .composer,
   .room .compose-inner,
   .room .composebox{width:100%;max-width:none}

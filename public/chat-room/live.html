@@ -12,10 +12,22 @@
       body {
         margin: 0;
         height: 100%;
+        width: 100%;
+        overflow: hidden;
         background: var(--ct-bg, #0b0f14);
       }
       #root {
         height: 100%;
+        width: 100%;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        min-height: 0;
+      }
+      #root > .room {
+        flex: 1;
+        min-height: 0;
+        width: 100%;
       }
       /* Embed must never show gather / refresh */
       [data-gather],
